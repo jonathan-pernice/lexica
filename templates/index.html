@@ -165,6 +165,37 @@
     #ai-no-results { color: #94a3b8; font-size: 0.9rem; display: none; }
     #ai-error      { color: #dc2626; font-size: 0.85rem; display: none; }
 
+    /* ── Passage grouping ── */
+    .passage-group { margin-bottom: 0.75rem; }
+    .passage-hdr {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.75rem;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      margin-bottom: 0.3rem;
+    }
+    .passage-hdr:hover { background: #e8eef6; }
+    .passage-hdr .p-toggle {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .passage-hdr .p-title { font-weight: 600; font-size: 0.875rem; color: #1e3a5f; flex: 1; }
+    .passage-hdr .p-count {
+      font-size: 0.75rem;
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-radius: 4px;
+      padding: 0.1rem 0.45rem;
+    }
+    .passage-body { padding-left: 0.5rem; }
+
     /* ── AI section ── */
     .ai-divider {
       display: flex;
@@ -221,6 +252,9 @@
   <div class="options-row">
     <input id="phrase-mode" type="checkbox">
     <label for="phrase-mode">Full phrase search</label>
+    <span style="color:#e2e8f0;margin:0 0.25rem">|</span>
+    <input id="group-passages" type="checkbox">
+    <label for="group-passages">Group by passage</label>
   </div>
 
   <div id="summary"></div>
@@ -267,6 +301,7 @@
     resultsEl.innerHTML = '';
     noResults.style.display = 'none';
     errorEl.style.display   = 'none';
+    _lastAiData = null;
 
     try {
       const res  = await fetch(`/api/ai-search?q=${encodeURIComponent(q)}`);
@@ -279,15 +314,8 @@
       }
 
       explEl.textContent = data.explanation || '';
-
-      if (data.total === 0) {
-        noResults.style.display = 'block';
-        return;
-      }
-
-      for (const r of data.results) {
-        resultsEl.appendChild(makeVerseCard(r));
-      }
+      _lastAiData = data;
+      renderAiResults(data);
     } catch (e) {
       errorEl.textContent   = `Network error: ${e}`;
       errorEl.style.display = 'block';
@@ -301,10 +329,98 @@
     if (document.getElementById('q').value.trim()) doSearch();
   });
 
+  document.getElementById('group-passages').addEventListener('change', () => {
+    if (document.getElementById('q').value.trim()) doSearch();
+    if (_lastAiData) renderAiResults(_lastAiData);
+  });
+
+  let _lastAiData = null;
+
+  const PASSAGES = [
+    { label: 'Creation',                      book: 'Gen', start:  1, end:  2 },
+    { label: 'Fall & Cain',                   book: 'Gen', start:  3, end:  4 },
+    { label: 'Antediluvian Genealogy',        book: 'Gen', start:  5, end:  5 },
+    { label: 'Flood',                         book: 'Gen', start:  6, end:  9 },
+    { label: 'Nations & Babel',               book: 'Gen', start: 10, end: 11 },
+    { label: "Abraham's Call & Journeys",     book: 'Gen', start: 12, end: 14 },
+    { label: 'Covenant of Fire',              book: 'Gen', start: 15, end: 15 },
+    { label: 'Hagar & Ishmael',               book: 'Gen', start: 16, end: 16 },
+    { label: 'Covenant of Circumcision',      book: 'Gen', start: 17, end: 17 },
+    { label: 'Sodom & Gomorrah',              book: 'Gen', start: 18, end: 19 },
+    { label: 'Abraham & Abimelech',           book: 'Gen', start: 20, end: 20 },
+    { label: 'Isaac & Hagar',                 book: 'Gen', start: 21, end: 21 },
+    { label: 'Binding of Isaac',              book: 'Gen', start: 22, end: 22 },
+    { label: "Sarah's Burial & Isaac's Wife", book: 'Gen', start: 23, end: 24 },
+    { label: 'Jacob & Esau',                  book: 'Gen', start: 25, end: 27 },
+    { label: "Jacob's Ladder",                book: 'Gen', start: 28, end: 28 },
+    { label: 'Jacob & Laban',                 book: 'Gen', start: 29, end: 31 },
+    { label: "Jacob's Return & Dinah",        book: 'Gen', start: 32, end: 36 },
+    { label: 'Joseph',                        book: 'Gen', start: 37, end: 50 },
+  ];
+
+  function passageLabelFor(book, chapter) {
+    const p = PASSAGES.find(p => p.book === book && chapter >= p.start && chapter <= p.end);
+    if (p) {
+      const ch = p.start === p.end ? p.start : `${p.start}–${p.end}`;
+      return `${p.label} (${book} ${ch})`;
+    }
+    return `${book} ${chapter}`;
+  }
+
+  function renderGrouped(results, container, makeCardFn) {
+    const groups = new Map();
+    const order  = [];
+    for (const r of results) {
+      const label = passageLabelFor(r.book, r.chapter);
+      if (!groups.has(label)) { groups.set(label, []); order.push(label); }
+      groups.get(label).push(r);
+    }
+    for (const label of order) {
+      const items   = groups.get(label);
+      const section = document.createElement('div');
+      section.className = 'passage-group';
+
+      const hdr = document.createElement('div');
+      hdr.className = 'passage-hdr';
+      hdr.innerHTML = `
+        <span class="p-toggle">▼</span>
+        <span class="p-title">${label}</span>
+        <span class="p-count">${items.length}</span>
+      `;
+
+      const body = document.createElement('div');
+      body.className = 'passage-body';
+      for (const r of items) body.appendChild(makeCardFn(r));
+
+      let open = true;
+      hdr.addEventListener('click', () => {
+        open = !open;
+        body.style.display = open ? '' : 'none';
+        hdr.querySelector('.p-toggle').style.transform = open ? '' : 'rotate(-90deg)';
+      });
+
+      section.appendChild(hdr);
+      section.appendChild(body);
+      container.appendChild(section);
+    }
+  }
+
+  function renderAiResults(data) {
+    const grouped   = document.getElementById('group-passages').checked;
+    const resultsEl = document.getElementById('ai-results');
+    const noResults = document.getElementById('ai-no-results');
+    resultsEl.innerHTML = '';
+    if (data.total === 0) { noResults.style.display = 'block'; return; }
+    noResults.style.display = 'none';
+    if (grouped) renderGrouped(data.results, resultsEl, makeVerseCard);
+    else for (const r of data.results) resultsEl.appendChild(makeVerseCard(r));
+  }
+
   async function doSearch() {
-    const q      = document.getElementById('q').value.trim();
-    const phrase = document.getElementById('phrase-mode').checked ? '1' : '0';
-    const summary = document.getElementById('summary');
+    const q       = document.getElementById('q').value.trim();
+    const phrase  = document.getElementById('phrase-mode').checked ? '1' : '0';
+    const grouped = document.getElementById('group-passages').checked;
+    const summary   = document.getElementById('summary');
     const resultsEl = document.getElementById('results');
     const noResults = document.getElementById('no-results');
 
@@ -323,26 +439,27 @@
       return;
     }
 
-    const shown = data.results.slice(0, 20);
-    const more  = data.total - shown.length;
-    summary.textContent = `${data.total} occurrence${data.total !== 1 ? 's' : ''} in Genesis` +
-      (more > 0 ? ` · showing first 20 of ${data.total}` : '');
+    const occLabel = `${data.total} occurrence${data.total !== 1 ? 's' : ''}`;
 
-    resultsEl.innerHTML = '';
-    for (const r of shown) {
-      resultsEl.appendChild(makeCard(r));
-    }
-
-    if (more > 0) {
-      const btn = document.createElement('button');
-      btn.textContent = `Show all ${data.total} results`;
-      btn.style.cssText = 'margin-top:0.5rem;padding:0.5rem 1rem;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;font-size:0.85rem;width:100%';
-      btn.onclick = () => {
-        for (const r of data.results.slice(20)) resultsEl.appendChild(makeCard(r));
-        btn.remove();
-        summary.textContent = `${data.total} occurrence${data.total !== 1 ? 's' : ''} in Genesis`;
-      };
-      resultsEl.appendChild(btn);
+    if (grouped) {
+      summary.textContent = occLabel;
+      renderGrouped(data.results, resultsEl, makeCard);
+    } else {
+      const shown = data.results.slice(0, 20);
+      const more  = data.total - shown.length;
+      summary.textContent = occLabel + (more > 0 ? ` · showing first 20 of ${data.total}` : '');
+      for (const r of shown) resultsEl.appendChild(makeCard(r));
+      if (more > 0) {
+        const btn = document.createElement('button');
+        btn.textContent = `Show all ${data.total} results`;
+        btn.style.cssText = 'margin-top:0.5rem;padding:0.5rem 1rem;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;font-size:0.85rem;width:100%';
+        btn.onclick = () => {
+          for (const r of data.results.slice(20)) resultsEl.appendChild(makeCard(r));
+          btn.remove();
+          summary.textContent = occLabel;
+        };
+        resultsEl.appendChild(btn);
+      }
     }
   }
 
