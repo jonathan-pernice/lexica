@@ -314,6 +314,20 @@ def _strongs_num(q: str):
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
 
+
+def _migrate_db():
+    conn = db()
+    try:
+        conn.execute("ALTER TABLE lsj ADD COLUMN summary_json TEXT")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # column already exists
+    finally:
+        conn.close()
+
+
+_migrate_db()
+
 @app.errorhandler(429)
 def rate_limit_handler(e):
     return jsonify({"error": f"Rate limit exceeded — {e.description}"}), 429
@@ -504,19 +518,32 @@ def lsj_summary(lemma):
     plain = _strip_accents(lemma).lower()
     conn = db()
     try:
-        row = conn.execute("SELECT def_html FROM lsj WHERE key = ?", (lemma,)).fetchone()
+        row = conn.execute(
+            "SELECT key, def_html, summary_json FROM lsj WHERE key = ?", (lemma,)
+        ).fetchone()
         if not row:
-            row = conn.execute("SELECT def_html FROM lsj WHERE plain = ?", (plain,)).fetchone()
+            row = conn.execute(
+                "SELECT key, def_html, summary_json FROM lsj WHERE plain = ?", (plain,)
+            ).fetchone()
     finally:
         conn.close()
     if not row:
         return jsonify({"error": "not found"}), 404
 
+    exact_key = row["key"]
+
+    if row["summary_json"]:
+        payload = json.loads(row["summary_json"])
+        _lsj_summary_cache[lemma] = payload
+        return jsonify(payload)
+
     parser = _SectionParser()
     parser.feed(row["def_html"] or "")
     sections = parser.get_sections()
     if not sections:
-        return jsonify({"sections": []}), 200
+        payload = {"sections": []}
+        _lsj_summary_cache[lemma] = payload
+        return jsonify(payload)
 
     results = []
     for marker, text in sections:
@@ -534,6 +561,15 @@ def lsj_summary(lemma):
         results.append({"marker": marker, "text": msg.content[0].text.strip()})
 
     payload = {"sections": results}
+    conn = db()
+    try:
+        conn.execute(
+            "UPDATE lsj SET summary_json = ? WHERE key = ?",
+            (json.dumps(payload), exact_key),
+        )
+        conn.commit()
+    finally:
+        conn.close()
     _lsj_summary_cache[lemma] = payload
     return jsonify(payload)
 
