@@ -234,6 +234,13 @@ def _strip_accents(s: str | None) -> str | None:
         c for c in unicodedata.normalize("NFD", s)
         if unicodedata.category(c) != "Mn"
     )
+
+
+def _clean_gloss(s: str | None) -> str | None:
+    """Strip trailing punctuation that ABP interlinear leaves on phrase-boundary words."""
+    if not s:
+        return s
+    return s.rstrip(" ,;:.!?")
 _ai_cache: dict = {}  # keyed on query string; cleared on restart when prompt changes
 
 _anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -298,6 +305,7 @@ def search():
                 LEFT JOIN lexicon l ON l.strongs = w.strongs_base
                 WHERE {col} = ?
                   AND w.english IS NOT NULL AND w.english != ''
+                  AND w.strongs_base != '*'
                 ORDER BY v.id, w.position
                 """,
                 (snum,),
@@ -316,6 +324,7 @@ def search():
                 WHERE ({search_col} LIKE ? COLLATE NOCASE
                        OR strip_accents(l.translit) LIKE ? COLLATE NOCASE)
                   AND w.english IS NOT NULL AND w.english != ''
+                  AND w.strongs_base != '*'
                 ORDER BY v.id, w.position
                 """,
                 (f"%{q}%", f"%{q_plain}%"),
@@ -331,7 +340,7 @@ def search():
             "verse":      r["verse"],
             "strongs":    r["strongs"],
             "strongs_base": r["strongs_base"],
-            "gloss":      r["english"],
+            "gloss":      _clean_gloss(r["english"]),
             "lemma":      r["lemma"],
             "translit":   r["translit"],
             "strongs_def": (r["strongs_def"] or "").strip(),
@@ -459,12 +468,12 @@ def ai_search():
                     "words":   [],
                 }
                 verse_order.append(key)
-            if not r["english"]:
+            if not r["english"] or r["strongs_base"] == "*":
                 continue
             verse_index[key]["words"].append({
                 "strongs":     r["strongs"],
                 "strongs_base": r["strongs_base"],
-                "gloss":       r["english"],
+                "gloss":       _clean_gloss(r["english"]),
                 "lemma":       r["lemma"],
                 "translit":    r["translit"],
                 "strongs_def": (r["strongs_def"] or "").strip(),
