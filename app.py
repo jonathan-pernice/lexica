@@ -319,10 +319,19 @@ def _migrate_db():
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     try:
-        conn.execute("ALTER TABLE lsj ADD COLUMN summary_json TEXT")
-        conn.commit()
-    except sqlite3.OperationalError:
-        pass  # column already exists
+        try:
+            conn.execute("ALTER TABLE lsj ADD COLUMN summary_json TEXT")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # column already exists
+        # One-time: clear v1 summaries that contained markdown artifacts.
+        # The presence of summary_v column marks this migration as done.
+        try:
+            conn.execute("ALTER TABLE lsj ADD COLUMN summary_v INTEGER DEFAULT 0")
+            conn.execute("UPDATE lsj SET summary_json = NULL WHERE summary_json IS NOT NULL")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # already migrated
     finally:
         conn.close()
 
@@ -555,8 +564,10 @@ def lsj_summary(lemma):
             max_tokens=200,
             messages=[{"role": "user", "content": (
                 "Extract only the English definition meaning from this LSJ Greek lexicon entry section. "
-                "Write one to two sentences. No Greek phrases, no citations, no abbreviations, "
-                "no scholarly apparatus. Plain English only.\n\n" + text
+                "Write one to two plain prose sentences. "
+                "Do not use markdown, headers (#), bullet points, or any formatting. "
+                "No Greek phrases, no citations, no abbreviations, no scholarly apparatus. "
+                "Return only the bare sentences, nothing else.\n\n" + text
             )}],
         )
         results.append({"marker": marker, "text": msg.content[0].text.strip()})

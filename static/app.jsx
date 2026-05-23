@@ -266,6 +266,24 @@ function ResultCard({ entry, active, onClick, count }) {
 // ============================================================
 // LSJ SUMMARY DISPLAY
 // ============================================================
+function _senseLevel(marker) {
+  if (!marker) return 0;
+  if (/^[IVX]+\.$/.test(marker)) return 0;
+  if (/^[A-E]\.$/.test(marker))  return 1;
+  if (/^[1-9]/.test(marker))     return 2;
+  return 3;
+}
+
+function _stripMd(text) {
+  return text
+    .replace(/^#+\s*/gm, "")      // strip # ## ### headers
+    .replace(/^\s*[-*]\s+/gm, "") // strip bullet points
+    .replace(/\*\*(.+?)\*\*/g, "$1") // strip bold **
+    .replace(/\*(.+?)\*/g, "$1")     // strip italic *
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function LsjSummary({ data, loading }) {
   if (loading)
     return <div className="lsj-def" style={{ color: "var(--muted)", fontStyle: "italic" }}>Summarizing…</div>;
@@ -274,9 +292,9 @@ function LsjSummary({ data, loading }) {
   return (
     <div className="lsj-parsed">
       {data.sections.map((s, i) => (
-        <div key={i} className="lsj-sense lsj-l0">
+        <div key={i} className={"lsj-sense lsj-l" + _senseLevel(s.marker)}>
           {s.marker && <span className="lsj-marker">{s.marker}</span>}
-          <span className="lsj-text">{s.text}</span>
+          <span className="lsj-text">{_stripMd(s.text)}</span>
         </div>
       ))}
     </div>
