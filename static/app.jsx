@@ -473,17 +473,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, entries, onWordClick }) {
+function VerseStudyRow({ book, chapter, verse, label, citedMap, onWordClick }) {
   const [words, setWords] = useState(null);
-
-  // Map strongs_base -> first matching entry for this verse
-  const matchMap = useMemo(() => {
-    const m = new Map();
-    for (const e of entries) {
-      if (e.strongs_base !== "*" && !m.has(e.strongs_base)) m.set(e.strongs_base, e);
-    }
-    return m;
-  }, [entries]);
 
   useEffect(() => {
     let cancelled = false;
@@ -501,7 +492,7 @@ function VerseStudyRow({ book, chapter, verse, label, entries, onWordClick }) {
         {words === null ? (
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
         ) : words.map((w, i) => {
-          const entry = w.is_content !== false ? matchMap.get(w.strongs_base) : null;
+          const entry = citedMap.get(w.strongs_base);
           if (entry) {
             return (
               <span key={i} className="study-word match" onClick={() => onWordClick(entry)}>
@@ -520,7 +511,7 @@ function VerseStudyRow({ book, chapter, verse, label, entries, onWordClick }) {
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, onWordClick }) {
+function PassageGroup({ label, verses, citedMap, onWordClick }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
@@ -542,7 +533,7 @@ function PassageGroup({ label, verses, onWordClick }) {
               chapter={v.chapter}
               verse={v.verse}
               label={v.ref}
-              entries={v.entries}
+              citedMap={citedMap}
               onWordClick={onWordClick}
             />
           ))}
@@ -556,6 +547,15 @@ function PassageGroup({ label, verses, onWordClick }) {
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
 function StudyMode({ allResults, onWordClick }) {
+  // Global map of cited Strong's numbers → entry (for sidebar on click)
+  const citedMap = useMemo(() => {
+    const m = new Map();
+    for (const e of allResults) {
+      if (e.strongs_base !== "*" && !m.has(e.strongs_base)) m.set(e.strongs_base, e);
+    }
+    return m;
+  }, [allResults]);
+
   const groups = useMemo(() => {
     const gMap = {};
     const gOrder = [];
@@ -572,12 +572,10 @@ function StudyMode({ allResults, onWordClick }) {
       const vk = `${entry.book}-${entry.chapter}-${entry.verse}`;
       if (!gMap[gk].verseMap[vk]) {
         gMap[gk].verseMap[vk] = {
-          book: entry.book, chapter: entry.chapter, verse: entry.verse,
-          ref: entry.ref, entries: [],
+          book: entry.book, chapter: entry.chapter, verse: entry.verse, ref: entry.ref,
         };
         gMap[gk].verseOrder.push(vk);
       }
-      gMap[gk].verseMap[vk].entries.push(entry);
     }
     return gOrder.map(gk => ({
       label: gMap[gk].label,
@@ -588,7 +586,7 @@ function StudyMode({ allResults, onWordClick }) {
   return (
     <div className="study-groups">
       {groups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} onWordClick={onWordClick} />
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} citedMap={citedMap} onWordClick={onWordClick} />
       ))}
     </div>
   );
