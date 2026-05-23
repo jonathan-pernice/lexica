@@ -169,6 +169,17 @@ End:    ORDER BY v.id, w.position   LIMIT 100\
 """
 
 _STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+
+
+def _strip_accents(s: str | None) -> str | None:
+    """Remove combining diacritical marks so 'pneuma' matches 'pneûma'."""
+    if not s:
+        return s
+    import unicodedata
+    return "".join(
+        c for c in unicodedata.normalize("NFD", s)
+        if unicodedata.category(c) != "Mn"
+    )
 _ai_cache: dict = {}
 
 _anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -194,6 +205,7 @@ DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bible.db")
 def db():
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
+    conn.create_function("strip_accents", 1, _strip_accents)
     return conn
 
 
@@ -238,6 +250,7 @@ def search():
             ).fetchall()
         else:
             search_col = "w.english" if phrase_mode else "w.english_head"
+            q_plain = _strip_accents(q)
             rows = conn.execute(
                 f"""
                 SELECT w.strongs_base, w.strongs, w.english, w.english_head,
@@ -246,11 +259,12 @@ def search():
                 FROM words w
                 JOIN verses v ON w.verse_id = v.id
                 LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-                WHERE {search_col} LIKE ? COLLATE NOCASE
+                WHERE ({search_col} LIKE ? COLLATE NOCASE
+                       OR strip_accents(l.translit) LIKE ? COLLATE NOCASE)
                   AND w.english IS NOT NULL AND w.english != ''
                 ORDER BY v.id, w.position
                 """,
-                (f"%{q}%",),
+                (f"%{q}%", f"%{q_plain}%"),
             ).fetchall()
     finally:
         conn.close()
