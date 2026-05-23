@@ -395,7 +395,7 @@ def ai_search():
             log.debug("must_cooccur filter: %d -> %d verses", before, len(results))
 
         payload = {"results": results, "total": len(results),
-                   "explanation": explanation, "sql": sql}
+                   "explanation": explanation}
         _ai_cache[q] = payload
         return jsonify(payload)
 
