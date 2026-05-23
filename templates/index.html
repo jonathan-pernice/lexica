@@ -177,8 +177,8 @@
     <button onclick="doSearch()">Search</button>
   </div>
   <div class="options-row">
-    <input id="whole-words" type="checkbox">
-    <label for="whole-words">Whole words only</label>
+    <input id="phrase-mode" type="checkbox">
+    <label for="phrase-mode">Full phrase search</label>
   </div>
 
   <div id="summary"></div>
@@ -191,13 +191,13 @@
     if (e.key === 'Enter') doSearch();
   });
 
-  document.getElementById('whole-words').addEventListener('change', () => {
+  document.getElementById('phrase-mode').addEventListener('change', () => {
     if (document.getElementById('q').value.trim()) doSearch();
   });
 
   async function doSearch() {
-    const q  = document.getElementById('q').value.trim();
-    const w  = document.getElementById('whole-words').checked ? '1' : '0';
+    const q      = document.getElementById('q').value.trim();
+    const phrase = document.getElementById('phrase-mode').checked ? '1' : '0';
     const summary = document.getElementById('summary');
     const resultsEl = document.getElementById('results');
     const noResults = document.getElementById('no-results');
@@ -208,7 +208,7 @@
     resultsEl.innerHTML = '';
     noResults.style.display = 'none';
 
-    const res  = await fetch(`/api/search?q=${encodeURIComponent(q)}&w=${w}`);
+    const res  = await fetch(`/api/search?q=${encodeURIComponent(q)}&phrase=${phrase}`);
     const data = await res.json();
 
     if (data.total === 0) {

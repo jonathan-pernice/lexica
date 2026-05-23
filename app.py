@@ -22,30 +22,27 @@ def index():
 @app.route("/api/search")
 def search():
     q = request.args.get("q", "").strip()
-    whole_words = request.args.get("w", "0") == "1"
+    phrase_mode = request.args.get("phrase", "0") == "1"
 
     if not q:
         return jsonify({"results": [], "total": 0})
 
+    search_col = "w.english" if phrase_mode else "w.english_head"
     conn = db()
     rows = conn.execute(
-        """
+        f"""
         SELECT w.strongs_base, w.strongs, w.english, w.english_head,
                v.id AS verse_id, v.book, v.chapter, v.verse,
                l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
         FROM words w
         JOIN verses v ON w.verse_id = v.id
         LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-        WHERE w.english_head LIKE ? COLLATE NOCASE
+        WHERE {search_col} LIKE ? COLLATE NOCASE
         ORDER BY v.id, w.position
         """,
         (f"%{q}%",),
     ).fetchall()
     conn.close()
-
-    if whole_words:
-        pat = re.compile(r"\b" + re.escape(q) + r"\b", re.IGNORECASE)
-        rows = [r for r in rows if pat.search(r["english_head"] or "")]
 
     results = [
         {
