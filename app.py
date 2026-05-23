@@ -198,14 +198,15 @@ KEY NARRATIVE CHAPTERS — Exodus (book = 'Exo')
 ─── OUTPUT FORMAT ───────────────────────────────────────────────────────────
 Return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
-  "explanation": "<Berean analysis in 3–5 sentences: (1) the key Greek term(s) and their full semantic range in LXX usage; (2) any translation choices that collapse or foreclose that range; (3) scholarly disagreement if the term or passage is contested; (4) which chapters/books are targeted and why they are the defining passages>",
+  "explanation": "<1–3 sentences on what the text reveals: the theological content and significance of the passages found. Apply Berean principles — note the semantic range of key terms, flag interpretive translation choices, name scholarly disagreement where present. Orient the reader to what the Greek says and why these passages matter. Never describe the search, the query, which chapters were targeted, or how the results were found.>",
   "sql": "<SELECT query>",
   "must_cooccur": ["<strongs_base>", ...]
 }
 
-The explanation MUST open with the Greek — what the word(s) mean before any
-theological framework. Never open with "The query targets…" or "This search finds…"
-Open with the Greek term, its lexical range, and how the LXX uses it.
+The explanation is about content, not process. It tells the reader what the text
+reveals — not how the search was constructed or which chapters were queried.
+Write it as a Berean synthesis: what does the Greek say, what is contested, what
+is theologically significant about these verses. Maximum 3 sentences.
 
 must_cooccur is REQUIRED whenever multiple Strong's numbers must co-occur in the
 same verse. Set to [] for single-concept queries. The server enforces co-occurrence
