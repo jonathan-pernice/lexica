@@ -276,13 +276,26 @@ function _lsjLevel(marker) {
 
 function _lsjClean(text) {
   return text
+    // 1. Full citations: Uppercase-abbreviated Author.Book.Line
     .replace(_CITE_RE, "")
+    // 2. Ibidem (same source) references
+    .replace(/\bib\.\s*/gi, "")
+    // 3. Parenthetical scholarly apparatus: (lyr.), (anap.), (dub.), (cj.), (v.l.), (fort.), etc.
+    //    Matches parens containing ≤ 22 chars of lowercase abbreviation ending with a period
+    .replace(/\(\s*[a-zA-Z][a-zA-Z./\s]{0,20}\.\s*\)/g, "")
+    // 4. Bare numerals left by citation stripping (e.g. remaining ", 5.874" or "77c")
+    .replace(/\b\d+[a-z]?(?:\.\d+[a-z]?)?\b/g, "")
+    // 5. Greek-letter+number citation suffixes left after main strip (.ε1, .α2)
+    .replace(/\.[α-ωΑ-Ω]\d*/g, "")
+    // 6. Isolated dots or colons left as orphans between spaces
+    .replace(/(\s|^)[.:]+(\s|$)/g, " ")
+    // 7. Punctuation cleanup
     .replace(/\s+([,;:])/g, "$1")
     .replace(/([,;:])\s*[,;:]/g, "$1")
     .replace(/\(\s*\)/g, "")
     .replace(/\s{2,}/g, " ")
-    .replace(/^[\s,;:]+/, "")
-    .replace(/[\s,;:]+$/, "")
+    .replace(/^[\s,;:.]+/, "")
+    .replace(/[\s,;:.]+$/, "")
     .trim();
 }
 
@@ -296,7 +309,8 @@ function parseLsj(html) {
 
   const flush = () => {
     const text = _lsjClean(cur.chunks.join(""));
-    if (text.replace(/[\s,;:.()]/g, "").length > 2)
+    const words = text.split(/\s+/).filter(w => w.replace(/[,;:.()]/g, "").length > 1);
+    if (words.length >= 2)
       senses.push({ marker: cur.marker, level: cur.level, text });
     cur = { marker: null, level: 0, chunks: [] };
   };
