@@ -316,7 +316,8 @@ limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="m
 
 
 def _migrate_db():
-    conn = db()
+    conn = sqlite3.connect(DB)
+    conn.row_factory = sqlite3.Row
     try:
         conn.execute("ALTER TABLE lsj ADD COLUMN summary_json TEXT")
         conn.commit()
@@ -324,9 +325,6 @@ def _migrate_db():
         pass  # column already exists
     finally:
         conn.close()
-
-
-_migrate_db()
 
 @app.errorhandler(429)
 def rate_limit_handler(e):
@@ -346,6 +344,9 @@ def db_ro():
     conn = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+_migrate_db()
 
 
 @app.route("/")
