@@ -5,7 +5,10 @@ import re
 import sqlite3
 
 import anthropic
+from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
+
+load_dotenv()
 
 _AI_SYSTEM = """\
 You are a Biblical Greek theological assistant for a SQLite database of LXX Genesis \
