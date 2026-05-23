@@ -161,7 +161,49 @@
     .lex-grid dd { color: #1e293b; }
 
     /* ── Empty / loading states ── */
-    #no-results { color: #94a3b8; font-size: 0.9rem; display: none; }
+    #no-results    { color: #94a3b8; font-size: 0.9rem; display: none; }
+    #ai-no-results { color: #94a3b8; font-size: 0.9rem; display: none; }
+    #ai-error      { color: #dc2626; font-size: 0.85rem; display: none; }
+
+    /* ── AI section ── */
+    .ai-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2rem 0 1rem;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .ai-divider::before, .ai-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .ai-btn {
+      padding: 0.6rem 1.2rem;
+      background: #6d28d9;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .ai-btn:hover { background: #7c3aed; }
+    .ai-btn:disabled { background: #a78bfa; cursor: default; }
+
+    #ai-explanation {
+      margin: 0.75rem 0 0.5rem;
+      font-size: 0.82rem;
+      color: #6d28d9;
+      font-style: italic;
+      min-height: 1em;
+    }
   </style>
 </head>
 <body>
@@ -184,12 +226,76 @@
   <div id="summary"></div>
   <div id="results"></div>
   <div id="no-results">No matches found.</div>
+
+  <div class="ai-divider">
+    <span>or ask a question</span>
+  </div>
+
+  <div class="search-row">
+    <input id="ai-q" type="search" placeholder='e.g. "where does the divine council appear?" or "find all covenants with Abraham"' autocomplete="off">
+    <button class="ai-btn" onclick="doAiSearch()">Ask AI</button>
+  </div>
+
+  <div id="ai-explanation"></div>
+  <div id="ai-results"></div>
+  <div id="ai-no-results">No results found.</div>
+  <div id="ai-error"></div>
 </main>
 
 <script>
   document.getElementById('q').addEventListener('keydown', e => {
     if (e.key === 'Enter') doSearch();
   });
+
+  document.getElementById('ai-q').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doAiSearch();
+  });
+
+  async function doAiSearch() {
+    const q          = document.getElementById('ai-q').value.trim();
+    const btn        = document.querySelector('.ai-btn');
+    const explEl     = document.getElementById('ai-explanation');
+    const resultsEl  = document.getElementById('ai-results');
+    const noResults  = document.getElementById('ai-no-results');
+    const errorEl    = document.getElementById('ai-error');
+
+    if (!q) return;
+
+    btn.disabled     = true;
+    btn.textContent  = 'Thinking…';
+    explEl.textContent = '';
+    resultsEl.innerHTML = '';
+    noResults.style.display = 'none';
+    errorEl.style.display   = 'none';
+
+    try {
+      const res  = await fetch(`/api/ai-search?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+
+      if (data.error) {
+        errorEl.textContent    = `Error: ${data.error}`;
+        errorEl.style.display  = 'block';
+        return;
+      }
+
+      explEl.textContent = data.explanation || '';
+
+      if (data.total === 0) {
+        noResults.style.display = 'block';
+        return;
+      }
+
+      for (const r of data.results) {
+        resultsEl.appendChild(makeCard(r));
+      }
+    } catch (e) {
+      errorEl.textContent   = `Network error: ${e}`;
+      errorEl.style.display = 'block';
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = 'Ask AI';
+    }
+  }
 
   document.getElementById('phrase-mode').addEventListener('change', () => {
     if (document.getElementById('q').value.trim()) doSearch();
