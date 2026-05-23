@@ -145,6 +145,17 @@ SUPERNATURAL FIGURES
   divine council    G5207+G2316 co-occurring (Gen 6), G32 angelos (Gen 18, 28)
   cherubim          G5502 (cheroubim)
 
+DIVINE PLURAL SPEECH — "let us / our image / one of us"
+  There are exactly three divine plural speech passages in Genesis:
+    Gen 1:26  "Let us make man in our image" (poiēsōmen / hēmeteran)
+    Gen 3:22  "the man has become as one of us" (hēmōn)
+    Gen 11:7  "Come, let us go down and confuse their language" (katabantes / synchōmen)
+  For any query about divine plural speech, God using "we/us/our", or the
+  heavenly council pattern, target ALL THREE chapters:
+    v.book = 'Gen' AND v.chapter IN (1, 3, 11)
+  with a co-occurrence filter for G2316 (theos). Do NOT omit chapter 11 —
+  Gen 11:7 is one of the three definitive passages and is frequently missed.
+
 FLOOD NARRATIVE (Gen 6–9)
   flood             G2627 (kataklymos)
   ark               G2787 (kibōtos)
@@ -242,7 +253,7 @@ def _clean_gloss(s: str | None) -> str | None:
     if not s:
         return s
     return s.rstrip(" ,;:.!?")
-_ai_cache: dict = {}  # keyed on query string; cleared on restart when prompt changes
+_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v4
 
 _anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
 if not _anthropic_key:
