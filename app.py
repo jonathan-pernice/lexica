@@ -166,6 +166,7 @@ End:    ORDER BY v.id, w.position   LIMIT 100\
 """
 
 _STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+_ai_cache: dict = {}
 
 
 def _strongs_num(q: str):
@@ -281,6 +282,10 @@ def ai_search():
         if not q:
             return jsonify({"error": "no query"}), 400
 
+        if q in _ai_cache:
+            log.debug("ai_search cache hit: q=%r", q)
+            return jsonify(_ai_cache[q])
+
         key = os.environ.get("ANTHROPIC_API_KEY")
         log.debug("ANTHROPIC_API_KEY present: %s", bool(key))
         if not key:
@@ -373,8 +378,10 @@ def ai_search():
             ]
             log.debug("must_cooccur filter: %d -> %d verses", before, len(results))
 
-        return jsonify({"results": results, "total": len(results),
-                        "explanation": explanation, "sql": sql})
+        payload = {"results": results, "total": len(results),
+                   "explanation": explanation, "sql": sql}
+        _ai_cache[q] = payload
+        return jsonify(payload)
 
     except Exception:
         log.error("Unhandled exception in ai_search:\n%s", traceback.format_exc())
