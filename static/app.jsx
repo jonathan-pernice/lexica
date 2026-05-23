@@ -266,6 +266,8 @@ function ResultCard({ entry, active, onClick, count }) {
 // ============================================================
 const _CITE_RE = /\b[A-Z][a-zA-Z]*(?:\.[A-Z][a-zA-Z0-9]*)*\.\d+[a-z0-9]*(?:\.\d+[a-z0-9]*)*/g;
 const _SENSE_RE = /^([IVX]+\.|[A-E]\.|[1-9][0-9]*\.|[a-e]\.)$/;
+const _GK_WORD = "[\\u0300-\\u036F\\u0370-\\u03FF\\u1F00-\\u1FFF\\u03B1-\\u03C9\\u0391-\\u03A9]+";
+const _GK_PHRASE = new RegExp(_GK_WORD + "(?:\\s+" + _GK_WORD + ")+(?!\\s*\\([A-Za-z])", "g");
 
 function _lsjLevel(marker) {
   if (/^[IVX]+\.$/.test(marker)) return 1;
@@ -276,20 +278,17 @@ function _lsjLevel(marker) {
 
 function _lsjClean(text) {
   return text
-    // 1. Full citations: Uppercase-abbreviated Author.Book.Line
     .replace(_CITE_RE, "")
-    // 2. Ibidem (same source) references
     .replace(/\bib\.\s*/gi, "")
-    // 3. Parenthetical scholarly apparatus: (lyr.), (anap.), (dub.), (cj.), (v.l.), (fort.), etc.
-    //    Matches parens containing ≤ 22 chars of lowercase abbreviation ending with a period
+    .replace(/\bcf\.\s+[^,;.\n]*/gi, "")
+    .replace(/\bopp\.\s+[^,;.\n]*/gi, "")
+    .replace(/\bfreq\.\s+in\s+[^,;.\n]*/gi, "")
+    .replace(/\bv\.l\.\s+[^,;.\n]*/gi, "")
     .replace(/\(\s*[a-zA-Z][a-zA-Z./\s]{0,20}\.\s*\)/g, "")
-    // 4. Bare numerals left by citation stripping (e.g. remaining ", 5.874" or "77c")
+    .replace(_GK_PHRASE, "")
     .replace(/\b\d+[a-z]?(?:\.\d+[a-z]?)?\b/g, "")
-    // 5. Greek-letter+number citation suffixes left after main strip (.ε1, .α2)
     .replace(/\.[α-ωΑ-Ω]\d*/g, "")
-    // 6. Isolated dots or colons left as orphans between spaces
     .replace(/(\s|^)[.:]+(\s|$)/g, " ")
-    // 7. Punctuation cleanup
     .replace(/\s+([,;:])/g, "$1")
     .replace(/([,;:])\s*[,;:]/g, "$1")
     .replace(/\(\s*\)/g, "")
