@@ -425,6 +425,29 @@ def verse_words(book, chapter, verse):
     })
 
 
+@app.route("/api/lsj/<path:lemma>")
+def lsj_lookup(lemma):
+    plain = _strip_accents(lemma).lower()
+    conn = db()
+    try:
+        row = conn.execute(
+            "SELECT key, translit, def_html FROM lsj WHERE key = ?", (lemma,)
+        ).fetchone()
+        if not row:
+            row = conn.execute(
+                "SELECT key, translit, def_html FROM lsj WHERE plain = ?", (plain,)
+            ).fetchone()
+    finally:
+        conn.close()
+    if not row:
+        return jsonify({"error": "not found"}), 404
+    return jsonify({
+        "key":      row["key"],
+        "translit": row["translit"],
+        "def_html": row["def_html"],
+    })
+
+
 @app.route("/api/strongs-count/<strongs_base>")
 def strongs_count_route(strongs_base):
     if strongs_base == "*":
