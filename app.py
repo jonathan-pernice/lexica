@@ -177,10 +177,9 @@ def _lsj_concept_lookup(terms: list[str]) -> list[dict]:
                    FROM lexicon l
                    JOIN lsj ON lsj.plain = lower(strip_accents(l.lemma))
                    WHERE lower(lsj.def_html) LIKE ?
-                      OR (lsj.summary_json IS NOT NULL AND lower(lsj.summary_json) LIKE ?)
                    ORDER BY length(lsj.def_html)
                    LIMIT ?""",
-                (pattern, pattern, _LSJ_TERM_LIMIT),
+                (pattern, _LSJ_TERM_LIMIT),
             ).fetchall()
             for row in rows:
                 if row["strongs"] in seen:
