@@ -117,7 +117,19 @@ KEY NARRATIVE CHAPTERS
 
 ─── QUERY RULES ────────────────────────────────────────────────────────────
 • Proper nouns (people, places) have strongs = '*'; search english_head LIKE '%name%'
-• Thematic queries: OR across multiple strongs_base values is preferred over text search
+• PRECISION OVER RECALL — target 5–25 key defining passages, not every occurrence.
+  Genesis has 50 chapters; common theological words appear hundreds of times. If an
+  unconstrained query would return 50+ rows, add chapter scope or co-occurrence
+  filters until the results are focused on the theologically significant verses.
+• Theological/thematic questions: ALWAYS scope to the KEY NARRATIVE CHAPTERS listed
+  above using  v.chapter IN (x,y,...)  or  v.chapter BETWEEN x AND y.
+  Example: "covenant" → restrict to ch 9, 15, 17 (the three covenant episodes).
+  Never scan all chapters for a theme — "covenant", "bless", and "God" appear
+  throughout; only the defining passages matter.
+• Use AND co-occurrence (multiple EXISTS subqueries or must_cooccur) to surface
+  verses where several related concepts cluster — those are the key passages.
+• Use OR across strongs_base values only for true synonyms (e.g. pneuma/pnoē for
+  "breath of life") — not to widen an already broad search.
 • Narrative-scoped queries: add  AND v.chapter BETWEEN x AND y
 • For "sons of God" / divine council: ALWAYS require G5207 AND G2316 to co-occur
   in the same verse. Use two EXISTS subqueries (one per strongs_base), never OR.
@@ -133,7 +145,7 @@ KEY NARRATIVE CHAPTERS
 ─── OUTPUT FORMAT ───────────────────────────────────────────────────────────
 Return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
-  "explanation": "<one concise sentence: your theological interpretation and search strategy>",
+  "explanation": "<one concise sentence: name the key chapters targeted and why>",
   "sql": "<SELECT query>",
   "must_cooccur": ["<strongs_base>", ...]
 }
@@ -150,7 +162,7 @@ The SELECT must return exactly these columns in this order:
   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
 Join:   words w JOIN verses v ON w.verse_id = v.id
         LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-End:    ORDER BY v.id, w.position   LIMIT 200\
+End:    ORDER BY v.id, w.position   LIMIT 100\
 """
 
 _STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
@@ -197,6 +209,7 @@ def search():
             JOIN verses v ON w.verse_id = v.id
             LEFT JOIN lexicon l ON l.strongs = w.strongs_base
             WHERE {col} = ?
+              AND w.english IS NOT NULL AND w.english != ''
             ORDER BY v.id, w.position
             """,
             (snum,),
@@ -212,6 +225,7 @@ def search():
             JOIN verses v ON w.verse_id = v.id
             LEFT JOIN lexicon l ON l.strongs = w.strongs_base
             WHERE {search_col} LIKE ? COLLATE NOCASE
+              AND w.english IS NOT NULL AND w.english != ''
             ORDER BY v.id, w.position
             """,
             (f"%{q}%",),
@@ -332,6 +346,8 @@ def ai_search():
                     "words":   [],
                 }
                 verse_order.append(key)
+            if not r["english"]:
+                continue
             verse_index[key]["words"].append({
                 "strongs":     r["strongs"],
                 "strongs_base": r["strongs_base"],
@@ -343,7 +359,7 @@ def ai_search():
                 "derivation":  (r["derivation"] or "").strip(),
             })
 
-        results = [verse_index[k] for k in verse_order]
+        results = [verse_index[k] for k in verse_order if verse_index[k]["words"]]
         log.debug("Grouped into %d verses", len(results))
 
         if must_cooccur:
