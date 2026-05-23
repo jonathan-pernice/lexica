@@ -75,104 +75,13 @@ GREEK FIRST, THEN QUERY STRATEGY
   lexicon(strongs TEXT PK,  -- matches words.strongs_base
           lemma, translit, strongs_def, kjv_def, derivation)
 
-─── CONCEPT → STRONG'S MAPPING ──────────────────────────────────────────────
-Use these to build WHERE clauses. Combine with OR only for true synonyms.
+─── LSJ LEXICAL CONTEXT ─────────────────────────────────────────────────────
+Each query is prepended with an "LSJ LEXICAL CONTEXT" block listing relevant Greek
+lemmas and Strong's numbers drawn live from the Liddell-Scott-Jones lexicon.
+Use those G-numbers in SQL WHERE clauses against strongs_base.
+Never invent or guess Strong's numbers not provided in the LSJ context block.
 
-CREATION & COSMOS
-  create/make       G2936 (ktizō), G4160 (poieō)
-  heaven/sky        G3772 (ouranos)
-  earth/land        G1093 (gē)
-  light             G5457 (phōs)
-  darkness          G4655 (skotos), G4639 (skia)
-  water / deep      G5204 (hydōr), G12 (abyssos)
-  firmament         G4733 (stereōma)
-  day / night       G2250 (hēmera), G3571 (nyx)
-  void / formless   G517 (aoratos), G180 (akataskeuastos)
-
-DIVINE FIGURES & PRESENCE
-  God / a god       G2316 (theos) — note: anarthrous theos can mean "a god" or "divine"
-  LORD / lord       G2962 (kyrios) — used for YHWH in LXX; also a title of honor
-  angel / messenger G32 (angelos) — means messenger; "angel" is an interpretive gloss
-  spirit / breath   G4151 (pneuma) — breath, wind, or spirit depending on context
-  glory / radiance  G1391 (doxa) — reputation, honor, radiance; not inherently trinitarian
-  face / presence   G4383 (prosōpon)
-  name              G3686 (onoma)
-  fear / awe        G5401 (phobos), G5399 (phobeomai)
-
-HUMANITY & ANTHROPOLOGY
-  man / human       G444 (anthrōpos)
-  image / likeness  G1504 (eikōn), G3667 (homoiōsis) — functional vs. ontological debate
-  breath of life    G4157 (pnoē), G4151 (pneuma), G5590 (psychē)
-  soul / living being G5590 (psychē) — not Platonic soul; means living being, self, throat
-  bone / flesh      G3747 (ostoun), G4561 (sarx)
-  male / female     G730 (arrēn), G2338 (thēlys)
-
-SIN, FALL & JUDGMENT
-  sin / miss mark   G266 (hamartia) — missing a target; "sin" is already interpretive
-  lawlessness       G458 (anomia)
-  curse             G1944 (epikataratos), G2671 (katara)
-  serpent           G3789 (ophis) — the text says serpent; "Satan" identification is later
-  naked / exposed   G1131 (gymnos)
-  expel / cast out  G1544 (ekballō)
-  death             G2288 (thanatos), G599 (apothnēskō)
-  kill / murder     G615 (apokteinō)
-
-COVENANT & PROMISE
-  covenant          G1242 (diathēkē) — disposition/arrangement; "testament" is one sense
-  oath              G3727 (horkos)
-  sign / token      G4592 (sēmeion)
-  seed / offspring  G4690 (sperma) — collective or individual; messianic reading is one option
-  bless / blessing  G2127 (eulogeō), G2129 (eulogia)
-  circumcision      G4061 (peritomē)
-  inherit           G2816 (klēronomeō)
-
-WORSHIP & SACRIFICE
-  altar             G2379 (thysiastērion)
-  sacrifice         G2378 (thysia), G3646 (holokautōma)
-  offering          G1435 (dōron)
-  call on the name  G1941 (epikaleō)
-  tithe             G1181 (dekatē)
-
-RIGHTEOUSNESS & TRUST
-  test / prove      G3985 (peirazō) — test or tempt depending on context
-  trust / believe   G4100 (pisteuō) — relational trust, not creedal belief
-  righteousness     G1343 (dikaiosynē), G1342 (dikaios)
-  know / knowledge  G1097 (ginōskō), G1108 (gnōsis)
-
-SUPERNATURAL FIGURES
-  sons of God       G5207 (huios) + G2316 (theos) — bene ha-elohim; identity disputed:
-                    angelic/divine beings (1 Enoch tradition), or nobility (some modern)
-  Nephilim/giants   G1121 (gigas)
-  divine council    G5207+G2316 co-occurring (Gen 6), G32 angelos (Gen 18, 28)
-  cherubim          G5502 (cheroubim)
-
-DIVINE PLURAL SPEECH — "let us / our image / one of us"
-  There are exactly three divine plural speech passages in Genesis:
-    Gen 1:26  "Let us make man in our image" (poiēsōmen / hēmeteran)
-    Gen 3:22  "the man has become as one of us" (hēmōn)
-    Gen 11:7  "Come, let us go down and confuse their language" (katabantes / synchōmen)
-  For any query about divine plural speech, God using "we/us/our", or the
-  heavenly council pattern, target ALL THREE chapters:
-    v.book = 'Gen' AND v.chapter IN (1, 3, 11)
-  with a co-occurrence filter for G2316 (theos). Do NOT omit chapter 11 —
-  Gen 11:7 is one of the three definitive passages and is frequently missed.
-
-FLOOD NARRATIVE (Gen 6–9)
-  flood             G2627 (kataklymos)
-  ark               G2787 (kibōtos)
-  rainbow           G2463 (iris)
-
-EXODUS THEMES
-  Passover / pass   G3957 (pascha)
-  plague / strike   G4127 (plēgē)
-  firstborn         G4416 (prōtotokos)
-  redeem / ransom   G3084 (lytroō), G629 (apolytrōsis)
-  holy / set apart  G40 (hagios), G37 (hagiazō)
-  glory / cloud     G1391 (doxa), G3507 (nephelē)
-  tabernacle        G4633 (skēnē)
-  law / instruction G3551 (nomos) — instruction/teaching; "law" is one rendering
-
-KEY NARRATIVE CHAPTERS — Genesis (book = 'Gen')
+─── KEY NARRATIVE CHAPTERS — Genesis (book = 'Gen') ─────────────────────────
   Creation          ch 1–2      Garden of Eden   ch 2–3
   Cain & Abel       ch 4        Flood            ch 6–9
   Tower of Babel    ch 11       Abrahamic call   ch 12
@@ -181,7 +90,7 @@ KEY NARRATIVE CHAPTERS — Genesis (book = 'Gen')
   Jacob & Esau      ch 25–27    Jacob's ladder   ch 28
   Joseph            ch 37–50
 
-KEY NARRATIVE CHAPTERS — Exodus (book = 'Exo')
+─── KEY NARRATIVE CHAPTERS — Exodus (book = 'Exo') ──────────────────────────
   Oppression        ch 1–2      Moses' call      ch 3–4
   Plagues           ch 7–12     Passover         ch 12
   Red Sea crossing  ch 14–15    Sinai arrival    ch 19
@@ -197,13 +106,6 @@ KEY NARRATIVE CHAPTERS — Exodus (book = 'Exo')
 • Use AND co-occurrence (multiple EXISTS subqueries) to surface verses where concepts
   cluster — those are the definitionally important passages.
 • Use OR across strongs_base values ONLY for true synonyms.
-• For "sons of God" / divine council: ALWAYS require G5207 AND G2316 to co-occur in
-  the same verse. Use two EXISTS subqueries. Restrict to Gen ch 6, 18, 28.
-  Example:
-    WHERE EXISTS (SELECT 1 FROM words w2 WHERE w2.verse_id=v.id AND w2.strongs_base='5207')
-      AND EXISTS (SELECT 1 FROM words w3 WHERE w3.verse_id=v.id AND w3.strongs_base='2316')
-      AND v.chapter IN (6,18,28) AND v.book = 'Gen'
-  Never query G2316 alone for divine-council questions — it matches nearly every verse.
 • Use LIKE … COLLATE NOCASE for any text matching
 • SELECT only — never INSERT, UPDATE, DELETE, DROP
 
@@ -254,7 +156,67 @@ def _clean_gloss(s: str | None) -> str | None:
     if not s:
         return s
     return s.rstrip(" ,;:.!?")
-_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v4
+_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v5
+
+
+_LSJ_TERM_LIMIT = 4  # max LSJ entries per extracted search term
+
+
+def _lsj_concept_lookup(terms: list[str]) -> list[dict]:
+    """Search LSJ + lexicon for English terms; return matched Strong's + semantic snippets."""
+    if not terms:
+        return []
+    conn = db()
+    seen: set[str] = set()
+    results: list[dict] = []
+    try:
+        for term in terms[:5]:
+            pattern = f"%{term.lower()}%"
+            rows = conn.execute(
+                """SELECT l.strongs, l.lemma, l.translit, lsj.summary_json, lsj.def_html
+                   FROM lexicon l
+                   JOIN lsj ON lsj.plain = lower(strip_accents(l.lemma))
+                   WHERE lower(lsj.def_html) LIKE ?
+                      OR (lsj.summary_json IS NOT NULL AND lower(lsj.summary_json) LIKE ?)
+                   ORDER BY length(lsj.def_html)
+                   LIMIT ?""",
+                (pattern, pattern, _LSJ_TERM_LIMIT),
+            ).fetchall()
+            for row in rows:
+                if row["strongs"] in seen:
+                    continue
+                seen.add(row["strongs"])
+                semantic = ""
+                if row["summary_json"]:
+                    try:
+                        sj = json.loads(row["summary_json"])
+                        semantic = " ".join(
+                            s["text"] for s in sj.get("sections", [])
+                        )[:300]
+                    except Exception:
+                        pass
+                if not semantic:
+                    semantic = re.sub(r"<[^>]+>", " ", row["def_html"] or "")[:300].strip()
+                results.append({
+                    "strongs":  row["strongs"],
+                    "lemma":    row["lemma"],
+                    "translit": row["translit"],
+                    "semantic": semantic,
+                })
+    except Exception as e:
+        log.warning("LSJ concept lookup failed: %s", e)
+    finally:
+        conn.close()
+    return results
+
+
+def _format_lsj_context(entries: list[dict]) -> str:
+    if not entries:
+        return ""
+    lines = ["LSJ LEXICAL CONTEXT — use these Strong's numbers in SQL WHERE clauses:"]
+    for e in entries:
+        lines.append(f"  G{e['strongs']} {e['lemma']} ({e['translit']}): {e['semantic']}")
+    return "\n".join(lines)
 _lsj_summary_cache: dict = {}  # keyed on LSJ key; persists for server lifetime
 
 _SENSE_MARKER_RE = re.compile(r'^([IVX]+\.|[A-E]\.|[1-9][0-9]*\.|[a-e]\.)$')
@@ -621,12 +583,39 @@ def ai_search():
         if not _anthropic:
             return jsonify({"error": "ANTHROPIC_API_KEY not set"}), 500
 
-        log.debug("Calling Haiku API…")
+        # ── Step 1: extract key terms for LSJ lookup ──────────────────────
+        log.debug("Step 1: extracting key terms…")
+        terms_msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=80,
+            messages=[{"role": "user", "content": (
+                "Extract 2–4 key Greek lexical concepts (as simple English words) "
+                "to look up in the Liddell-Scott-Jones Greek lexicon for this query. "
+                "Return ONLY a JSON array of lowercase English strings, "
+                "e.g. [\"spirit\",\"breath\"]. No explanation.\n\nQuery: " + q
+            )}],
+        )
+        try:
+            terms = json.loads(terms_msg.content[0].text.strip())
+            if not isinstance(terms, list):
+                terms = []
+        except Exception:
+            terms = []
+        log.debug("Extracted terms: %r", terms)
+
+        # ── Step 2: LSJ concept lookup ────────────────────────────────────
+        lsj_entries = _lsj_concept_lookup(terms)
+        lsj_context = _format_lsj_context(lsj_entries)
+        log.debug("LSJ context (%d entries): %.200s", len(lsj_entries), lsj_context)
+
+        # ── Step 3: SQL generation with LSJ context ───────────────────────
+        user_content = f"{lsj_context}\n\nQuery: {q}" if lsj_context else q
+        log.debug("Calling Haiku for SQL generation…")
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=1500,
             system=_AI_SYSTEM,
-            messages=[{"role": "user", "content": q}],
+            messages=[{"role": "user", "content": user_content}],
         )
         raw = msg.content[0].text.strip()
         log.debug("Haiku raw response: %r", raw[:300])
