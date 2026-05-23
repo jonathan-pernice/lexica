@@ -10,6 +10,8 @@ const api = {
     fetch(`/api/ai-search?q=${encodeURIComponent(q)}`).then(r => r.json()),
   verse: (book, chapter, verse) =>
     fetch(`/api/verse/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  verseWords: (book, chapter, verse) =>
+    fetch(`/api/verse-words/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
   strongsCount: (strongs_base) =>
     fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
 };
@@ -110,6 +112,17 @@ const Icon = {
   Share: (p) => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
       <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/>
+    </svg>
+  ),
+  Grid: (p) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+  ),
+  Lines: (p) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M3 6h18M3 11h18M3 16h12"/>
     </svg>
   ),
 };
@@ -378,6 +391,130 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 }
 
 // ============================================================
+// STUDY MODE — VERSE ROW
+// ============================================================
+function VerseStudyRow({ book, chapter, verse, label, entries, onWordClick }) {
+  const [words, setWords] = useState(null);
+
+  // Map strongs_base -> first matching entry for this verse
+  const matchMap = useMemo(() => {
+    const m = new Map();
+    for (const e of entries) {
+      if (e.strongs_base !== "*" && !m.has(e.strongs_base)) m.set(e.strongs_base, e);
+    }
+    return m;
+  }, [entries]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setWords(null);
+    api.verseWords(book, chapter, verse)
+      .then(d => { if (!cancelled) setWords(d.words || []); })
+      .catch(() => { if (!cancelled) setWords([]); });
+    return () => { cancelled = true; };
+  }, [book, chapter, verse]);
+
+  return (
+    <div className="study-verse">
+      <span className="study-ref">{label}</span>
+      <span className="study-text">
+        {words === null ? (
+          <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
+        ) : words.map((w, i) => {
+          const entry = matchMap.get(w.strongs_base);
+          if (entry) {
+            return (
+              <span key={i} className="study-word match" onClick={() => onWordClick(entry)}>
+                <span className="word-badge">G{w.strongs_base}</span>
+                {w.english}{" "}
+              </span>
+            );
+          }
+          return <span key={i} className="study-word">{w.english}{" "}</span>;
+        })}
+      </span>
+    </div>
+  );
+}
+
+// ============================================================
+// STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
+// ============================================================
+function PassageGroup({ label, verses, onWordClick }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="study-group">
+      <button
+        className={"study-group-head " + (open ? "open" : "")}
+        onClick={() => setOpen(o => !o)}
+      >
+        <Icon.Book style={{ opacity: 0.5, flexShrink: 0 }}/>
+        <span className="study-group-label">{label}</span>
+        <span className="study-group-count">{verses.length} verse{verses.length !== 1 ? "s" : ""}</span>
+        <span className={"study-chevron " + (open ? "open" : "")}/>
+      </button>
+      {open && (
+        <div className="study-group-body">
+          {verses.map(v => (
+            <VerseStudyRow
+              key={`${v.book}-${v.chapter}-${v.verse}`}
+              book={v.book}
+              chapter={v.chapter}
+              verse={v.verse}
+              label={v.ref}
+              entries={v.entries}
+              onWordClick={onWordClick}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// STUDY MODE — OUTER CONTAINER
+// ============================================================
+function StudyMode({ allResults, onWordClick }) {
+  const groups = useMemo(() => {
+    const gMap = {};
+    const gOrder = [];
+    for (const entry of allResults) {
+      const gk = `${entry.book}-${entry.chapter}`;
+      if (!gMap[gk]) {
+        gMap[gk] = {
+          label: `${BOOK_LABELS[entry.book] || entry.book} · Chapter ${entry.chapter}`,
+          verseMap: {},
+          verseOrder: [],
+        };
+        gOrder.push(gk);
+      }
+      const vk = `${entry.book}-${entry.chapter}-${entry.verse}`;
+      if (!gMap[gk].verseMap[vk]) {
+        gMap[gk].verseMap[vk] = {
+          book: entry.book, chapter: entry.chapter, verse: entry.verse,
+          ref: entry.ref, entries: [],
+        };
+        gMap[gk].verseOrder.push(vk);
+      }
+      gMap[gk].verseMap[vk].entries.push(entry);
+    }
+    return gOrder.map(gk => ({
+      label: gMap[gk].label,
+      verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
+    }));
+  }, [allResults]);
+
+  return (
+    <div className="study-groups">
+      {groups.map(g => (
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} onWordClick={onWordClick} />
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
 // AI ANSWER STRIP
 // ============================================================
 function AIAnswer({ query, explanation, entries, onPick }) {
@@ -431,6 +568,7 @@ function App() {
   const [error, setError] = useState("");
   const [activeEntry, setActiveEntry] = useState(null);
   const [sortBy, setSortBy] = useState("relevance");
+  const [viewMode, setViewMode] = useState("browse");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -465,6 +603,7 @@ function App() {
     setAiMeta(null);
     setMode("search");
     setSortBy("relevance");
+    setViewMode("browse");
     setActiveEntry(null);
     try {
       const data = await api.search(q, overrideQ !== null ? false : phraseMode);
@@ -494,6 +633,7 @@ function App() {
     setError("");
     setMode("ai");
     setSortBy("relevance");
+    setViewMode("study");
     setActiveEntry(null);
     try {
       const data = await api.aiSearch(q);
@@ -562,26 +702,40 @@ function App() {
                   <span className="results-label">results</span>
                   {searchLabel && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
-                <div className="results-sort">
-                  <span className="sort-label">Sort</span>
-                  <button className={"sort-btn " + (sortBy === "relevance" ? "on" : "")} onClick={() => setSortBy("relevance")}>Relevance</button>
-                  <button className={"sort-btn " + (sortBy === "alpha" ? "on" : "")} onClick={() => setSortBy("alpha")}>A–Z</button>
-                  <button className={"sort-btn " + (sortBy === "freq" ? "on" : "")} onClick={() => setSortBy("freq")}>Frequency</button>
+                <div className="results-controls">
+                  {viewMode === "browse" && (
+                    <div className="results-sort">
+                      <span className="sort-label">Sort</span>
+                      <button className={"sort-btn " + (sortBy === "relevance" ? "on" : "")} onClick={() => setSortBy("relevance")}>Relevance</button>
+                      <button className={"sort-btn " + (sortBy === "alpha" ? "on" : "")} onClick={() => setSortBy("alpha")}>A–Z</button>
+                      <button className={"sort-btn " + (sortBy === "freq" ? "on" : "")} onClick={() => setSortBy("freq")}>Frequency</button>
+                    </div>
+                  )}
+                  <div className="view-toggle">
+                    <button className={"view-btn " + (viewMode === "browse" ? "on" : "")} onClick={() => setViewMode("browse")} title="Browse mode">
+                      <Icon.Grid/>
+                    </button>
+                    <button className={"view-btn " + (viewMode === "study" ? "on" : "")} onClick={() => setViewMode("study")} title="Study mode">
+                      <Icon.Lines/>
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="results">
-                {loading ? (
-                  <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "60px 20px", color: "var(--ink-3)", fontSize: "14px" }}>
-                    Searching…
-                  </div>
-                ) : displayed.length === 0 ? (
-                  <div className="empty">
-                    <div className="empty-title">No matches</div>
-                    <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
-                  </div>
-                ) : (
-                  displayed.map((entry) => (
+              {loading ? (
+                <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--ink-3)", fontSize: "14px" }}>
+                  Searching…
+                </div>
+              ) : displayed.length === 0 ? (
+                <div className="empty">
+                  <div className="empty-title">No matches</div>
+                  <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
+                </div>
+              ) : viewMode === "study" ? (
+                <StudyMode allResults={allResults} onWordClick={(e) => setActiveEntry(e)} />
+              ) : (
+                <div className="results">
+                  {displayed.map((entry) => (
                     <ResultCard
                       key={entry.id}
                       entry={entry}
@@ -589,9 +743,9 @@ function App() {
                       onClick={() => setActiveEntry(entry)}
                       count={countMap[entry.strongs_base] || 0}
                     />
-                  ))
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
             </>
           )}
 

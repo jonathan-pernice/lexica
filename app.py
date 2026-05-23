@@ -376,6 +376,44 @@ def verse_text(book, chapter, verse):
     return jsonify({"text": " ".join(w["english"] for w in words)})
 
 
+@app.route("/api/verse-words/<book>/<int:chapter>/<int:verse>")
+def verse_words(book, chapter, verse):
+    conn = db()
+    try:
+        row = conn.execute(
+            "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
+            (book, chapter, verse),
+        ).fetchone()
+        if not row:
+            return jsonify({"error": "verse not found"}), 404
+        wrows = conn.execute(
+            """SELECT w.position, w.english, w.strongs_base, w.strongs,
+                      l.lemma, l.translit, l.strongs_def, l.derivation
+               FROM words w
+               LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+               WHERE w.verse_id = ? AND w.english IS NOT NULL
+               ORDER BY w.position""",
+            (row["id"],),
+        ).fetchall()
+    finally:
+        conn.close()
+    return jsonify({
+        "words": [
+            {
+                "position":   w["position"],
+                "english":    w["english"],
+                "strongs_base": w["strongs_base"],
+                "strongs":    w["strongs"],
+                "lemma":      w["lemma"],
+                "translit":   w["translit"],
+                "strongs_def": (w["strongs_def"] or "").strip(),
+                "derivation": (w["derivation"] or "").strip(),
+            }
+            for w in wrows
+        ]
+    })
+
+
 @app.route("/api/strongs-count/<strongs_base>")
 def strongs_count_route(strongs_base):
     if strongs_base == "*":
