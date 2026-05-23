@@ -32,6 +32,17 @@ VERSE_RE = re.compile(
 _BRACKET_RE  = re.compile(r'[\[\]]')
 _NUMMARK_RE  = re.compile(r'(?<!\d)\d+\s*(?=[A-Za-z])')
 
+# Words that are never the semantic head of a gloss
+_FUNCTION_WORDS = frozenset({
+    'a', 'an', 'the',
+    'my', 'his', 'her', 'their', 'its', 'our', 'your',
+    'he', 'she', 'it', 'they', 'we', 'you', 'i',
+    'of', 'by', 'in', 'with', 'from', 'to', 'at', 'for',
+    'upon', 'over', 'under', 'into', 'on', 'up', 'out',
+    'and', 'or', 'but', 'not', 'no', 'as', 'so',
+    'also', 'even', 'then', 'now',
+})
+
 
 def _clean_english(text: str) -> str | None:
     t = _BRACKET_RE.sub('', text)       # remove [ ]
@@ -39,6 +50,23 @@ def _clean_english(text: str) -> str | None:
     t = t.strip(' .')                   # strip flanking dots/spaces
     t = re.sub(r'\s+', ' ', t)         # normalize whitespace
     return t or None
+
+
+def _head_word(text: str) -> str | None:
+    """Last non-function word of the gloss, lowercased — the primary search token.
+
+    'God made' -> 'made', 'my spirit' -> 'spirit', 'destroyed by the wind' -> 'wind'.
+    In ABP interlinear, context words from the previous entry often appear at the
+    start of the next gloss, so the last content word is the truest translation.
+    """
+    if not text:
+        return None
+    tokens = [re.sub(r"[^\w]", "", w).lower() for w in text.split()]
+    tokens = [t for t in tokens if t]
+    for tok in reversed(tokens):
+        if tok not in _FUNCTION_WORDS:
+            return tok
+    return tokens[-1] if tokens else None
 
 
 def parse_words(verse_text: str) -> list:
@@ -89,11 +117,13 @@ CREATE TABLE IF NOT EXISTS verses (
 -- strongs uses the ABP numbering: plain integers or dotted extensions like 1510.7.3.
 --   '*' means proper noun without a numbered entry.
 -- strongs_base strips dotted extensions (1510.7.3 -> 1510) for standard lookups.
+-- english_head is the last non-function word of the gloss — the primary search token.
 CREATE TABLE IF NOT EXISTS words (
     id           INTEGER PRIMARY KEY,
     verse_id     INTEGER NOT NULL REFERENCES verses(id),
     position     INTEGER NOT NULL,
     english      TEXT,
+    english_head TEXT,
     strongs      TEXT    NOT NULL,
     strongs_base TEXT    NOT NULL
 );
@@ -102,6 +132,7 @@ CREATE INDEX IF NOT EXISTS idx_words_verse        ON words(verse_id);
 CREATE INDEX IF NOT EXISTS idx_words_strongs      ON words(strongs);
 CREATE INDEX IF NOT EXISTS idx_words_strongs_base ON words(strongs_base);
 CREATE INDEX IF NOT EXISTS idx_words_english      ON words(english COLLATE NOCASE);
+CREATE INDEX IF NOT EXISTS idx_words_english_head ON words(english_head COLLATE NOCASE);
 """
 
 
@@ -121,8 +152,8 @@ def build_database(db_path: str, parsed: list) -> None:
         ).fetchone()[0]
 
         c.executemany(
-            "INSERT INTO words (verse_id, position, english, strongs, strongs_base) VALUES (?,?,?,?,?)",
-            [(verse_id, pos, eng, st, st.split(".")[0]) for pos, eng, st in words],
+            "INSERT INTO words (verse_id, position, english, english_head, strongs, strongs_base) VALUES (?,?,?,?,?,?)",
+            [(verse_id, pos, eng, _head_word(eng), st, st.split(".")[0]) for pos, eng, st in words],
         )
 
     conn.commit()

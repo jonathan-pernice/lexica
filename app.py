@@ -30,13 +30,13 @@ def search():
     conn = db()
     rows = conn.execute(
         """
-        SELECT w.strongs_base, w.strongs, w.english,
+        SELECT w.strongs_base, w.strongs, w.english, w.english_head,
                v.id AS verse_id, v.book, v.chapter, v.verse,
                l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
         FROM words w
         JOIN verses v ON w.verse_id = v.id
         LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-        WHERE w.english LIKE ? COLLATE NOCASE
+        WHERE w.english_head LIKE ? COLLATE NOCASE
         ORDER BY v.id, w.position
         """,
         (f"%{q}%",),
@@ -45,7 +45,7 @@ def search():
 
     if whole_words:
         pat = re.compile(r"\b" + re.escape(q) + r"\b", re.IGNORECASE)
-        rows = [r for r in rows if pat.search(r["english"] or "")]
+        rows = [r for r in rows if pat.search(r["english_head"] or "")]
 
     results = [
         {
