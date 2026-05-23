@@ -222,7 +222,8 @@ Join:   words w JOIN verses v ON w.verse_id = v.id
 End:    ORDER BY v.id, w.position   LIMIT 100\
 """
 
-_STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+_STRONGS_RE   = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+_VERSE_REF_RE = re.compile(r'\b(Gen(?:esis)?|Exo(?:dus)?)\s+(\d+):(\d+)\b', re.IGNORECASE)
 
 
 def _strip_accents(s: str | None) -> str | None:
@@ -483,6 +484,63 @@ def ai_search():
 
         results = [verse_index[k] for k in verse_order if verse_index[k]["words"]]
         log.debug("Grouped into %d verses", len(results))
+
+        # Fetch any verses explicitly cited in the explanation that SQL missed
+        cited_matches = _VERSE_REF_RE.findall(explanation)
+        if cited_matches:
+            cited_conn = db_ro()
+            new_cited = []
+            try:
+                for book_raw, chap_str, verse_str in cited_matches:
+                    book = "Gen" if book_raw.lower().startswith("gen") else "Exo"
+                    chapter, verse_num = int(chap_str), int(verse_str)
+                    key = (book, chapter, verse_num)
+                    if key in verse_index:
+                        continue
+                    vrow = cited_conn.execute(
+                        "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
+                        (book, chapter, verse_num),
+                    ).fetchone()
+                    if not vrow:
+                        continue
+                    wrows = cited_conn.execute(
+                        """SELECT w.strongs_base, w.strongs, w.english,
+                                  l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
+                           FROM words w
+                           LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+                           WHERE w.verse_id = ?
+                             AND w.english IS NOT NULL AND w.english != ''
+                             AND w.strongs_base != '*'
+                           ORDER BY w.position""",
+                        (vrow["id"],),
+                    ).fetchall()
+                    words = [
+                        {
+                            "strongs":      wr["strongs"],
+                            "strongs_base": wr["strongs_base"],
+                            "gloss":        _clean_gloss(wr["english"]),
+                            "lemma":        wr["lemma"],
+                            "translit":     wr["translit"],
+                            "strongs_def":  (wr["strongs_def"] or "").strip(),
+                            "kjv_def":      wr["kjv_def"],
+                            "derivation":   (wr["derivation"] or "").strip(),
+                        }
+                        for wr in wrows
+                    ]
+                    if words:
+                        verse_index[key] = {
+                            "ref":     f"{book} {chapter}:{verse_num}",
+                            "book":    book,
+                            "chapter": chapter,
+                            "verse":   verse_num,
+                            "words":   words,
+                        }
+                        new_cited.append(key)
+                        log.debug("Cited verse fetched: %s %d:%d", book, chapter, verse_num)
+            finally:
+                cited_conn.close()
+            if new_cited:
+                results = [verse_index[k] for k in new_cited] + results
 
         if must_cooccur:
             before = len(results)
