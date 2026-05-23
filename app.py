@@ -9,6 +9,8 @@ import traceback
 import anthropic
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 load_dotenv()
 
@@ -181,6 +183,11 @@ def _strongs_num(q: str):
     return m.group(1) if m else None
 
 app = Flask(__name__)
+limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
+
+@app.errorhandler(429)
+def rate_limit_handler(e):
+    return jsonify({"error": f"Rate limit exceeded — {e.description}"}), 429
 DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bible.db")
 
 
@@ -292,6 +299,7 @@ def verse_text(book, chapter, verse):
 
 
 @app.route("/api/ai-search")
+@limiter.limit("20 per hour")
 def ai_search():
     try:
         q = request.args.get("q", "").strip()
