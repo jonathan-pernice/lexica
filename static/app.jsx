@@ -14,6 +14,8 @@ const api = {
     fetch(`/api/verse-words/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
   strongsCount: (strongs_base) =>
     fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
+  lsj: (lemma) =>
+    fetch(`/api/lsj/${encodeURIComponent(lemma)}`).then(r => r.json()),
 };
 
 // ============================================================
@@ -294,6 +296,16 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     return () => { cancelled = true; };
   }, [entry && entry.strongs_base]);
 
+  const [lsjEntry, setLsjEntry] = useState(null);
+  useEffect(() => {
+    if (!entry || !entry.greek) { setLsjEntry(null); return; }
+    let cancelled = false;
+    api.lsj(entry.greek)
+      .then(d => { if (!cancelled) setLsjEntry(d.error ? null : d); })
+      .catch(() => { if (!cancelled) setLsjEntry(null); });
+    return () => { cancelled = true; };
+  }, [entry && entry.greek]);
+
   if (!entry) return null;
 
   const barWidth = Math.min(100, (occurrences / Math.max(1, totalResults)) * 100);
@@ -346,6 +358,21 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             >
               <b>{abpCount}</b>× in Genesis–Exodus LXX <Icon.ArrowRight/>
             </button>
+          </section>
+        )}
+
+        {lsjEntry && (
+          <section className="detail-section">
+            <h4 className="detail-h">
+              <span className="lsj-section-label">
+                Liddell-Scott-Jones
+                <span className="lsj-badge">LSJ</span>
+              </span>
+            </h4>
+            <div
+              className="lsj-def"
+              dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }}
+            />
           </section>
         )}
 
