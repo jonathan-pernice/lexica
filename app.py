@@ -4,6 +4,14 @@ import sqlite3
 
 from flask import Flask, jsonify, render_template, request
 
+_STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+
+
+def _strongs_num(q: str):
+    """Return the numeric portion if q looks like a Strong's ref, else None."""
+    m = _STRONGS_RE.match(q.strip())
+    return m.group(1) if m else None
+
 app = Flask(__name__)
 DB = "bible.db"
 
@@ -27,21 +35,38 @@ def search():
     if not q:
         return jsonify({"results": [], "total": 0})
 
-    search_col = "w.english" if phrase_mode else "w.english_head"
     conn = db()
-    rows = conn.execute(
-        f"""
-        SELECT w.strongs_base, w.strongs, w.english, w.english_head,
-               v.id AS verse_id, v.book, v.chapter, v.verse,
-               l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
-        FROM words w
-        JOIN verses v ON w.verse_id = v.id
-        LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-        WHERE {search_col} LIKE ? COLLATE NOCASE
-        ORDER BY v.id, w.position
-        """,
-        (f"%{q}%",),
-    ).fetchall()
+    snum = _strongs_num(q)
+    if snum:
+        col = "w.strongs" if "." in snum else "w.strongs_base"
+        rows = conn.execute(
+            f"""
+            SELECT w.strongs_base, w.strongs, w.english, w.english_head,
+                   v.id AS verse_id, v.book, v.chapter, v.verse,
+                   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
+            FROM words w
+            JOIN verses v ON w.verse_id = v.id
+            LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+            WHERE {col} = ?
+            ORDER BY v.id, w.position
+            """,
+            (snum,),
+        ).fetchall()
+    else:
+        search_col = "w.english" if phrase_mode else "w.english_head"
+        rows = conn.execute(
+            f"""
+            SELECT w.strongs_base, w.strongs, w.english, w.english_head,
+                   v.id AS verse_id, v.book, v.chapter, v.verse,
+                   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
+            FROM words w
+            JOIN verses v ON w.verse_id = v.id
+            LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+            WHERE {search_col} LIKE ? COLLATE NOCASE
+            ORDER BY v.id, w.position
+            """,
+            (f"%{q}%",),
+        ).fetchall()
     conn.close()
 
     results = [

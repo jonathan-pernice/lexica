@@ -18,12 +18,25 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 DEFAULT_LIMIT = 20
 
+_STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+
+
+def _strongs_num(term: str):
+    m = _STRONGS_RE.match(term.strip())
+    return m.group(1) if m else None
+
 
 def search(db_path: str, terms: list, word_boundary: bool = False, limit: int = DEFAULT_LIMIT) -> None:
     conn = sqlite3.connect(db_path)
 
-    conditions = " OR ".join(["w.english_head LIKE ? COLLATE NOCASE"] * len(terms))
-    params = [f"%{t}%" for t in terms]
+    snums = [_strongs_num(t) for t in terms]
+    if all(snums):
+        parts = [("w.strongs" if "." in n else "w.strongs_base") + " = ?" for n in snums]
+        conditions = " OR ".join(parts)
+        params = snums
+    else:
+        conditions = " OR ".join(["w.english_head LIKE ? COLLATE NOCASE"] * len(terms))
+        params = [f"%{t}%" for t in terms]
 
     rows = conn.execute(
         f"""
@@ -40,7 +53,7 @@ def search(db_path: str, terms: list, word_boundary: bool = False, limit: int = 
     ).fetchall()
     conn.close()
 
-    if word_boundary:
+    if word_boundary and not all(snums):
         pats = [re.compile(r'\b' + re.escape(t) + r'\b', re.IGNORECASE) for t in terms]
         rows = [r for r in rows if any(p.search(r[3] or '') for p in pats)]
 
