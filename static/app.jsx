@@ -16,6 +16,8 @@ const api = {
     fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
   lsj: (lemma) =>
     fetch(`/api/lsj/${encodeURIComponent(lemma)}`).then(r => r.json()),
+  lsjSummary: (lemma) =>
+    fetch(`/api/lsj-summary/${encodeURIComponent(lemma)}`).then(r => r.json()),
 };
 
 // ============================================================
@@ -262,89 +264,17 @@ function ResultCard({ entry, active, onClick, count }) {
 }
 
 // ============================================================
-// LSJ PARSER
+// LSJ SUMMARY DISPLAY
 // ============================================================
-const _CITE_RE = /\b[A-Z][a-zA-Z]*(?:\.[A-Z][a-zA-Z0-9]*)*\.\d+[a-z0-9]*(?:\.\d+[a-z0-9]*)*/g;
-const _SENSE_RE = /^([IVX]+\.|[A-E]\.|[1-9][0-9]*\.|[a-e]\.)$/;
-const _GK_WORD = "[\\u0300-\\u036F\\u0370-\\u03FF\\u1F00-\\u1FFF\\u03B1-\\u03C9\\u0391-\\u03A9]+";
-const _GK_PHRASE = new RegExp(_GK_WORD + "(?:\\s+" + _GK_WORD + ")+(?!\\s*\\([A-Za-z])", "g");
-
-function _lsjLevel(marker) {
-  if (/^[IVX]+\.$/.test(marker)) return 1;
-  if (/^[A-E]\.$/.test(marker))  return 0;
-  if (/^[1-9]/.test(marker))     return 2;
-  return 3;
-}
-
-function _lsjClean(text) {
-  return text
-    .replace(_CITE_RE, "")
-    .replace(/\bib\.\s*/gi, "")
-    .replace(/\bcf\.\s+[^,;.\n]*/gi, "")
-    .replace(/\bopp\.\s+[^,;.\n]*/gi, "")
-    .replace(/\bfreq\.\s+in\s+[^,;.\n]*/gi, "")
-    .replace(/\bv\.l\.\s+[^,;.\n]*/gi, "")
-    .replace(/\(\s*[a-zA-Z][a-zA-Z./\s]{0,20}\.\s*\)/g, "")
-    .replace(_GK_PHRASE, "")
-    .replace(/\b\d+[a-z]?(?:\.\d+[a-z]?)?\b/g, "")
-    .replace(/\.[α-ωΑ-Ω]\d*/g, "")
-    .replace(/(\s|^)[.:]+(\s|$)/g, " ")
-    .replace(/\s+([,;:])/g, "$1")
-    .replace(/([,;:])\s*[,;:]/g, "$1")
-    .replace(/\(\s*\)/g, "")
-    .replace(/\s{2,}/g, " ")
-    .replace(/^[\s,;:.]+/, "")
-    .replace(/[\s,;:.]+$/, "")
-    .trim();
-}
-
-function parseLsj(html) {
-  if (!html || typeof DOMParser === "undefined") return [];
-  const doc = new DOMParser().parseFromString("<body>" + html + "</body>", "text/html");
-  const body = doc.body;
-
-  const senses = [];
-  let cur = { marker: null, level: 0, chunks: [] };
-
-  const flush = () => {
-    const text = _lsjClean(cur.chunks.join(""));
-    const words = text.split(/\s+/).filter(w => w.replace(/[,;:.()]/g, "").length > 1);
-    if (words.length >= 2)
-      senses.push({ marker: cur.marker, level: cur.level, text });
-    cur = { marker: null, level: 0, chunks: [] };
-  };
-
-  const walk = (node) => {
-    if (node.nodeType === 3) {
-      cur.chunks.push(node.textContent);
-    } else if (node.nodeName === "B" || node.nodeName === "STRONG") {
-      const t = node.textContent.trim();
-      if (_SENSE_RE.test(t)) {
-        flush();
-        cur = { marker: t, level: _lsjLevel(t), chunks: [] };
-      } else {
-        cur.chunks.push(node.textContent);
-      }
-    } else if (node.nodeName === "I" || node.nodeName === "EM") {
-      cur.chunks.push(node.textContent);
-    } else if (node.childNodes) {
-      for (const child of node.childNodes) walk(child);
-    }
-  };
-
-  for (const child of body.childNodes) walk(child);
-  flush();
-  return senses;
-}
-
-function LsjDefinition({ html }) {
-  const senses = useMemo(() => parseLsj(html), [html]);
-  if (!senses.length)
-    return <div className="lsj-def" dangerouslySetInnerHTML={{ __html: html }} />;
+function LsjSummary({ data, loading }) {
+  if (loading)
+    return <div className="lsj-def" style={{ color: "var(--muted)", fontStyle: "italic" }}>Summarizing…</div>;
+  if (!data || !data.sections || !data.sections.length)
+    return <div className="lsj-def" style={{ color: "var(--muted)" }}>No definition available.</div>;
   return (
     <div className="lsj-parsed">
-      {senses.map((s, i) => (
-        <div key={i} className={"lsj-sense lsj-l" + Math.max(0, s.level)}>
+      {data.sections.map((s, i) => (
+        <div key={i} className="lsj-sense lsj-l0">
           {s.marker && <span className="lsj-marker">{s.marker}</span>}
           <span className="lsj-text">{s.text}</span>
         </div>
@@ -390,8 +320,12 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
   const [lsjEntry, setLsjEntry] = useState(null);
   const [lsjTab, setLsjTab] = useState("def");
+  const [lsjSummary, setLsjSummary] = useState(null);
+  const [lsjSummaryLoading, setLsjSummaryLoading] = useState(false);
+
   useEffect(() => {
     setLsjTab("def");
+    setLsjSummary(null);
     if (!entry || !entry.greek) { setLsjEntry(null); return; }
     let cancelled = false;
     api.lsj(entry.greek)
@@ -399,6 +333,17 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
       .catch(() => { if (!cancelled) setLsjEntry(null); });
     return () => { cancelled = true; };
   }, [entry && entry.greek]);
+
+  useEffect(() => {
+    if (!lsjEntry) { setLsjSummary(null); return; }
+    let cancelled = false;
+    setLsjSummaryLoading(true);
+    api.lsjSummary(lsjEntry.key)
+      .then(d => { if (!cancelled) setLsjSummary(d); })
+      .catch(() => { if (!cancelled) setLsjSummary(null); })
+      .finally(() => { if (!cancelled) setLsjSummaryLoading(false); });
+    return () => { cancelled = true; };
+  }, [lsjEntry && lsjEntry.key]);
 
   if (!entry) return null;
 
@@ -447,7 +392,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               </div>
             </div>
             {lsjTab === "def"
-              ? <LsjDefinition html={lsjEntry.def_html} />
+              ? <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
               : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
             }
           </section>

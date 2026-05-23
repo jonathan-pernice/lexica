@@ -5,6 +5,7 @@ import os
 import re
 import sqlite3
 import traceback
+from html.parser import HTMLParser
 
 import anthropic
 from dotenv import load_dotenv
@@ -254,6 +255,50 @@ def _clean_gloss(s: str | None) -> str | None:
         return s
     return s.rstrip(" ,;:.!?")
 _ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v4
+_lsj_summary_cache: dict = {}  # keyed on LSJ key; persists for server lifetime
+
+_SENSE_MARKER_RE = re.compile(r'^([IVX]+\.|[A-E]\.|[1-9][0-9]*\.|[a-e]\.)$')
+
+
+class _SectionParser(HTMLParser):
+    """Split LSJ def_html into major sense sections by bold markers."""
+    def __init__(self):
+        super().__init__()
+        self._bold = False
+        self._bold_buf: list[str] = []
+        self._cur_marker: str | None = None
+        self._cur_text: list[str] = []
+        self._sections: list[tuple[str | None, str]] = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("b", "strong"):
+            self._bold = True
+            self._bold_buf = []
+
+    def handle_endtag(self, tag):
+        if tag in ("b", "strong") and self._bold:
+            self._bold = False
+            marker = "".join(self._bold_buf).strip()
+            if _SENSE_MARKER_RE.match(marker):
+                text = "".join(self._cur_text).strip()
+                if text:
+                    self._sections.append((self._cur_marker, text))
+                self._cur_marker = marker
+                self._cur_text = []
+            else:
+                self._cur_text.append(marker)
+
+    def handle_data(self, data):
+        if self._bold:
+            self._bold_buf.append(data)
+        else:
+            self._cur_text.append(data)
+
+    def get_sections(self) -> list[tuple[str | None, str]]:
+        text = "".join(self._cur_text).strip()
+        if text:
+            self._sections.append((self._cur_marker, text))
+        return self._sections
 
 _anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
 if not _anthropic_key:
@@ -446,6 +491,51 @@ def lsj_lookup(lemma):
         "translit": row["translit"],
         "def_html": row["def_html"],
     })
+
+
+@app.route("/api/lsj-summary/<path:lemma>")
+@limiter.limit("60 per hour")
+def lsj_summary(lemma):
+    if lemma in _lsj_summary_cache:
+        return jsonify(_lsj_summary_cache[lemma])
+    if not _anthropic:
+        return jsonify({"error": "AI unavailable"}), 503
+
+    plain = _strip_accents(lemma).lower()
+    conn = db()
+    try:
+        row = conn.execute("SELECT def_html FROM lsj WHERE key = ?", (lemma,)).fetchone()
+        if not row:
+            row = conn.execute("SELECT def_html FROM lsj WHERE plain = ?", (plain,)).fetchone()
+    finally:
+        conn.close()
+    if not row:
+        return jsonify({"error": "not found"}), 404
+
+    parser = _SectionParser()
+    parser.feed(row["def_html"] or "")
+    sections = parser.get_sections()
+    if not sections:
+        return jsonify({"sections": []}), 200
+
+    results = []
+    for marker, text in sections:
+        if not text.strip():
+            continue
+        msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=200,
+            messages=[{"role": "user", "content": (
+                "Extract only the English definition meaning from this LSJ Greek lexicon entry section. "
+                "Write one to two sentences. No Greek phrases, no citations, no abbreviations, "
+                "no scholarly apparatus. Plain English only.\n\n" + text
+            )}],
+        )
+        results.append({"marker": marker, "text": msg.content[0].text.strip()})
+
+    payload = {"sections": results}
+    _lsj_summary_cache[lemma] = payload
+    return jsonify(payload)
 
 
 @app.route("/api/strongs-count/<strongs_base>")
