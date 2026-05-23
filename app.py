@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 import json
+import logging
 import os
 import re
 import sqlite3
+import traceback
 
 import anthropic
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request
 
 load_dotenv()
+
+logging.basicConfig(level=logging.DEBUG, format="%(levelname)s %(name)s: %(message)s")
+log = logging.getLogger("bible")
 
 _AI_SYSTEM = """\
 You are a Biblical Greek theological assistant for a SQLite database of LXX Genesis \
@@ -91,9 +96,9 @@ PROVIDENCE & TESTING
   know / knowledge  G1097 (ginōskō), G1108 (gnōsis)
 
 SUPERNATURAL FIGURES
-  sons of God       G5207 (huios) + G2316 (theos) — search both together
+  sons of God       G5207 (huios) + G2316 (theos) — MUST appear together in same verse
   Nephilim/giants   G1121 (gigas)
-  divine council    G32 (angelos), G5207+G2316, G1121 — use OR
+  divine council    G5207+G2316 co-occurring (ch 6), G32 angelos (ch 18, 28), G1121 Nephilim (ch 6)
   cherubim          G5502 (cheroubim)
 
 FLOOD NARRATIVE (Gen 6–9)
@@ -114,8 +119,14 @@ KEY NARRATIVE CHAPTERS
 • Proper nouns (people, places) have strongs = '*'; search english_head LIKE '%name%'
 • Thematic queries: OR across multiple strongs_base values is preferred over text search
 • Narrative-scoped queries: add  AND v.chapter BETWEEN x AND y
-• For "sons of God" (divine council): find verses containing BOTH G5207 and G2316
-  using EXISTS subquery or join the words table twice
+• For "sons of God" / divine council: ALWAYS require G5207 AND G2316 to co-occur
+  in the same verse. Use two EXISTS subqueries (one per strongs_base), never OR.
+  Restrict to ch 6 (Nephilim/sons of God), ch 18 (heavenly visitors to Abraham),
+  ch 28 (Jacob's ladder / divine beings). Example pattern:
+    WHERE EXISTS (SELECT 1 FROM words w2 WHERE w2.verse_id=v.id AND w2.strongs_base='5207')
+      AND EXISTS (SELECT 1 FROM words w3 WHERE w3.verse_id=v.id AND w3.strongs_base='2316')
+      AND v.chapter IN (6,18,28)
+  Never query G2316 alone for divine-council topics — it matches nearly every verse.
 • Use LIKE … COLLATE NOCASE for any text matching
 • SELECT only — never INSERT, UPDATE, DELETE, DROP
 
@@ -123,8 +134,15 @@ KEY NARRATIVE CHAPTERS
 Return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
   "explanation": "<one concise sentence: your theological interpretation and search strategy>",
-  "sql": "<SELECT query>"
+  "sql": "<SELECT query>",
+  "must_cooccur": ["<strongs_base>", ...]
 }
+
+must_cooccur is REQUIRED whenever the query demands that multiple Strong's numbers
+appear together in the same verse (e.g. divine council = ["5207","2316"]).
+Set it to [] for single-concept queries. The server enforces co-occurrence from
+this list as a post-filter, so you can use a simple IN(...) WHERE clause in the SQL
+rather than nested EXISTS — but you MUST populate must_cooccur correctly.
 
 The SELECT must return exactly these columns in this order:
   w.strongs_base, w.strongs, w.english, w.english_head,
@@ -243,66 +261,108 @@ def verse_text(book, chapter, verse):
 
 @app.route("/api/ai-search")
 def ai_search():
-    q = request.args.get("q", "").strip()
-    if not q:
-        return jsonify({"error": "no query"}), 400
-
-    key = os.environ.get("ANTHROPIC_API_KEY")
-    if not key:
-        return jsonify({"error": "ANTHROPIC_API_KEY not set"}), 500
-
-    client = anthropic.Anthropic(api_key=key)
-    msg = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=1024,
-        system=_AI_SYSTEM,
-        messages=[{"role": "user", "content": q}],
-    )
-    raw = msg.content[0].text.strip()
-
-    # Strip accidental markdown fences
-    if raw.startswith("```"):
-        raw = re.sub(r"^```[^\n]*\n?", "", raw).rstrip("`").strip()
-
     try:
-        parsed = json.loads(raw)
-    except json.JSONDecodeError as e:
-        return jsonify({"error": f"AI response not valid JSON: {e}", "raw": raw}), 500
+        q = request.args.get("q", "").strip()
+        log.debug("ai_search called: q=%r", q)
+        if not q:
+            return jsonify({"error": "no query"}), 400
 
-    sql         = parsed.get("sql", "").strip()
-    explanation = parsed.get("explanation", "")
+        key = os.environ.get("ANTHROPIC_API_KEY")
+        log.debug("ANTHROPIC_API_KEY present: %s", bool(key))
+        if not key:
+            log.error("ANTHROPIC_API_KEY not set — check .env file")
+            return jsonify({"error": "ANTHROPIC_API_KEY not set"}), 500
 
-    if not re.match(r"^\s*SELECT\b", sql, re.IGNORECASE):
-        return jsonify({"error": "AI returned a non-SELECT query", "sql": sql}), 400
+        log.debug("Calling Haiku API…")
+        client = anthropic.Anthropic(api_key=key)
+        msg = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=1024,
+            system=_AI_SYSTEM,
+            messages=[{"role": "user", "content": q}],
+        )
+        raw = msg.content[0].text.strip()
+        log.debug("Haiku raw response: %r", raw[:300])
 
-    conn = db()
-    try:
-        rows = conn.execute(sql).fetchall()
-    except Exception as e:
+        # Extract the JSON object even if surrounded by prose or fences
+        start = raw.find("{")
+        end   = raw.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            candidate = raw[start:end + 1]
+        else:
+            candidate = raw
+
+        try:
+            parsed = json.loads(candidate)
+        except json.JSONDecodeError as e:
+            log.error("AI response not valid JSON: %s\nraw=%r", e, raw)
+            return jsonify({"error": f"AI response not valid JSON: {e}", "raw": raw}), 500
+
+        sql          = parsed.get("sql", "").strip()
+        explanation  = parsed.get("explanation", "")
+        must_cooccur = [str(s) for s in parsed.get("must_cooccur", [])]
+        log.debug("SQL from AI: %s", sql)
+        log.debug("must_cooccur: %s", must_cooccur)
+
+        if not re.match(r"^\s*SELECT\b", sql, re.IGNORECASE):
+            log.error("AI returned non-SELECT query: %r", sql)
+            return jsonify({"error": "AI returned a non-SELECT query", "sql": sql}), 400
+
+        conn = db()
+        try:
+            rows = conn.execute(sql).fetchall()
+        except Exception as e:
+            conn.close()
+            log.error("SQL execution error: %s\nSQL: %s", e, sql)
+            return jsonify({"error": f"SQL error: {e}", "sql": sql}), 400
         conn.close()
-        return jsonify({"error": f"SQL error: {e}", "sql": sql}), 400
-    conn.close()
+        log.debug("SQL returned %d rows", len(rows))
 
-    results = [
-        {
-            "ref":         f"{r['book']} {r['chapter']}:{r['verse']}",
-            "book":        r["book"],
-            "chapter":     r["chapter"],
-            "verse":       r["verse"],
-            "strongs":     r["strongs"],
-            "strongs_base": r["strongs_base"],
-            "gloss":       r["english"],
-            "lemma":       r["lemma"],
-            "translit":    r["translit"],
-            "strongs_def": (r["strongs_def"] or "").strip(),
-            "kjv_def":     r["kjv_def"],
-            "derivation":  (r["derivation"] or "").strip(),
-        }
-        for r in rows
-    ]
+        # Group word-level rows into one entry per verse
+        verse_index = {}
+        verse_order = []
+        for r in rows:
+            key = (r["book"], r["chapter"], r["verse"])
+            if key not in verse_index:
+                verse_index[key] = {
+                    "ref":     f"{r['book']} {r['chapter']}:{r['verse']}",
+                    "book":    r["book"],
+                    "chapter": r["chapter"],
+                    "verse":   r["verse"],
+                    "words":   [],
+                }
+                verse_order.append(key)
+            verse_index[key]["words"].append({
+                "strongs":     r["strongs"],
+                "strongs_base": r["strongs_base"],
+                "gloss":       r["english"],
+                "lemma":       r["lemma"],
+                "translit":    r["translit"],
+                "strongs_def": (r["strongs_def"] or "").strip(),
+                "kjv_def":     r["kjv_def"],
+                "derivation":  (r["derivation"] or "").strip(),
+            })
 
-    return jsonify({"results": results, "total": len(results),
-                    "explanation": explanation, "sql": sql})
+        results = [verse_index[k] for k in verse_order]
+        log.debug("Grouped into %d verses", len(results))
+
+        if must_cooccur:
+            before = len(results)
+            results = [
+                v for v in results
+                if all(
+                    any(w["strongs_base"] == s for w in v["words"])
+                    for s in must_cooccur
+                )
+            ]
+            log.debug("must_cooccur filter: %d -> %d verses", before, len(results))
+
+        return jsonify({"results": results, "total": len(results),
+                        "explanation": explanation, "sql": sql})
+
+    except Exception:
+        log.error("Unhandled exception in ai_search:\n%s", traceback.format_exc())
+        return jsonify({"error": "Internal server error — see console for details"}), 500
 
 
 if __name__ == "__main__":

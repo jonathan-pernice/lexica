@@ -286,7 +286,7 @@
       }
 
       for (const r of data.results) {
-        resultsEl.appendChild(makeCard(r));
+        resultsEl.appendChild(makeVerseCard(r));
       }
     } catch (e) {
       errorEl.textContent   = `Network error: ${e}`;
@@ -375,6 +375,59 @@
       if (r.kjv_def)      dl.innerHTML += `<dt>KJV gloss</dt><dd>${r.kjv_def}</dd>`;
       if (r.derivation)   dl.innerHTML += `<dt>Derivation</dt><dd>${r.derivation}</dd>`;
       body.appendChild(dl);
+    }
+
+    let verseLoaded = false;
+    header.addEventListener('click', async () => {
+      card.classList.toggle('open');
+      if (card.classList.contains('open') && !verseLoaded) {
+        verseLoaded = true;
+        const vRes  = await fetch(`/api/verse/${encodeURIComponent(r.book)}/${r.chapter}/${r.verse}`);
+        const vData = await vRes.json();
+        body.querySelector('.verse-text').innerHTML =
+          `<em>${r.ref}</em> &nbsp;${vData.text || '(no text)'}`;
+      }
+    });
+
+    card.appendChild(header);
+    card.appendChild(body);
+    return card;
+  }
+  function makeVerseCard(r) {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const wordTags = r.words.map(w => {
+      const lemmaHtml = w.lemma
+        ? `<span class="greek">${w.lemma}</span> <span class="translit">${w.translit || ''}</span>`
+        : '';
+      return `<span class="strongs-tag">G${w.strongs}</span>${lemmaHtml ? ' ' + lemmaHtml : ''} <span class="gloss">"${w.gloss || ''}"</span>`;
+    }).join('<span style="color:#cbd5e1;margin:0 0.4rem">·</span>');
+
+    const header = document.createElement('div');
+    header.className = 'card-header';
+    header.style.flexWrap = 'wrap';
+    header.innerHTML = `
+      <span class="ref">${r.ref}</span>
+      ${wordTags}
+      <span class="toggle-icon" style="margin-left:auto">▼</span>
+    `;
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    body.innerHTML = '<div class="verse-text"><em>Loading verse…</em></div>';
+
+    for (const w of r.words) {
+      if (w.strongs_def || w.kjv_def || w.derivation) {
+        const dl = document.createElement('dl');
+        dl.className = 'lex-grid';
+        dl.style.marginTop = '0.6rem';
+        if (w.lemma)      dl.innerHTML += `<dt>Lemma</dt><dd>${w.lemma} <em style="color:#94a3b8">${w.translit || ''}</em></dd>`;
+        if (w.strongs_def) dl.innerHTML += `<dt>Definition</dt><dd>${w.strongs_def}</dd>`;
+        if (w.kjv_def)    dl.innerHTML += `<dt>KJV gloss</dt><dd>${w.kjv_def}</dd>`;
+        if (w.derivation) dl.innerHTML += `<dt>Derivation</dt><dd>${w.derivation}</dd>`;
+        body.appendChild(dl);
+      }
     }
 
     let verseLoaded = false;
