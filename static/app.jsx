@@ -262,6 +262,85 @@ function ResultCard({ entry, active, onClick, count }) {
 }
 
 // ============================================================
+// LSJ PARSER
+// ============================================================
+const _CITE_RE = /\b[A-Z][a-zA-Z]*(?:\.[A-Z][a-zA-Z0-9]*)*\.\d+[a-z0-9]*(?:\.\d+[a-z0-9]*)*/g;
+const _SENSE_RE = /^([IVX]+\.|[A-E]\.|[1-9][0-9]*\.|[a-e]\.)$/;
+
+function _lsjLevel(marker) {
+  if (/^[IVX]+\.$/.test(marker)) return 1;
+  if (/^[A-E]\.$/.test(marker))  return 0;
+  if (/^[1-9]/.test(marker))     return 2;
+  return 3;
+}
+
+function _lsjClean(text) {
+  return text
+    .replace(_CITE_RE, "")
+    .replace(/\s+([,;:])/g, "$1")
+    .replace(/([,;:])\s*[,;:]/g, "$1")
+    .replace(/\(\s*\)/g, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/^[\s,;:]+/, "")
+    .replace(/[\s,;:]+$/, "")
+    .trim();
+}
+
+function parseLsj(html) {
+  if (!html || typeof DOMParser === "undefined") return [];
+  const doc = new DOMParser().parseFromString("<body>" + html + "</body>", "text/html");
+  const body = doc.body;
+
+  const senses = [];
+  let cur = { marker: null, level: 0, chunks: [] };
+
+  const flush = () => {
+    const text = _lsjClean(cur.chunks.join(""));
+    if (text.replace(/[\s,;:.()]/g, "").length > 2)
+      senses.push({ marker: cur.marker, level: cur.level, text });
+    cur = { marker: null, level: 0, chunks: [] };
+  };
+
+  const walk = (node) => {
+    if (node.nodeType === 3) {
+      cur.chunks.push(node.textContent);
+    } else if (node.nodeName === "B" || node.nodeName === "STRONG") {
+      const t = node.textContent.trim();
+      if (_SENSE_RE.test(t)) {
+        flush();
+        cur = { marker: t, level: _lsjLevel(t), chunks: [] };
+      } else {
+        cur.chunks.push(node.textContent);
+      }
+    } else if (node.nodeName === "I" || node.nodeName === "EM") {
+      cur.chunks.push(node.textContent);
+    } else if (node.childNodes) {
+      for (const child of node.childNodes) walk(child);
+    }
+  };
+
+  for (const child of body.childNodes) walk(child);
+  flush();
+  return senses;
+}
+
+function LsjDefinition({ html }) {
+  const senses = useMemo(() => parseLsj(html), [html]);
+  if (!senses.length)
+    return <div className="lsj-def" dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <div className="lsj-parsed">
+      {senses.map((s, i) => (
+        <div key={i} className={"lsj-sense lsj-l" + Math.max(0, s.level)}>
+          {s.marker && <span className="lsj-marker">{s.marker}</span>}
+          <span className="lsj-text">{s.text}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
 // DETAIL PANEL — SIDEBAR / BOTTOM SHEET
 // ============================================================
 function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch }) {
@@ -297,7 +376,9 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.strongs_base]);
 
   const [lsjEntry, setLsjEntry] = useState(null);
+  const [lsjTab, setLsjTab] = useState("def");
   useEffect(() => {
+    setLsjTab("def");
     if (!entry || !entry.greek) { setLsjEntry(null); return; }
     let cancelled = false;
     api.lsj(entry.greek)
@@ -341,10 +422,21 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="detail-gloss">{entry.gloss}</div>
         </div>
 
-        {entry.definition && (
+        {lsjEntry && (
           <section className="detail-section">
-            <h4 className="detail-h">Definition</h4>
-            <p className="detail-p">{entry.definition}</p>
+            <div className="lsj-head">
+              <h4 className="detail-h" style={{ margin: 0 }}>
+                Liddell-Scott-Jones<span className="lsj-badge">LSJ</span>
+              </h4>
+              <div className="lsj-tabs">
+                <button className={"lsj-tab " + (lsjTab === "def"  ? "on" : "")} onClick={() => setLsjTab("def")}>Definition</button>
+                <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>Full LSJ</button>
+              </div>
+            </div>
+            {lsjTab === "def"
+              ? <LsjDefinition html={lsjEntry.def_html} />
+              : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
+            }
           </section>
         )}
 
@@ -358,21 +450,6 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             >
               <b>{abpCount}</b>× in Genesis–Exodus LXX <Icon.ArrowRight/>
             </button>
-          </section>
-        )}
-
-        {lsjEntry && (
-          <section className="detail-section">
-            <h4 className="detail-h">
-              <span className="lsj-section-label">
-                Liddell-Scott-Jones
-                <span className="lsj-badge">LSJ</span>
-              </span>
-            </h4>
-            <div
-              className="lsj-def"
-              dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }}
-            />
           </section>
         )}
 

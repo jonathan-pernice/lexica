@@ -717,12 +717,15 @@ input { font-family: inherit; }
 .freq-meta b { color: var(--ink); font-weight: 600; }
 
 /* ============================================================
-   LSJ DEFINITION
+   LSJ — TABS + DEFINITION
 ============================================================ */
-.lsj-section-label {
+.lsj-head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 .lsj-badge {
   font-family: var(--f-mono);
@@ -733,10 +736,57 @@ input { font-family: inherit; }
   background: var(--gold-soft);
   padding: 2px 6px;
   border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 6px;
 }
-.lsj-def {
+.lsj-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--bg-sunk);
+  border-radius: 7px;
+  flex-shrink: 0;
+}
+.lsj-tab {
+  font-size: 11.5px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  color: var(--ink-3);
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.lsj-tab:hover { color: var(--ink); }
+.lsj-tab.on { color: var(--ink); background: #fff; box-shadow: var(--shadow-sm); }
+
+/* Parsed / cleaned definition */
+.lsj-parsed { display: flex; flex-direction: column; gap: 6px; }
+.lsj-sense {
+  display: flex;
+  gap: 7px;
   font-family: var(--f-serif);
   font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.lsj-l0 { padding-left: 0; }
+.lsj-l1 { padding-left: 14px; }
+.lsj-l2 { padding-left: 28px; }
+.lsj-l3 { padding-left: 42px; }
+.lsj-marker {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  min-width: 24px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.lsj-text { color: var(--ink-2); }
+
+/* Full / raw LSJ */
+.lsj-def {
+  font-family: var(--f-serif);
+  font-size: 13px;
   line-height: 1.7;
   color: var(--ink-2);
 }
