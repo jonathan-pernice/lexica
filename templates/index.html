@@ -191,6 +191,10 @@
     if (e.key === 'Enter') doSearch();
   });
 
+  document.getElementById('whole-words').addEventListener('change', () => {
+    if (document.getElementById('q').value.trim()) doSearch();
+  });
+
   async function doSearch() {
     const q  = document.getElementById('q').value.trim();
     const w  = document.getElementById('whole-words').checked ? '1' : '0';
