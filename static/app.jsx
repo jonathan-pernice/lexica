@@ -603,15 +603,26 @@ function PassageGroup({ label, verses, citedMap, onWordClick }) {
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
 function StudyMode({ allResults, primaryStrongs, onWordClick }) {
-  // citedMap: strongs_base → entry, content words only (function words excluded).
-  // G1473 (ἐγώ) is suppressed unless it's the explicitly searched strongs — it
-  // appears too frequently as a grammatical marker and obscures semantic highlights.
+  // citedMap: strongs_base → entry, only for Strong's numbers that appear in
+  // multiple verses (cross-verse frequency ≥ 2), so highlights reflect core
+  // vocabulary rather than every incidental word in the result set.
   const citedMap = useMemo(() => {
+    // Count how many distinct verses each strongs_base appears in.
+    const verseCount = new Map();
+    for (const e of allResults) {
+      if (e.strongs_base === "*" || e.is_function) continue;
+      if (e.strongs_base === "1473" && primaryStrongs !== "1473") continue;
+      const key = `${e.book}-${e.chapter}-${e.verse}`;
+      if (!verseCount.has(e.strongs_base)) verseCount.set(e.strongs_base, new Set());
+      verseCount.get(e.strongs_base).add(key);
+    }
+    const threshold = primaryStrongs ? 1 : 2;
     const m = new Map();
     for (const e of allResults) {
-      if (e.strongs_base !== "*" && !e.is_function
-          && (e.strongs_base !== "1473" || primaryStrongs === "1473")
-          && !m.has(e.strongs_base))
+      if (e.strongs_base === "*" || e.is_function) continue;
+      if (e.strongs_base === "1473" && primaryStrongs !== "1473") continue;
+      const count = verseCount.get(e.strongs_base)?.size || 0;
+      if (count >= threshold && !m.has(e.strongs_base))
         m.set(e.strongs_base, e);
     }
     return m;
