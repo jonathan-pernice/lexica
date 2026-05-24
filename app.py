@@ -782,7 +782,10 @@ def ai_search():
         results = [verse_index[k] for k in verse_order if verse_index[k]["words"]]
         log.debug("Grouped into %d verses", len(results))
 
-        # Fetch any verses explicitly cited in the explanation that SQL missed
+        # Fetch any verses explicitly cited in the explanation that SQL missed.
+        # Cited verses use the full word list (all words in the verse) and are
+        # exempt from must_cooccur — the AI named them directly.
+        cited_keys: set = set()
         cited_matches = _get_verse_ref_re().findall(explanation)
         if cited_matches:
             cited_conn = db_ro()
@@ -796,7 +799,10 @@ def ai_search():
                     book = _BOOK_NORM.get(book_raw.lower()[:3], book_raw.title()[:3])
                     chapter, verse_num = int(chap_str), int(verse_str)
                     key = (book, chapter, verse_num)
+                    cited_keys.add(key)
                     if key in verse_index:
+                        # Already in results from SQL — still mark as cited so
+                        # must_cooccur doesn't drop it.
                         continue
                     vrow = cited_conn.execute(
                         "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
@@ -847,7 +853,8 @@ def ai_search():
             before = len(results)
             results = [
                 v for v in results
-                if all(
+                if (v["book"], v["chapter"], v["verse"]) in cited_keys
+                or all(
                     any(w["strongs_base"] == s for w in v["words"])
                     for s in must_cooccur
                 )
