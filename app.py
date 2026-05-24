@@ -19,9 +19,12 @@ _log_level = getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), loggi
 logging.basicConfig(level=_log_level, format="%(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("bible")
 
-_AI_SYSTEM = """\
+# @@CORPUS_LIST@@  — comma-separated full book names, e.g. "Genesis, Exodus, …"
+# @@SCHEMA_BOOKS@@ — schema comment listing abbrev→name pairs
+# @@NARRATIVE_CHAPTERS@@ — one ─── KEY NARRATIVE CHAPTERS block per loaded book
+_AI_SYSTEM_TMPL = """\
 You are a Berean textual analyst for a SQLite database of the Greek Septuagint (LXX) \
-covering the Pentateuch — Genesis, Exodus, Leviticus, Numbers, and Deuteronomy \
+covering @@CORPUS_LIST@@ \
 (Apostolic Bible Polyglot interlinear). Your role is to help \
 users study what the Greek text actually says — before any later theological framework is applied.
 
@@ -67,7 +70,7 @@ GREEK FIRST, THEN QUERY STRATEGY
 
 ─── DATABASE SCHEMA ─────────────────────────────────────────────────────────
   verses(id, book TEXT, chapter INTEGER, verse INTEGER)
-        -- book is "Gen" (Genesis), "Exo" (Exodus), "Lev" (Leviticus), "Num" (Numbers), "Deu" (Deuteronomy)
+        -- @@SCHEMA_BOOKS@@
   words(id, verse_id, position INTEGER,
         english TEXT,       -- full ABP gloss, e.g. "my spirit", "of God"
         english_head TEXT,  -- core word, e.g. "spirit", "God"
@@ -82,37 +85,7 @@ lemmas and Strong's numbers drawn live from the Liddell-Scott-Jones lexicon.
 Use those G-numbers in SQL WHERE clauses against strongs_base.
 Never invent or guess Strong's numbers not provided in the LSJ context block.
 
-─── KEY NARRATIVE CHAPTERS — Genesis (book = 'Gen') ─────────────────────────
-  Creation          ch 1–2      Garden of Eden   ch 2–3
-  Cain & Abel       ch 4        Flood            ch 6–9
-  Tower of Babel    ch 11       Abrahamic call   ch 12
-  Covenant of fire  ch 15       Hagar/Ishmael    ch 16, 21
-  Sodom             ch 18–19    Binding of Isaac ch 22
-  Jacob & Esau      ch 25–27    Jacob's ladder   ch 28
-  Joseph            ch 37–50
-
-─── KEY NARRATIVE CHAPTERS — Exodus (book = 'Exo') ──────────────────────────
-  Oppression        ch 1–2      Moses' call      ch 3–4
-  Plagues           ch 7–12     Passover         ch 12
-  Red Sea crossing  ch 14–15    Sinai arrival    ch 19
-  Covenant/law      ch 20–24    Golden calf      ch 32
-  Tabernacle design ch 25–31    Tabernacle built ch 35–40
-
-─── KEY NARRATIVE CHAPTERS — Leviticus (book = 'Lev') ───────────────────────
-  Burnt/sin offerings ch 1–7    Priestly ordination ch 8–10
-  Purity laws       ch 11–15    Day of Atonement    ch 16
-  Holiness Code     ch 17–26    Vows & tithes       ch 27
-
-─── KEY NARRATIVE CHAPTERS — Numbers (book = 'Num') ─────────────────────────
-  Census            ch 1–4      Nazarite vow     ch 6
-  Spies/Canaan      ch 13–14    Korah's revolt   ch 16
-  Bronze serpent    ch 21       Balaam           ch 22–24
-  Phinehas          ch 25       Second census    ch 26
-
-─── KEY NARRATIVE CHAPTERS — Deuteronomy (book = 'Deu') ─────────────────────
-  Moses' retrospect ch 1–3      Shema            ch 6
-  Covenant renewal  ch 4–5      Blessings/curses ch 27–28
-  Song of Moses     ch 32       Blessing/death   ch 33–34
+@@NARRATIVE_CHAPTERS@@
 
 ─── QUERY RULES ─────────────────────────────────────────────────────────────
 • Proper nouns (people, places) have strongs = '*'; search english_head LIKE '%name%'
@@ -155,26 +128,54 @@ Join:   words w JOIN verses v ON w.verse_id = v.id
 End:    ORDER BY v.id, w.position   LIMIT 100\
 """
 
+_AI_SYSTEM_BUILT: str | None = None
+
+
+def _get_ai_system() -> str:
+    global _AI_SYSTEM_BUILT
+    if _AI_SYSTEM_BUILT is not None:
+        return _AI_SYSTEM_BUILT
+    conn = db()
+    try:
+        rows = conn.execute(
+            "SELECT abbrev, name, re_alt, narrative FROM books ORDER BY id"
+        ).fetchall()
+    finally:
+        conn.close()
+
+    names   = [r[1] for r in rows]
+    abbrevs = [r[0] for r in rows]
+
+    # "Genesis, Exodus, Leviticus, Numbers, and Deuteronomy"
+    if len(names) == 1:
+        corpus_list = names[0]
+    else:
+        corpus_list = ", ".join(names[:-1]) + ", and " + names[-1]
+
+    # book is "Gen" (Genesis), "Exo" (Exodus), …
+    schema_books = ", ".join(f'"{a}" ({n})' for a, n in zip(abbrevs, names))
+
+    # One ─── KEY NARRATIVE CHAPTERS block per book
+    sections = []
+    for abbrev, name, _, narrative in rows:
+        if not narrative:
+            continue
+        bar_len = max(4, 78 - len(f"─── KEY NARRATIVE CHAPTERS — {name} (book = '{abbrev}') "))
+        header  = f"─── KEY NARRATIVE CHAPTERS — {name} (book = '{abbrev}') " + "─" * bar_len
+        sections.append(f"{header}\n{narrative}")
+    narrative_chapters = "\n\n".join(sections)
+
+    _AI_SYSTEM_BUILT = (
+        _AI_SYSTEM_TMPL
+        .replace("@@CORPUS_LIST@@", corpus_list)
+        .replace("@@SCHEMA_BOOKS@@", schema_books)
+        .replace("@@NARRATIVE_CHAPTERS@@", narrative_chapters)
+    )
+    log.debug("Built AI system prompt for books: %s", abbrevs)
+    return _AI_SYSTEM_BUILT
+
 _STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
 
-# Full-name expansions for known book abbreviations used in AI-generated text.
-# Any DB book not listed here falls back to matching its abbreviation only.
-_BOOK_RE_ALTS = {
-    "Gen": r"Gen(?:esis)?",
-    "Exo": r"Exo(?:dus)?",
-    "Lev": r"Lev(?:iticus)?",
-    "Num": r"Num(?:bers)?",
-    "Deu": r"Deu(?:t(?:eronomy)?)?",
-    "Jos": r"Jos(?:hua)?",
-    "Jdg": r"Jdg|Judg(?:es)?",
-    "Rut": r"Rut(?:h)?",
-    "Psa": r"Psa(?:lms?)?",
-    "Pro": r"Pro(?:verbs?)?",
-    "Isa": r"Isa(?:iah)?",
-    "Jer": r"Jer(?:emiah)?",
-    "Eze": r"Eze(?:kiel)?",
-    "Dan": r"Dan(?:iel)?",
-}
 _VERSE_REF_RE: re.Pattern | None = None
 
 
@@ -184,17 +185,15 @@ def _get_verse_ref_re() -> re.Pattern:
         return _VERSE_REF_RE
     conn = db()
     try:
-        books = [r[0] for r in conn.execute(
-            "SELECT book FROM (SELECT book, MIN(id) AS first FROM verses GROUP BY book) ORDER BY first"
-        ).fetchall()]
+        rows = conn.execute("SELECT re_alt FROM books ORDER BY id").fetchall()
     finally:
         conn.close()
-    alts = [_BOOK_RE_ALTS.get(b, re.escape(b)) for b in books]
+    alts = [r[0] for r in rows]
     _VERSE_REF_RE = re.compile(
         r'\b(' + '|'.join(alts) + r')\s+(\d+):(\d+)\b',
         re.IGNORECASE,
     )
-    log.debug("Built _VERSE_REF_RE from DB books: %s", books)
+    log.debug("Built _VERSE_REF_RE from books table: %s", alts)
     return _VERSE_REF_RE
 
 
@@ -713,7 +712,7 @@ def ai_search():
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=1500,
-            system=_AI_SYSTEM,
+            system=_get_ai_system(),
             messages=[{"role": "user", "content": user_content}],
         )
         raw = msg.content[0].text.strip()
