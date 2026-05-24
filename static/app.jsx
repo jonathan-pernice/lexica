@@ -14,10 +14,14 @@ const api = {
     fetch(`/api/verse-words/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
   strongsCount: (strongs_base) =>
     fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
-  lsj: (lemma) =>
-    fetch(`/api/lsj/${encodeURIComponent(lemma)}`).then(r => r.json()),
-  lsjSummary: (lemma) =>
-    fetch(`/api/lsj-summary/${encodeURIComponent(lemma)}`).then(r => r.json()),
+  lsj: (lemma, strongs) => {
+    const qs = strongs && strongs.includes('.') ? `?strongs=${encodeURIComponent(strongs)}` : '';
+    return fetch(`/api/lsj/${encodeURIComponent(lemma)}${qs}`).then(r => r.json());
+  },
+  lsjSummary: (key, strongs) => {
+    const qs = strongs && strongs.includes('.') ? `?strongs=${encodeURIComponent(strongs)}` : '';
+    return fetch(`/api/lsj-summary/${encodeURIComponent(key)}${qs}`).then(r => r.json());
+  },
   books: () =>
     fetch("/api/books").then(r => r.json()),
   chapter: (book, ch) =>
@@ -32,6 +36,7 @@ function makeEntry(r, idx) {
     id: `${r.strongs_base}-${r.book}-${r.chapter}-${r.verse}-${idx}`,
     strongs: r.strongs_base === "*" ? "PN" : `G${r.strongs_base}`,
     strongs_base: r.strongs_base,
+    strongs_raw: r.strongs || "",
     greek: r.lemma || "",
     translit: r.translit || "",
     gloss: r.gloss || "",
@@ -53,6 +58,7 @@ function flattenAiResults(verses) {
         id: `ai-${v.book}-${v.chapter}-${v.verse}-${w.strongs_base}-${idx++}`,
         strongs: w.strongs_base === "*" ? "PN" : `G${w.strongs_base}`,
         strongs_base: w.strongs_base,
+        strongs_raw: w.strongs || "",
         greek: w.lemma || "",
         translit: w.translit || "",
         gloss: w.gloss || "",
@@ -373,7 +379,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (!entry || !entry.greek) { setLsjLoading(false); return; }
     let cancelled = false;
     setLsjLoading(true);
-    api.lsj(entry.greek)
+    api.lsj(entry.greek, entry.strongs_raw)
       .then(d => {
         if (!cancelled) { setLsjEntry(d.error ? null : d); setLsjLoading(false); }
       })
@@ -387,7 +393,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (!lsjEntry) { setLsjSummary(null); return; }
     let cancelled = false;
     setLsjSummaryLoading(true);
-    api.lsjSummary(lsjEntry.key)
+    const summaryStrongs = lsjEntry.source === "abp_ext" ? lsjEntry.key : "";
+    api.lsjSummary(lsjEntry.key, summaryStrongs)
       .then(d => { if (!cancelled) setLsjSummary(d); })
       .catch(() => { if (!cancelled) setLsjSummary(null); })
       .finally(() => { if (!cancelled) setLsjSummaryLoading(false); });
@@ -776,6 +783,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
       id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
       strongs: `G${w.strongs_base}`,
       strongs_base: w.strongs_base,
+      strongs_raw: w.strongs || "",
       greek: w.lemma || "",
       translit: w.translit || "",
       gloss: w.english || "",

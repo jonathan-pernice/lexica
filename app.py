@@ -724,6 +724,11 @@ def _migrate_db():
             conn.commit()
         except sqlite3.OperationalError:
             pass  # already migrated
+        try:
+            conn.execute("ALTER TABLE abp_ext ADD COLUMN summary_json TEXT")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # column already exists
         # Persistent AI search result cache (survives restarts).
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS ai_search_cache (
@@ -957,9 +962,16 @@ def verse_words(book, chapter, verse):
 
 @app.route("/api/lsj/<path:lemma>")
 def lsj_lookup(lemma):
-    plain = _strip_accents(lemma).lower()
+    strongs_param = request.args.get("strongs", "")
     conn = db()
     try:
+        if "." in strongs_param:
+            abp_row = conn.execute(
+                "SELECT def_html FROM abp_ext WHERE strongs = ?", (strongs_param,)
+            ).fetchone()
+        else:
+            abp_row = None
+        plain = _strip_accents(lemma).lower()
         row = conn.execute(
             "SELECT key, translit, def_html FROM lsj WHERE key = ?", (lemma,)
         ).fetchone()
@@ -969,6 +981,13 @@ def lsj_lookup(lemma):
             ).fetchone()
     finally:
         conn.close()
+    if abp_row:
+        return jsonify({
+            "key":      strongs_param,
+            "translit": "",
+            "def_html": abp_row["def_html"],
+            "source":   "abp_ext",
+        })
     if not row:
         return jsonify({"error": "not found"}), 404
     return jsonify({
@@ -981,31 +1000,46 @@ def lsj_lookup(lemma):
 @app.route("/api/lsj-summary/<path:lemma>")
 @limiter.limit("60 per hour")
 def lsj_summary(lemma):
-    if lemma in _lsj_summary_cache:
-        return jsonify(_lsj_summary_cache[lemma])
+    strongs_param = request.args.get("strongs", "")
+    cache_key = f"abp:{strongs_param}" if ("." in strongs_param) else lemma
+
+    if cache_key in _lsj_summary_cache:
+        return jsonify(_lsj_summary_cache[cache_key])
     if not _anthropic:
         return jsonify({"error": "AI unavailable"}), 503
 
-    plain = _strip_accents(lemma).lower()
     conn = db()
+    exact_key = None    # set for LSJ rows so summary_json is written back
+    abp_strongs = None  # set for abp_ext rows so summary_json is written back
     try:
-        row = conn.execute(
-            "SELECT key, def_html, summary_json FROM lsj WHERE key = ?", (lemma,)
-        ).fetchone()
-        if not row:
-            row = conn.execute(
-                "SELECT key, def_html, summary_json FROM lsj WHERE plain = ?", (plain,)
+        if "." in strongs_param:
+            abp_row = conn.execute(
+                "SELECT def_html, summary_json FROM abp_ext WHERE strongs = ?", (strongs_param,)
             ).fetchone()
+            if abp_row:
+                row = {"def_html": abp_row["def_html"], "summary_json": abp_row["summary_json"]}
+                abp_strongs = strongs_param
+            else:
+                row = None
+        else:
+            plain = _strip_accents(lemma).lower()
+            row = conn.execute(
+                "SELECT key, def_html, summary_json FROM lsj WHERE key = ?", (lemma,)
+            ).fetchone()
+            if not row:
+                row = conn.execute(
+                    "SELECT key, def_html, summary_json FROM lsj WHERE plain = ?", (plain,)
+                ).fetchone()
+            if row:
+                exact_key = row["key"]
     finally:
         conn.close()
     if not row:
         return jsonify({"error": "not found"}), 404
 
-    exact_key = row["key"]
-
     if row["summary_json"]:
         payload = json.loads(row["summary_json"])
-        _lsj_summary_cache[lemma] = payload
+        _lsj_summary_cache[cache_key] = payload
         return jsonify(payload)
 
     parser = _SectionParser()
@@ -1013,7 +1047,7 @@ def lsj_summary(lemma):
     sections = parser.get_sections()
     if not sections:
         payload = {"sections": []}
-        _lsj_summary_cache[lemma] = payload
+        _lsj_summary_cache[cache_key] = payload
         return jsonify(payload)
 
     _lsj_refusal_re = re.compile(
@@ -1044,14 +1078,21 @@ def lsj_summary(lemma):
     payload = {"sections": results}
     conn = db()
     try:
-        conn.execute(
-            "UPDATE lsj SET summary_json = ? WHERE key = ?",
-            (json.dumps(payload), exact_key),
-        )
-        conn.commit()
+        if exact_key:
+            conn.execute(
+                "UPDATE lsj SET summary_json = ? WHERE key = ?",
+                (json.dumps(payload), exact_key),
+            )
+            conn.commit()
+        elif abp_strongs:
+            conn.execute(
+                "UPDATE abp_ext SET summary_json = ? WHERE strongs = ?",
+                (json.dumps(payload), abp_strongs),
+            )
+            conn.commit()
     finally:
         conn.close()
-    _lsj_summary_cache[lemma] = payload
+    _lsj_summary_cache[cache_key] = payload
     return jsonify(payload)
 
 
@@ -1076,7 +1117,7 @@ def chapter_text(book, chapter):
     conn = db()
     try:
         rows = conn.execute(
-            """SELECT v.verse, w.position, w.english, w.strongs_base,
+            """SELECT v.verse, w.position, w.english, w.strongs_base, w.strongs,
                       l.lemma, l.translit, w.greek_pos, w.bracket_id
                FROM verses v
                JOIN words w ON w.verse_id = v.id
@@ -1099,6 +1140,7 @@ def chapter_text(book, chapter):
             "position":     r["position"],
             "english":      r["english"],
             "strongs_base": r["strongs_base"],
+            "strongs":      r["strongs"],
             "lemma":        r["lemma"],
             "translit":     r["translit"],
             "greek_pos":    r["greek_pos"],
