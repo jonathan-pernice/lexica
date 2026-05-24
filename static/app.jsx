@@ -1376,7 +1376,6 @@ function App() {
           />
         </>
       )}
-    </div>
       {isMobile && (
         <nav className="mobile-tabs">
           <button className={"mobile-tab" + (mainView === "search" ? " active" : "")} onClick={() => handleNavChange("search")}>
@@ -1389,6 +1388,7 @@ function App() {
           </button>
         </nav>
       )}
+    </div>
   );
 }
 
