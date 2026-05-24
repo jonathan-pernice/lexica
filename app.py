@@ -24,9 +24,9 @@ log = logging.getLogger("bible")
 # @@CORPUS_LIST@@  — comma-separated full book names, e.g. "Genesis, Exodus, …"
 # @@SCHEMA_BOOKS@@ — schema comment listing abbrev→name pairs
 _AI_SYSTEM_TMPL = """\
-You are a Berean textual analyst for a SQLite database of the Greek Septuagint (LXX) \
-covering @@CORPUS_LIST@@ \
-(Apostolic Bible Polyglot interlinear). Your role is to help \
+You are a Berean textual analyst for a SQLite database of the Apostolic Bible Polyglot (ABP) — \
+a Greek interlinear covering both the Septuagint (OT) and New Testament. \
+The corpus spans @@CORPUS_LIST@@. Your role is to help \
 users study what the Greek text actually says — before any later theological framework is applied.
 
 ─── BEREAN METHODOLOGY ─────────────────────────────────────────────────────
@@ -98,6 +98,20 @@ lemmas and Strong's numbers drawn live from the Liddell-Scott-Jones lexicon.
 Use those G-numbers in SQL WHERE clauses against strongs_base (or w.strongs
 for dotted variants). Never invent or guess Strong's numbers not provided in
 the LSJ context block.
+
+─── NEW TESTAMENT COVERAGE ──────────────────────────────────────────────────
+NT books (Matthew through Revelation) are fully indexed with the same Strong's
+numbering system. For any thematic query, generate SQL that covers BOTH OT and
+NT — do NOT add WHERE v.book IN (...) filters unless the query is explicitly
+book-specific. The LSJ LEXICAL CONTEXT block will provide G-numbers valid for
+both testaments. Key NT equivalents the context block may include:
+  G5207 huios   — son (divine sonship: OT + NT)
+  G5043 teknon  — child/children of God (Pauline and Johannine letters)
+  G4151 pneuma  — spirit/breath (OT ruach; NT holy spirit)
+  G4102 pistis  — faith (throughout Pauline corpus)
+  G26   agapē   — love (1 Cor 13, 1 Jn 4)
+  G32   angelos — messenger/angel (both testaments)
+Always UNION OT and NT patterns when a concept spans both corpora.
 
 ─── OUTPUT FORMAT ───────────────────────────────────────────────────────────
 This is a search interface, not a conversation. ALWAYS return the JSON below.
@@ -489,7 +503,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 2
+_CACHE_CODE_VER = 3
 
 
 def _get_ai_cache_ver() -> str:
@@ -1525,9 +1539,8 @@ def ai_search():
                             book, chapter, verse_num,
                         )
                         continue
-                    primary_set.add(key)
                     if key in verse_index:
-                        continue  # already in results; primary_set.add above is enough
+                        continue
                     words = _fetch_verse_words(add_conn, vrow["id"])
                     if words:
                         verse_index[key] = {
@@ -1544,15 +1557,14 @@ def ai_search():
             if new_additional:
                 results = [verse_index[k] for k in new_additional] + results
 
-        # ── Tag is_primary on every result verse ──────────────────────────────
-        # For divine council queries the hardcoded corpus is the sole authority —
-        # Haiku's curation is ignored for primary tagging.
-        if dc_query:
-            for v in results:
-                v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in _DIVINE_COUNCIL_VERSES
-        else:
-            for v in results:
-                v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in primary_set
+        # ── Tag is_primary / is_additional on every result verse ─────────────
+        for v in results:
+            key = (v["book"], v["chapter"], v["verse"])
+            if dc_query:
+                v["is_primary"] = key in _DIVINE_COUNCIL_VERSES
+            else:
+                v["is_primary"] = key in primary_set
+            v["is_additional"] = (key in additional_set) and not v["is_primary"]
 
         # ── Sort in canonical book order (books.id) then chapter/verse ────────
         ord_conn = db_ro()
