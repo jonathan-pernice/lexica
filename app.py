@@ -965,10 +965,14 @@ def lsj_lookup(lemma):
     try:
         if "." in strongs_param:
             snum = strongs_param.lstrip("Gg")
-            abp_row = conn.execute(
-                "SELECT def_html FROM abp_ext WHERE strongs = ? OR strongs = ?",
-                (snum, "G" + snum),
-            ).fetchone()
+            try:
+                abp_row = conn.execute(
+                    "SELECT def_html FROM abp_ext WHERE strongs = ? OR strongs = ?",
+                    (snum, "G" + snum),
+                ).fetchone()
+            except Exception as e:
+                log.warning("abp_ext lookup failed: %s", e)
+                abp_row = None
         else:
             snum = strongs_param
             abp_row = None
@@ -1015,10 +1019,14 @@ def lsj_summary(lemma):
     try:
         if "." in strongs_param:
             snum = strongs_param.lstrip("Gg")
-            abp_row = conn.execute(
-                "SELECT def_html, summary_json FROM abp_ext WHERE strongs = ? OR strongs = ?",
-                (snum, "G" + snum),
-            ).fetchone()
+            try:
+                abp_row = conn.execute(
+                    "SELECT def_html, summary_json FROM abp_ext WHERE strongs = ? OR strongs = ?",
+                    (snum, "G" + snum),
+                ).fetchone()
+            except Exception as e:
+                log.warning("abp_ext summary lookup failed: %s", e)
+                abp_row = None
             if abp_row:
                 row = {"def_html": abp_row["def_html"], "summary_json": abp_row["summary_json"]}
                 abp_strongs = snum
