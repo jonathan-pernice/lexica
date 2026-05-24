@@ -649,13 +649,14 @@ function StudyMode({ allResults, primaryStrongs, onWordClick, onReadInContext })
     }));
   }, [allResults]);
 
-  const primaryGroups = groups
-    .map(g => ({ ...g, verses: g.verses.filter(v => v.is_primary) }))
-    .filter(g => g.verses.length > 0);
+  const hasPrimary = allResults.some(e => e.is_primary);
+  const displayGroups = hasPrimary
+    ? groups.map(g => ({ ...g, verses: g.verses.filter(v => v.is_primary) })).filter(g => g.verses.length > 0)
+    : groups;
 
   return (
     <div className="study-groups">
-      {primaryGroups.map(g => (
+      {displayGroups.map(g => (
         <PassageGroup key={g.label} label={g.label} verses={g.verses} allResults={allResults} onWordClick={onWordClick} onReadInContext={onReadInContext} />
       ))}
     </div>
