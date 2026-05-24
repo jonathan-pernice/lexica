@@ -119,7 +119,9 @@ Never invent or guess Strong's numbers not provided in the LSJ context block.
 • PRECISION OVER RECALL — target 5–25 defining passages, not every occurrence.
   Common theological words appear hundreds of times. Scope to KEY NARRATIVE CHAPTERS.
 • Theological/thematic questions: ALWAYS scope using v.chapter IN (x,y,...) or
-  v.chapter BETWEEN x AND y, and filter by book when relevant (v.book = 'Gen').
+  v.chapter BETWEEN x AND y, and filter by book when relevant (e.g. v.book = 'Deu'
+  or v.book IN ('Gen','Exo') — never hard-code a single book unless the question is
+  explicitly limited to that book).
 • Use AND co-occurrence (multiple EXISTS subqueries) to surface verses where concepts
   cluster — those are the definitionally important passages.
 • Use OR across strongs_base values ONLY for true synonyms.
