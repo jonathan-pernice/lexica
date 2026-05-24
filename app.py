@@ -21,7 +21,8 @@ log = logging.getLogger("bible")
 
 _AI_SYSTEM = """\
 You are a Berean textual analyst for a SQLite database of the Greek Septuagint (LXX) \
-covering Genesis and Exodus (Apostolic Bible Polyglot interlinear). Your role is to help \
+covering the Pentateuch — Genesis, Exodus, Leviticus, Numbers, and Deuteronomy \
+(Apostolic Bible Polyglot interlinear). Your role is to help \
 users study what the Greek text actually says — before any later theological framework is applied.
 
 ─── BEREAN METHODOLOGY ─────────────────────────────────────────────────────
@@ -66,7 +67,7 @@ GREEK FIRST, THEN QUERY STRATEGY
 
 ─── DATABASE SCHEMA ─────────────────────────────────────────────────────────
   verses(id, book TEXT, chapter INTEGER, verse INTEGER)
-        -- book is "Gen" (Genesis) or "Exo" (Exodus)
+        -- book is "Gen" (Genesis), "Exo" (Exodus), "Lev" (Leviticus), "Num" (Numbers), "Deu" (Deuteronomy)
   words(id, verse_id, position INTEGER,
         english TEXT,       -- full ABP gloss, e.g. "my spirit", "of God"
         english_head TEXT,  -- core word, e.g. "spirit", "God"
@@ -96,6 +97,22 @@ Never invent or guess Strong's numbers not provided in the LSJ context block.
   Red Sea crossing  ch 14–15    Sinai arrival    ch 19
   Covenant/law      ch 20–24    Golden calf      ch 32
   Tabernacle design ch 25–31    Tabernacle built ch 35–40
+
+─── KEY NARRATIVE CHAPTERS — Leviticus (book = 'Lev') ───────────────────────
+  Burnt/sin offerings ch 1–7    Priestly ordination ch 8–10
+  Purity laws       ch 11–15    Day of Atonement    ch 16
+  Holiness Code     ch 17–26    Vows & tithes       ch 27
+
+─── KEY NARRATIVE CHAPTERS — Numbers (book = 'Num') ─────────────────────────
+  Census            ch 1–4      Nazarite vow     ch 6
+  Spies/Canaan      ch 13–14    Korah's revolt   ch 16
+  Bronze serpent    ch 21       Balaam           ch 22–24
+  Phinehas          ch 25       Second census    ch 26
+
+─── KEY NARRATIVE CHAPTERS — Deuteronomy (book = 'Deu') ─────────────────────
+  Moses' retrospect ch 1–3      Shema            ch 6
+  Covenant renewal  ch 4–5      Blessings/curses ch 27–28
+  Song of Moses     ch 32       Blessing/death   ch 33–34
 
 ─── QUERY RULES ─────────────────────────────────────────────────────────────
 • Proper nouns (people, places) have strongs = '*'; search english_head LIKE '%name%'
@@ -731,8 +748,12 @@ def ai_search():
             cited_conn = db_ro()
             new_cited = []
             try:
+                _BOOK_NORM = {
+                    "gen": "Gen", "exo": "Exo", "lev": "Lev",
+                    "num": "Num", "deu": "Deu", "dtn": "Deu",
+                }
                 for book_raw, chap_str, verse_str in cited_matches:
-                    book = "Gen" if book_raw.lower().startswith("gen") else "Exo"
+                    book = _BOOK_NORM.get(book_raw.lower()[:3], book_raw.title()[:3])
                     chapter, verse_num = int(chap_str), int(verse_str)
                     key = (book, chapter, verse_num)
                     if key in verse_index:

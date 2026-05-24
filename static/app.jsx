@@ -67,7 +67,13 @@ function flattenAiResults(verses) {
 // ============================================================
 // BOOK LABELS
 // ============================================================
-const BOOK_LABELS = { Gen: "Genesis LXX", Exo: "Exodus LXX" };
+const BOOK_LABELS = {
+  Gen: "Genesis LXX",
+  Exo: "Exodus LXX",
+  Lev: "Leviticus LXX",
+  Num: "Numbers LXX",
+  Deu: "Deuteronomy LXX",
+};
 
 // ============================================================
 // ICONS — minimal line set
@@ -425,7 +431,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               style={{ fontSize: "15px", fontWeight: "600" }}
               onClick={() => onStrongsSearch(entry.strongs_base)}
             >
-              <b>{abpCount}</b>× in Genesis–Exodus LXX <Icon.ArrowRight/>
+              <b>{abpCount}</b>× in Pentateuch LXX <Icon.ArrowRight/>
             </button>
           </section>
         )}
@@ -829,7 +835,7 @@ function App() {
           )}
 
           <footer className="foot">
-            <span>Lexica · Genesis–Exodus LXX · Apostolic Bible Polyglot Interlinear · Strong's Greek</span>
+            <span>Lexica · Pentateuch LXX · Apostolic Bible Polyglot Interlinear · Strong's Greek</span>
           </footer>
         </div>
       </main>
