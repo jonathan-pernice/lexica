@@ -141,7 +141,15 @@ input { font-family: inherit; }
   max-width: 1400px;
   margin: 0 auto;
   padding: 36px 28px 80px;
-  padding-right: 460px;
+}
+.app.has-detail .main-inner {
+  padding-right: calc(460px + 16px);
+}
+@media (max-width: 1100px) {
+  .app.has-detail .main-inner { padding-right: calc(400px + 16px); }
+}
+@media (max-width: 860px) {
+  .app.has-detail .main-inner { padding-right: 28px; }
 }
 
 /* ============================================================
@@ -506,7 +514,6 @@ input { font-family: inherit; }
 }
 @media (max-width: 1100px) {
   .detail-side { width: 400px; }
-  .main-inner { padding-right: 400px; }
 }
 
 /* MOBILE BOTTOM SHEET */
@@ -1226,7 +1233,7 @@ input { font-family: inherit; }
   .hdr-inner { padding: 12px 16px; gap: 16px; }
   .brand-sub { display: none; }
   .hdr-nav { display: none; }
-  .main-inner { padding: 20px 16px 80px; padding-right: 16px; }
+  .main-inner { padding: 20px 16px 80px; }
   .mobile-tabs {
     display: flex;
     position: fixed;
