@@ -1117,19 +1117,25 @@ function App() {
   }, [allResults, mode]);
 
   const [libEverVisited, setLibEverVisited] = useState(false);
+  const searchScrollRef = useRef(0);
 
   const handleReadInContext = (book, chapter, verse) => {
+    searchScrollRef.current = window.scrollY;
     setLibNav({ book, chapter, highlight: verse, scroll: true });
     setLibEverVisited(true);
     setMainView("library");
   };
 
   const handleNavChange = (view) => {
-    setMainView(view);
     if (view === "library") {
+      searchScrollRef.current = window.scrollY;
       setLibEverVisited(true);
       if (!libNav) setLibNav({});
+    } else {
+      const saved = searchScrollRef.current;
+      requestAnimationFrame(() => window.scrollTo(0, saved));
     }
+    setMainView(view);
   };
 
   const handleSearch = async (overrideQ = null, newBreadcrumbs = null, pushHistory = true) => {
