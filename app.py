@@ -1346,7 +1346,7 @@ def ai_search():
 
         sql         = _normalize_union_sql(parsed.get("sql", "").strip())
         explanation = parsed.get("explanation", "")
-        log.debug("SQL from AI: %s", sql)
+        log.info("SQL from AI: %s", sql)
 
         if not re.match(r"^\s*SELECT\b", sql, re.IGNORECASE):
             log.error("AI returned non-SELECT query: %r", sql)
