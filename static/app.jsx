@@ -597,11 +597,31 @@ function StudyMode({ allResults, onWordClick }) {
     }));
   }, [allResults]);
 
+  const primaryGroups    = groups.filter(g =>  g.hasPrimary);
+  const backgroundGroups = groups.filter(g => !g.hasPrimary);
+  const [showBg, setShowBg] = useState(false);
+
   return (
     <div className="study-groups">
-      {groups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} hasPrimary={g.hasPrimary} citedMap={citedMap} onWordClick={onWordClick} />
+      {primaryGroups.map(g => (
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} hasPrimary={true} citedMap={citedMap} onWordClick={onWordClick} />
       ))}
+
+      {backgroundGroups.length > 0 && (
+        <>
+          {showBg && backgroundGroups.map(g => (
+            <PassageGroup key={g.label} label={g.label} verses={g.verses} hasPrimary={false} citedMap={citedMap} onWordClick={onWordClick} />
+          ))}
+          <button
+            className="bg-toggle"
+            onClick={() => setShowBg(s => !s)}
+          >
+            {showBg
+              ? "Hide background results"
+              : `Show background results (${backgroundGroups.length} chapter${backgroundGroups.length !== 1 ? "s" : ""})`}
+          </button>
+        </>
+      )}
     </div>
   );
 }
