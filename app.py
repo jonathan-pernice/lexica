@@ -729,6 +729,15 @@ def _migrate_db():
             conn.commit()
         except sqlite3.OperationalError:
             pass  # column already exists
+        # One-time: clear any abp_ext summaries generated before the G-prefix OR-clause
+        # fix was deployed (they may have been generated from LSJ content instead of ABP).
+        # The presence of abp_summary_v column marks this migration as done.
+        try:
+            conn.execute("ALTER TABLE abp_ext ADD COLUMN abp_summary_v INTEGER DEFAULT 0")
+            conn.execute("UPDATE abp_ext SET summary_json = NULL WHERE summary_json IS NOT NULL")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # already migrated
         # Persistent AI search result cache (survives restarts).
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS ai_search_cache (
@@ -967,7 +976,7 @@ def lsj_lookup(lemma):
             snum = strongs_param.lstrip("Gg")
             try:
                 abp_row = conn.execute(
-                    "SELECT def_html FROM abp_ext WHERE strongs = ? OR strongs = ?",
+                    "SELECT def_html FROM abp_ext WHERE trim(strongs) = ? OR trim(strongs) = ?",
                     (snum, "G" + snum),
                 ).fetchone()
             except Exception as e:
@@ -1021,7 +1030,7 @@ def lsj_summary(lemma):
             snum = strongs_param.lstrip("Gg")
             try:
                 abp_row = conn.execute(
-                    "SELECT def_html, summary_json FROM abp_ext WHERE strongs = ? OR strongs = ?",
+                    "SELECT def_html, summary_json FROM abp_ext WHERE trim(strongs) = ? OR trim(strongs) = ?",
                     (snum, "G" + snum),
                 ).fetchone()
             except Exception as e:
@@ -1097,7 +1106,7 @@ def lsj_summary(lemma):
             conn.commit()
         elif abp_strongs:
             conn.execute(
-                "UPDATE abp_ext SET summary_json = ? WHERE strongs = ? OR strongs = ?",
+                "UPDATE abp_ext SET summary_json = ? WHERE trim(strongs) = ? OR trim(strongs) = ?",
                 (json.dumps(payload), abp_strongs, "G" + abp_strongs),
             )
             conn.commit()
@@ -1123,7 +1132,7 @@ def abp_debug():
             s = word_dots[0]["strongs"]
             sn = s.lstrip("Gg")
             row = conn.execute(
-                "SELECT strongs FROM abp_ext WHERE strongs = ? OR strongs = ? LIMIT 1",
+                "SELECT strongs FROM abp_ext WHERE trim(strongs) = ? OR trim(strongs) = ? LIMIT 1",
                 (sn, "G" + sn),
             ).fetchone()
             sample_hit = {"words_strongs": s, "looked_up": [sn, "G" + sn], "abp_match": row["strongs"] if row else None}

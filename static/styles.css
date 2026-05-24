@@ -720,6 +720,18 @@ input { font-family: inherit; }
   vertical-align: middle;
   margin-left: 6px;
 }
+.abp-badge {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1d6fb8;
+  background: #dbeafe;
+  padding: 2px 6px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 6px;
+}
 .lsj-tabs {
   display: flex;
   gap: 2px;

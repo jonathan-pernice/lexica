@@ -449,14 +449,14 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
                 {lsjEntry && lsjEntry.source === "abp_ext"
-                  ? <span>ABP Extended<span className="lsj-badge">ABP</span></span>
+                  ? <span>ABP Extended<span className="abp-badge">ABP EXT</span></span>
                   : <span>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></span>}
               </h4>
               {lsjEntry && (
                 <div className="lsj-tabs">
                   <button className={"lsj-tab " + (lsjTab === "def"  ? "on" : "")} onClick={() => setLsjTab("def")}>Definition</button>
                   <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>
-                    {lsjEntry.source === "abp_ext" ? "Full text" : "Full LSJ"}
+                    {lsjEntry.source === "abp_ext" ? "Full ABP" : "Full LSJ"}
                   </button>
                 </div>
               )}
