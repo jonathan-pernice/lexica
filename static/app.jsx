@@ -1242,6 +1242,7 @@ function App() {
   return (
     <div className={"app " + (activeEntry ? "has-detail" : "")}>
       <Header activeView={mainView} onNavChange={handleNavChange}/>
+      <div className="app-body">
       <main className="main">
         <div className="main-inner">
           {libEverVisited && (
@@ -1380,6 +1381,8 @@ function App() {
           onReadInContext={handleReadInContext}
         />
       )}
+      </div>
+
       {activeEntry && isMobile && (
         <>
           <div className="sheet-scrim" onClick={() => setActiveEntry(null)}/>

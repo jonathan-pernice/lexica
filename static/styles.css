@@ -56,6 +56,11 @@ input { font-family: inherit; }
   display: flex;
   flex-direction: column;
 }
+.app-body {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+}
 
 /* ============================================================
    HEADER
@@ -136,20 +141,11 @@ input { font-family: inherit; }
 /* ============================================================
    MAIN LAYOUT
 ============================================================ */
-.main { flex: 1; }
+.main { flex: 1; min-width: 0; }
 .main-inner {
-  max-width: 1400px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 36px 28px 80px;
-}
-.app.has-detail .main-inner {
-  padding-right: calc(460px + 16px);
-}
-@media (max-width: 1100px) {
-  .app.has-detail .main-inner { padding-right: calc(400px + 16px); }
-}
-@media (max-width: 860px) {
-  .app.has-detail .main-inner { padding-right: 28px; }
 }
 
 /* ============================================================
@@ -498,22 +494,20 @@ input { font-family: inherit; }
    DETAIL PANEL — DESKTOP SIDEBAR
 ============================================================ */
 .detail-side {
-  position: fixed;
-  top: 0; right: 0; bottom: 0;
   width: 460px;
+  flex-shrink: 0;
   background: var(--paper);
   border-left: 1px solid var(--rule);
-  z-index: 40;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
   display: flex; flex-direction: column;
-  box-shadow: var(--shadow-lg);
-  animation: slide-in 0.25s ease;
+  animation: slide-in 0.2s ease;
 }
 @keyframes slide-in {
   from { transform: translateX(20px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
-}
-@media (max-width: 1100px) {
-  .detail-side { width: 400px; }
 }
 
 /* MOBILE BOTTOM SHEET */
