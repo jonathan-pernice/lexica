@@ -115,8 +115,16 @@ explanation — 1–3 sentences. What does the Greek text reveal: the lexical ra
 of key terms, interpretive translation choices, scholarly disagreement. Never
 describe the query, the SQL, or which passages were targeted.
 
-sql — SELECT only. Never INSERT, UPDATE, DELETE, DROP. Proper nouns use
-strongs = '*'; match them with english_head LIKE. Function words (articles,
+sql — SELECT only. Never INSERT, UPDATE, DELETE, DROP.
+Proper nouns (people, places) are tagged strongs = '*' — no Strong's number exists.
+Match them with english LIKE or english_head LIKE. Examples:
+  WHERE w.english LIKE '%Paul%'
+  WHERE w.english LIKE '%Corinth%' OR w.english LIKE '%Ephesus%'
+  WHERE w.english LIKE '%Paul%' AND v.id IN (
+      SELECT verse_id FROM words WHERE strongs_base = '4198')  -- travel + Paul
+For purely proper-noun queries (e.g. "where did Paul travel"), the WHERE clause
+MUST use english LIKE — a strongs_base filter alone will return nothing.
+Function words (articles,
 prepositions, conjunctions) are filtered from highlighting automatically by LSJ
 part-of-speech data — include them freely in SQL without concern. Return exactly:
   w.strongs_base, w.strongs, w.english, w.english_head,
@@ -172,6 +180,33 @@ def _get_ai_system() -> str:
     return _AI_SYSTEM_BUILT
 
 _STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+
+# Words that start with a capital but are NOT proper nouns for the english LIKE fallback.
+# Theological terms with Strong's numbers (God, Lord, Jesus, Christ) are excluded because
+# they appear in thousands of verses and are already handled by the AI's strongs_base SQL.
+_PROPER_NOUN_STOP = frozenset({
+    "The", "A", "An", "In", "Of", "To", "And", "Or", "But", "With",
+    "For", "At", "By", "From", "Where", "When", "What", "Who", "How",
+    "Why", "Did", "Does", "Do", "Is", "Are", "Was", "Were", "Has",
+    "Have", "Had", "Will", "Would", "Could", "Should", "May", "Might",
+    "Show", "Find", "Get", "Tell", "Give", "Let", "Make", "Take",
+    "All", "His", "Her", "Its", "Our", "Their", "My", "Your",
+    "This", "That", "These", "Those", "There", "Here", "Then",
+    "He", "She", "It", "We", "They", "You", "Me", "Him", "Her",
+    "God", "Lord", "Jesus", "Christ",
+})
+
+
+def _extract_proper_nouns(q: str) -> list[str]:
+    """Return deduplicated capitalized words that look like proper nouns."""
+    seen: set[str] = set()
+    result: list[str] = []
+    for w in re.findall(r'\b[A-Z][a-z]{2,}\b', q):
+        if w not in _PROPER_NOUN_STOP and w not in seen:
+            seen.add(w)
+            result.append(w)
+    return result
+
 
 # Divine council corpus — injected as primary when query matches.
 # Bypasses Haiku curation so results are deterministic regardless of SQL.
@@ -1372,6 +1407,45 @@ def ai_search():
                 cited_conn.close()
             if new_cited:
                 results = [verse_index[k] for k in new_cited] + results
+
+        # ── Step 3.5: Proper noun supplement (english LIKE fallback) ─────────
+        # Proper nouns in ABP are tagged strongs='*' and invisible to Strong's-based SQL.
+        # Extract capitalized words from the query and query the english field directly,
+        # adding any new verses to the result pool before pass-2 curation.
+        proper_nouns = _extract_proper_nouns(q)
+        if proper_nouns:
+            like_clauses = " OR ".join("w.english LIKE ?" for _ in proper_nouns)
+            pn_sql = f"""
+                SELECT DISTINCT v.book, v.chapter, v.verse, v.id AS vid
+                FROM words w
+                JOIN verses v ON w.verse_id = v.id
+                WHERE {like_clauses}
+                ORDER BY v.id
+                LIMIT 300
+            """
+            pn_params = [f"%{pn}%" for pn in proper_nouns]
+            pn_conn = db_ro()
+            new_pn: list = []
+            try:
+                for pr in pn_conn.execute(pn_sql, pn_params).fetchall():
+                    key = (pr["book"], pr["chapter"], pr["verse"])
+                    if key in verse_index:
+                        continue
+                    words = _fetch_verse_words(pn_conn, pr["vid"])
+                    if words:
+                        verse_index[key] = {
+                            "ref": f"{pr['book']} {pr['chapter']}:{pr['verse']}",
+                            "book": pr["book"],
+                            "chapter": pr["chapter"],
+                            "verse": pr["verse"],
+                            "words": words,
+                        }
+                        new_pn.append(key)
+            finally:
+                pn_conn.close()
+            if new_pn:
+                results = results + [verse_index[k] for k in new_pn]
+                log.debug("Proper noun supplement: +%d verses for %s", len(new_pn), proper_nouns)
 
         # ── Pass 2: relevance curation ────────────────────────────────────────
         primary_verses_raw, additional_verses_raw = _curate_primary_verses(q, results)
