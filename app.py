@@ -80,11 +80,24 @@ GREEK FIRST
   lexicon(strongs TEXT PK,  -- matches words.strongs_base
           lemma, translit, strongs_def, kjv_def, derivation)
 
+─── DOTTED STRONG'S VARIANTS ────────────────────────────────────────────────
+The ABP assigns dotted sub-numbers to lexically distinct words that share a base:
+  G1095   γίγας  giant (base form)
+  G1095.1 γίγας  a specific giant variant (distinct lexical entry)
+strongs_base always strips the decimal — both map to strongs_base='1095'.
+To target a specific dotted variant, filter on w.strongs (the exact field):
+  WHERE w.strongs = '1095.1'     -- only the dotted variant
+  WHERE w.strongs_base = '1095'  -- all variants sharing the base
+The LSJ LEXICAL CONTEXT block lists dotted variants present in the corpus.
+Prefer the specific dotted variant when the query targets a distinct concept.
+Never invent dotted numbers — only use ones listed in the LSJ context block.
+
 ─── LSJ LEXICAL CONTEXT ─────────────────────────────────────────────────────
 Each query is prepended with an "LSJ LEXICAL CONTEXT" block listing relevant Greek
 lemmas and Strong's numbers drawn live from the Liddell-Scott-Jones lexicon.
-Use those G-numbers in SQL WHERE clauses against strongs_base.
-Never invent or guess Strong's numbers not provided in the LSJ context block.
+Use those G-numbers in SQL WHERE clauses against strongs_base (or w.strongs
+for dotted variants). Never invent or guess Strong's numbers not provided in
+the LSJ context block.
 
 ─── OUTPUT FORMAT ───────────────────────────────────────────────────────────
 This is a search interface, not a conversation. ALWAYS return the JSON below.
@@ -602,11 +615,19 @@ def _lsj_concept_lookup(terms: list[str]) -> list[dict]:
                         pass
                 if not semantic:
                     semantic = re.sub(r"<[^>]+>", " ", row["def_html"] or "")[:300].strip()
+                # Fetch dotted variants present in the corpus for this base
+                variants = [
+                    v["strongs"] for v in conn.execute(
+                        "SELECT DISTINCT strongs FROM words WHERE strongs LIKE ? AND strongs != ?",
+                        (f"{row['strongs']}.%", row["strongs"]),
+                    ).fetchall()
+                ]
                 results.append({
-                    "strongs":  row["strongs"],
-                    "lemma":    row["lemma"],
-                    "translit": row["translit"],
-                    "semantic": semantic,
+                    "strongs":         row["strongs"],
+                    "lemma":           row["lemma"],
+                    "translit":        row["translit"],
+                    "semantic":        semantic,
+                    "dotted_variants": variants,
                 })
     except Exception as e:
         log.warning("LSJ concept lookup failed: %s", e)
@@ -620,7 +641,12 @@ def _format_lsj_context(entries: list[dict]) -> str:
         return ""
     lines = ["LSJ LEXICAL CONTEXT — use these Strong's numbers in SQL WHERE clauses:"]
     for e in entries:
-        lines.append(f"  G{e['strongs']} {e['lemma']} ({e['translit']}): {e['semantic']}")
+        line = f"  G{e['strongs']} {e['lemma']} ({e['translit']}): {e['semantic']}"
+        variants = e.get("dotted_variants", [])
+        if variants:
+            vlist = ", ".join(f"G{v}" for v in sorted(variants))
+            line += f" [corpus dotted variants: {vlist} — use w.strongs='...' to target specifically]"
+        lines.append(line)
     return "\n".join(lines)
 
 _SENSE_MARKER_RE = re.compile(r'^([IVX]+\.|[A-E]\.|[1-9][0-9]*\.|[a-e]\.)$')
