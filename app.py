@@ -1111,8 +1111,27 @@ def lsj_summary(lemma):
 def abp_debug():
     conn = db()
     try:
-        rows = conn.execute("SELECT strongs, length(def_html) AS dlen FROM abp_ext LIMIT 10").fetchall()
-        return jsonify({"rows": [{"strongs": r["strongs"], "def_html_len": r["dlen"]} for r in rows]})
+        abp_rows = conn.execute(
+            "SELECT strongs, length(def_html) AS dlen FROM abp_ext LIMIT 5"
+        ).fetchall()
+        word_dots = conn.execute(
+            "SELECT DISTINCT strongs FROM words WHERE strongs LIKE '%.%' LIMIT 10"
+        ).fetchall()
+        # Try matching a dotted word strongs against abp_ext
+        sample_hit = None
+        if word_dots:
+            s = word_dots[0]["strongs"]
+            sn = s.lstrip("Gg")
+            row = conn.execute(
+                "SELECT strongs FROM abp_ext WHERE strongs = ? OR strongs = ? LIMIT 1",
+                (sn, "G" + sn),
+            ).fetchone()
+            sample_hit = {"words_strongs": s, "looked_up": [sn, "G" + sn], "abp_match": row["strongs"] if row else None}
+        return jsonify({
+            "abp_sample": [{"strongs": r["strongs"], "def_html_len": r["dlen"]} for r in abp_rows],
+            "words_dotted_strongs": [r["strongs"] for r in word_dots],
+            "sample_match": sample_hit,
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
