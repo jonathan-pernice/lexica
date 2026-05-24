@@ -487,12 +487,19 @@ _ai_cache: dict = {}            # in-memory L1 cache (query → payload)
 _lsj_summary_cache: dict = {}  # keyed on LSJ key; persists for server lifetime
 _ai_cache_ver: str | None = None  # computed once from prompt template + book list
 
+# Bump this integer whenever server-side search logic changes in a way that
+# affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
+_CACHE_CODE_VER = 2
+
+# Cache entries older than this many days are ignored and re-generated.
+_CACHE_TTL_DAYS = 30
+
 
 def _get_ai_cache_ver() -> str:
-    """SHA1 of (system prompt template + sorted book abbreviations).
+    """SHA1 of (system prompt template + book list + code version).
 
-    Automatically invalidates DB cache when books are added or the system
-    prompt template changes — no manual version bump required.
+    Automatically invalidates DB cache when books are added, the system
+    prompt changes, or _CACHE_CODE_VER is bumped.
     """
     global _ai_cache_ver
     if _ai_cache_ver is not None:
@@ -504,33 +511,44 @@ def _get_ai_cache_ver() -> str:
         )
     finally:
         conn.close()
-    raw = _AI_SYSTEM_TMPL + "|books=" + abbrevs
+    raw = _AI_SYSTEM_TMPL + f"|books={abbrevs}|cv={_CACHE_CODE_VER}"
     _ai_cache_ver = hashlib.sha1(raw.encode()).hexdigest()[:16]
     return _ai_cache_ver
 
 
+def _cache_expired(created_at: float) -> bool:
+    return (time.time() - created_at) > _CACHE_TTL_DAYS * 86400
+
+
 def _load_ai_cache_from_db() -> None:
-    """Populate in-memory cache from DB; delete entries from a different version."""
+    """Populate in-memory cache from DB; delete stale-version and expired entries."""
     ver = _get_ai_cache_ver()
+    cutoff = time.time() - _CACHE_TTL_DAYS * 86400
     try:
         conn = db()
         rows = conn.execute(
-            "SELECT query, result_json FROM ai_search_cache WHERE ver_key = ?", (ver,)
+            "SELECT query, result_json, created_at FROM ai_search_cache WHERE ver_key = ?",
+            (ver,),
         ).fetchall()
+        loaded = 0
         for r in rows:
+            if r["created_at"] < cutoff:
+                continue
             try:
                 _ai_cache[r["query"]] = json.loads(r["result_json"])
+                loaded += 1
             except Exception:
                 pass
-        # Prune stale entries from previous prompt/book versions.
+        # Prune wrong-version and expired entries.
         deleted = conn.execute(
-            "DELETE FROM ai_search_cache WHERE ver_key != ?", (ver,)
+            "DELETE FROM ai_search_cache WHERE ver_key != ? OR created_at < ?",
+            (ver, cutoff),
         ).rowcount
         conn.commit()
         conn.close()
         log.info(
-            "AI cache: loaded %d entries (ver=%s), pruned %d stale",
-            len(rows), ver, deleted,
+            "AI cache: loaded %d entries (ver=%s), pruned %d stale/expired",
+            loaded, ver, deleted,
         )
     except Exception as exc:
         log.warning("Could not load AI cache from DB: %s", exc)
