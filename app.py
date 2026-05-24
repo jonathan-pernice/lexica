@@ -491,9 +491,6 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
 _CACHE_CODE_VER = 2
 
-# Cache entries older than this many days are ignored and re-generated.
-_CACHE_TTL_DAYS = 30
-
 
 def _get_ai_cache_ver() -> str:
     """SHA1 of (system prompt template + book list + code version).
@@ -516,39 +513,28 @@ def _get_ai_cache_ver() -> str:
     return _ai_cache_ver
 
 
-def _cache_expired(created_at: float) -> bool:
-    return (time.time() - created_at) > _CACHE_TTL_DAYS * 86400
-
-
 def _load_ai_cache_from_db() -> None:
-    """Populate in-memory cache from DB; delete stale-version and expired entries."""
+    """Populate in-memory cache from DB; delete entries from a different version."""
     ver = _get_ai_cache_ver()
-    cutoff = time.time() - _CACHE_TTL_DAYS * 86400
     try:
         conn = db()
         rows = conn.execute(
-            "SELECT query, result_json, created_at FROM ai_search_cache WHERE ver_key = ?",
-            (ver,),
+            "SELECT query, result_json FROM ai_search_cache WHERE ver_key = ?", (ver,)
         ).fetchall()
-        loaded = 0
         for r in rows:
-            if r["created_at"] < cutoff:
-                continue
             try:
                 _ai_cache[r["query"]] = json.loads(r["result_json"])
-                loaded += 1
             except Exception:
                 pass
-        # Prune wrong-version and expired entries.
+        # Prune wrong-version entries only.
         deleted = conn.execute(
-            "DELETE FROM ai_search_cache WHERE ver_key != ? OR created_at < ?",
-            (ver, cutoff),
+            "DELETE FROM ai_search_cache WHERE ver_key != ?", (ver,)
         ).rowcount
         conn.commit()
         conn.close()
         log.info(
-            "AI cache: loaded %d entries (ver=%s), pruned %d stale/expired",
-            loaded, ver, deleted,
+            "AI cache: loaded %d entries (ver=%s), pruned %d stale",
+            len(rows), ver, deleted,
         )
     except Exception as exc:
         log.warning("Could not load AI cache from DB: %s", exc)
