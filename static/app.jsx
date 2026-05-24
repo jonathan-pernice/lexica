@@ -448,9 +448,9 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
-                {lsjEntry?.source === "abp_ext"
-                  ? <>ABP Extended<span className="lsj-badge">ABP</span></>
-                  : <>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></>}
+                {lsjEntry && lsjEntry.source === "abp_ext"
+                  ? <span>ABP Extended<span className="lsj-badge">ABP</span></span>
+                  : <span>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></span>}
               </h4>
               {lsjEntry && (
                 <div className="lsj-tabs">
@@ -489,7 +489,13 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         {entry.derivation && (
           <section className="detail-section">
             <h4 className="detail-h">Derivation</h4>
-            <p className="detail-p">{entry.derivation}</p>
+            <p className="detail-p">
+              {entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) =>
+                /^G\d[\d.]*/i.test(part)
+                  ? <button key={i} className="link-btn" style={{ fontWeight: "600" }} onClick={() => onStrongsSearch(part)}>{part}</button>
+                  : part
+              )}
+            </p>
           </section>
         )}
 
