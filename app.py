@@ -148,17 +148,22 @@ JOIN: words w JOIN verses v ON w.verse_id = v.id
       LEFT JOIN lexicon l ON l.strongs = w.strongs_base
 End:  ORDER BY v.id, w.position   LIMIT 500
 
-GENITIVE PHRASES ("sons of God", "son of man", "word of God") — use english LIKE
-on the exact phrase rather than Strong's co-occurrence. Co-occurrence of G5207 +
-G2316 matches any verse containing both "son" and "God" regardless of order or
-relationship — this floods results with "sons of Israel", "son of man", and other
-unrelated constructs. The english field stores the full ABP gloss per word, so a
-phrase match is far more precise:
+GENITIVE PHRASES ("sons of God", "son of man", "word of God") — the ABP stores
+the genitive relationship inside a single word's english gloss (e.g. "sons of God"
+appears as one entry). Use english LIKE on the exact phrase:
   WHERE w.english LIKE '%sons of God%' OR w.english LIKE '%son of God%'
   WHERE w.english LIKE '%word of God%'
   WHERE w.english LIKE '%son of man%'
-Use Strong's co-occurrence only when no phrase match is possible (e.g. an abstract
-concept spread across grammatically separate words in the Greek).
+This prevents false positives from Strong's co-occurrence (G5207 + G2316 matches
+any verse with both "son" and "God" regardless of relationship, flooding results
+with "sons of Israel", genealogies, etc.).
+
+ADJECTIVE + NOUN PHRASES ("holy spirit", "living water", "eternal life") — each
+word is a separate DB row, so english LIKE on the full phrase will match nothing.
+Use Strong's numbers instead:
+  G4151 (pneuma/spirit) + G40 (hagios/holy) for holy spirit
+  G2222 (zōē/life) + G166 (aiōnios/eternal) for eternal life
+Never apply the LIKE approach to adjective+noun combinations.
 
 When two NON-PHRASE concepts must appear TOGETHER in the same verse, enforce
 co-occurrence with a subquery — do not rely on post-filtering:
@@ -572,7 +577,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 8
+_CACHE_CODE_VER = 9
 
 
 def _get_ai_cache_ver() -> str:
