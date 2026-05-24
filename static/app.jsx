@@ -529,7 +529,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick }) {
+function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext }) {
   const [words, setWords] = useState(null);
 
   useEffect(() => {
@@ -552,7 +552,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick })
 
   return (
     <div className="study-verse">
-      <span className="study-ref">{label}</span>
+      <button className="study-ref" onClick={() => onReadInContext?.(book, chapter, verse)}>{label}</button>
       <span className="study-text">
         {words === null ? (
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
@@ -583,7 +583,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick })
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, allResults, onWordClick }) {
+function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
@@ -607,6 +607,7 @@ function PassageGroup({ label, verses, allResults, onWordClick }) {
               label={v.ref}
               allResults={allResults}
               onWordClick={onWordClick}
+              onReadInContext={onReadInContext}
             />
           ))}
         </div>
@@ -618,7 +619,7 @@ function PassageGroup({ label, verses, allResults, onWordClick }) {
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
-function StudyMode({ allResults, primaryStrongs, onWordClick }) {
+function StudyMode({ allResults, primaryStrongs, onWordClick, onReadInContext }) {
 
   const groups = useMemo(() => {
     const gMap = {};
@@ -655,7 +656,7 @@ function StudyMode({ allResults, primaryStrongs, onWordClick }) {
   return (
     <div className="study-groups">
       {primaryGroups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} allResults={allResults} onWordClick={onWordClick} />
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} allResults={allResults} onWordClick={onWordClick} onReadInContext={onReadInContext} />
       ))}
     </div>
   );
@@ -1337,7 +1338,7 @@ function App() {
                   <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
                 </div>
               ) : viewMode === "study" ? (
-                <StudyMode allResults={allResults} primaryStrongs={primaryStrongs} onWordClick={(e) => setActiveEntry(e)} />
+                <StudyMode allResults={allResults} primaryStrongs={primaryStrongs} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
               ) : (
                 <div className="results">
                   {displayed.map((entry) => (

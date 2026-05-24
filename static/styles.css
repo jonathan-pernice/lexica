@@ -907,7 +907,11 @@ input { font-family: inherit; }
   letter-spacing: 0.04em;
   align-self: flex-start;
   margin-top: 6px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.12s;
 }
+.study-ref:hover { opacity: 0.75; }
 .study-text {
   font-family: var(--f-serif);
   font-size: 15.5px;
