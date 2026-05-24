@@ -970,7 +970,6 @@ def verse_words(book, chapter, verse):
 @app.route("/api/lsj/<path:lemma>")
 def lsj_lookup(lemma):
     strongs_param = request.args.get("strongs", "")
-    log.info("lsj_lookup: lemma=%r strongs_param=%r", lemma, strongs_param)
     conn = db()
     try:
         if "." in strongs_param:
@@ -980,15 +979,12 @@ def lsj_lookup(lemma):
                     "SELECT def_html FROM abp_ext WHERE trim(strongs) = ? OR trim(strongs) = ?",
                     (snum, "G" + snum),
                 ).fetchone()
-                log.info("lsj_lookup: queried abp_ext for (%r, %r) -> %s",
-                         snum, "G" + snum, "HIT" if abp_row else "MISS")
             except Exception as e:
                 log.warning("abp_ext lookup failed: %s", e)
                 abp_row = None
         else:
             snum = strongs_param
             abp_row = None
-            log.info("lsj_lookup: no dot in strongs_param, skipping abp_ext")
         plain = _strip_accents(lemma).lower()
         row = conn.execute(
             "SELECT key, translit, def_html FROM lsj WHERE key = ?", (lemma,)
@@ -997,12 +993,9 @@ def lsj_lookup(lemma):
             row = conn.execute(
                 "SELECT key, translit, def_html FROM lsj WHERE plain = ?", (plain,)
             ).fetchone()
-        log.info("lsj_lookup: lsj query for key=%r plain=%r -> %s",
-                 lemma, plain, ("HIT key=" + repr(row["key"])) if row else "MISS")
     finally:
         conn.close()
     if abp_row:
-        log.info("lsj_lookup: returning source=abp_ext key=%r", snum)
         return jsonify({
             "key":      snum,
             "translit": "",
@@ -1010,9 +1003,7 @@ def lsj_lookup(lemma):
             "source":   "abp_ext",
         })
     if not row:
-        log.info("lsj_lookup: returning 404")
         return jsonify({"error": "not found"}), 404
-    log.info("lsj_lookup: returning source=lsj key=%r", row["key"])
     return jsonify({
         "key":      row["key"],
         "translit": row["translit"],
@@ -1123,37 +1114,6 @@ def lsj_summary(lemma):
         conn.close()
     _lsj_summary_cache[cache_key] = payload
     return jsonify(payload)
-
-
-@app.route("/api/abp-debug")
-def abp_debug():
-    conn = db()
-    try:
-        abp_rows = conn.execute(
-            "SELECT strongs, length(def_html) AS dlen FROM abp_ext LIMIT 5"
-        ).fetchall()
-        word_dots = conn.execute(
-            "SELECT DISTINCT strongs FROM words WHERE strongs LIKE '%.%' LIMIT 10"
-        ).fetchall()
-        # Try matching a dotted word strongs against abp_ext
-        sample_hit = None
-        if word_dots:
-            s = word_dots[0]["strongs"]
-            sn = s.lstrip("Gg")
-            row = conn.execute(
-                "SELECT strongs FROM abp_ext WHERE trim(strongs) = ? OR trim(strongs) = ? LIMIT 1",
-                (sn, "G" + sn),
-            ).fetchone()
-            sample_hit = {"words_strongs": s, "looked_up": [sn, "G" + sn], "abp_match": row["strongs"] if row else None}
-        return jsonify({
-            "abp_sample": [{"strongs": r["strongs"], "def_html_len": r["dlen"]} for r in abp_rows],
-            "words_dotted_strongs": [r["strongs"] for r in word_dots],
-            "sample_match": sample_hit,
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        conn.close()
 
 
 @app.route("/api/books")
