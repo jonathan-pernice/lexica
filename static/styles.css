@@ -1009,6 +1009,21 @@ input { font-family: inherit; }
   color: var(--ink-3);
   white-space: nowrap;
 }
+.lib-chap-input {
+  width: 3.2ch;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink-3);
+  text-align: center;
+  padding: 0;
+  -moz-appearance: textfield;
+}
+.lib-chap-input::-webkit-inner-spin-button,
+.lib-chap-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.lib-chap-input:focus { outline: none; border-bottom-color: var(--ink); }
 
 .lib-toggles {
   display: flex;

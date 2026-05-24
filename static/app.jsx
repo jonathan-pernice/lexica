@@ -292,14 +292,17 @@ function _stripMd(text) {
     .trim();
 }
 
+const _REFUSAL_RE = /^(I |A\.\s*I |I'm |I don't|I cannot|I appreciate|I need|Unfortunately)/i;
+
 function LsjSummary({ data, loading }) {
   if (loading)
     return <div className="lsj-def" style={{ color: "var(--muted)", fontStyle: "italic" }}>Summarizing…</div>;
-  if (!data || !data.sections || !data.sections.length)
+  const sections = (data?.sections || []).filter(s => s.text && !_REFUSAL_RE.test(s.text));
+  if (!sections.length)
     return <div className="lsj-def" style={{ color: "var(--muted)" }}>No definition available.</div>;
   return (
     <div className="lsj-parsed">
-      {data.sections.map((s, i) => (
+      {sections.map((s, i) => (
         <div key={i} className={"lsj-sense lsj-l" + _senseLevel(s.marker)}>
           {s.marker && <span className="lsj-marker">{s.marker}</span>}
           <span className="lsj-text">{_stripMd(s.text)}</span>
@@ -714,7 +717,7 @@ function groupForGreekMode(words) {
 // ============================================================
 // LIBRARY VIEW
 // ============================================================
-function LibraryView({ nav, onWordClick }) {
+function LibraryView({ nav, onNavChange, onWordClick }) {
   const [books, setBooks] = useState([]);
   const [selBook, setSelBook] = useState(null);
   const [selChapter, setSelChapter] = useState(1);
@@ -756,6 +759,12 @@ function LibraryView({ nav, onWordClick }) {
     if (!nav || !nav.highlight || !highlightRef.current) return;
     setTimeout(() => highlightRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
   }, [nav && nav.highlight, verses]);
+
+  useEffect(() => {
+    if (nav && nav.highlight && selChapter !== nav.chapter) {
+      onNavChange && onNavChange({ ...nav, highlight: null });
+    }
+  }, [selChapter]);
 
   const maxChap = selBook ? selBook.chapters : 1;
   const wordMode = showStrongs || showInterlinear || wordOrder === "greek";
@@ -877,7 +886,19 @@ function LibraryView({ nav, onWordClick }) {
             onClick={() => setSelChapter(c => Math.max(1, c - 1))}
             aria-label="Previous chapter"
           >‹</button>
-          <span className="lib-chap-label">Ch {selChapter} / {maxChap}</span>
+          <span className="lib-chap-label">
+            Ch <input
+              className="lib-chap-input"
+              type="number"
+              min={1}
+              max={maxChap}
+              value={selChapter}
+              onChange={e => {
+                const v = parseInt(e.target.value);
+                if (v >= 1 && v <= maxChap) setSelChapter(v);
+              }}
+            /> / {maxChap}
+          </span>
           <button
             className="lib-nav-btn"
             disabled={selChapter >= maxChap}
@@ -1207,7 +1228,7 @@ function App() {
       <main className="main">
         <div className="main-inner">
           {mainView === "library" ? (
-            <LibraryView nav={libNav} onWordClick={(e) => setActiveEntry(e)} />
+            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => setActiveEntry(e)} />
           ) : (
           <><SearchBar
             q1={q1} setQ1={setQ1}

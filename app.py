@@ -990,22 +990,30 @@ def lsj_summary(lemma):
         _lsj_summary_cache[lemma] = payload
         return jsonify(payload)
 
+    _lsj_refusal_re = re.compile(
+        r'^(I |A\.\s*I |I\'m |I don\'t|I cannot|I appreciate|I need|Unfortunately)',
+        re.IGNORECASE,
+    )
     results = []
     for marker, text in sections:
-        if not text.strip():
+        if len(text.strip()) < 20:
             continue
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=200,
             messages=[{"role": "user", "content": (
-                "Extract only the English definition meaning from this LSJ Greek lexicon entry section. "
-                "Write one to two plain prose sentences. "
-                "Do not use markdown, headers (#), bullet points, or any formatting. "
-                "No Greek phrases, no citations, no abbreviations, no scholarly apparatus. "
-                "Return only the bare sentences, nothing else.\n\n" + text
+                "You are a lexicon summarizer. Extract the English definition from this LSJ Greek lexicon section. "
+                "Write one to two plain prose sentences stating what the word means. "
+                "No markdown, no headers, no bullet points, no Greek text, no citations, no abbreviations. "
+                "If the section contains only grammatical labels or cross-references with no definition, "
+                "write a single sentence summarizing any meaning present. "
+                "Return only the bare sentences.\n\n" + text
             )}],
         )
-        results.append({"marker": marker, "text": msg.content[0].text.strip()})
+        response_text = msg.content[0].text.strip()
+        if _lsj_refusal_re.match(response_text):
+            continue
+        results.append({"marker": marker, "text": response_text})
 
     payload = {"sections": results}
     conn = db()
