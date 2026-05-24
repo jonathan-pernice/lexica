@@ -141,6 +141,7 @@ input { font-family: inherit; }
   max-width: 1400px;
   margin: 0 auto;
   padding: 36px 28px 80px;
+  padding-right: calc(460px + 40px);
 }
 
 /* ============================================================
@@ -505,6 +506,7 @@ input { font-family: inherit; }
 }
 @media (max-width: 1100px) {
   .detail-side { width: 400px; }
+  .main-inner { padding-right: calc(400px + 32px); }
 }
 
 /* MOBILE BOTTOM SHEET */
@@ -1224,7 +1226,7 @@ input { font-family: inherit; }
   .hdr-inner { padding: 12px 16px; gap: 16px; }
   .brand-sub { display: none; }
   .hdr-nav { display: none; }
-  .main-inner { padding: 20px 16px 80px; }
+  .main-inner { padding: 20px 16px 80px; padding-right: 16px; }
   .mobile-tabs {
     display: flex;
     position: fixed;
