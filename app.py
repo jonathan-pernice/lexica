@@ -161,7 +161,9 @@ with "sons of Israel", genealogies, etc.).
 ADJECTIVE + NOUN PHRASES ("holy spirit", "living water", "eternal life") — each
 word is a separate DB row, so english LIKE on the full phrase will match nothing.
 Use Strong's numbers instead:
-  G4151 (pneuma/spirit) + G40 (hagios/holy) for holy spirit
+  G4151 (pneuma/spirit) + G39 or G40 (hagios) for holy spirit — the ABP tags
+  "holy" in "holy spirit" as G39 in NT and G40 in OT; always check both:
+    AND v.id IN (SELECT verse_id FROM words WHERE strongs_base IN ('39','40'))
   G2222 (zōē/life) + G166 (aiōnios/eternal) for eternal life
 Never apply the LIKE approach to adjective+noun combinations.
 
@@ -577,7 +579,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 9
+_CACHE_CODE_VER = 10
 
 
 def _get_ai_cache_ver() -> str:
