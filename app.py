@@ -156,7 +156,10 @@ End:    ORDER BY v.id, w.position   LIMIT 100\
 """
 
 _STRONGS_RE   = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
-_VERSE_REF_RE = re.compile(r'\b(Gen(?:esis)?|Exo(?:dus)?)\s+(\d+):(\d+)\b', re.IGNORECASE)
+_VERSE_REF_RE = re.compile(
+    r'\b(Gen(?:esis)?|Exo(?:dus)?|Lev(?:iticus)?|Num(?:bers)?|Deu(?:t(?:eronomy)?)?)\s+(\d+):(\d+)\b',
+    re.IGNORECASE,
+)
 
 
 def _strip_accents(s: str | None) -> str | None:
