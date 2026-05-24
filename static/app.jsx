@@ -755,15 +755,14 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
   }, [selBook && selBook.abbrev, selChapter]);
 
   useEffect(() => {
-    if (!nav || !nav.highlight || !highlightRef.current) return;
-    setTimeout(() => highlightRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
-  }, [nav && nav.highlight, verses]);
-
-  useEffect(() => {
-    if (nav && nav.highlight && selChapter !== nav.chapter) {
-      onNavChange && onNavChange({ ...nav, highlight: null });
-    }
-  }, [selChapter]);
+    if (!nav?.scroll || !verses.length) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (highlightRef.current) {
+        highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        onNavChange?.({ ...nav, scroll: false });
+      }
+    }));
+  }, [nav?.scroll, verses]);
 
   const maxChap = selBook ? selBook.chapters : 1;
   const wordMode = showStrongs || showInterlinear || wordOrder === "greek";
@@ -1116,14 +1115,20 @@ function App() {
     return seen.size;
   }, [allResults, mode]);
 
+  const [libEverVisited, setLibEverVisited] = useState(false);
+
   const handleReadInContext = (book, chapter, verse) => {
-    setLibNav({ book, chapter, highlight: verse });
+    setLibNav({ book, chapter, highlight: verse, scroll: true });
+    setLibEverVisited(true);
     setMainView("library");
   };
 
   const handleNavChange = (view) => {
     setMainView(view);
-    if (view === "library" && !libNav) setLibNav({});
+    if (view === "library") {
+      setLibEverVisited(true);
+      if (!libNav) setLibNav({});
+    }
   };
 
   const handleSearch = async (overrideQ = null, newBreadcrumbs = null, pushHistory = true) => {
@@ -1232,9 +1237,12 @@ function App() {
       <Header activeView={mainView} onNavChange={handleNavChange}/>
       <main className="main">
         <div className="main-inner">
-          {mainView === "library" ? (
-            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => setActiveEntry(e)} />
-          ) : (
+          {libEverVisited && (
+            <div style={{ display: mainView === "library" ? undefined : "none" }}>
+              <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => setActiveEntry(e)} />
+            </div>
+          )}
+          <div style={{ display: mainView === "library" ? "none" : undefined }}>
           <><SearchBar
             q1={q1} setQ1={setQ1}
             q2={q2} setQ2={setQ2}
@@ -1350,7 +1358,7 @@ function App() {
             <span>Lexica · Greek Septuagint (LXX) · Apostolic Bible Polyglot Interlinear · Strong's Greek</span>
           </footer>
           </>
-          )}
+          </div>
         </div>
       </main>
 
