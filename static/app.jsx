@@ -529,7 +529,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, citedMap, onWordClick }) {
+function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick }) {
   const [words, setWords] = useState(null);
 
   useEffect(() => {
@@ -541,6 +541,15 @@ function VerseStudyRow({ book, chapter, verse, label, citedMap, onWordClick }) {
     return () => { cancelled = true; };
   }, [book, chapter, verse]);
 
+  const entryMap = useMemo(() => {
+    const m = new Map();
+    for (const e of allResults) {
+      if (e.book === book && e.chapter === chapter && e.verse === verse && !m.has(e.strongs_base))
+        m.set(e.strongs_base, e);
+    }
+    return m;
+  }, [allResults, book, chapter, verse]);
+
   return (
     <div className="study-verse">
       <span className="study-ref">{label}</span>
@@ -548,16 +557,23 @@ function VerseStudyRow({ book, chapter, verse, label, citedMap, onWordClick }) {
         {words === null ? (
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
         ) : words.map((w, i) => {
-          const entry = citedMap.get(w.strongs_base);
-          if (entry) {
-            return (
-              <span key={i} className="study-word match" onClick={() => onWordClick(entry)}>
-                <span className="word-badge">G{w.strongs_base}</span>
-                {w.english}{" "}
-              </span>
-            );
-          }
-          return <span key={i} className="study-word">{w.english}{" "}</span>;
+          const clickable = w.strongs_base && w.strongs_base !== "*";
+          const entry = clickable && (entryMap.get(w.strongs_base) || {
+            id: `study-${book}-${chapter}-${verse}-${i}`,
+            strongs: `G${w.strongs_base}`,
+            strongs_base: w.strongs_base,
+            greek: w.lemma || "",
+            translit: w.translit || "",
+            gloss: w.english || "",
+            ref: `${book} ${chapter}:${verse}`,
+            book, chapter, verse,
+            definition: "", derivation: "", is_function: false,
+          });
+          return clickable ? (
+            <span key={i} className="study-word match" onClick={() => onWordClick(entry)}>{w.english}{" "}</span>
+          ) : (
+            <span key={i} className="study-word">{w.english}{" "}</span>
+          );
         })}
       </span>
     </div>
@@ -567,7 +583,7 @@ function VerseStudyRow({ book, chapter, verse, label, citedMap, onWordClick }) {
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, citedMap, onWordClick }) {
+function PassageGroup({ label, verses, allResults, onWordClick }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
@@ -589,7 +605,7 @@ function PassageGroup({ label, verses, citedMap, onWordClick }) {
               chapter={v.chapter}
               verse={v.verse}
               label={v.ref}
-              citedMap={citedMap}
+              allResults={allResults}
               onWordClick={onWordClick}
             />
           ))}
@@ -602,46 +618,7 @@ function PassageGroup({ label, verses, citedMap, onWordClick }) {
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
-const _EN_FUNCTION = new Set([
-  "the","a","an","and","or","but","of","in","to","for","with","at","from","by","on",
-  "as","into","through","all","some","any","each","every","both","his","her","its",
-  "our","their","my","your","he","she","it","they","we","i","you","is","are","was",
-  "were","be","been","have","has","had","do","does","did","not","no","nor","so","if",
-  "when","that","this","these","those","who","which","what","how","also","even","then",
-  "than","thus","now","up","out","about","over","after","before","more","most","such",
-  "own","same","other","us","me","him","them","itself","himself","themselves","ourselves",
-  "said","says","say","shall","will","would","could","should","may","might","must","let",
-  "upon","among","against","between","without","within","until","therefore","because",
-  "yet","still","too","very","just","only","never","always","already","here","there",
-]);
-
 function StudyMode({ allResults, primaryStrongs, onWordClick }) {
-  // citedMap: strongs_base → entry, only for Strong's numbers that appear in
-  // multiple verses (cross-verse frequency ≥ 2), so highlights reflect core
-  // vocabulary rather than every incidental word in the result set.
-  const citedMap = useMemo(() => {
-    // Count how many distinct verses each strongs_base appears in.
-    const verseCount = new Map();
-    for (const e of allResults) {
-      if (e.strongs_base === "*" || e.is_function) continue;
-      if (e.strongs_base === "1473" && primaryStrongs !== "1473") continue;
-      if (_EN_FUNCTION.has((e.gloss || "").toLowerCase().trim())) continue;
-      const key = `${e.book}-${e.chapter}-${e.verse}`;
-      if (!verseCount.has(e.strongs_base)) verseCount.set(e.strongs_base, new Set());
-      verseCount.get(e.strongs_base).add(key);
-    }
-    const threshold = primaryStrongs ? 1 : 2;
-    const m = new Map();
-    for (const e of allResults) {
-      if (e.strongs_base === "*" || e.is_function) continue;
-      if (e.strongs_base === "1473" && primaryStrongs !== "1473") continue;
-      if (_EN_FUNCTION.has((e.gloss || "").toLowerCase().trim())) continue;
-      const count = verseCount.get(e.strongs_base)?.size || 0;
-      if (count >= threshold && !m.has(e.strongs_base))
-        m.set(e.strongs_base, e);
-    }
-    return m;
-  }, [allResults, primaryStrongs]);
 
   const groups = useMemo(() => {
     const gMap = {};
@@ -678,7 +655,7 @@ function StudyMode({ allResults, primaryStrongs, onWordClick }) {
   return (
     <div className="study-groups">
       {primaryGroups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} citedMap={citedMap} onWordClick={onWordClick} />
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} allResults={allResults} onWordClick={onWordClick} />
       ))}
     </div>
   );
