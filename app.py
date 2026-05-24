@@ -1161,8 +1161,12 @@ def ai_search():
             system=_get_ai_system(),
             messages=[{"role": "user", "content": user_content}],
         )
-        raw = msg.content[0].text.strip()
-        log.debug("Haiku raw response: %r", raw[:300])
+        raw = msg.content[0].text.strip() if msg.content else ""
+        log.debug("Haiku raw response (stop=%s): %r", msg.stop_reason, raw[:300])
+
+        if not raw:
+            log.error("AI returned empty response (stop_reason=%s)", msg.stop_reason)
+            return jsonify({"error": "AI returned an empty response — please try again."}), 500
 
         # Extract the JSON object even if surrounded by prose or fences
         start = raw.find("{")
@@ -1176,7 +1180,7 @@ def ai_search():
             parsed = json.loads(candidate)
         except json.JSONDecodeError as e:
             log.error("AI response not valid JSON: %s\nraw=%r", e, raw)
-            return jsonify({"error": f"AI response not valid JSON: {e}", "raw": raw}), 500
+            return jsonify({"error": "AI response not valid JSON — please try again."}), 500
 
         sql         = _normalize_union_sql(parsed.get("sql", "").strip())
         explanation = parsed.get("explanation", "")
