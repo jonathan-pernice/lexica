@@ -141,7 +141,7 @@ input { font-family: inherit; }
   max-width: 1400px;
   margin: 0 auto;
   padding: 36px 28px 80px;
-  padding-right: calc(460px + 40px);
+  padding-right: calc(460px + 16px);
 }
 
 /* ============================================================
@@ -506,7 +506,7 @@ input { font-family: inherit; }
 }
 @media (max-width: 1100px) {
   .detail-side { width: 400px; }
-  .main-inner { padding-right: calc(400px + 32px); }
+  .main-inner { padding-right: calc(400px + 16px); }
 }
 
 /* MOBILE BOTTOM SHEET */
