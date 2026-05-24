@@ -84,6 +84,7 @@ function flattenAiResults(verses) {
         derivation: w.derivation || "",
         is_function: w.is_function || false,
         is_primary: v.is_primary || false,
+        is_additional: v.is_additional || false,
       });
     }
   }
@@ -653,7 +654,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext 
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
-function StudyMode({ allResults, primaryStrongs, onWordClick, onReadInContext }) {
+function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInContext }) {
 
   const groups = useMemo(() => {
     const gMap = {};
@@ -673,6 +674,7 @@ function StudyMode({ allResults, primaryStrongs, onWordClick, onReadInContext })
         gMap[gk].verseMap[vk] = {
           book: entry.book, chapter: entry.chapter, verse: entry.verse, ref: entry.ref,
           is_primary: entry.is_primary,
+          is_additional: entry.is_additional,
         };
         gMap[gk].verseOrder.push(vk);
       }
@@ -684,14 +686,37 @@ function StudyMode({ allResults, primaryStrongs, onWordClick, onReadInContext })
   }, [allResults]);
 
   const hasPrimary = allResults.some(e => e.is_primary);
-  const displayGroups = hasPrimary
+  const hasAdditional = allResults.some(e => e.is_additional);
+
+  const primaryGroups = hasPrimary
     ? groups.map(g => ({ ...g, verses: g.verses.filter(v => v.is_primary) })).filter(g => g.verses.length > 0)
     : groups;
 
+  const additionalGroups = hasAdditional
+    ? groups.map(g => ({ ...g, verses: g.verses.filter(v => v.is_additional) })).filter(g => g.verses.length > 0)
+    : [];
+
+  const otherGroups = (hasPrimary || hasAdditional)
+    ? groups.map(g => ({ ...g, verses: g.verses.filter(v => !v.is_primary && !v.is_additional) })).filter(g => g.verses.length > 0)
+    : [];
+
+  const passageGroupProps = { allResults, onWordClick, onReadInContext };
+
   return (
     <div className="study-groups">
-      {displayGroups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} allResults={allResults} onWordClick={onWordClick} onReadInContext={onReadInContext} />
+      {primaryGroups.map(g => (
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
+      ))}
+      {additionalGroups.length > 0 && (
+        <div className="additional-refs-section">
+          <div className="additional-refs-label">Additional references</div>
+          {additionalGroups.map(g => (
+            <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
+          ))}
+        </div>
+      )}
+      {showAll && otherGroups.map(g => (
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
       ))}
     </div>
   );
@@ -1123,6 +1148,7 @@ function App() {
   const [q2, setQ2] = useState("");
   const [allResults, setAllResults] = useState([]);
   const [aiMeta, setAiMeta] = useState(null);
+  const [showAllAi, setShowAllAi] = useState(false);
   const [mode, setMode] = useState("idle");
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -1278,6 +1304,7 @@ function App() {
     setAiLoading(true);
     setError("");
     setMode("ai");
+    setShowAllAi(false);
     setSortBy("relevance");
     setViewMode("study");
     setActiveEntry(null);
@@ -1289,7 +1316,7 @@ function App() {
         setAiMeta(null);
       } else {
         setAllResults(flattenAiResults(data.results || []));
-        setAiMeta({ query: q, explanation: data.explanation || "" });
+        setAiMeta({ query: q, explanation: data.explanation || "", total: data.total || 0 });
       }
     } catch (e) {
       setError("Network error: " + e.message);
@@ -1359,6 +1386,11 @@ function App() {
                     <>
                       <span className="results-count">{loading ? "…" : primaryVerseCount}</span>
                       <span className="results-label">primary {primaryVerseCount === 1 ? "verse" : "verses"}</span>
+                      {!loading && aiMeta && aiMeta.total > primaryVerseCount && (
+                        <button className="see-all-link" onClick={() => setShowAllAi(v => !v)}>
+                          {showAllAi ? "Show less" : `See all ${aiMeta.total} occurrences`}
+                        </button>
+                      )}
                     </>
                   ) : (
                     <>
@@ -1408,7 +1440,7 @@ function App() {
                   <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
                 </div>
               ) : viewMode === "study" ? (
-                <StudyMode allResults={allResults} primaryStrongs={primaryStrongs} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
+                <StudyMode allResults={allResults} primaryStrongs={primaryStrongs} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
               ) : (
                 <div className="results">
                   {displayed.map((entry) => (
