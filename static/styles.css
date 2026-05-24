@@ -915,7 +915,7 @@ input { font-family: inherit; }
 .study-text {
   font-family: var(--f-serif);
   font-size: 15.5px;
-  line-height: 3;
+  line-height: 1.8;
   color: var(--ink);
   flex: 1;
 }
@@ -925,8 +925,9 @@ input { font-family: inherit; }
   border-radius: 3px;
   text-decoration: underline dotted var(--ink-4);
   text-underline-offset: 3px;
-  padding: 0 2px;
+  padding: 1px 2px;
   margin: 0 1px;
+  vertical-align: baseline;
   transition: background 0.12s;
 }
 .study-word.match:hover { background: var(--accent-soft); }
