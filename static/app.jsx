@@ -58,6 +58,8 @@ function flattenAiResults(verses) {
         verse: v.verse,
         definition: w.strongs_def || "",
         derivation: w.derivation || "",
+        is_function: w.is_function || false,
+        is_primary: v.is_primary || false,
       });
     }
   }
@@ -518,8 +520,8 @@ function VerseStudyRow({ book, chapter, verse, label, citedMap, onWordClick }) {
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, citedMap, onWordClick }) {
-  const [open, setOpen] = useState(true);
+function PassageGroup({ label, verses, hasPrimary, citedMap, onWordClick }) {
+  const [open, setOpen] = useState(hasPrimary);
   return (
     <div className="study-group">
       <button
@@ -554,11 +556,12 @@ function PassageGroup({ label, verses, citedMap, onWordClick }) {
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
 function StudyMode({ allResults, onWordClick }) {
-  // Global map of cited Strong's numbers → entry (for sidebar on click)
+  // citedMap: strongs_base → entry, content words only (function words excluded)
   const citedMap = useMemo(() => {
     const m = new Map();
     for (const e of allResults) {
-      if (e.strongs_base !== "*" && !m.has(e.strongs_base)) m.set(e.strongs_base, e);
+      if (e.strongs_base !== "*" && !e.is_function && !m.has(e.strongs_base))
+        m.set(e.strongs_base, e);
     }
     return m;
   }, [allResults]);
@@ -571,29 +574,33 @@ function StudyMode({ allResults, onWordClick }) {
       if (!gMap[gk]) {
         gMap[gk] = {
           label: `${BOOK_LABELS[entry.book] || entry.book} · Chapter ${entry.chapter}`,
+          hasPrimary: false,
           verseMap: {},
           verseOrder: [],
         };
         gOrder.push(gk);
       }
+      if (entry.is_primary) gMap[gk].hasPrimary = true;
       const vk = `${entry.book}-${entry.chapter}-${entry.verse}`;
       if (!gMap[gk].verseMap[vk]) {
         gMap[gk].verseMap[vk] = {
           book: entry.book, chapter: entry.chapter, verse: entry.verse, ref: entry.ref,
+          is_primary: entry.is_primary,
         };
         gMap[gk].verseOrder.push(vk);
       }
     }
     return gOrder.map(gk => ({
-      label: gMap[gk].label,
-      verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
+      label:      gMap[gk].label,
+      hasPrimary: gMap[gk].hasPrimary,
+      verses:     gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
     }));
   }, [allResults]);
 
   return (
     <div className="study-groups">
       {groups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} citedMap={citedMap} onWordClick={onWordClick} />
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} hasPrimary={g.hasPrimary} citedMap={citedMap} onWordClick={onWordClick} />
       ))}
     </div>
   );

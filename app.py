@@ -21,7 +21,6 @@ log = logging.getLogger("bible")
 
 # @@CORPUS_LIST@@  — comma-separated full book names, e.g. "Genesis, Exodus, …"
 # @@SCHEMA_BOOKS@@ — schema comment listing abbrev→name pairs
-# @@NARRATIVE_CHAPTERS@@ — one ─── KEY NARRATIVE CHAPTERS block per loaded book
 _AI_SYSTEM_TMPL = """\
 You are a Berean textual analyst for a SQLite database of the Greek Septuagint (LXX) \
 covering @@CORPUS_LIST@@ \
@@ -62,11 +61,11 @@ HONEST ABOUT SCHOLARLY DISAGREEMENT
   is functional or ontological), present the range of positions. Do not present
   one reading as obvious when it is contested.
 
-GREEK FIRST, THEN QUERY STRATEGY
+GREEK FIRST
   Your explanation MUST open with what the Greek says — the lexical range of the
   key term(s), how the LXX uses them in this corpus, and any translation choices
-  worth flagging. Only after that should you describe which chapters are targeted
-  and why. Never open the explanation with "The query targets…" or similar.
+  worth flagging. Never open with "The query targets…" or any description of the
+  search strategy.
 
 ─── DATABASE SCHEMA ─────────────────────────────────────────────────────────
   verses(id, book TEXT, chapter INTEGER, verse INTEGER)
@@ -85,47 +84,37 @@ lemmas and Strong's numbers drawn live from the Liddell-Scott-Jones lexicon.
 Use those G-numbers in SQL WHERE clauses against strongs_base.
 Never invent or guess Strong's numbers not provided in the LSJ context block.
 
-@@NARRATIVE_CHAPTERS@@
-
-─── QUERY RULES ─────────────────────────────────────────────────────────────
-• Proper nouns (people, places) have strongs = '*'; search english_head LIKE '%name%'
-• PRECISION OVER RECALL — target 5–25 defining passages, not every occurrence.
-  Common theological words appear hundreds of times. Scope to KEY NARRATIVE CHAPTERS.
-• Theological/thematic questions: ALWAYS scope using v.chapter IN (x,y,...) or
-  v.chapter BETWEEN x AND y, and filter by book when relevant (e.g. v.book = 'Deu'
-  or v.book IN ('Gen','Exo') — never hard-code a single book unless the question is
-  explicitly limited to that book).
-• Use AND co-occurrence (multiple EXISTS subqueries) to surface verses where concepts
-  cluster — those are the definitionally important passages.
-• Use OR across strongs_base values ONLY for true synonyms.
-• Use LIKE … COLLATE NOCASE for any text matching
-• SELECT only — never INSERT, UPDATE, DELETE, DROP
-
 ─── OUTPUT FORMAT ───────────────────────────────────────────────────────────
 Return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
-  "explanation": "<1–3 sentences on what the text reveals: the theological content and significance of the passages found. Apply Berean principles — note the semantic range of key terms, flag interpretive translation choices, name scholarly disagreement where present. Orient the reader to what the Greek says and why these passages matter. Never describe the search, the query, which chapters were targeted, or how the results were found.>",
-  "sql": "<SELECT query>",
-  "must_cooccur": ["<strongs_base>", ...]
+  "explanation": "...",
+  "sql": "SELECT ...",
+  "must_cooccur": [...],
+  "primary_verses": [...]
 }
 
-The explanation is about content, not process. It tells the reader what the text
-reveals — not how the search was constructed or which chapters were queried.
-Write it as a Berean synthesis: what does the Greek say, what is contested, what
-is theologically significant about these verses. Maximum 3 sentences.
+explanation — 1–3 sentences. What does the Greek text reveal: the lexical range
+of key terms, interpretive translation choices, scholarly disagreement. Never
+describe the query, the SQL, or which passages were targeted.
 
-must_cooccur is REQUIRED whenever multiple Strong's numbers must co-occur in the
-same verse. Set to [] for single-concept queries. The server enforces co-occurrence
-as a post-filter, so you can use a simple IN(...) WHERE clause in the SQL rather
-than nested EXISTS — but you MUST populate must_cooccur correctly.
-
-The SELECT must return exactly these columns in this order:
+sql — SELECT only. Never INSERT, UPDATE, DELETE, DROP. Proper nouns use
+strongs = '*'; match them with english_head LIKE. Function words (articles,
+prepositions, conjunctions) are filtered from highlighting automatically by LSJ
+part-of-speech data — include them freely in SQL without concern. Return exactly:
   w.strongs_base, w.strongs, w.english, w.english_head,
   v.book, v.chapter, v.verse,
   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
-Join:   words w JOIN verses v ON w.verse_id = v.id
-        LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-End:    ORDER BY v.id, w.position   LIMIT 100\
+JOIN: words w JOIN verses v ON w.verse_id = v.id
+      LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+End:  ORDER BY v.id, w.position   LIMIT 100
+
+must_cooccur — strongs_base values that MUST co-occur in the same verse. Set to
+[] for single-concept queries. The server enforces this as a post-filter.
+
+primary_verses — 3–8 verse references (e.g. "Deu 32:8", "Gen 1:26") that most
+directly exemplify the concept being studied. The UI expands only these by
+default; all other results collapse. Choose definitionally important verses, not
+just frequent occurrences.\
 """
 
 _AI_SYSTEM_BUILT: str | None = None
@@ -138,7 +127,7 @@ def _get_ai_system() -> str:
     conn = db()
     try:
         rows = conn.execute(
-            "SELECT abbrev, name, re_alt, narrative FROM books ORDER BY id"
+            "SELECT abbrev, name FROM books ORDER BY id"
         ).fetchall()
     finally:
         conn.close()
@@ -146,35 +135,31 @@ def _get_ai_system() -> str:
     names   = [r[1] for r in rows]
     abbrevs = [r[0] for r in rows]
 
-    # "Genesis, Exodus, Leviticus, Numbers, and Deuteronomy"
     if len(names) == 1:
         corpus_list = names[0]
     else:
         corpus_list = ", ".join(names[:-1]) + ", and " + names[-1]
 
-    # book is "Gen" (Genesis), "Exo" (Exodus), …
     schema_books = ", ".join(f'"{a}" ({n})' for a, n in zip(abbrevs, names))
-
-    # One ─── KEY NARRATIVE CHAPTERS block per book
-    sections = []
-    for abbrev, name, _, narrative in rows:
-        if not narrative:
-            continue
-        bar_len = max(4, 78 - len(f"─── KEY NARRATIVE CHAPTERS — {name} (book = '{abbrev}') "))
-        header  = f"─── KEY NARRATIVE CHAPTERS — {name} (book = '{abbrev}') " + "─" * bar_len
-        sections.append(f"{header}\n{narrative}")
-    narrative_chapters = "\n\n".join(sections)
 
     _AI_SYSTEM_BUILT = (
         _AI_SYSTEM_TMPL
         .replace("@@CORPUS_LIST@@", corpus_list)
         .replace("@@SCHEMA_BOOKS@@", schema_books)
-        .replace("@@NARRATIVE_CHAPTERS@@", narrative_chapters)
     )
     log.debug("Built AI system prompt for books: %s", abbrevs)
     return _AI_SYSTEM_BUILT
 
 _STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+
+# Normalise raw book strings (from AI output or regex captures) to DB abbreviations.
+_BOOK_NORM: dict[str, str] = {
+    "gen": "Gen", "genesis": "Gen",
+    "exo": "Exo", "exod": "Exo", "exodus": "Exo",
+    "lev": "Lev", "leviticus": "Lev",
+    "num": "Num", "numbers": "Num",
+    "deu": "Deu", "dtn": "Deu", "deut": "Deu", "deuteronomy": "Deu",
+}
 
 _VERSE_REF_RE: re.Pattern | None = None
 
@@ -215,21 +200,35 @@ def _clean_gloss(s: str | None) -> str | None:
     return s.rstrip(" ,;:.!?")
 _ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v5
 
-# LSJ-based function word detection
+# LSJ part-of-speech detection for function words.
+# LSJ def_html has two POS patterns:
+#   Short entries: <b>WORD</b>, Conj., …
+#   Long entries:  <b>WORD</b>, (many variant forms) … <b>PREP.</b> WITH DAT. …
+# We check both: plain-text POS near the headword AND bold POS section headers.
 _LSJ_FUNC_WORD_RE = re.compile(
-    r'^(?:'
-    r'Prep\.|Conj\.|Part(?:icle)?\.|Art(?:icle)?\.|'
-    r'[Pp]reposition\b|[Cc]onjunction\b|[Pp]article\b|[Aa]rticle\b|'
-    r'[Aa]\s+(?:primary\s+)?(?:preposition|particle|conjunction|article)'
+    r'\b(?:'
+    r'Prep(?:osition)?[.,\s]|Conj(?:unction)?[.,\s]|Part(?:icle)?[.,\s]|'
+    r'Art(?:icle)?[.,\s]|definite\s+article\b|'
+    r'preposition\b|conjunction\b|particle\b|article\b'
     r')',
+    re.IGNORECASE,
+)
+_LSJ_FUNC_BOLD_RE = re.compile(
+    r'<b>(?:PREP(?:OSITION)?|CONJ(?:UNCTION)?|PART(?:ICLE)?|ART(?:ICLE)?)[.,\s<]',
     re.IGNORECASE,
 )
 
 
 def _is_lsj_function_word(def_html: str) -> bool:
     """Return True if the LSJ entry is a grammatical function word (not a content word)."""
-    text = re.sub(r"<[^>]+>", " ", def_html or "").strip()
-    return bool(_LSJ_FUNC_WORD_RE.match(text[:300]))
+    html = def_html or ''
+    # Fast path: bold POS section header anywhere in the entry (e.g. <b>PREP.</b>)
+    if _LSJ_FUNC_BOLD_RE.search(html[:3000]):
+        return True
+    # Slow path: strip the opening headword, then look for POS in plain text
+    tail = re.sub(r'^\s*<b>[^<]*</b>', '', html.strip())
+    text = re.sub(r'<[^>]+>', ' ', tail[:300]).strip()
+    return bool(_LSJ_FUNC_WORD_RE.search(text[:200]))
 
 
 _FUNCTION_STRONGS: set[str] = set()  # strongs_base values that are function words
@@ -735,6 +734,7 @@ def ai_search():
         sql          = parsed.get("sql", "").strip()
         explanation  = parsed.get("explanation", "")
         must_cooccur = [str(s) for s in parsed.get("must_cooccur", [])]
+        primary_verses_raw = parsed.get("primary_verses", [])
         log.debug("SQL from AI: %s", sql)
         log.debug("must_cooccur: %s", must_cooccur)
 
@@ -769,48 +769,55 @@ def ai_search():
             if not r["english"] or r["strongs_base"] == "*":
                 continue
             verse_index[key]["words"].append({
-                "strongs":     r["strongs"],
+                "strongs":      r["strongs"],
                 "strongs_base": r["strongs_base"],
-                "gloss":       _clean_gloss(r["english"]),
-                "lemma":       r["lemma"],
-                "translit":    r["translit"],
-                "strongs_def": (r["strongs_def"] or "").strip(),
-                "kjv_def":     r["kjv_def"],
-                "derivation":  (r["derivation"] or "").strip(),
+                "is_function":  r["strongs_base"] in _FUNCTION_STRONGS,
+                "gloss":        _clean_gloss(r["english"]),
+                "lemma":        r["lemma"],
+                "translit":     r["translit"],
+                "strongs_def":  (r["strongs_def"] or "").strip(),
+                "kjv_def":      r["kjv_def"],
+                "derivation":   (r["derivation"] or "").strip(),
             })
 
         results = [verse_index[k] for k in verse_order if verse_index[k]["words"]]
         log.debug("Grouped into %d verses", len(results))
 
-        # Fetch any verses explicitly cited in the explanation that SQL missed.
-        # Cited verses use the full word list (all words in the verse) and are
-        # exempt from must_cooccur — the AI named them directly.
+        # Build the set of verse keys that must be force-fetched and shown:
+        # (a) verses explicitly cited in the explanation text
+        # (b) verses in the AI's primary_verses list
+        # Both bypass must_cooccur and are fetched from DB if missing from SQL results.
+        def _norm_book(raw: str) -> str:
+            key = raw.lower().rstrip(".")
+            return _BOOK_NORM.get(key) or _BOOK_NORM.get(key[:3]) or raw.title()[:3]
+
         cited_keys: set = set()
-        cited_matches = _get_verse_ref_re().findall(explanation)
-        if cited_matches:
-            cited_conn = db_ro()
-            new_cited = []
+        for book_raw, chap_str, verse_str in _get_verse_ref_re().findall(explanation):
+            cited_keys.add((_norm_book(book_raw), int(chap_str), int(verse_str)))
+
+        primary_set: set = set()
+        ref_re = re.compile(r'(\w+)\s+(\d+):(\d+)')
+        for ref_str in (primary_verses_raw or []):
+            m = ref_re.search(str(ref_str).strip())
+            if m:
+                primary_set.add((_norm_book(m.group(1)), int(m.group(2)), int(m.group(3))))
+
+        forced_keys = cited_keys | primary_set
+        if forced_keys:
+            forced_conn = db_ro()
+            new_forced = []
             try:
-                _BOOK_NORM = {
-                    "gen": "Gen", "exo": "Exo", "lev": "Lev",
-                    "num": "Num", "deu": "Deu", "dtn": "Deu",
-                }
-                for book_raw, chap_str, verse_str in cited_matches:
-                    book = _BOOK_NORM.get(book_raw.lower()[:3], book_raw.title()[:3])
-                    chapter, verse_num = int(chap_str), int(verse_str)
-                    key = (book, chapter, verse_num)
-                    cited_keys.add(key)
+                for key in forced_keys:
                     if key in verse_index:
-                        # Already in results from SQL — still mark as cited so
-                        # must_cooccur doesn't drop it.
-                        continue
-                    vrow = cited_conn.execute(
+                        continue  # already present; is_primary tagged below
+                    book, chapter, verse_num = key
+                    vrow = forced_conn.execute(
                         "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
                         (book, chapter, verse_num),
                     ).fetchone()
                     if not vrow:
                         continue
-                    wrows = cited_conn.execute(
+                    wrows = forced_conn.execute(
                         """SELECT w.strongs_base, w.strongs, w.english,
                                   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
                            FROM words w
@@ -825,6 +832,7 @@ def ai_search():
                         {
                             "strongs":      wr["strongs"],
                             "strongs_base": wr["strongs_base"],
+                            "is_function":  wr["strongs_base"] in _FUNCTION_STRONGS,
                             "gloss":        _clean_gloss(wr["english"]),
                             "lemma":        wr["lemma"],
                             "translit":     wr["translit"],
@@ -842,18 +850,29 @@ def ai_search():
                             "verse":   verse_num,
                             "words":   words,
                         }
-                        new_cited.append(key)
-                        log.debug("Cited verse fetched: %s %d:%d", book, chapter, verse_num)
+                        new_forced.append(key)
+                        log.debug("Force-fetched verse: %s %d:%d", book, chapter, verse_num)
             finally:
-                cited_conn.close()
-            if new_cited:
-                results = [verse_index[k] for k in new_cited] + results
+                forced_conn.close()
+            if new_forced:
+                # Primary verses first, then cited-only, then SQL results
+                prim_new  = [k for k in new_forced if k in primary_set]
+                other_new = [k for k in new_forced if k not in primary_set]
+                results = (
+                    [verse_index[k] for k in prim_new] +
+                    [verse_index[k] for k in other_new] +
+                    results
+                )
+
+        # Tag is_primary on every verse
+        for v in results:
+            v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in primary_set
 
         if must_cooccur:
             before = len(results)
             results = [
                 v for v in results
-                if (v["book"], v["chapter"], v["verse"]) in cited_keys
+                if (v["book"], v["chapter"], v["verse"]) in forced_keys
                 or all(
                     any(w["strongs_base"] == s for w in v["words"])
                     for s in must_cooccur
