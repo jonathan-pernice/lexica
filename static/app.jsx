@@ -172,9 +172,6 @@ function Header({ activeView, onNavChange }) {
           <button className={"hdr-link " + (activeView === "library" ? "active" : "")} onClick={() => onNavChange("library")}>Library</button>
         </nav>
         <div className="hdr-right">
-          <button className="hdr-icon-btn" aria-label="Saved">
-            <Icon.Bookmark/>
-          </button>
           <div className="hdr-avatar">JM</div>
         </div>
       </div>
@@ -426,7 +423,6 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             >
               <Icon.Copy/>
             </button>
-            <button className="tool-btn" title="Save"><Icon.Bookmark/></button>
             <button className="tool-btn" title="Share"><Icon.Share/></button>
           </div>
           <div className="detail-gloss">{entry.gloss}</div>
@@ -1381,6 +1377,18 @@ function App() {
         </>
       )}
     </div>
+      {isMobile && (
+        <nav className="mobile-tabs">
+          <button className={"mobile-tab" + (mainView === "search" ? " active" : "")} onClick={() => handleNavChange("search")}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+            Search
+          </button>
+          <button className={"mobile-tab" + (mainView === "library" ? " active" : "")} onClick={() => handleNavChange("library")}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3"/></svg>
+            Library
+          </button>
+        </nav>
+      )}
   );
 }
 
