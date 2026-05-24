@@ -1111,20 +1111,7 @@ function SearchBreadcrumb({ breadcrumbs, currentLabel, onNav }) {
 // ============================================================
 // AI ANSWER STRIP
 // ============================================================
-function AIAnswer({ query, explanation, entries, onPick }) {
-  const uniqueEntries = useMemo(() => {
-    const seen = new Set();
-    const result = [];
-    for (const e of entries) {
-      if (!seen.has(e.strongs_raw)) {
-        seen.add(e.strongs_raw);
-        result.push(e);
-        if (result.length >= 6) break;
-      }
-    }
-    return result;
-  }, [entries]);
-
+function AIAnswer({ query, explanation, keyStrongs, onStrongsSearch }) {
   return (
     <section className="ai-answer">
       <div className="ai-answer-head">
@@ -1135,14 +1122,16 @@ function AIAnswer({ query, explanation, entries, onPick }) {
         <span className="ai-q">"{query}"</span>
       </div>
       <p className="ai-answer-body">{explanation}</p>
-      <div className="ai-cites">
-        <span className="ai-cites-label">Cited:</span>
-        {uniqueEntries.map((e) => (
-          <button key={e.id} className="ai-cite" onClick={() => onPick(e)}>
-            {e.strongs} {e.greek}
-          </button>
-        ))}
-      </div>
+      {keyStrongs && keyStrongs.length > 0 && (
+        <div className="ai-cites">
+          <span className="ai-cites-label">Cited:</span>
+          {keyStrongs.map((ks) => (
+            <button key={ks.strongs} className="ai-cite" onClick={() => onStrongsSearch(ks.strongs_base)}>
+              {ks.strongs} {ks.lemma}
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
@@ -1378,7 +1367,7 @@ function App() {
         setAiMeta(null);
       } else {
         setAllResults(flattenAiResults(data.results || []));
-        setAiMeta({ query: q, explanation: data.explanation || "", total: data.total || 0 });
+        setAiMeta({ query: q, explanation: data.explanation || "", total: data.total || 0, keyStrongs: data.key_strongs || [] });
       }
     } catch (e) {
       setError("Network error: " + e.message);
@@ -1428,8 +1417,8 @@ function App() {
             <AIAnswer
               query={aiMeta.query}
               explanation={aiMeta.explanation}
-              entries={allResults}
-              onPick={(e) => setActiveEntry(e)}
+              keyStrongs={aiMeta.keyStrongs || []}
+              onStrongsSearch={handleStrongsSearch}
             />
           )}
 

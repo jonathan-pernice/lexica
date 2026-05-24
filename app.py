@@ -135,12 +135,16 @@ relevant SQL that covers the likely intent.
 Return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
   "explanation": "...",
-  "sql": "SELECT ..."
+  "sql": "SELECT ...",
+  "key_strongs": ["4102", "26"]
 }
 
 explanation — 1–3 sentences. What does the Greek text reveal: the lexical range
 of key terms, interpretive translation choices, scholarly disagreement. Never
 describe the query, the SQL, or which passages were targeted.
+key_strongs — up to 6 Strong's base numbers (digits only, no "G" prefix) that your
+explanation explicitly discusses, ordered by centrality to the query. Omit particles,
+articles, prepositions, and other function words.
 
 sql — SELECT only. Never INSERT, UPDATE, DELETE, DROP.
 Proper nouns (people, places) are tagged strongs = '*' — no Strong's number exists.
@@ -592,7 +596,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 11
+_CACHE_CODE_VER = 12
 
 
 def _get_ai_cache_ver() -> str:
@@ -1438,6 +1442,31 @@ def ai_search():
         log.info("SQL from AI: %s", sql)
         app.logger.warning("AI generated SQL: %s", sql)
 
+        # Extract key_strongs from AI response; fall back to LSJ lookup entries
+        _ks_raw = parsed.get("key_strongs") or []
+        if not isinstance(_ks_raw, list):
+            _ks_raw = []
+        _ks_raw = [re.sub(r'^[Gg]', '', str(s)).strip() for s in _ks_raw[:6]]
+        _ks_raw = [s for s in _ks_raw if re.match(r'^\d+(?:\.\d+)?$', s)]
+        if not _ks_raw:
+            _ks_raw = [e["strongs"] for e in lsj_entries[:6]]
+        key_strongs_data: list[dict] = []
+        if _ks_raw:
+            ks_conn = db_ro()
+            try:
+                for sn in _ks_raw:
+                    row = ks_conn.execute(
+                        "SELECT lemma, translit FROM lexicon WHERE strongs = ?", (sn,)
+                    ).fetchone()
+                    key_strongs_data.append({
+                        "strongs_base": sn,
+                        "strongs": f"G{sn}",
+                        "lemma":   (row["lemma"]   if row else "") or "",
+                        "translit":(row["translit"] if row else "") or "",
+                    })
+            finally:
+                ks_conn.close()
+
         if not re.match(r"^\s*SELECT\b", sql, re.IGNORECASE):
             log.error("AI returned non-SELECT query: %r", sql)
             return jsonify({"error": "AI returned a non-SELECT query", "sql": sql}), 400
@@ -1672,7 +1701,7 @@ def ai_search():
         )
 
         payload = {"results": results, "total": len(results),
-                   "explanation": explanation}
+                   "explanation": explanation, "key_strongs": key_strongs_data}
         _ai_cache[q] = payload
         _persist_ai_cache(q, payload)
         return jsonify(payload)
