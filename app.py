@@ -218,14 +218,26 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
 
 
 _CURATION_SYSTEM = """\
-You are evaluating Septuagint verse translations for direct relevance to a search query.
+You are selecting primary evidence verses for a word study of the Greek Septuagint.
 Return ONLY valid JSON: {"primary_verses": ["Book Ch:V", ...]}
 
-Include a verse only if the queried concept is explicitly named or directly enacted in it.
-Exclude verses where the concept word appears incidentally — in a genealogy, a list,
-a narrative setting clause, or background context where the concept is not the subject.
-Inclusion test: does this verse directly demonstrate the concept, or merely contain
-a related word? Only include verses that pass the first condition.
+A verse is PRIMARY EVIDENCE if a scholar or student studying this topic would
+cite it in their analysis. Include a verse when it does any of the following:
+
+  • Makes the concept the grammatical subject, object, or predicate
+  • Shows the concept acting, being described, named, or qualified
+  • Establishes the existence, identity, or role of the concept
+  • Places the concept in a theologically significant relationship
+  • Provides evidence (even indirect) that a careful reader would cite
+
+A verse is BACKGROUND — exclude it — only when the query word appears with no
+bearing on the study topic at all: a personal name in an unrelated genealogy,
+a bare preposition, a place name, or a counting formula where the word is purely
+grammatical filler with no connection to the concept being studied.
+
+When in doubt, include. Err toward broader coverage. A typical study would
+rather have one extra verse than miss key evidence.
+
 Select 3–8 verses maximum.\
 """
 
@@ -289,7 +301,7 @@ def _clean_gloss(s: str | None) -> str | None:
     if not s:
         return s
     return s.rstrip(" ,;:.!?")
-_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v7
+_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v8
 
 # LSJ part-of-speech detection for function words.
 # LSJ def_html has two POS patterns:
