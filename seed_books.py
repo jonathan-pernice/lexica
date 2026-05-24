@@ -357,6 +357,246 @@ KNOWN_BOOKS: dict[str, dict] = {
             "  Tithing           ch 3        Day of the Lord  ch 4"
         ),
     },
+    # ── New Testament ──────────────────────────────────────────────────────────
+    "Mat": {
+        "name": "Matthew",
+        "re_alt": r"Mat(?:t(?:hew)?)?",
+        "narrative": (
+            "  Genealogy/birth   ch 1–2      Sermon on Mount  ch 5–7\n"
+            "  Twelve sent out   ch 10       Parables         ch 13\n"
+            "  Peter's confession ch 16      Transfiguration  ch 17\n"
+            "  Triumphal entry   ch 21       Olivet discourse ch 24–25\n"
+            "  Passion/death     ch 26–27    Resurrection     ch 28"
+        ),
+    },
+    "Mar": {
+        "name": "Mark",
+        "re_alt": r"Mar(?:k)?",
+        "narrative": (
+            "  Baptism/temptation ch 1       Twelve appointed ch 3\n"
+            "  Feeding 5000      ch 6        Transfiguration  ch 9\n"
+            "  Triumphal entry   ch 11       Olivet discourse ch 13\n"
+            "  Passion/death     ch 14–15    Resurrection     ch 16"
+        ),
+    },
+    "Luk": {
+        "name": "Luke",
+        "re_alt": r"Luk(?:e)?",
+        "narrative": (
+            "  Birth narratives  ch 1–2      Sermon on Plain  ch 6\n"
+            "  Good Samaritan    ch 10       Prodigal son     ch 15\n"
+            "  Rich man/Lazarus  ch 16       Zacchaeus        ch 19\n"
+            "  Passion/death     ch 22–23    Emmaus road      ch 24"
+        ),
+    },
+    "Joh": {
+        "name": "John",
+        "re_alt": r"Joh(?:n)?",
+        "narrative": (
+            "  Logos prologue    ch 1        Wedding at Cana  ch 2\n"
+            "  Born again        ch 3        Bread of life    ch 6\n"
+            "  Light of world    ch 8        Lazarus raised   ch 11\n"
+            "  Upper room disc.  ch 13–17    Passion/death    ch 18–19\n"
+            "  Resurrection      ch 20–21"
+        ),
+    },
+    "Act": {
+        "name": "Acts",
+        "re_alt": r"Act(?:s)?",
+        "narrative": (
+            "  Pentecost         ch 2        Stephen martyred ch 7\n"
+            "  Philip/eunuch     ch 8        Paul's conversion ch 9\n"
+            "  Peter/Cornelius   ch 10       Jerusalem council ch 15\n"
+            "  Paul's journeys   ch 13–21    Rome imprisonment ch 28"
+        ),
+    },
+    "Rom": {
+        "name": "Romans",
+        "re_alt": r"Rom(?:ans?)?",
+        "narrative": (
+            "  All have sinned   ch 1–3      Justification    ch 3–5\n"
+            "  Death to sin      ch 6        Spirit's life    ch 8\n"
+            "  Israel's future   ch 9–11     Living sacrifice ch 12"
+        ),
+    },
+    "1Co": {
+        "name": "1 Corinthians",
+        "re_alt": r"1\s*Cor?(?:inthians?)?",
+        "narrative": (
+            "  Church divisions  ch 1–4      Sexual ethics    ch 5–6\n"
+            "  Marriage          ch 7        Idol food        ch 8–10\n"
+            "  Lord's supper     ch 11       Spiritual gifts  ch 12–14\n"
+            "  Resurrection      ch 15"
+        ),
+    },
+    "2Co": {
+        "name": "2 Corinthians",
+        "re_alt": r"2\s*Cor?(?:inthians?)?",
+        "narrative": (
+            "  Ministry/suffering ch 1–7     Collection       ch 8–9\n"
+            "  Boasting/weakness ch 10–12    Apostolic auth.  ch 13"
+        ),
+    },
+    "Gal": {
+        "name": "Galatians",
+        "re_alt": r"Gal(?:atians?)?",
+        "narrative": (
+            "  Gospel defended   ch 1–2      Justification    ch 2–3\n"
+            "  Law & promise     ch 3–4      Fruit of Spirit  ch 5\n"
+            "  Sowing/reaping    ch 6"
+        ),
+    },
+    "Eph": {
+        "name": "Ephesians",
+        "re_alt": r"Eph(?:esians?)?",
+        "narrative": (
+            "  Chosen in Christ  ch 1        One body         ch 2\n"
+            "  Mystery revealed  ch 3        Church unity     ch 4\n"
+            "  Armor of God      ch 6"
+        ),
+    },
+    "Php": {
+        "name": "Philippians",
+        "re_alt": r"Php|Phi|Phil(?:ippians?)?",
+        "narrative": (
+            "  Joy in suffering  ch 1        Christ's humility ch 2\n"
+            "  Righteousness     ch 3        Peace of God     ch 4"
+        ),
+    },
+    "Col": {
+        "name": "Colossians",
+        "re_alt": r"Col(?:ossians?)?",
+        "narrative": (
+            "  Christ supremacy  ch 1        Against false teaching ch 2\n"
+            "  New self          ch 3        Household code   ch 3–4"
+        ),
+    },
+    "1Th": {
+        "name": "1 Thessalonians",
+        "re_alt": r"1\s*Th(?:ess(?:alonians?)?)?",
+        "narrative": (
+            "  Model church      ch 1        Paul's ministry  ch 2\n"
+            "  Timothy's report  ch 3        Sexual holiness  ch 4\n"
+            "  Day of the Lord   ch 5"
+        ),
+    },
+    "2Th": {
+        "name": "2 Thessalonians",
+        "re_alt": r"2\s*Th(?:ess(?:alonians?)?)?",
+        "narrative": (
+            "  Persecution       ch 1        Man of lawlessness ch 2\n"
+            "  Work ethic        ch 3"
+        ),
+    },
+    "1Ti": {
+        "name": "1 Timothy",
+        "re_alt": r"1\s*Ti(?:m(?:othy)?)?",
+        "narrative": (
+            "  False teachers    ch 1        Prayer/worship   ch 2\n"
+            "  Elders/deacons    ch 3        Sound doctrine   ch 4\n"
+            "  Widows/elders     ch 5        Contentment      ch 6"
+        ),
+    },
+    "2Ti": {
+        "name": "2 Timothy",
+        "re_alt": r"2\s*Ti(?:m(?:othy)?)?",
+        "narrative": (
+            "  Fan the flame     ch 1        Approved worker  ch 2\n"
+            "  Last days         ch 3        Scripture useful ch 3\n"
+            "  Preach the word   ch 4"
+        ),
+    },
+    "Tit": {
+        "name": "Titus",
+        "re_alt": r"Tit(?:us)?",
+        "narrative": (
+            "  Elders in Crete   ch 1        Sound teaching   ch 2\n"
+            "  Good deeds        ch 3"
+        ),
+    },
+    "Phm": {
+        "name": "Philemon",
+        "re_alt": r"Phm|Philem(?:on)?",
+        "narrative": (
+            "  Onesimus returned v 1–25"
+        ),
+    },
+    "Heb": {
+        "name": "Hebrews",
+        "re_alt": r"Heb(?:rews?)?",
+        "narrative": (
+            "  Son superior      ch 1–2      Sabbath rest     ch 3–4\n"
+            "  High priest       ch 4–7      New covenant     ch 8\n"
+            "  Tabernacle/blood  ch 9        Faith chapter    ch 11\n"
+            "  Discipline        ch 12"
+        ),
+    },
+    "Jas": {
+        "name": "James",
+        "re_alt": r"Jas(?:ames?)?|Jam(?:es)?",
+        "narrative": (
+            "  Trials & wisdom   ch 1        Faith & works    ch 2\n"
+            "  Taming the tongue ch 3        Worldliness      ch 4\n"
+            "  Rich oppressors   ch 5        Prayer           ch 5"
+        ),
+    },
+    "1Pe": {
+        "name": "1 Peter",
+        "re_alt": r"1\s*Pe(?:t(?:er)?)?",
+        "narrative": (
+            "  Living hope       ch 1        Holy nation      ch 2\n"
+            "  Suffering unjustly ch 2–3     Fiery trial      ch 4\n"
+            "  Elders/humility   ch 5"
+        ),
+    },
+    "2Pe": {
+        "name": "2 Peter",
+        "re_alt": r"2\s*Pe(?:t(?:er)?)?",
+        "narrative": (
+            "  Virtues           ch 1        False prophets   ch 2\n"
+            "  Day of the Lord   ch 3"
+        ),
+    },
+    "1Jn": {
+        "name": "1 John",
+        "re_alt": r"1\s*Joh?n?",
+        "narrative": (
+            "  God is light      ch 1–2      Love one another ch 3–4\n"
+            "  Born of God       ch 5        Eternal life     ch 5"
+        ),
+    },
+    "2Jn": {
+        "name": "2 John",
+        "re_alt": r"2\s*Joh?n?",
+        "narrative": (
+            "  Walk in truth     v 1–13      Deceivers warned v 7–11"
+        ),
+    },
+    "3Jn": {
+        "name": "3 John",
+        "re_alt": r"3\s*Joh?n?",
+        "narrative": (
+            "  Gaius commended   v 1–12      Diotrephes rebuked v 9–10"
+        ),
+    },
+    "Jud": {
+        "name": "Jude",
+        "re_alt": r"Jud(?:e)?",
+        "narrative": (
+            "  Contend for faith v 1–25      False teachers   v 4–16\n"
+            "  Doxology          v 24–25"
+        ),
+    },
+    "Rev": {
+        "name": "Revelation",
+        "re_alt": r"Rev(?:elation)?",
+        "narrative": (
+            "  Seven churches    ch 2–3      Throne vision    ch 4–5\n"
+            "  Seven seals       ch 6–8      Seven trumpets   ch 8–11\n"
+            "  Dragon/beast      ch 12–13    Seven bowls      ch 15–16\n"
+            "  Babylon falls     ch 17–18    New Jerusalem    ch 21–22"
+        ),
+    },
 }
 
 

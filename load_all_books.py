@@ -11,11 +11,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-HERE      = Path(__file__).parent
-TEXTS_DIR = HERE / "abp_texts"
-DB        = sys.argv[1] if len(sys.argv) > 1 else str(HERE / "bible.db")
+HERE       = Path(__file__).parent
+TEXTS_DIRS = [HERE / "abp_texts", HERE / "abp_nt_texts"]
+DB         = sys.argv[1] if len(sys.argv) > 1 else str(HERE / "bible.db")
 
 CANONICAL_ORDER = [
+    # Old Testament
     "genesis", "exodus", "leviticus", "numbers", "deuteronomy",
     "joshua", "judges", "ruth", "1samuel", "2samuel",
     "1kings", "2kings", "1chronicles", "2chronicles",
@@ -24,6 +25,13 @@ CANONICAL_ORDER = [
     "lamentations", "ezekiel", "daniel", "hosea", "joel",
     "amos", "obadiah", "jonah", "micah", "nahum",
     "habakkuk", "zephaniah", "haggai", "zechariah", "malachi",
+    # New Testament
+    "matthew", "mark", "luke", "john", "acts",
+    "romans", "1corinthians", "2corinthians", "galatians", "ephesians",
+    "philippians", "colossians", "1thessalonians", "2thessalonians",
+    "1timothy", "2timothy", "titus", "philemon", "hebrews",
+    "james", "1peter", "2peter", "1john", "2john", "3john",
+    "jude", "revelation",
 ]
 
 _VERSE_HEADER_RE = re.compile(r'\((\S+)\s+\d+:\d+\)')
@@ -58,7 +66,10 @@ def _sort_key(path: Path) -> int:
 
 
 def main() -> None:
-    txt_files = sorted(TEXTS_DIR.glob("abp_*.txt"), key=_sort_key)
+    txt_files = sorted(
+        (f for d in TEXTS_DIRS if d.exists() for f in d.glob("abp_*.txt")),
+        key=_sort_key,
+    )
     if not txt_files:
         print(f"No abp_*.txt files found in {TEXTS_DIR}")
         sys.exit(1)

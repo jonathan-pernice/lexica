@@ -1260,7 +1260,7 @@ def ai_search():
         log.debug("Calling Haiku for SQL generation…")
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=1500,
+            max_tokens=2000,
             temperature=0,
             system=_get_ai_system(),
             messages=[{"role": "user", "content": user_content}],
