@@ -109,17 +109,7 @@ JOIN: words w JOIN verses v ON w.verse_id = v.id
 End:  ORDER BY v.id, w.position   LIMIT 100
 
 must_cooccur — strongs_base values that MUST co-occur in the same verse. Set to
-[] for single-concept queries. The server enforces this as a post-filter.
-
-primary_verses — 3–8 verse references (e.g. "Deu 32:8", "Gen 1:26") where the
-queried concept is explicitly named or directly enacted. The UI expands only
-these by default; all other results collapse.
-
-Inclusion test: does this verse directly demonstrate the concept, or does it
-merely contain a related word as background, genealogy, or narrative context?
-Only include verses that pass the first condition. A verse where the word
-appears incidentally in a list, lineage, or scene-setting clause fails the test
-even if the Strong's number matches.\
+[] for single-concept queries. The server enforces this as a post-filter.\
 """
 
 _AI_SYSTEM_BUILT: str | None = None
@@ -198,12 +188,108 @@ def _strip_accents(s: str | None) -> str | None:
     )
 
 
+def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
+    """Return the full word list for a verse, used when fetching cited/primary verses."""
+    wrows = conn.execute(
+        """SELECT w.strongs_base, w.strongs, w.english,
+                  l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
+           FROM words w
+           LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+           WHERE w.verse_id = ?
+             AND w.english IS NOT NULL AND w.english != ''
+             AND w.strongs_base != '*'
+           ORDER BY w.position""",
+        (verse_id,),
+    ).fetchall()
+    return [
+        {
+            "strongs":      wr["strongs"],
+            "strongs_base": wr["strongs_base"],
+            "is_function":  wr["strongs_base"] in _FUNCTION_STRONGS,
+            "gloss":        _clean_gloss(wr["english"]),
+            "lemma":        wr["lemma"],
+            "translit":     wr["translit"],
+            "strongs_def":  (wr["strongs_def"] or "").strip(),
+            "kjv_def":      wr["kjv_def"],
+            "derivation":   (wr["derivation"] or "").strip(),
+        }
+        for wr in wrows
+    ]
+
+
+_CURATION_SYSTEM = """\
+You are evaluating Septuagint verse translations for direct relevance to a search query.
+Return ONLY valid JSON: {"primary_verses": ["Book Ch:V", ...]}
+
+Include a verse only if the queried concept is explicitly named or directly enacted in it.
+Exclude verses where the concept word appears incidentally — in a genealogy, a list,
+a narrative setting clause, or background context where the concept is not the subject.
+Inclusion test: does this verse directly demonstrate the concept, or merely contain
+a related word? Only include verses that pass the first condition.
+Select 3–8 verses maximum.\
+"""
+
+
+def _curate_primary_verses(query: str, results: list[dict]) -> list[str]:
+    """Pass 2: send actual verse texts to Haiku and return curated primary verse refs."""
+    if not results or not _anthropic:
+        return []
+
+    # Batch-fetch full English text for each result verse (all words, not just matched)
+    capped = results[:50]
+    if capped:
+        or_parts = " OR ".join(
+            "(v.book=? AND v.chapter=? AND v.verse=?)" for _ in capped
+        )
+        params = [x for v in capped for x in (v["book"], v["chapter"], v["verse"])]
+        conn = db_ro()
+        try:
+            wrows = conn.execute(
+                f"""SELECT v.book, v.chapter, v.verse, w.english
+                    FROM words w JOIN verses v ON w.verse_id = v.id
+                    WHERE ({or_parts})
+                      AND w.english IS NOT NULL AND w.english != ''
+                    ORDER BY v.id, w.position""",
+                params,
+            ).fetchall()
+        finally:
+            conn.close()
+
+        texts: dict[str, list[str]] = {}
+        for r in wrows:
+            ref = f"{r['book']} {r['chapter']}:{r['verse']}"
+            texts.setdefault(ref, []).append(r["english"])
+        verse_list = "\n".join(
+            f"{ref}: {' '.join(words)[:300]}" for ref, words in texts.items()
+        )
+    else:
+        verse_list = ""
+
+    try:
+        msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            system=_CURATION_SYSTEM,
+            messages=[{
+                "role": "user",
+                "content": f"Query: {query}\n\nVerses:\n{verse_list}",
+            }],
+        )
+        raw = msg.content[0].text.strip()
+        s, e = raw.find("{"), raw.rfind("}")
+        parsed = json.loads(raw[s:e + 1]) if s != -1 and e > s else {}
+        return [str(r) for r in parsed.get("primary_verses", [])]
+    except Exception as exc:
+        log.warning("Pass-2 curation failed: %s", exc)
+        return []
+
+
 def _clean_gloss(s: str | None) -> str | None:
     """Strip trailing punctuation that ABP interlinear leaves on phrase-boundary words."""
     if not s:
         return s
     return s.rstrip(" ,;:.!?")
-_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v6
+_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v7
 
 # LSJ part-of-speech detection for function words.
 # LSJ def_html has two POS patterns:
@@ -739,7 +825,6 @@ def ai_search():
         sql          = parsed.get("sql", "").strip()
         explanation  = parsed.get("explanation", "")
         must_cooccur = [str(s) for s in parsed.get("must_cooccur", [])]
-        primary_verses_raw = parsed.get("primary_verses", [])
         log.debug("SQL from AI: %s", sql)
         log.debug("must_cooccur: %s", must_cooccur)
 
@@ -757,7 +842,7 @@ def ai_search():
             conn.close()
         log.debug("SQL returned %d rows", len(rows))
 
-        # Group word-level rows into one entry per verse
+        # ── Group word-level rows into one entry per verse ───────────────────
         verse_index = {}
         verse_order = []
         for r in rows:
@@ -788,102 +873,99 @@ def ai_search():
         results = [verse_index[k] for k in verse_order if verse_index[k]["words"]]
         log.debug("Grouped into %d verses", len(results))
 
-        # Build the set of verse keys that must be force-fetched and shown:
-        # (a) verses explicitly cited in the explanation text
-        # (b) verses in the AI's primary_verses list
-        # Both bypass must_cooccur and are fetched from DB if missing from SQL results.
+        # ── Helper: normalise raw book strings to DB abbreviations ────────────
         def _norm_book(raw: str) -> str:
             key = raw.lower().rstrip(".")
             return _BOOK_NORM.get(key) or _BOOK_NORM.get(key[:3]) or raw.title()[:3]
 
+        # ── Fetch verses cited in the explanation that SQL missed ─────────────
         cited_keys: set = set()
         for book_raw, chap_str, verse_str in _get_verse_ref_re().findall(explanation):
             cited_keys.add((_norm_book(book_raw), int(chap_str), int(verse_str)))
 
-        primary_set: set = set()
-        ref_re = re.compile(r'(\w+)\s+(\d+):(\d+)')
-        for ref_str in (primary_verses_raw or []):
-            m = ref_re.search(str(ref_str).strip())
-            if m:
-                primary_set.add((_norm_book(m.group(1)), int(m.group(2)), int(m.group(3))))
-
-        forced_keys = cited_keys | primary_set
-        if forced_keys:
-            forced_conn = db_ro()
-            new_forced = []
+        if cited_keys:
+            cited_conn = db_ro()
+            new_cited = []
             try:
-                for key in forced_keys:
+                for key in cited_keys:
                     if key in verse_index:
-                        continue  # already present; is_primary tagged below
+                        continue
                     book, chapter, verse_num = key
-                    vrow = forced_conn.execute(
+                    vrow = cited_conn.execute(
                         "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
                         (book, chapter, verse_num),
                     ).fetchone()
                     if not vrow:
                         continue
-                    wrows = forced_conn.execute(
-                        """SELECT w.strongs_base, w.strongs, w.english,
-                                  l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
-                           FROM words w
-                           LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-                           WHERE w.verse_id = ?
-                             AND w.english IS NOT NULL AND w.english != ''
-                             AND w.strongs_base != '*'
-                           ORDER BY w.position""",
-                        (vrow["id"],),
-                    ).fetchall()
-                    words = [
-                        {
-                            "strongs":      wr["strongs"],
-                            "strongs_base": wr["strongs_base"],
-                            "is_function":  wr["strongs_base"] in _FUNCTION_STRONGS,
-                            "gloss":        _clean_gloss(wr["english"]),
-                            "lemma":        wr["lemma"],
-                            "translit":     wr["translit"],
-                            "strongs_def":  (wr["strongs_def"] or "").strip(),
-                            "kjv_def":      wr["kjv_def"],
-                            "derivation":   (wr["derivation"] or "").strip(),
-                        }
-                        for wr in wrows
-                    ]
+                    words = _fetch_verse_words(cited_conn, vrow["id"])
                     if words:
                         verse_index[key] = {
-                            "ref":     f"{book} {chapter}:{verse_num}",
-                            "book":    book,
-                            "chapter": chapter,
-                            "verse":   verse_num,
-                            "words":   words,
+                            "ref": f"{book} {chapter}:{verse_num}",
+                            "book": book, "chapter": chapter, "verse": verse_num,
+                            "words": words,
                         }
-                        new_forced.append(key)
-                        log.debug("Force-fetched verse: %s %d:%d", book, chapter, verse_num)
+                        new_cited.append(key)
+                        log.debug("Cited verse fetched: %s %d:%d", book, chapter, verse_num)
             finally:
-                forced_conn.close()
-            if new_forced:
-                # Primary verses first, then cited-only, then SQL results
-                prim_new  = [k for k in new_forced if k in primary_set]
-                other_new = [k for k in new_forced if k not in primary_set]
-                results = (
-                    [verse_index[k] for k in prim_new] +
-                    [verse_index[k] for k in other_new] +
-                    results
-                )
+                cited_conn.close()
+            if new_cited:
+                results = [verse_index[k] for k in new_cited] + results
 
-        # Tag is_primary on every verse
-        for v in results:
-            v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in primary_set
-
+        # ── must_cooccur filter (cited verses are exempt) ─────────────────────
         if must_cooccur:
             before = len(results)
             results = [
                 v for v in results
-                if (v["book"], v["chapter"], v["verse"]) in forced_keys
+                if (v["book"], v["chapter"], v["verse"]) in cited_keys
                 or all(
                     any(w["strongs_base"] == s for w in v["words"])
                     for s in must_cooccur
                 )
             ]
             log.debug("must_cooccur filter: %d -> %d verses", before, len(results))
+
+        # ── Pass 2: relevance curation ────────────────────────────────────────
+        primary_verses_raw = _curate_primary_verses(q, results)
+        log.debug("Pass-2 primary_verses: %s", primary_verses_raw)
+
+        # ── Build primary_set and fetch any missing primary verses ────────────
+        ref_re = re.compile(r'(\w+)\s+(\d+):(\d+)')
+        primary_set: set = set()
+        for ref_str in primary_verses_raw:
+            m = ref_re.search(str(ref_str).strip())
+            if m:
+                primary_set.add((_norm_book(m.group(1)), int(m.group(2)), int(m.group(3))))
+
+        missing_primary = [k for k in primary_set if k not in verse_index]
+        if missing_primary:
+            prim_conn = db_ro()
+            new_primary = []
+            try:
+                for key in missing_primary:
+                    book, chapter, verse_num = key
+                    vrow = prim_conn.execute(
+                        "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
+                        (book, chapter, verse_num),
+                    ).fetchone()
+                    if not vrow:
+                        continue
+                    words = _fetch_verse_words(prim_conn, vrow["id"])
+                    if words:
+                        verse_index[key] = {
+                            "ref": f"{book} {chapter}:{verse_num}",
+                            "book": book, "chapter": chapter, "verse": verse_num,
+                            "words": words,
+                        }
+                        new_primary.append(key)
+                        log.debug("Primary verse fetched: %s %d:%d", book, chapter, verse_num)
+            finally:
+                prim_conn.close()
+            if new_primary:
+                results = [verse_index[k] for k in new_primary] + results
+
+        # ── Tag is_primary on every result verse ──────────────────────────────
+        for v in results:
+            v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in primary_set
 
         payload = {"results": results, "total": len(results),
                    "explanation": explanation}
