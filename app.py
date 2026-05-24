@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 import logging
 import os
 import re
 import sqlite3
+import time
 import traceback
 from html.parser import HTMLParser
 
@@ -85,12 +87,15 @@ Use those G-numbers in SQL WHERE clauses against strongs_base.
 Never invent or guess Strong's numbers not provided in the LSJ context block.
 
 ─── OUTPUT FORMAT ───────────────────────────────────────────────────────────
+This is a search interface, not a conversation. ALWAYS return the JSON below.
+Never ask the user for clarification. Never explain why you can't answer.
+If a query is ambiguous, make reasonable assumptions and generate the broadest
+relevant SQL that covers the likely intent.
+
 Return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
   "explanation": "...",
-  "sql": "SELECT ...",
-  "must_cooccur": [...],
-  "primary_verses": [...]
+  "sql": "SELECT ..."
 }
 
 explanation — 1–3 sentences. What does the Greek text reveal: the lexical range
@@ -106,10 +111,18 @@ part-of-speech data — include them freely in SQL without concern. Return exact
   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
 JOIN: words w JOIN verses v ON w.verse_id = v.id
       LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-End:  ORDER BY v.id, w.position   LIMIT 100
+End:  ORDER BY v.id, w.position   LIMIT 500
 
-must_cooccur — strongs_base values that MUST co-occur in the same verse. Set to
-[] for single-concept queries. The server enforces this as a post-filter.\
+When two concepts must appear TOGETHER in the same verse (e.g. "sons of God"
+needs both G5207 and G2316), enforce co-occurrence inside the WHERE clause with
+a subquery — do not rely on post-filtering:
+  WHERE w.strongs_base = '5207'
+    AND v.id IN (SELECT verse_id FROM words WHERE strongs_base = '2316')
+
+When a concept has multiple lexical realizations, write a UNION ALL covering all
+patterns. Each branch should enforce its own co-occurrence via subquery where
+relevant. Every branch must select the same columns above; omit both ORDER BY and
+LIMIT on UNION queries — the server wraps them in a subquery and handles ordering.\
 """
 
 _AI_SYSTEM_BUILT: str | None = None
@@ -147,6 +160,28 @@ def _get_ai_system() -> str:
 
 _STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
 
+# Divine council corpus — injected as primary when query matches.
+# Bypasses Haiku curation so results are deterministic regardless of SQL.
+_DIVINE_COUNCIL_VERSES: frozenset = frozenset({
+    ("Gen",  1, 26), ("Gen",  3, 22), ("Gen",  6,  2), ("Gen",  6,  4), ("Gen", 11,  7),
+    ("Deu", 32,  8), ("Deu", 32, 43),
+    ("1Ki", 22, 19), ("1Ki", 22, 20),
+    ("Job",  1,  6), ("Job",  2,  1),
+    ("Psa", 29,  1), ("Psa", 82,  1), ("Psa", 82,  6), ("Psa", 89,  5), ("Psa", 89,  7),
+    ("Isa",  6,  1), ("Isa",  6,  8),
+    ("Zec",  3,  1), ("Zec",  3,  2),
+})
+
+
+_DIVINE_COUNCIL_RE = re.compile(
+    r'\b(?:divine\s+council|sons?\s+of\s+(?:god|the\s+gods?|the\s+most\s+high)|'
+    r'divine\s+being|heavenly\s+assembly|bene\s+[ae]lohim|holy\s+ones?|'
+    r'heavenly\s+court|host\s+of\s+heaven|divine\s+assembly|'
+    r'council\s+of\s+(?:god|the\s+holy)|gods?\s+of\s+the\s+nations?|'
+    r'elohim\s+council|seraphim?|huioi?\s+tou\s+theou)\b',
+    re.IGNORECASE,
+)
+
 # Normalise raw book strings (from AI output or regex captures) to DB abbreviations.
 _BOOK_NORM: dict[str, str] = {
     "gen": "Gen", "genesis": "Gen",
@@ -154,9 +189,20 @@ _BOOK_NORM: dict[str, str] = {
     "lev": "Lev", "leviticus": "Lev",
     "num": "Num", "numbers": "Num",
     "deu": "Deu", "dtn": "Deu", "deut": "Deu", "deuteronomy": "Deu",
+    # DB abbreviation doesn't match title()[:3] for these two books
+    "jud": "Jdg", "judg": "Jdg", "judges": "Jdg",
+    "rut": "Rth", "ruth": "Rth",
 }
 
 _VERSE_REF_RE: re.Pattern | None = None
+
+# Parses "Book Ch:V" refs from AI-generated text (explanation, primary_verses, etc.)
+_VERSE_REF_PARSE_RE = re.compile(r'(\w+)\s+(\d+):(\d+)')
+
+
+def _norm_book(raw: str) -> str:
+    key = raw.lower().rstrip(".")
+    return _BOOK_NORM.get(key) or _BOOK_NORM.get(key[:3]) or raw.title()[:3]
 
 
 def _get_verse_ref_re() -> re.Pattern:
@@ -186,6 +232,20 @@ def _strip_accents(s: str | None) -> str | None:
         c for c in unicodedata.normalize("NFD", s)
         if unicodedata.category(c) != "Mn"
     )
+
+
+_WORD_BOUNDARY_RE_CACHE: dict[str, re.Pattern] = {}
+
+
+def _word_boundary_match(haystack: str | None, needle: str | None) -> bool:
+    """SQLite custom function: True if needle appears as a complete word in haystack."""
+    if not haystack or not needle:
+        return False
+    pat = _WORD_BOUNDARY_RE_CACHE.get(needle)
+    if pat is None:
+        pat = re.compile(r'(?<!\w)' + re.escape(needle) + r'(?!\w)', re.IGNORECASE)
+        _WORD_BOUNDARY_RE_CACHE[needle] = pat
+    return bool(pat.search(haystack))
 
 
 def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
@@ -219,35 +279,75 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
 
 _CURATION_SYSTEM = """\
 You are selecting primary evidence verses for a word study of the Greek Septuagint.
-Return ONLY valid JSON: {"primary_verses": ["Book Ch:V", ...]}
+Return ONLY valid JSON — no prose, no markdown:
+{
+  "primary_verses": ["Book Ch:V", ...],
+  "additional_verses": ["Book Ch:V", ...]
+}
 
-A verse is PRIMARY EVIDENCE if a scholar or student studying this topic would
-cite it in their analysis. Include a verse when it does any of the following:
+─── primary_verses ──────────────────────────────────────────────────────────
+Select from the verse list provided by the user. A verse is PRIMARY EVIDENCE if
+a scholar or student studying this topic would cite it in their analysis:
 
   • Makes the concept the grammatical subject, object, or predicate
   • Shows the concept acting, being described, named, or qualified
   • Establishes the existence, identity, or role of the concept
   • Places the concept in a theologically significant relationship
+  • Performs a cosmic or governance function (setting borders, dividing nations,
+    interceding, ruling, or acting on behalf of the divine) — these are primary
+    even when the concept appears instrumentally rather than as the main subject
   • Provides evidence (even indirect) that a careful reader would cite
 
-A verse is BACKGROUND — exclude it — only when the query word appears with no
-bearing on the study topic at all: a personal name in an unrelated genealogy,
-a bare preposition, a place name, or a counting formula where the word is purely
-grammatical filler with no connection to the concept being studied.
+Exclude a verse ONLY when the word appears with zero bearing on the study topic:
+a personal name in an unrelated genealogy, a bare preposition or particle, a
+place name, or a counting formula where the word is purely grammatical filler.
 
-When in doubt, include. Err toward broader coverage. A typical study would
-rather have one extra verse than miss key evidence.
+For divine council and related queries, apply the participant test: the verse
+must feature non-human supernatural beings — angels (angeloi), sons of God
+(huioi tou theou), gods (theoi), spirits (pneumata), or holy ones (hagioi) —
+as active participants. Human assemblies do not qualify regardless of what
+assembly language is used. If the only beings named or implied in the verse are
+humans (Israelites, elders, tribal chiefs, warriors, priests), it is not a
+divine council passage.
+  Fail: Israel assembles at Horeb — participants are humans
+  Fail: Moses assembles tribal elders — participants are humans
+  Fail: Israel gathers for war — participants are humans
+  Pass: sons of God present themselves before the LORD (Job 1:6) — supernatural participants
+  Pass: God stands in the divine assembly judging among gods (Psa 82:1) — supernatural participants
+Theological statements about God's counsel, wisdom, or plan also do not qualify —
+a verse describing what God decided is not the same as a verse showing the
+assembly where it happened.
 
-Select 3–8 verses maximum.\
+When in doubt, include. Select 4–10 primary verses.
+
+─── additional_verses ───────────────────────────────────────────────────────
+List up to 12 verse refs (Book Ch:V) that are standard scholarly citations for
+this topic but were NOT returned by the SQL query (i.e. not in the verse list
+below). Use this field ONLY when:
+
+  • Scholarly consensus is strong that the verse belongs in this study, AND
+  • The connection is inferred from context or implicit language rather than
+    explicit vocabulary — e.g. Gen 1:26 for the divine council (plural "let us /
+    our image" implies a heavenly assembly even though no council/being word
+    appears explicitly).
+
+If the verse list already covers the topic well, return additional_verses as [].
+Do not pad with loosely related verses. Prefer empty over speculative.\
 """
 
 
-def _curate_primary_verses(query: str, results: list[dict]) -> list[str]:
-    """Pass 2: send actual verse texts to Haiku and return curated primary verse refs."""
-    if not results or not _anthropic:
-        return []
+def _curate_primary_verses(
+    query: str, results: list[dict]
+) -> tuple[list[str], list[str]]:
+    """Pass 2: send actual verse texts to Haiku.
 
-    # Batch-fetch full English text for each result verse (all words, not just matched)
+    Returns (primary_refs, additional_refs). primary_refs are curated from the
+    SQL results; additional_refs are scholarly additions from Haiku's training
+    knowledge that the SQL query missed (capped at 12, caller validates against DB).
+    """
+    if not results or not _anthropic:
+        return [], []
+
     capped = results[:50]
     if capped:
         or_parts = " OR ".join(
@@ -280,7 +380,8 @@ def _curate_primary_verses(query: str, results: list[dict]) -> list[str]:
     try:
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=300,
+            max_tokens=400,
+            temperature=0,
             system=_CURATION_SYSTEM,
             messages=[{
                 "role": "user",
@@ -290,10 +391,12 @@ def _curate_primary_verses(query: str, results: list[dict]) -> list[str]:
         raw = msg.content[0].text.strip()
         s, e = raw.find("{"), raw.rfind("}")
         parsed = json.loads(raw[s:e + 1]) if s != -1 and e > s else {}
-        return [str(r) for r in parsed.get("primary_verses", [])]
+        primary    = [str(r) for r in parsed.get("primary_verses", [])][:25]
+        additional = [str(r) for r in parsed.get("additional_verses", [])][:12]
+        return primary, additional
     except Exception as exc:
         log.warning("Pass-2 curation failed: %s", exc)
-        return []
+        return [], []
 
 
 def _clean_gloss(s: str | None) -> str | None:
@@ -301,7 +404,105 @@ def _clean_gloss(s: str | None) -> str | None:
     if not s:
         return s
     return s.rstrip(" ,;:.!?")
-_ai_cache: dict = {}  # keyed on query string; bump version comment to invalidate: v8
+
+
+def _normalize_union_sql(sql: str) -> str:
+    """Wrap UNION ALL queries in a subquery so ORDER BY works in SQLite.
+
+    In a SQLite compound select (UNION ALL), ORDER BY cannot reference
+    table-qualified names like v.id or w.position because the aliases are out
+    of scope. Wrapping in a subquery lets the outer SELECT * pick up all columns
+    by their unqualified names and apply a clean ORDER BY.
+
+    No LIMIT is applied to UNION queries: each branch is already scoped to a
+    specific concept, so total row count is manageable, and pass-2 curation caps
+    the verses it processes at 50. Single-pattern queries keep their own LIMIT.
+    """
+    if not re.search(r'\bUNION\b', sql, re.IGNORECASE):
+        return sql
+    # Strip the trailing ORDER BY … LIMIT … that Haiku appends (table-qualified
+    # names are invalid in a compound-select context; LIMIT removed deliberately).
+    inner = re.sub(
+        r'\s+ORDER\s+BY\s+\S.*',
+        '',
+        sql,
+        flags=re.IGNORECASE | re.DOTALL,
+    ).rstrip()
+    return (
+        "SELECT * FROM (\n"
+        + inner
+        + "\n) ORDER BY book, chapter, verse"
+    )
+
+
+_ai_cache: dict = {}            # in-memory L1 cache (query → payload)
+_lsj_summary_cache: dict = {}  # keyed on LSJ key; persists for server lifetime
+_ai_cache_ver: str | None = None  # computed once from prompt template + book list
+
+
+def _get_ai_cache_ver() -> str:
+    """SHA1 of (system prompt template + sorted book abbreviations).
+
+    Automatically invalidates DB cache when books are added or the system
+    prompt template changes — no manual version bump required.
+    """
+    global _ai_cache_ver
+    if _ai_cache_ver is not None:
+        return _ai_cache_ver
+    conn = db()
+    try:
+        abbrevs = ",".join(
+            r[0] for r in conn.execute("SELECT abbrev FROM books ORDER BY id").fetchall()
+        )
+    finally:
+        conn.close()
+    raw = _AI_SYSTEM_TMPL + "|books=" + abbrevs
+    _ai_cache_ver = hashlib.sha1(raw.encode()).hexdigest()[:16]
+    return _ai_cache_ver
+
+
+def _load_ai_cache_from_db() -> None:
+    """Populate in-memory cache from DB; delete entries from a different version."""
+    ver = _get_ai_cache_ver()
+    try:
+        conn = db()
+        rows = conn.execute(
+            "SELECT query, result_json FROM ai_search_cache WHERE ver_key = ?", (ver,)
+        ).fetchall()
+        for r in rows:
+            try:
+                _ai_cache[r["query"]] = json.loads(r["result_json"])
+            except Exception:
+                pass
+        # Prune stale entries from previous prompt/book versions.
+        deleted = conn.execute(
+            "DELETE FROM ai_search_cache WHERE ver_key != ?", (ver,)
+        ).rowcount
+        conn.commit()
+        conn.close()
+        log.info(
+            "AI cache: loaded %d entries (ver=%s), pruned %d stale",
+            len(rows), ver, deleted,
+        )
+    except Exception as exc:
+        log.warning("Could not load AI cache from DB: %s", exc)
+
+
+def _persist_ai_cache(query: str, payload: dict) -> None:
+    """Write a single cache entry to the DB (fire-and-forget; errors are logged only)."""
+    ver = _get_ai_cache_ver()
+    try:
+        conn = db()
+        conn.execute(
+            """INSERT OR REPLACE INTO ai_search_cache
+               (query, result_json, ver_key, created_at)
+               VALUES (?, ?, ?, ?)""",
+            (query, json.dumps(payload), ver, time.time()),
+        )
+        conn.commit()
+        conn.close()
+    except Exception as exc:
+        log.warning("Could not persist AI cache entry: %s", exc)
 
 # LSJ part-of-speech detection for function words.
 # LSJ def_html has two POS patterns:
@@ -336,6 +537,11 @@ def _is_lsj_function_word(def_html: str) -> bool:
 
 _FUNCTION_STRONGS: set[str] = set()  # strongs_base values that are function words
 
+# Known function words not caught by the LSJ POS detector (manual overrides).
+_FUNCTION_STRONGS_OVERRIDE: frozenset[str] = frozenset({
+    "3361",  # μή — negative particle
+})
+
 
 def _build_function_strongs_cache() -> None:
     """Classify lexicon entries as content/function using LSJ def_html; runs once at startup."""
@@ -352,6 +558,7 @@ def _build_function_strongs_cache() -> None:
         for row in rows:
             if _is_lsj_function_word(row["def_html"]):
                 func.add(row["strongs"])
+        func |= _FUNCTION_STRONGS_OVERRIDE
         _FUNCTION_STRONGS = func
         log.info("Function word cache: %d function words identified via LSJ", len(func))
     except Exception as e:
@@ -415,7 +622,6 @@ def _format_lsj_context(entries: list[dict]) -> str:
     for e in entries:
         lines.append(f"  G{e['strongs']} {e['lemma']} ({e['translit']}): {e['semantic']}")
     return "\n".join(lines)
-_lsj_summary_cache: dict = {}  # keyed on LSJ key; persists for server lifetime
 
 _SENSE_MARKER_RE = re.compile(r'^([IVX]+\.|[A-E]\.|[1-9][0-9]*\.|[a-e]\.)$')
 
@@ -492,6 +698,17 @@ def _migrate_db():
             conn.commit()
         except sqlite3.OperationalError:
             pass  # already migrated
+        # Persistent AI search result cache (survives restarts).
+        conn.executescript("""
+            CREATE TABLE IF NOT EXISTS ai_search_cache (
+                query      TEXT PRIMARY KEY,
+                result_json TEXT NOT NULL,
+                ver_key    TEXT NOT NULL,
+                created_at REAL NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_ai_cache_ver ON ai_search_cache(ver_key);
+        """)
+        conn.commit()
     finally:
         conn.close()
 
@@ -505,6 +722,7 @@ def db():
     conn = sqlite3.connect(DB)
     conn.row_factory = sqlite3.Row
     conn.create_function("strip_accents", 1, _strip_accents)
+    conn.create_function("word_boundary", 2, _word_boundary_match)
     return conn
 
 
@@ -517,6 +735,7 @@ def db_ro():
 
 _migrate_db()
 _build_function_strongs_cache()
+_load_ai_cache_from_db()
 
 
 @app.route("/")
@@ -533,6 +752,7 @@ def search():
         return jsonify({"results": [], "total": 0})
 
     conn = db()
+    groupings: dict = {}
     try:
         snum = _strongs_num(q)
         if snum:
@@ -553,24 +773,77 @@ def search():
                 (snum,),
             ).fetchall()
         else:
-            search_col = "w.english" if phrase_mode else "w.english_head"
             q_plain = _strip_accents(q)
-            rows = conn.execute(
-                f"""
-                SELECT w.strongs_base, w.strongs, w.english, w.english_head,
-                       v.id AS verse_id, v.book, v.chapter, v.verse,
-                       l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
-                FROM words w
-                JOIN verses v ON w.verse_id = v.id
-                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-                WHERE ({search_col} LIKE ? COLLATE NOCASE
-                       OR strip_accents(l.translit) LIKE ? COLLATE NOCASE)
-                  AND w.english IS NOT NULL AND w.english != ''
-                  AND w.strongs_base != '*'
-                ORDER BY v.id, w.position
-                """,
-                (f"%{q}%", f"%{q_plain}%"),
-            ).fetchall()
+            if phrase_mode:
+                # Phrase mode: word-boundary match within the full multi-word gloss.
+                rows = conn.execute(
+                    """
+                    SELECT w.strongs_base, w.strongs, w.english, w.english_head,
+                           v.id AS verse_id, v.book, v.chapter, v.verse,
+                           l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
+                    FROM words w
+                    JOIN verses v ON w.verse_id = v.id
+                    LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+                    WHERE (word_boundary(w.english, ?)
+                           OR word_boundary(strip_accents(l.translit), ?))
+                      AND w.english IS NOT NULL AND w.english != ''
+                      AND w.strongs_base != '*'
+                    ORDER BY v.id, w.position
+                    """,
+                    (q, q_plain),
+                ).fetchall()
+            else:
+                # Default mode: exact head-word match (english_head is a single token),
+                # or transliteration prefix/substring for Greek lookup flexibility.
+                rows = conn.execute(
+                    """
+                    SELECT w.strongs_base, w.strongs, w.english, w.english_head,
+                           v.id AS verse_id, v.book, v.chapter, v.verse,
+                           l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
+                    FROM words w
+                    JOIN verses v ON w.verse_id = v.id
+                    LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+                    WHERE (w.english_head = ? COLLATE NOCASE
+                           OR strip_accents(l.translit) LIKE ? COLLATE NOCASE)
+                      AND w.english IS NOT NULL AND w.english != ''
+                      AND w.strongs_base != '*'
+                    ORDER BY v.id, w.position
+                    """,
+                    (q, f"%{q_plain}%"),
+                ).fetchall()
+        # Gloss groupings: for text searches, query the DB directly for strongs_base
+        # values whose english_head = q — independent of what rows happened to match
+        # (avoids including strongs that only appeared via the translit LIKE branch).
+        if snum:
+            unique_strongs = list({r["strongs_base"] for r in rows
+                                   if r["strongs_base"] and r["strongs_base"] != "*"})
+        else:
+            # strongs_base values where english_head = q exists anywhere in corpus
+            corpus_match = {
+                r["strongs_base"] for r in conn.execute(
+                    """SELECT DISTINCT strongs_base FROM words
+                       WHERE english_head = ? COLLATE NOCASE
+                         AND strongs_base IS NOT NULL AND strongs_base != '*'""",
+                    (q,),
+                ).fetchall()
+            }
+            # Cross-reference: only include strongs that also appear in the search results
+            result_strongs = {r["strongs_base"] for r in rows
+                              if r["strongs_base"] and r["strongs_base"] != "*"}
+            unique_strongs = list(corpus_match & result_strongs)
+        if unique_strongs:
+            placeholders = ",".join("?" * len(unique_strongs))
+            for gr in conn.execute(
+                f"""SELECT strongs_base, english_head, COUNT(*) AS cnt
+                    FROM words
+                    WHERE strongs_base IN ({placeholders})
+                      AND english_head IS NOT NULL AND english_head != ''
+                    GROUP BY strongs_base, english_head
+                    ORDER BY strongs_base, cnt DESC""",
+                unique_strongs,
+            ).fetchall():
+                sb = gr["strongs_base"]
+                groupings.setdefault(sb, []).append({"gloss": gr["english_head"], "count": gr["cnt"]})
     finally:
         conn.close()
 
@@ -592,7 +865,7 @@ def search():
         for r in rows
     ]
 
-    return jsonify({"results": results, "total": len(results)})
+    return jsonify({"results": results, "total": len(results), "groupings": groupings})
 
 
 @app.route("/api/verse/<book>/<int:chapter>/<int:verse>")
@@ -748,6 +1021,64 @@ def lsj_summary(lemma):
     return jsonify(payload)
 
 
+@app.route("/api/books")
+def books_list():
+    conn = db()
+    try:
+        rows = conn.execute("""
+            SELECT b.abbrev, b.name, MAX(v.chapter) AS chapters
+            FROM books b
+            JOIN verses v ON v.book = b.abbrev
+            GROUP BY b.abbrev, b.name
+            ORDER BY b.id
+        """).fetchall()
+    finally:
+        conn.close()
+    return jsonify([{"abbrev": r["abbrev"], "name": r["name"], "chapters": r["chapters"]} for r in rows])
+
+
+@app.route("/api/chapter/<book>/<int:chapter>")
+def chapter_text(book, chapter):
+    conn = db()
+    try:
+        rows = conn.execute(
+            """SELECT v.verse, w.position, w.english, w.strongs_base,
+                      l.lemma, l.translit, w.greek_pos, w.bracket_id
+               FROM verses v
+               JOIN words w ON w.verse_id = v.id
+               LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+               WHERE v.book = ? AND v.chapter = ?
+                 AND w.english IS NOT NULL AND w.english != ''
+               ORDER BY v.verse, w.position""",
+            (book, chapter),
+        ).fetchall()
+    finally:
+        conn.close()
+    verses: dict[int, dict] = {}
+    order: list[int] = []
+    for r in rows:
+        vn = r["verse"]
+        if vn not in verses:
+            verses[vn] = {"words": []}
+            order.append(vn)
+        verses[vn]["words"].append({
+            "position":     r["position"],
+            "english":      r["english"],
+            "strongs_base": r["strongs_base"],
+            "lemma":        r["lemma"],
+            "translit":     r["translit"],
+            "greek_pos":    r["greek_pos"],
+            "bracket_id":   r["bracket_id"],
+        })
+    return jsonify([
+        {
+            "verse": v,
+            "words": verses[v]["words"],
+        }
+        for v in order
+    ])
+
+
 @app.route("/api/strongs-count/<strongs_base>")
 def strongs_count_route(strongs_base):
     if strongs_base == "*":
@@ -788,9 +1119,13 @@ def ai_search():
         terms_msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=80,
+            temperature=0,
             messages=[{"role": "user", "content": (
-                "Extract 2–4 key Greek lexical concepts (as simple English words) "
+                "Extract 3–6 key Greek lexical concepts (as simple English words) "
                 "to look up in the Liddell-Scott-Jones Greek lexicon for this query. "
+                "Include the primary term AND related vocabulary from all major "
+                "manifestations of the concept — e.g. for divine beings include both "
+                "titles (angel, holy one) and membership/kinship terms (son, child, assembly). "
                 "Return ONLY a JSON array of lowercase English strings, "
                 "e.g. [\"spirit\",\"breath\"]. No explanation.\n\nQuery: " + q
             )}],
@@ -814,6 +1149,7 @@ def ai_search():
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=1500,
+            temperature=0,
             system=_get_ai_system(),
             messages=[{"role": "user", "content": user_content}],
         )
@@ -834,11 +1170,9 @@ def ai_search():
             log.error("AI response not valid JSON: %s\nraw=%r", e, raw)
             return jsonify({"error": f"AI response not valid JSON: {e}", "raw": raw}), 500
 
-        sql          = parsed.get("sql", "").strip()
-        explanation  = parsed.get("explanation", "")
-        must_cooccur = [str(s) for s in parsed.get("must_cooccur", [])]
+        sql         = _normalize_union_sql(parsed.get("sql", "").strip())
+        explanation = parsed.get("explanation", "")
         log.debug("SQL from AI: %s", sql)
-        log.debug("must_cooccur: %s", must_cooccur)
 
         if not re.match(r"^\s*SELECT\b", sql, re.IGNORECASE):
             log.error("AI returned non-SELECT query: %r", sql)
@@ -885,11 +1219,6 @@ def ai_search():
         results = [verse_index[k] for k in verse_order if verse_index[k]["words"]]
         log.debug("Grouped into %d verses", len(results))
 
-        # ── Helper: normalise raw book strings to DB abbreviations ────────────
-        def _norm_book(raw: str) -> str:
-            key = raw.lower().rstrip(".")
-            return _BOOK_NORM.get(key) or _BOOK_NORM.get(key[:3]) or raw.title()[:3]
-
         # ── Fetch verses cited in the explanation that SQL missed ─────────────
         cited_keys: set = set()
         for book_raw, chap_str, verse_str in _get_verse_ref_re().findall(explanation):
@@ -923,30 +1252,23 @@ def ai_search():
             if new_cited:
                 results = [verse_index[k] for k in new_cited] + results
 
-        # ── must_cooccur filter (cited verses are exempt) ─────────────────────
-        if must_cooccur:
-            before = len(results)
-            results = [
-                v for v in results
-                if (v["book"], v["chapter"], v["verse"]) in cited_keys
-                or all(
-                    any(w["strongs_base"] == s for w in v["words"])
-                    for s in must_cooccur
-                )
-            ]
-            log.debug("must_cooccur filter: %d -> %d verses", before, len(results))
-
         # ── Pass 2: relevance curation ────────────────────────────────────────
-        primary_verses_raw = _curate_primary_verses(q, results)
+        primary_verses_raw, additional_verses_raw = _curate_primary_verses(q, results)
         log.debug("Pass-2 primary_verses: %s", primary_verses_raw)
+        log.debug("Pass-2 additional_verses: %s", additional_verses_raw)
 
         # ── Build primary_set and fetch any missing primary verses ────────────
-        ref_re = re.compile(r'(\w+)\s+(\d+):(\d+)')
+        dc_query = bool(_DIVINE_COUNCIL_RE.search(q))
         primary_set: set = set()
         for ref_str in primary_verses_raw:
-            m = ref_re.search(str(ref_str).strip())
+            m = _VERSE_REF_PARSE_RE.search(str(ref_str).strip())
             if m:
                 primary_set.add((_norm_book(m.group(1)), int(m.group(2)), int(m.group(3))))
+
+        # ── Hardcoded corpora — injected regardless of Haiku output ──────────
+        if dc_query:
+            primary_set.update(_DIVINE_COUNCIL_VERSES)
+            log.debug("Divine council corpus injected: %d verses", len(_DIVINE_COUNCIL_VERSES))
 
         missing_primary = [k for k in primary_set if k not in verse_index]
         if missing_primary:
@@ -975,13 +1297,83 @@ def ai_search():
             if new_primary:
                 results = [verse_index[k] for k in new_primary] + results
 
+        # ── Validate and fetch additional verses from Haiku's knowledge ───────
+        # These are inferential scholarly citations that the SQL query couldn't
+        # reach (e.g. Gen 1:26 for divine council — implied by plural pronouns,
+        # not by any "divine being" Strong's number). Each ref is checked against
+        # the DB before use; hallucinated refs are silently dropped.
+        additional_set: set = set()
+        for ref_str in additional_verses_raw:
+            m = _VERSE_REF_PARSE_RE.search(str(ref_str).strip())
+            if m:
+                additional_set.add(
+                    (_norm_book(m.group(1)), int(m.group(2)), int(m.group(3)))
+                )
+
+        if additional_set:
+            add_conn = db_ro()
+            new_additional: list = []
+            try:
+                for key in additional_set:
+                    book, chapter, verse_num = key
+                    vrow = add_conn.execute(
+                        "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
+                        (book, chapter, verse_num),
+                    ).fetchone()
+                    if not vrow:
+                        log.debug(
+                            "Additional verse not in DB (dropped): %s %d:%d",
+                            book, chapter, verse_num,
+                        )
+                        continue
+                    primary_set.add(key)
+                    if key in verse_index:
+                        continue  # already in results; primary_set.add above is enough
+                    words = _fetch_verse_words(add_conn, vrow["id"])
+                    if words:
+                        verse_index[key] = {
+                            "ref": f"{book} {chapter}:{verse_num}",
+                            "book": book, "chapter": chapter, "verse": verse_num,
+                            "words": words,
+                        }
+                        new_additional.append(key)
+                        log.debug(
+                            "Additional verse fetched: %s %d:%d", book, chapter, verse_num
+                        )
+            finally:
+                add_conn.close()
+            if new_additional:
+                results = [verse_index[k] for k in new_additional] + results
+
         # ── Tag is_primary on every result verse ──────────────────────────────
-        for v in results:
-            v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in primary_set
+        # For divine council queries the hardcoded corpus is the sole authority —
+        # Haiku's curation is ignored for primary tagging.
+        if dc_query:
+            for v in results:
+                v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in _DIVINE_COUNCIL_VERSES
+        else:
+            for v in results:
+                v["is_primary"] = (v["book"], v["chapter"], v["verse"]) in primary_set
+
+        # ── Sort in canonical book order (books.id) then chapter/verse ────────
+        ord_conn = db_ro()
+        try:
+            book_order = {
+                r["abbrev"]: r["id"]
+                for r in ord_conn.execute(
+                    "SELECT abbrev, id FROM books ORDER BY id"
+                ).fetchall()
+            }
+        finally:
+            ord_conn.close()
+        results.sort(
+            key=lambda v: (book_order.get(v["book"], 9999), v["chapter"], v["verse"])
+        )
 
         payload = {"results": results, "total": len(results),
                    "explanation": explanation}
         _ai_cache[q] = payload
+        _persist_ai_cache(q, payload)
         return jsonify(payload)
 
     except Exception:

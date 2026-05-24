@@ -18,6 +18,10 @@ const api = {
     fetch(`/api/lsj/${encodeURIComponent(lemma)}`).then(r => r.json()),
   lsjSummary: (lemma) =>
     fetch(`/api/lsj-summary/${encodeURIComponent(lemma)}`).then(r => r.json()),
+  books: () =>
+    fetch("/api/books").then(r => r.json()),
+  chapter: (book, ch) =>
+    fetch(`/api/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
 };
 
 // ============================================================
@@ -70,11 +74,16 @@ function flattenAiResults(verses) {
 // BOOK LABELS
 // ============================================================
 const BOOK_LABELS = {
-  Gen: "Genesis LXX",
-  Exo: "Exodus LXX",
-  Lev: "Leviticus LXX",
-  Num: "Numbers LXX",
-  Deu: "Deuteronomy LXX",
+  Gen: "Genesis",      Exo: "Exodus",       Lev: "Leviticus",    Num: "Numbers",
+  Deu: "Deuteronomy",  Jos: "Joshua",        Jdg: "Judges",       Rth: "Ruth",
+  "1Sa": "1 Samuel",   "2Sa": "2 Samuel",    "1Ki": "1 Kings",    "2Ki": "2 Kings",
+  "1Ch": "1 Chronicles", "2Ch": "2 Chronicles", Ezr: "Ezra",      Neh: "Nehemiah",
+  Est: "Esther",       Job: "Job",           Psa: "Psalms",       Pro: "Proverbs",
+  Ecc: "Ecclesiastes", Son: "Song of Solomon", Isa: "Isaiah",     Jer: "Jeremiah",
+  Lam: "Lamentations", Eze: "Ezekiel",       Dan: "Daniel",       Hos: "Hosea",
+  Joe: "Joel",         Amo: "Amos",          Oba: "Obadiah",      Jon: "Jonah",
+  Mic: "Micah",        Nah: "Nahum",         Hab: "Habakkuk",     Zep: "Zephaniah",
+  Hag: "Haggai",       Zec: "Zechariah",     Mal: "Malachi",
 };
 
 // ============================================================
@@ -142,7 +151,7 @@ const Icon = {
 // ============================================================
 // HEADER
 // ============================================================
-function Header() {
+function Header({ activeView, onNavChange }) {
   return (
     <header className="hdr">
       <div className="hdr-inner">
@@ -159,10 +168,8 @@ function Header() {
           </div>
         </div>
         <nav className="hdr-nav">
-          <a className="hdr-link active" href="#">Search</a>
-          <a className="hdr-link" href="#">Concordance</a>
-          <a className="hdr-link" href="#">Library</a>
-          <a className="hdr-link" href="#">Notes</a>
+          <button className={"hdr-link " + (activeView === "search" ? "active" : "")} onClick={() => onNavChange("search")}>Search</button>
+          <button className={"hdr-link " + (activeView === "library" ? "active" : "")} onClick={() => onNavChange("library")}>Library</button>
         </nav>
         <div className="hdr-right">
           <button className="hdr-icon-btn" aria-label="Saved">
@@ -178,7 +185,7 @@ function Header() {
 // ============================================================
 // SEARCH BAR
 // ============================================================
-function SearchBar({ q1, setQ1, q2, setQ2, phraseMode, setPhraseMode, onSearch, onAiSearch, aiLoading }) {
+function SearchBar({ q1, setQ1, q2, setQ2, onSearch, onAiSearch, aiLoading }) {
   return (
     <section className="search">
       <div className="search-grid">
@@ -197,15 +204,7 @@ function SearchBar({ q1, setQ1, q2, setQ2, phraseMode, setPhraseMode, onSearch, 
               onChange={(e) => setQ1(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onSearch()}
             />
-            <kbd className="search-kbd">⌘ K</kbd>
-          </div>
-          <div className="search-chips">
-            <button
-              className={"chip " + (phraseMode ? "chip-active" : "")}
-              onClick={() => setPhraseMode(!phraseMode)}
-            >
-              <Icon.Filter/> Phrase
-            </button>
+
           </div>
         </div>
         <div className="search-divider" aria-hidden="true"></div>
@@ -313,10 +312,26 @@ function LsjSummary({ data, loading }) {
 // ============================================================
 // DETAIL PANEL — SIDEBAR / BOTTOM SHEET
 // ============================================================
-function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch }) {
+function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch, onReadInContext }) {
   const [verseText, setVerseText] = useState("");
   const [verseLoading, setVerseLoading] = useState(false);
   const [abpCount, setAbpCount] = useState(null);
+  const [showInterlinear, setShowInterlinear] = useState(false);
+  const [interlinearWords, setInterlinearWords] = useState(null);
+
+  useEffect(() => {
+    setShowInterlinear(false);
+    setInterlinearWords(null);
+  }, [entry && entry.id]);
+
+  useEffect(() => {
+    if (!showInterlinear || !entry || interlinearWords) return;
+    let cancelled = false;
+    api.verseWords(entry.book, entry.chapter, entry.verse)
+      .then(d => { if (!cancelled) setInterlinearWords(d.words || []); })
+      .catch(() => { if (!cancelled) setInterlinearWords([]); });
+    return () => { cancelled = true; };
+  }, [showInterlinear, entry && entry.id]);
 
   useEffect(() => {
     if (!entry) return;
@@ -346,20 +361,27 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.strongs_base]);
 
   const [lsjEntry, setLsjEntry] = useState(null);
+  const [lsjLoading, setLsjLoading] = useState(false);
   const [lsjTab, setLsjTab] = useState("def");
   const [lsjSummary, setLsjSummary] = useState(null);
   const [lsjSummaryLoading, setLsjSummaryLoading] = useState(false);
 
   useEffect(() => {
+    setLsjEntry(null);
     setLsjTab("def");
     setLsjSummary(null);
-    if (!entry || !entry.greek) { setLsjEntry(null); return; }
+    if (!entry || !entry.greek) { setLsjLoading(false); return; }
     let cancelled = false;
+    setLsjLoading(true);
     api.lsj(entry.greek)
-      .then(d => { if (!cancelled) setLsjEntry(d.error ? null : d); })
-      .catch(() => { if (!cancelled) setLsjEntry(null); });
+      .then(d => {
+        if (!cancelled) { setLsjEntry(d.error ? null : d); setLsjLoading(false); }
+      })
+      .catch(() => {
+        if (!cancelled) { setLsjEntry(null); setLsjLoading(false); }
+      });
     return () => { cancelled = true; };
-  }, [entry && entry.greek]);
+  }, [entry && entry.id]);
 
   useEffect(() => {
     if (!lsjEntry) { setLsjSummary(null); return; }
@@ -407,21 +429,28 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="detail-gloss">{entry.gloss}</div>
         </div>
 
-        {lsjEntry && (
+        {entry.greek && (
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
                 Liddell-Scott-Jones<span className="lsj-badge">LSJ</span>
               </h4>
-              <div className="lsj-tabs">
-                <button className={"lsj-tab " + (lsjTab === "def"  ? "on" : "")} onClick={() => setLsjTab("def")}>Definition</button>
-                <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>Full LSJ</button>
-              </div>
+              {lsjEntry && (
+                <div className="lsj-tabs">
+                  <button className={"lsj-tab " + (lsjTab === "def"  ? "on" : "")} onClick={() => setLsjTab("def")}>Definition</button>
+                  <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>Full LSJ</button>
+                </div>
+              )}
             </div>
-            {lsjTab === "def"
-              ? <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
-              : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
-            }
+            {lsjLoading ? (
+              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
+            ) : lsjEntry ? (
+              lsjTab === "def"
+                ? <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
+                : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
+            ) : (
+              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not in LSJ.</div>
+            )}
           </section>
         )}
 
@@ -433,7 +462,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               style={{ fontSize: "15px", fontWeight: "600" }}
               onClick={() => onStrongsSearch(entry.strongs_base)}
             >
-              <b>{abpCount}</b>× in Pentateuch LXX <Icon.ArrowRight/>
+              <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
             </button>
           </section>
         )}
@@ -454,12 +483,31 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             <span className="verse-num">{entry.verse}</span>
             {verseLoading ? "Loading…" : verseText || "—"}
           </blockquote>
+          {showInterlinear && (
+            <div className="interlinear">
+              {!interlinearWords ? (
+                <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
+              ) : interlinearWords.map((w, i) => (
+                <div key={i} className="iword">
+                  <span className="iw-greek">{w.lemma || "—"}</span>
+                  <span className="iw-translit">{w.translit || ""}</span>
+                  <span className="iw-english">{w.english || "—"}</span>
+                  {w.strongs_base && w.strongs_base !== "*" && (
+                    <span className="iw-strongs">G{w.strongs_base}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="verse-tools">
-            <button className="link-btn">Read in context <Icon.ArrowRight/></button>
+            <button className="link-btn" onClick={() => onReadInContext && onReadInContext(entry.book, entry.chapter, entry.verse)}>
+              Read in context <Icon.ArrowRight/>
+            </button>
             <span className="dot">·</span>
-            <button className="link-btn">Interlinear</button>
-            <span className="dot">·</span>
-            <button className="link-btn">Parallel</button>
+            <button
+              className={"link-btn" + (showInterlinear ? " link-btn-on" : "")}
+              onClick={() => setShowInterlinear(v => !v)}
+            >Interlinear</button>
           </div>
         </section>
 
@@ -520,8 +568,8 @@ function VerseStudyRow({ book, chapter, verse, label, citedMap, onWordClick }) {
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, hasPrimary, citedMap, onWordClick }) {
-  const [open, setOpen] = useState(hasPrimary);
+function PassageGroup({ label, verses, citedMap, onWordClick }) {
+  const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
       <button
@@ -555,16 +603,20 @@ function PassageGroup({ label, verses, hasPrimary, citedMap, onWordClick }) {
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
-function StudyMode({ allResults, onWordClick }) {
-  // citedMap: strongs_base → entry, content words only (function words excluded)
+function StudyMode({ allResults, primaryStrongs, onWordClick }) {
+  // citedMap: strongs_base → entry, content words only (function words excluded).
+  // G1473 (ἐγώ) is suppressed unless it's the explicitly searched strongs — it
+  // appears too frequently as a grammatical marker and obscures semantic highlights.
   const citedMap = useMemo(() => {
     const m = new Map();
     for (const e of allResults) {
-      if (e.strongs_base !== "*" && !e.is_function && !m.has(e.strongs_base))
+      if (e.strongs_base !== "*" && !e.is_function
+          && (e.strongs_base !== "1473" || primaryStrongs === "1473")
+          && !m.has(e.strongs_base))
         m.set(e.strongs_base, e);
     }
     return m;
-  }, [allResults]);
+  }, [allResults, primaryStrongs]);
 
   const groups = useMemo(() => {
     const gMap = {};
@@ -574,13 +626,11 @@ function StudyMode({ allResults, onWordClick }) {
       if (!gMap[gk]) {
         gMap[gk] = {
           label: `${BOOK_LABELS[entry.book] || entry.book} · Chapter ${entry.chapter}`,
-          hasPrimary: false,
           verseMap: {},
           verseOrder: [],
         };
         gOrder.push(gk);
       }
-      if (entry.is_primary) gMap[gk].hasPrimary = true;
       const vk = `${entry.book}-${entry.chapter}-${entry.verse}`;
       if (!gMap[gk].verseMap[vk]) {
         gMap[gk].verseMap[vk] = {
@@ -591,38 +641,353 @@ function StudyMode({ allResults, onWordClick }) {
       }
     }
     return gOrder.map(gk => ({
-      label:      gMap[gk].label,
-      hasPrimary: gMap[gk].hasPrimary,
-      verses:     gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
+      label:  gMap[gk].label,
+      verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
     }));
   }, [allResults]);
 
-  const primaryGroups    = groups.filter(g =>  g.hasPrimary);
-  const backgroundGroups = groups.filter(g => !g.hasPrimary);
-  const [showBg, setShowBg] = useState(false);
+  const primaryGroups = groups
+    .map(g => ({ ...g, verses: g.verses.filter(v => v.is_primary) }))
+    .filter(g => g.verses.length > 0);
 
   return (
     <div className="study-groups">
       {primaryGroups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} hasPrimary={true} citedMap={citedMap} onWordClick={onWordClick} />
+        <PassageGroup key={g.label} label={g.label} verses={g.verses} citedMap={citedMap} onWordClick={onWordClick} />
       ))}
-
-      {backgroundGroups.length > 0 && (
-        <>
-          {showBg && backgroundGroups.map(g => (
-            <PassageGroup key={g.label} label={g.label} verses={g.verses} hasPrimary={false} citedMap={citedMap} onWordClick={onWordClick} />
-          ))}
-          <button
-            className="bg-toggle"
-            onClick={() => setShowBg(s => !s)}
-          >
-            {showBg
-              ? "Hide background results"
-              : `Show background results (${backgroundGroups.length} chapter${backgroundGroups.length !== 1 ? "s" : ""})`}
-          </button>
-        </>
-      )}
     </div>
+  );
+}
+
+// ============================================================
+// LIBRARY HELPERS
+// ============================================================
+
+// Reorder words for natural English reading:
+// within each bracket group sort by greek_pos ascending; non-bracket words keep position order.
+function getEnglishOrderWords(words) {
+  const bracketMap = {};
+  for (const w of words) {
+    const bid = w.bracket_id;
+    if (bid !== null && bid !== undefined) {
+      if (!bracketMap[bid]) bracketMap[bid] = [];
+      bracketMap[bid].push(w);
+    }
+  }
+  for (const bid in bracketMap) {
+    bracketMap[bid].sort((a, b) => (a.greek_pos ?? 999) - (b.greek_pos ?? 999));
+  }
+  const result = [];
+  const seen = new Set();
+  for (const w of words) {
+    const bid = w.bracket_id;
+    if (bid === null || bid === undefined) {
+      result.push(w);
+    } else if (!seen.has(bid)) {
+      seen.add(bid);
+      result.push(...bracketMap[bid]);
+    }
+  }
+  return result;
+}
+
+// Group a position-sorted word list into runs by bracket_id for bracket notation rendering.
+function groupForGreekMode(words) {
+  const groups = [];
+  let cur = null;
+  for (const w of words) {
+    const bid = (w.bracket_id !== null && w.bracket_id !== undefined) ? w.bracket_id : null;
+    if (bid === null) {
+      groups.push({ isBracket: false, word: w });
+      cur = null;
+    } else {
+      if (!cur || cur.bid !== bid) {
+        cur = { isBracket: true, bid, words: [] };
+        groups.push(cur);
+      }
+      cur.words.push(w);
+    }
+  }
+  return groups;
+}
+
+// ============================================================
+// LIBRARY VIEW
+// ============================================================
+function LibraryView({ nav, onWordClick }) {
+  const [books, setBooks] = useState([]);
+  const [selBook, setSelBook] = useState(null);
+  const [selChapter, setSelChapter] = useState(1);
+  const [verses, setVerses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showStrongs, setShowStrongs] = useState(false);
+  const [showInterlinear, setShowInterlinear] = useState(false);
+  const [wordOrder, setWordOrder] = useState("english"); // "english" | "greek"
+  const highlightRef = useRef(null);
+
+  useEffect(() => {
+    api.books().then(data => {
+      setBooks(data);
+      if (data.length) setSelBook(data[0]);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!nav || !nav.book || !books.length) return;
+    const b = books.find(b => b.abbrev === nav.book);
+    if (b) {
+      setSelBook(b);
+      setSelChapter(nav.chapter || 1);
+    }
+  }, [nav, books]);
+
+  useEffect(() => {
+    if (!selBook) return;
+    let cancelled = false;
+    setLoading(true);
+    setVerses([]);
+    api.chapter(selBook.abbrev, selChapter)
+      .then(data => { if (!cancelled) { setVerses(data); setLoading(false); } })
+      .catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [selBook && selBook.abbrev, selChapter]);
+
+  useEffect(() => {
+    if (!nav || !nav.highlight || !highlightRef.current) return;
+    setTimeout(() => highlightRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
+  }, [nav && nav.highlight, verses]);
+
+  const maxChap = selBook ? selBook.chapters : 1;
+  const wordMode = showStrongs || showInterlinear || wordOrder === "greek";
+
+  const renderVerse = (v) => {
+    const isHighlight = nav && nav.highlight === v.verse;
+
+    const makeEntry = (w) => ({
+      id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
+      strongs: `G${w.strongs_base}`,
+      strongs_base: w.strongs_base,
+      greek: w.lemma || "",
+      translit: w.translit || "",
+      gloss: w.english || "",
+      ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
+      book: selBook.abbrev,
+      chapter: selChapter,
+      verse: v.verse,
+      definition: "",
+      derivation: "",
+      is_function: false,
+    });
+
+    // Plain chip (English mode or non-bracketed word in Greek mode)
+    const chip = (w, key) => {
+      const clickable = !!(onWordClick && w.strongs_base && w.strongs_base !== "*");
+      return (
+        <span key={key}
+          className={"lib-word" + (clickable ? " lib-word-clickable" : "")}
+          onClick={clickable ? () => onWordClick(makeEntry(w)) : undefined}>
+          {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
+          <span className="lib-iw-english">{w.english}</span>
+          {showStrongs && w.strongs_base && w.strongs_base !== "*" &&
+            <span className="lib-iw-strongs">G{w.strongs_base}</span>}
+        </span>
+      );
+    };
+
+    // Bracket chip (bracketed word in Greek mode — shows inline position number)
+    const bracketChip = (w, key) => {
+      const clickable = !!(onWordClick && w.strongs_base && w.strongs_base !== "*");
+      return (
+        <span key={key}
+          className={"lib-word lib-word-bracketed" + (clickable ? " lib-word-clickable" : "")}
+          onClick={clickable ? () => onWordClick(makeEntry(w)) : undefined}>
+          {w.greek_pos !== null && w.greek_pos !== undefined &&
+            <span className="lib-iw-pos">{w.greek_pos}</span>}
+          {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
+          <span className="lib-iw-english">{w.english}</span>
+          {showStrongs && w.strongs_base && w.strongs_base !== "*" &&
+            <span className="lib-iw-strongs">G{w.strongs_base}</span>}
+        </span>
+      );
+    };
+
+    if (!wordMode) {
+      // Prose mode: compute English-ordered text from words
+      const englishWords = getEnglishOrderWords(v.words);
+      const text = englishWords.map(w => w.english).join(' ');
+      return (
+        <span key={v.verse} ref={isHighlight ? highlightRef : null}
+          className={"lib-verse-span" + (isHighlight ? " lib-highlight" : "")}>
+          <sup className="lib-vnum">{v.verse}</sup>
+          {text}{" "}
+        </span>
+      );
+    }
+
+    // Chip mode
+    let content;
+    if (wordOrder === "greek") {
+      // Greek syntactic order with bracket notation
+      const sortedWords = [...v.words].sort((a, b) => a.position - b.position);
+      const groups = groupForGreekMode(sortedWords);
+      content = groups.map((g, gi) => {
+        if (!g.isBracket) {
+          return chip(g.word, `g${gi}`);
+        }
+        return (
+          <span key={`bg${gi}`} className="lib-bracket-group">
+            <span className="lib-bracket">[</span>
+            {g.words.map((w, wi) => bracketChip(w, `bg${gi}w${wi}`))}
+            <span className="lib-bracket">]</span>
+          </span>
+        );
+      });
+    } else {
+      // English reading order
+      const englishWords = getEnglishOrderWords(v.words);
+      content = englishWords.map((w, i) => chip(w, `e${i}`));
+    }
+
+    return (
+      <span key={v.verse} ref={isHighlight ? highlightRef : null}
+        className={"lib-verse-block" + (isHighlight ? " lib-highlight" : "")}>
+        <sup className="lib-vnum">{v.verse}</sup>
+        {content}
+      </span>
+    );
+  };
+
+  return (
+    <div className="library">
+      <div className="lib-toolbar">
+        <select
+          className="lib-select"
+          value={selBook ? selBook.abbrev : ""}
+          onChange={e => {
+            const b = books.find(b => b.abbrev === e.target.value);
+            if (b) { setSelBook(b); setSelChapter(1); }
+          }}
+        >
+          {books.map(b => <option key={b.abbrev} value={b.abbrev}>{b.name}</option>)}
+        </select>
+        <div className="lib-chap-nav">
+          <button
+            className="lib-nav-btn"
+            disabled={selChapter <= 1}
+            onClick={() => setSelChapter(c => Math.max(1, c - 1))}
+            aria-label="Previous chapter"
+          >‹</button>
+          <span className="lib-chap-label">Ch {selChapter} / {maxChap}</span>
+          <button
+            className="lib-nav-btn"
+            disabled={selChapter >= maxChap}
+            onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))}
+            aria-label="Next chapter"
+          >›</button>
+        </div>
+        <div className="lib-toggles">
+          <button
+            className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
+            onClick={() => setShowStrongs(v => !v)}
+          >Strong's</button>
+          <button
+            className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
+            onClick={() => setShowInterlinear(v => !v)}
+          >Interlinear</button>
+          <div className="lib-order-toggle">
+            <button
+              className={"lib-order-btn" + (wordOrder === "english" ? " on" : "")}
+              onClick={() => setWordOrder("english")}
+            >English</button>
+            <button
+              className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
+              onClick={() => setWordOrder("greek")}
+            >Greek</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="lib-reading">
+        <h2 className="lib-heading">
+          {selBook ? selBook.name : "—"} <span className="lib-chap-num">{selChapter}</span>
+        </h2>
+        {loading ? (
+          <div className="lib-loading">Loading…</div>
+        ) : wordMode ? (
+          <div className="lib-text-words">
+            {verses.map(v => renderVerse(v))}
+          </div>
+        ) : (
+          <p className="lib-text">
+            {verses.map(v => renderVerse(v))}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// GLOSS GROUPINGS
+// ============================================================
+function GlossGroupings({ groupings, results, onGlossDrill, onStrongsSearch }) {
+  const rows = useMemo(() => {
+    const seen = new Set();
+    const order = [];
+    for (const e of results) {
+      if (e.strongs_base && e.strongs_base !== "*" && !seen.has(e.strongs_base)) {
+        seen.add(e.strongs_base);
+        order.push(e.strongs_base);
+      }
+    }
+    return order
+      .map(sb => ({ sb, glosses: groupings[sb] || [], entry: results.find(e => e.strongs_base === sb) }))
+      .filter(({ glosses }) => glosses.length > 1);
+  }, [groupings, results]);
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="gloss-groupings">
+      {rows.map(({ sb, glosses, entry }) => (
+        <div key={sb} className="gloss-group">
+          <span className="gloss-group-head">
+            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(`G${sb}`)}>G{sb}</button>
+            {entry?.translit && <span className="gloss-translit">{entry.translit}</span>}
+            <span className="gloss-also">appears as</span>
+          </span>
+          <span className="gloss-chips">
+            {glosses.map(g => (
+              <button key={g.gloss} className="gloss-chip"
+                onClick={() => onGlossDrill(sb, entry?.greek || entry?.translit, g.gloss)}>
+                {g.gloss}
+                <span className="gloss-chip-count">{g.count}</span>
+              </button>
+            ))}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ============================================================
+// SEARCH BREADCRUMB
+// ============================================================
+function SearchBreadcrumb({ breadcrumbs, currentLabel, onNav }) {
+  if (!breadcrumbs.length) return null;
+  return (
+    <nav className="breadcrumb" aria-label="Search navigation">
+      {breadcrumbs.map((crumb, idx) => (
+        <React.Fragment key={idx}>
+          <button className="breadcrumb-item" onClick={() => onNav(crumb, idx)}>
+            {crumb.label}
+          </button>
+          <span className="breadcrumb-sep" aria-hidden="true">›</span>
+        </React.Fragment>
+      ))}
+      <span className="breadcrumb-current">{currentLabel}</span>
+    </nav>
   );
 }
 
@@ -671,7 +1036,6 @@ function AIAnswer({ query, explanation, entries, onPick }) {
 function App() {
   const [q1, setQ1] = useState("");
   const [q2, setQ2] = useState("");
-  const [phraseMode, setPhraseMode] = useState(false);
   const [allResults, setAllResults] = useState([]);
   const [aiMeta, setAiMeta] = useState(null);
   const [mode, setMode] = useState("idle");
@@ -682,6 +1046,11 @@ function App() {
   const [sortBy, setSortBy] = useState("relevance");
   const [viewMode, setViewMode] = useState("browse");
   const [isMobile, setIsMobile] = useState(false);
+  const [mainView, setMainView] = useState("search");
+  const [libNav, setLibNav] = useState(null);
+  const [groupings, setGroupings] = useState({});
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const searchFnRef = useRef(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 860);
@@ -706,10 +1075,39 @@ function App() {
     return allResults; // relevance = original order
   }, [allResults, sortBy, countMap]);
 
-  const handleSearch = async (overrideQ = null) => {
+  // Strongs base being searched directly (null in AI/text modes)
+  const primaryStrongs = useMemo(() => {
+    if (mode !== "search") return null;
+    const m = /^[Gg](\d+)$/.exec(q1.trim());
+    return m ? m[1] : null;
+  }, [mode, q1]);
+
+  // Count of distinct primary verses (AI mode only)
+  const primaryVerseCount = useMemo(() => {
+    if (mode !== "ai") return null;
+    const seen = new Set();
+    for (const e of allResults) { if (e.is_primary) seen.add(e.ref); }
+    return seen.size;
+  }, [allResults, mode]);
+
+  const handleReadInContext = (book, chapter, verse) => {
+    setLibNav({ book, chapter, highlight: verse });
+    setMainView("library");
+  };
+
+  const handleNavChange = (view) => {
+    setMainView(view);
+    if (view === "library" && !libNav) setLibNav({});
+  };
+
+  const handleSearch = async (overrideQ = null, newBreadcrumbs = null, pushHistory = true) => {
     const q = (overrideQ !== null ? overrideQ : q1).trim();
     if (!q) return;
     if (overrideQ !== null) setQ1(overrideQ);
+    const crumbs = newBreadcrumbs ?? [];
+    setBreadcrumbs(crumbs);
+    if (pushHistory) window.history.pushState({ q, breadcrumbs: crumbs }, "");
+    setMainView("search");
     setLoading(true);
     setError("");
     setAiMeta(null);
@@ -717,13 +1115,16 @@ function App() {
     setSortBy("relevance");
     setViewMode("browse");
     setActiveEntry(null);
+    setGroupings({});
     try {
-      const data = await api.search(q, overrideQ !== null ? false : phraseMode);
+      const data = await api.search(q);
       if (data.error) {
         setError(data.error);
         setAllResults([]);
+        setGroupings({});
       } else {
         setAllResults((data.results || []).map((r, idx) => makeEntry(r, idx)));
+        setGroupings(data.groupings || {});
       }
     } catch (e) {
       setError("Network error: " + e.message);
@@ -732,15 +1133,47 @@ function App() {
       setLoading(false);
     }
   };
+  searchFnRef.current = handleSearch;
 
   const handleStrongsSearch = (strongs_base) => {
     if (!strongs_base || strongs_base === "*") return;
-    handleSearch(`G${strongs_base}`);
+    const num = String(strongs_base).replace(/^G/i, "");
+    handleSearch(`G${num}`);
   };
+
+  const handleGlossDrill = (sb, greek, gloss) => {
+    const gq = `G${sb}`;
+    const label = greek ? `${greek} G${sb}` : gq;
+    const existingIdx = breadcrumbs.findIndex(c => c.q === gq);
+    let newCrumbs;
+    if (existingIdx !== -1) {
+      newCrumbs = breadcrumbs.slice(0, existingIdx + 1);
+    } else {
+      newCrumbs = [
+        ...breadcrumbs,
+        { label: searchLabel, q: q1.trim() },
+        { label, q: gq },
+      ];
+    }
+    handleSearch(gloss, newCrumbs, true);
+  };
+
+  const handleBreadcrumbNav = (crumb, idx) => {
+    handleSearch(crumb.q, breadcrumbs.slice(0, idx), true);
+  };
+
+  useEffect(() => {
+    const onPop = (e) => {
+      if (e.state?.q) searchFnRef.current(e.state.q, e.state.breadcrumbs ?? [], false);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   const handleAiSearch = async () => {
     const q = q2.trim();
     if (!q) return;
+    setMainView("search");
     setAiLoading(true);
     setError("");
     setMode("ai");
@@ -770,14 +1203,15 @@ function App() {
 
   return (
     <div className={"app " + (activeEntry ? "has-detail" : "")}>
-      <Header/>
+      <Header activeView={mainView} onNavChange={handleNavChange}/>
       <main className="main">
         <div className="main-inner">
-          <SearchBar
+          {mainView === "library" ? (
+            <LibraryView nav={libNav} onWordClick={(e) => setActiveEntry(e)} />
+          ) : (
+          <><SearchBar
             q1={q1} setQ1={setQ1}
             q2={q2} setQ2={setQ2}
-            phraseMode={phraseMode}
-            setPhraseMode={setPhraseMode}
             onSearch={handleSearch}
             onAiSearch={handleAiSearch}
             aiLoading={aiLoading}
@@ -808,10 +1242,26 @@ function App() {
 
           {mode !== "idle" && (
             <>
+              {mode === "search" && breadcrumbs.length > 0 && (
+                <SearchBreadcrumb
+                  breadcrumbs={breadcrumbs}
+                  currentLabel={searchLabel}
+                  onNav={handleBreadcrumbNav}
+                />
+              )}
               <div className="results-head">
                 <div className="results-meta">
-                  <span className="results-count">{loading ? "…" : displayed.length}</span>
-                  <span className="results-label">results</span>
+                  {mode === "ai" ? (
+                    <>
+                      <span className="results-count">{loading ? "…" : primaryVerseCount}</span>
+                      <span className="results-label">primary {primaryVerseCount === 1 ? "verse" : "verses"}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="results-count">{loading ? "…" : displayed.length}</span>
+                      <span className="results-label">results</span>
+                    </>
+                  )}
                   {searchLabel && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
                 <div className="results-controls">
@@ -834,6 +1284,15 @@ function App() {
                 </div>
               </div>
 
+              {!loading && allResults.length > 0 && mode === "search" && (
+                <GlossGroupings
+                  groupings={groupings}
+                  results={allResults}
+                  onGlossDrill={handleGlossDrill}
+                  onStrongsSearch={handleStrongsSearch}
+                />
+              )}
+
               {loading ? (
                 <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--ink-3)", fontSize: "14px" }}>
                   Searching…
@@ -844,7 +1303,7 @@ function App() {
                   <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
                 </div>
               ) : viewMode === "study" ? (
-                <StudyMode allResults={allResults} onWordClick={(e) => setActiveEntry(e)} />
+                <StudyMode allResults={allResults} primaryStrongs={primaryStrongs} onWordClick={(e) => setActiveEntry(e)} />
               ) : (
                 <div className="results">
                   {displayed.map((entry) => (
@@ -862,8 +1321,10 @@ function App() {
           )}
 
           <footer className="foot">
-            <span>Lexica · Pentateuch LXX · Apostolic Bible Polyglot Interlinear · Strong's Greek</span>
+            <span>Lexica · Greek Septuagint (LXX) · Apostolic Bible Polyglot Interlinear · Strong's Greek</span>
           </footer>
+          </>
+          )}
         </div>
       </main>
 
@@ -875,6 +1336,7 @@ function App() {
           occurrences={countMap[activeEntry.strongs_base] || 0}
           totalResults={allResults.length}
           onStrongsSearch={handleStrongsSearch}
+          onReadInContext={handleReadInContext}
         />
       )}
       {activeEntry && isMobile && (
@@ -887,6 +1349,7 @@ function App() {
             occurrences={countMap[activeEntry.strongs_base] || 0}
             totalResults={allResults.length}
             onStrongsSearch={handleStrongsSearch}
+            onReadInContext={handleReadInContext}
           />
         </>
       )}

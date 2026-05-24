@@ -28,9 +28,11 @@ VERSE_RE = re.compile(
 )
 
 
-# Strips ABP bracket reordering markers: [2word 1other] -> "word other"
+# Cleans leftover bracket/number artifacts from non-bracket segments
 _BRACKET_RE  = re.compile(r'[\[\]]')
 _NUMMARK_RE  = re.compile(r'(?<!\d)\d+\s*(?=[A-Za-z])')
+# Extracts leading ABP bracket position number: "2day" → group(1)="2", rest="day"
+_LEADING_POS = re.compile(r'^(\d+)\s*')
 
 # Words that are never the semantic head of a gloss
 _FUNCTION_WORDS = frozenset({
@@ -80,20 +82,49 @@ def _head_word(text: str) -> str | None:
 
 def parse_words(verse_text: str) -> list:
     """
-    Return list of (position, english, strongs) for one verse.
+    Return list of (position, english, strongs, greek_pos, bracket_id) for one verse.
 
-    english is None when the Strong's number has no English gloss
-    (i.e. it appears as a bare G#### in the stream).
+    english is None when the Strong's number has no English gloss.
     strongs is the raw number string, e.g. '1722', '1510.7.3', '*'.
+    greek_pos is the ABP reorder number (1 = first in English reading order) or None.
+    bracket_id is a sequential bracket group index within the verse, or None.
     """
     words = []
     last_end = 0
+    in_bracket = False
+    bracket_id = -1
 
-    for pos, m in enumerate(STRONGS_RE.finditer(verse_text)):
-        raw = verse_text[last_end : m.start()].strip()
-        english = _clean_english(raw) if raw else None
-        words.append((pos, english, m.group(1)))
+    for seq, m in enumerate(STRONGS_RE.finditer(verse_text)):
+        raw = verse_text[last_end : m.start()]
         last_end = m.end()
+
+        has_open  = '[' in raw
+        has_close = ']' in raw
+
+        if has_open:
+            in_bracket = True
+            bracket_id += 1
+
+        cur_bracket_id = bracket_id if in_bracket else None
+        greek_pos = None
+
+        if in_bracket:
+            # Extract text inside the bracket for this entry
+            if has_open:
+                segment = raw[raw.index('[') + 1:]
+            else:
+                segment = raw
+            # Strip trailing ']...' so we only examine the gloss text
+            segment = re.sub(r'\].*$', '', segment).strip()
+            pm = _LEADING_POS.match(segment)
+            if pm:
+                greek_pos = int(pm.group(1))
+
+        if has_close:
+            in_bracket = False
+
+        english = _clean_english(raw) if raw.strip() else None
+        words.append((seq, english, m.group(1), greek_pos, cur_bracket_id))
 
     return words
 
@@ -127,6 +158,8 @@ CREATE TABLE IF NOT EXISTS verses (
 --   '*' means proper noun without a numbered entry.
 -- strongs_base strips dotted extensions (1510.7.3 -> 1510) for standard lookups.
 -- english_head is the last non-function word of the gloss — the primary search token.
+-- greek_pos: ABP bracket reorder number (1 = first in English reading order), NULL if not in brackets.
+-- bracket_id: sequential bracket group index within the verse, NULL if not in brackets.
 CREATE TABLE IF NOT EXISTS words (
     id           INTEGER PRIMARY KEY,
     verse_id     INTEGER NOT NULL REFERENCES verses(id),
@@ -134,7 +167,9 @@ CREATE TABLE IF NOT EXISTS words (
     english      TEXT,
     english_head TEXT,
     strongs      TEXT    NOT NULL,
-    strongs_base TEXT    NOT NULL
+    strongs_base TEXT    NOT NULL,
+    greek_pos    INTEGER,
+    bracket_id   INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS idx_words_verse        ON words(verse_id);
@@ -161,8 +196,9 @@ def build_database(db_path: str, parsed: list) -> None:
         ).fetchone()[0]
 
         c.executemany(
-            "INSERT INTO words (verse_id, position, english, english_head, strongs, strongs_base) VALUES (?,?,?,?,?,?)",
-            [(verse_id, pos, eng, _head_word(eng), st, st.split(".")[0]) for pos, eng, st in words],
+            "INSERT INTO words (verse_id, position, english, english_head, strongs, strongs_base, greek_pos, bracket_id) VALUES (?,?,?,?,?,?,?,?)",
+            [(verse_id, pos, eng, _head_word(eng), st, st.split(".")[0], gpos, bid)
+             for pos, eng, st, gpos, bid in words],
         )
 
     conn.commit()
