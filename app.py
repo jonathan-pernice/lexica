@@ -352,7 +352,7 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
 
 
 _CURATION_SYSTEM = """\
-You are selecting primary evidence verses for a word study of the Greek Septuagint.
+You are selecting primary evidence verses for a word study of the Greek Bible (OT + NT).
 Return ONLY valid JSON — no prose, no markdown:
 {
   "primary_verses": ["Book Ch:V", ...],
@@ -360,53 +360,45 @@ Return ONLY valid JSON — no prose, no markdown:
 }
 
 ─── primary_verses ──────────────────────────────────────────────────────────
-Select from the verse list provided by the user. A verse is PRIMARY EVIDENCE if
-a scholar or student studying this topic would cite it in their analysis:
+Select from the verse list provided. The user message specifies the target count.
+Rank candidates in this priority order:
 
-  • Makes the concept the grammatical subject, object, or predicate
-  • Shows the concept acting, being described, named, or qualified
-  • Establishes the existence, identity, or role of the concept
-  • Places the concept in a theologically significant relationship
-  • Performs a cosmic or governance function (setting borders, dividing nations,
-    interceding, ruling, or acting on behalf of the divine) — these are primary
-    even when the concept appears instrumentally rather than as the main subject
-  • Provides evidence (even indirect) that a careful reader would cite
+1. FOUNDATIONAL / PROGRAMMATIC — verses that introduce, define, or establish the
+   concept in canonical theology. Include these even if vocabulary density is low.
+   e.g. Acts 2 for the Holy Spirit at Pentecost; John 14–16 for the Paraclete;
+   Rom 8 for Spirit and adoption; Deu 32:8 for divine allotment; Gen 1:26 for
+   the divine plural. These belong in primary regardless of how many matching
+   Strong's numbers appear in the verse.
 
-Exclude a verse ONLY when the word appears with zero bearing on the study topic:
-a personal name in an unrelated genealogy, a bare preposition or particle, a
-place name, or a counting formula where the word is purely grammatical filler.
+2. THEOLOGICALLY CENTRAL — verses scholars and students invariably cite for this
+   topic. For NT themes prefer John, Acts, Romans, Galatians, Hebrews anchor
+   texts over incidental mentions in shorter letters, unless the shorter letter
+   passage is itself definitional (e.g. Gal 4:6 for divine sonship).
 
-For divine council and related queries, apply the participant test: the verse
-must feature non-human supernatural beings — angels (angeloi), sons of God
-(huioi tou theou), gods (theoi), spirits (pneumata), or holy ones (hagioi) —
-as active participants. Human assemblies do not qualify regardless of what
-assembly language is used. If the only beings named or implied in the verse are
-humans (Israelites, elders, tribal chiefs, warriors, priests), it is not a
-divine council passage.
-  Fail: Israel assembles at Horeb — participants are humans
-  Fail: Moses assembles tribal elders — participants are humans
-  Fail: Israel gathers for war — participants are humans
-  Pass: sons of God present themselves before the LORD (Job 1:6) — supernatural participants
-  Pass: God stands in the divine assembly judging among gods (Psa 82:1) — supernatural participants
-Theological statements about God's counsel, wisdom, or plan also do not qualify —
-a verse describing what God decided is not the same as a verse showing the
-assembly where it happened.
+3. GRAMMATICALLY PROMINENT — the concept is the grammatical subject, object, or
+   predicate; it acts, is described, named, qualified, or placed in a
+   theologically significant relationship.
 
-When in doubt, include. Select 4–10 primary verses.
+4. FUNCTIONALLY SIGNIFICANT — the concept performs a key role (intercession,
+   governance, identity-marking) even if not the main subject.
+
+CRITICAL: Do NOT preference verses on lexical density alone. A foundational verse
+with one occurrence of the key term outranks a verbose passage where the term
+appears incidentally three times. Frequency of matching words within a single
+verse is not a proxy for theological importance.
+
+Exclude ONLY when the word has zero bearing on the topic: a personal name in an
+unrelated genealogy, a bare preposition or particle, a place name, or a pure
+counting formula where the word is grammatical filler.
 
 ─── additional_verses ───────────────────────────────────────────────────────
-List up to 12 verse refs (Book Ch:V) that are standard scholarly citations for
-this topic but were NOT returned by the SQL query (i.e. not in the verse list
-below). Use this field ONLY when:
-
+List verse refs (Book Ch:V) that are standard scholarly citations for this topic
+but were NOT in the verse list provided. Use ONLY when:
   • Scholarly consensus is strong that the verse belongs in this study, AND
   • The connection is inferred from context or implicit language rather than
-    explicit vocabulary — e.g. Gen 1:26 for the divine council (plural "let us /
-    our image" implies a heavenly assembly even though no council/being word
-    appears explicitly).
-
+    explicit vocabulary.
 If the verse list already covers the topic well, return additional_verses as [].
-Do not pad with loosely related verses. Prefer empty over speculative.\
+Prefer empty over speculative.\
 """
 
 
@@ -422,7 +414,18 @@ def _curate_primary_verses(
     if not results or not _anthropic:
         return [], []
 
-    capped = results[:50]
+    # Scale input window and primary target with result pool size.
+    n = len(results)
+    if n >= 200:
+        input_cap, primary_cap = 80, 30
+    elif n >= 100:
+        input_cap, primary_cap = 65, 25
+    elif n >= 50:
+        input_cap, primary_cap = 50, 20
+    else:
+        input_cap, primary_cap = max(n, 1), 12
+
+    capped = results[:input_cap]
     if capped:
         or_parts = " OR ".join(
             "(v.book=? AND v.chapter=? AND v.verse=?)" for _ in capped
@@ -454,18 +457,18 @@ def _curate_primary_verses(
     try:
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=400,
+            max_tokens=600,
             temperature=0,
             system=_CURATION_SYSTEM,
             messages=[{
                 "role": "user",
-                "content": f"Query: {query}\n\nVerses:\n{verse_list}",
+                "content": f"Query: {query}\nSelect up to {primary_cap} primary verses.\n\nVerses:\n{verse_list}",
             }],
         )
         raw = msg.content[0].text.strip()
         s, e = raw.find("{"), raw.rfind("}")
         parsed = json.loads(raw[s:e + 1]) if s != -1 and e > s else {}
-        primary    = [str(r) for r in parsed.get("primary_verses", [])][:25]
+        primary    = [str(r) for r in parsed.get("primary_verses", [])][:primary_cap]
         additional = [str(r) for r in parsed.get("additional_verses", [])][:12]
         return primary, additional
     except Exception as exc:
@@ -515,7 +518,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 4
+_CACHE_CODE_VER = 5
 
 
 def _get_ai_cache_ver() -> str:
