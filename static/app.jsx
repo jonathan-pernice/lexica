@@ -602,6 +602,19 @@ function PassageGroup({ label, verses, citedMap, onWordClick }) {
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
+const _EN_FUNCTION = new Set([
+  "the","a","an","and","or","but","of","in","to","for","with","at","from","by","on",
+  "as","into","through","all","some","any","each","every","both","his","her","its",
+  "our","their","my","your","he","she","it","they","we","i","you","is","are","was",
+  "were","be","been","have","has","had","do","does","did","not","no","nor","so","if",
+  "when","that","this","these","those","who","which","what","how","also","even","then",
+  "than","thus","now","up","out","about","over","after","before","more","most","such",
+  "own","same","other","us","me","him","them","itself","himself","themselves","ourselves",
+  "said","says","say","shall","will","would","could","should","may","might","must","let",
+  "upon","among","against","between","without","within","until","therefore","because",
+  "yet","still","too","very","just","only","never","always","already","here","there",
+]);
+
 function StudyMode({ allResults, primaryStrongs, onWordClick }) {
   // citedMap: strongs_base → entry, only for Strong's numbers that appear in
   // multiple verses (cross-verse frequency ≥ 2), so highlights reflect core
@@ -612,6 +625,7 @@ function StudyMode({ allResults, primaryStrongs, onWordClick }) {
     for (const e of allResults) {
       if (e.strongs_base === "*" || e.is_function) continue;
       if (e.strongs_base === "1473" && primaryStrongs !== "1473") continue;
+      if (_EN_FUNCTION.has((e.gloss || "").toLowerCase().trim())) continue;
       const key = `${e.book}-${e.chapter}-${e.verse}`;
       if (!verseCount.has(e.strongs_base)) verseCount.set(e.strongs_base, new Set());
       verseCount.get(e.strongs_base).add(key);
@@ -621,6 +635,7 @@ function StudyMode({ allResults, primaryStrongs, onWordClick }) {
     for (const e of allResults) {
       if (e.strongs_base === "*" || e.is_function) continue;
       if (e.strongs_base === "1473" && primaryStrongs !== "1473") continue;
+      if (_EN_FUNCTION.has((e.gloss || "").toLowerCase().trim())) continue;
       const count = verseCount.get(e.strongs_base)?.size || 0;
       if (count >= threshold && !m.has(e.strongs_base))
         m.set(e.strongs_base, e);
