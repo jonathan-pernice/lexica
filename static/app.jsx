@@ -15,12 +15,18 @@ const api = {
   strongsCount: (strongs_base) =>
     fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
   lsj: (lemma, strongs) => {
-    const qs = strongs && strongs.includes('.') ? `?strongs=${encodeURIComponent(strongs)}` : '';
-    return fetch(`/api/lsj/${encodeURIComponent(lemma)}${qs}`).then(r => r.json());
+    const hasDot = strongs && strongs.includes('.');
+    const path = lemma || (hasDot ? strongs : '');
+    if (!path) return Promise.resolve({ error: 'not found' });
+    const qs = hasDot ? `?strongs=${encodeURIComponent(strongs)}` : '';
+    return fetch(`/api/lsj/${encodeURIComponent(path)}${qs}`).then(r => r.json());
   },
   lsjSummary: (key, strongs) => {
-    const qs = strongs && strongs.includes('.') ? `?strongs=${encodeURIComponent(strongs)}` : '';
-    return fetch(`/api/lsj-summary/${encodeURIComponent(key)}${qs}`).then(r => r.json());
+    const hasDot = strongs && strongs.includes('.');
+    const path = key || (hasDot ? strongs : '');
+    if (!path) return Promise.resolve({ error: 'not found' });
+    const qs = hasDot ? `?strongs=${encodeURIComponent(strongs)}` : '';
+    return fetch(`/api/lsj-summary/${encodeURIComponent(path)}${qs}`).then(r => r.json());
   },
   books: () =>
     fetch("/api/books").then(r => r.json()),
@@ -378,7 +384,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setLsjEntry(null);
     setLsjTab("def");
     setLsjSummary(null);
-    if (!entry || !entry.greek) { setLsjLoading(false); return; }
+    const canLookup = entry && (entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.')));
+    if (!canLookup) { setLsjLoading(false); return; }
     let cancelled = false;
     setLsjLoading(true);
     api.lsj(entry.greek, entry.strongs_raw)
@@ -437,16 +444,20 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="detail-gloss">{entry.gloss}</div>
         </div>
 
-        {entry.greek && (
+        {(entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.'))) && (
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
-                Liddell-Scott-Jones<span className="lsj-badge">LSJ</span>
+                {lsjEntry?.source === "abp_ext"
+                  ? <>ABP Extended<span className="lsj-badge">ABP</span></>
+                  : <>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></>}
               </h4>
               {lsjEntry && (
                 <div className="lsj-tabs">
                   <button className={"lsj-tab " + (lsjTab === "def"  ? "on" : "")} onClick={() => setLsjTab("def")}>Definition</button>
-                  <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>Full LSJ</button>
+                  <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>
+                    {lsjEntry.source === "abp_ext" ? "Full text" : "Full LSJ"}
+                  </button>
                 </div>
               )}
             </div>
@@ -457,7 +468,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                 ? <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
                 : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
             ) : (
-              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not in LSJ.</div>
+              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found.</div>
             )}
           </section>
         )}

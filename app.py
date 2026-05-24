@@ -964,16 +964,19 @@ def lsj_lookup(lemma):
     conn = db()
     try:
         if "." in strongs_param:
+            snum = strongs_param.lstrip("Gg")
             abp_row = conn.execute(
-                "SELECT def_html FROM abp_ext WHERE strongs = ?", (strongs_param,)
+                "SELECT def_html FROM abp_ext WHERE strongs = ? OR strongs = ?",
+                (snum, "G" + snum),
             ).fetchone()
         else:
+            snum = strongs_param
             abp_row = None
         plain = _strip_accents(lemma).lower()
         row = conn.execute(
             "SELECT key, translit, def_html FROM lsj WHERE key = ?", (lemma,)
         ).fetchone()
-        if not row:
+        if not row and plain:
             row = conn.execute(
                 "SELECT key, translit, def_html FROM lsj WHERE plain = ?", (plain,)
             ).fetchone()
@@ -981,7 +984,7 @@ def lsj_lookup(lemma):
         conn.close()
     if abp_row:
         return jsonify({
-            "key":      strongs_param,
+            "key":      snum,
             "translit": "",
             "def_html": abp_row["def_html"],
             "source":   "abp_ext",
@@ -1011,12 +1014,14 @@ def lsj_summary(lemma):
     abp_strongs = None  # set for abp_ext rows so summary_json is written back
     try:
         if "." in strongs_param:
+            snum = strongs_param.lstrip("Gg")
             abp_row = conn.execute(
-                "SELECT def_html, summary_json FROM abp_ext WHERE strongs = ?", (strongs_param,)
+                "SELECT def_html, summary_json FROM abp_ext WHERE strongs = ? OR strongs = ?",
+                (snum, "G" + snum),
             ).fetchone()
             if abp_row:
                 row = {"def_html": abp_row["def_html"], "summary_json": abp_row["summary_json"]}
-                abp_strongs = strongs_param
+                abp_strongs = snum
             else:
                 row = None
         else:
@@ -1024,7 +1029,7 @@ def lsj_summary(lemma):
             row = conn.execute(
                 "SELECT key, def_html, summary_json FROM lsj WHERE key = ?", (lemma,)
             ).fetchone()
-            if not row:
+            if not row and plain:
                 row = conn.execute(
                     "SELECT key, def_html, summary_json FROM lsj WHERE plain = ?", (plain,)
                 ).fetchone()
@@ -1084,8 +1089,8 @@ def lsj_summary(lemma):
             conn.commit()
         elif abp_strongs:
             conn.execute(
-                "UPDATE abp_ext SET summary_json = ? WHERE strongs = ?",
-                (json.dumps(payload), abp_strongs),
+                "UPDATE abp_ext SET summary_json = ? WHERE strongs = ? OR strongs = ?",
+                (json.dumps(payload), abp_strongs, "G" + abp_strongs),
             )
             conn.commit()
     finally:
