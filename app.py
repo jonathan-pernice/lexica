@@ -793,6 +793,7 @@ def search():
 
     conn = db()
     groupings: dict = {}
+    variants: dict = {}
     try:
         snum = _strongs_num(q)
         if snum:
@@ -882,6 +883,21 @@ def search():
             ).fetchall():
                 s = gr["strongs"]
                 groupings.setdefault(s, []).append({"gloss": gr["english_head"], "count": gr["cnt"]})
+        # Sibling variants: for each strongs_base that has dotted results,
+        # fetch all corpus variants so the frontend can show related numbers.
+        dotted_bases = {
+            r["strongs_base"] for r in rows
+            if r["strongs_base"] and r["strongs_base"] != "*"
+            and r["strongs"] and "." in r["strongs"]
+        }
+        for base in dotted_bases:
+            var_rows = conn.execute(
+                "SELECT DISTINCT strongs FROM words WHERE strongs_base = ? ORDER BY strongs",
+                (base,),
+            ).fetchall()
+            all_v = [v["strongs"] for v in var_rows]
+            if len(all_v) > 1:
+                variants[base] = all_v
     finally:
         conn.close()
 
@@ -903,7 +919,7 @@ def search():
         for r in rows
     ]
 
-    return jsonify({"results": results, "total": len(results), "groupings": groupings})
+    return jsonify({"results": results, "total": len(results), "groupings": groupings, "variants": variants})
 
 
 @app.route("/api/verse/<book>/<int:chapter>/<int:verse>")

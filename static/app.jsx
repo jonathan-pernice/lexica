@@ -989,7 +989,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
 // ============================================================
 // GLOSS GROUPINGS
 // ============================================================
-function GlossGroupings({ groupings, results, onGlossDrill, onStrongsSearch }) {
+function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsSearch }) {
   const rows = useMemo(() => {
     const seen = new Set();
     const order = [];
@@ -1000,30 +1000,50 @@ function GlossGroupings({ groupings, results, onGlossDrill, onStrongsSearch }) {
       }
     }
     return order
-      .map(sn => ({ sn, glosses: groupings[sn] || [], entry: results.find(e => e.strongs_raw === sn) }))
-      .filter(({ glosses }) => glosses.length > 1);
-  }, [groupings, results]);
+      .map(sn => {
+        const glosses = groupings[sn] || [];
+        const base = sn.includes('.') ? sn.split('.')[0] : sn;
+        const allVariants = (variants && variants[base]) || [];
+        const siblings = sn.includes('.') ? allVariants.filter(v => v !== sn) : [];
+        const entry = results.find(e => e.strongs_raw === sn);
+        return { sn, glosses, siblings, entry };
+      })
+      .filter(({ glosses, siblings }) => glosses.length > 1 || siblings.length > 0);
+  }, [groupings, results, variants]);
 
   if (rows.length === 0) return null;
 
   return (
     <div className="gloss-groupings">
-      {rows.map(({ sn, glosses, entry }) => (
+      {rows.map(({ sn, glosses, siblings, entry }) => (
         <div key={sn} className="gloss-group">
           <span className="gloss-group-head">
             <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(`G${sn}`)}>G{sn}</button>
-            {entry?.translit && <span className="gloss-translit">{entry.translit}</span>}
-            <span className="gloss-also">appears as</span>
+            {entry && entry.translit && <span className="gloss-translit">{entry.translit}</span>}
+            {glosses.length > 1 && <span className="gloss-also">appears as</span>}
           </span>
-          <span className="gloss-chips">
-            {glosses.map(g => (
-              <button key={g.gloss} className="gloss-chip"
-                onClick={() => onGlossDrill(sn, entry?.greek || entry?.translit, g.gloss)}>
-                {g.gloss}
-                <span className="gloss-chip-count">{g.count}</span>
-              </button>
-            ))}
-          </span>
+          {glosses.length > 1 && (
+            <span className="gloss-chips">
+              {glosses.map(g => (
+                <button key={g.gloss} className="gloss-chip"
+                  onClick={() => onGlossDrill(sn, entry && (entry.greek || entry.translit), g.gloss)}>
+                  {g.gloss}
+                  <span className="gloss-chip-count">{g.count}</span>
+                </button>
+              ))}
+            </span>
+          )}
+          {siblings.length > 0 && (
+            <span className="gloss-siblings">
+              <span className="gloss-also">{glosses.length > 1 ? "·" : "see also"}</span>
+              {siblings.map(v => (
+                <button key={v} className="gloss-strongs-btn gloss-sibling-btn"
+                  onClick={() => onStrongsSearch(`G${v}`)}>
+                  G{v}
+                </button>
+              ))}
+            </span>
+          )}
         </div>
       ))}
     </div>
@@ -1108,6 +1128,7 @@ function App() {
   const [mainView, setMainView] = useState("search");
   const [libNav, setLibNav] = useState(null);
   const [groupings, setGroupings] = useState({});
+  const [variants, setVariants] = useState({});
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const searchFnRef = useRef(null);
 
@@ -1187,15 +1208,18 @@ function App() {
     setViewMode("browse");
     setActiveEntry(null);
     setGroupings({});
+    setVariants({});
     try {
       const data = await api.search(q);
       if (data.error) {
         setError(data.error);
         setAllResults([]);
         setGroupings({});
+        setVariants({});
       } else {
         setAllResults((data.results || []).map((r, idx) => makeEntry(r, idx)));
         setGroupings(data.groupings || {});
+        setVariants(data.variants || {});
       }
     } catch (e) {
       setError("Network error: " + e.message);
@@ -1362,6 +1386,7 @@ function App() {
                 <GlossGroupings
                   groupings={groupings}
                   results={allResults}
+                  variants={variants}
                   onGlossDrill={handleGlossDrill}
                   onStrongsSearch={handleStrongsSearch}
                 />

@@ -1379,3 +1379,15 @@ input { font-family: inherit; }
   color: var(--ink-4);
   font-variant-numeric: tabular-nums;
 }
+.gloss-siblings {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.gloss-sibling-btn {
+  opacity: 0.65;
+}
+.gloss-sibling-btn:hover {
+  opacity: 1;
+}
