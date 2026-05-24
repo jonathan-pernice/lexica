@@ -392,6 +392,11 @@ HOLY SPIRIT / SPIRIT OF GOD
 Apply this referent identification first; then select primary verses only from
 the matching pool, discarding verses that belong to a different referent class.
 
+FALLBACK: If the referent filter leaves fewer than 5 qualifying verses, discard
+the filter entirely and select from the full verse pool. The goal is to narrow
+and prioritize, not to eliminate results. Never return an empty primary_verses
+list when the verse pool is non-empty.
+
 ─── STEP 2: SELECT PRIMARY VERSES ──────────────────────────────────────────
 Select from the verse list provided. The user message specifies the target count.
 Rank candidates in this priority order:
@@ -551,7 +556,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 6
+_CACHE_CODE_VER = 7
 
 
 def _get_ai_cache_ver() -> str:
