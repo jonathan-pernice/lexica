@@ -359,7 +359,40 @@ Return ONLY valid JSON — no prose, no markdown:
   "additional_verses": ["Book Ch:V", ...]
 }
 
-─── primary_verses ──────────────────────────────────────────────────────────
+─── STEP 1: IDENTIFY THE REFERENT ──────────────────────────────────────────
+Before selecting any verses, determine exactly which referent the query targets.
+The same Greek words can denote completely different concepts; conflating them
+produces misleading results. Apply these rules:
+
+SINGULAR vs PLURAL sonship
+  "Son of God" (singular, title-case, or clearly Christological context)
+      → Jesus specifically: baptism voice, transfiguration, trial confession,
+        Johannine "I am" discourse, messianic declarations.
+      → EXCLUDE verses where huios/teknon refers to believers or heavenly beings.
+  "sons of God" / "children of God" (plural, or adoptionist context)
+      → Believers (NT adoption: Rom 8:14–17, Gal 3:26, 1 Jn 3:1–2) AND/OR
+        divine/heavenly beings (Gen 6:2–4, Job 1:6, 2:1, Psa 82:6, Deu 32:8).
+      → EXCLUDE Christological title verses (Jesus declared Son of God at baptism
+        or trial) unless the query explicitly asks about Jesus.
+
+DIVINE COUNCIL vs GENERAL SONSHIP
+  "divine council" / "heavenly assembly" / "bene ha-elohim"
+      → OT supernatural assembly (Job 1–2, Psa 82, Deu 32, 1 Ki 22:19–22).
+      → EXCLUDE NT adoption theology and Christological passages entirely.
+  General "sons of God" without divine-council framing
+      → Draw from both OT (divine beings) and NT (adoption) unless the query
+        limits scope (e.g. "in the NT" → NT only; "in Genesis" → OT only).
+
+HOLY SPIRIT / SPIRIT OF GOD
+  "Holy Spirit" or "Spirit of God" as divine person/presence
+      → Prioritise programmatic passages: Acts 2 (Pentecost), John 14–16
+        (Paraclete/G3875), Rom 8 (adoption + intercession), Gen 1:2 (hovering).
+      → EXCLUDE verses where pneuma refers merely to human breath or disposition.
+
+Apply this referent identification first; then select primary verses only from
+the matching pool, discarding verses that belong to a different referent class.
+
+─── STEP 2: SELECT PRIMARY VERSES ──────────────────────────────────────────
 Select from the verse list provided. The user message specifies the target count.
 Rank candidates in this priority order:
 
@@ -518,7 +551,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 5
+_CACHE_CODE_VER = 6
 
 
 def _get_ai_cache_ver() -> str:
