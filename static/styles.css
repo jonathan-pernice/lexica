@@ -141,16 +141,6 @@ input { font-family: inherit; }
   max-width: 1400px;
   margin: 0 auto;
   padding: 36px 28px 80px;
-  transition: padding-right 0.25s ease;
-}
-.app.has-detail .main-inner {
-  padding-right: calc(28px + 460px + 24px);
-}
-@media (max-width: 1100px) {
-  .app.has-detail .main-inner { padding-right: calc(28px + 400px + 16px); }
-}
-@media (max-width: 860px) {
-  .app.has-detail .main-inner { padding-right: 28px; }
 }
 
 /* ============================================================
@@ -381,12 +371,6 @@ input { font-family: inherit; }
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 14px;
-}
-.app.has-detail .results {
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-}
-@media (max-width: 1100px) {
-  .app.has-detail .results { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 }
 
 .card {
