@@ -32,11 +32,12 @@ const api = {
 // DATA SHAPING
 // ============================================================
 function makeEntry(r, idx) {
+  const snum = r.strongs_base === "*" ? "*" : (r.strongs || r.strongs_base);
   return {
-    id: `${r.strongs_base}-${r.book}-${r.chapter}-${r.verse}-${idx}`,
-    strongs: r.strongs_base === "*" ? "PN" : `G${r.strongs_base}`,
+    id: `${snum}-${r.book}-${r.chapter}-${r.verse}-${idx}`,
+    strongs: snum === "*" ? "PN" : `G${snum}`,
     strongs_base: r.strongs_base,
-    strongs_raw: r.strongs || "",
+    strongs_raw: snum,
     greek: r.lemma || "",
     translit: r.translit || "",
     gloss: r.gloss || "",
@@ -54,11 +55,12 @@ function flattenAiResults(verses) {
   let idx = 0;
   for (const v of verses) {
     for (const w of (v.words || [])) {
+      const snum = w.strongs_base === "*" ? "*" : (w.strongs || w.strongs_base);
       entries.push({
-        id: `ai-${v.book}-${v.chapter}-${v.verse}-${w.strongs_base}-${idx++}`,
-        strongs: w.strongs_base === "*" ? "PN" : `G${w.strongs_base}`,
+        id: `ai-${v.book}-${v.chapter}-${v.verse}-${snum}-${idx++}`,
+        strongs: snum === "*" ? "PN" : `G${snum}`,
         strongs_base: w.strongs_base,
-        strongs_raw: w.strongs || "",
+        strongs_raw: snum,
         greek: w.lemma || "",
         translit: w.translit || "",
         gloss: w.gloss || "",
@@ -360,11 +362,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   useEffect(() => {
     if (!entry || entry.strongs_base === "*") { setAbpCount(null); return; }
     let cancelled = false;
-    api.strongsCount(entry.strongs_base)
+    api.strongsCount(entry.strongs_raw)
       .then(d => { if (!cancelled) setAbpCount(d.count ?? null); })
       .catch(() => { if (!cancelled) setAbpCount(null); });
     return () => { cancelled = true; };
-  }, [entry && entry.strongs_base]);
+  }, [entry && entry.strongs_raw]);
 
   const [lsjEntry, setLsjEntry] = useState(null);
   const [lsjLoading, setLsjLoading] = useState(false);
@@ -466,7 +468,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             <button
               className="link-btn"
               style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onStrongsSearch(entry.strongs_base)}
+              onClick={() => onStrongsSearch(entry.strongs_raw)}
             >
               <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
             </button>
@@ -498,8 +500,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                   <span className="iw-greek">{w.lemma || "—"}</span>
                   <span className="iw-translit">{w.translit || ""}</span>
                   <span className="iw-english">{w.english || "—"}</span>
-                  {w.strongs_base && w.strongs_base !== "*" && (
-                    <span className="iw-strongs">G{w.strongs_base}</span>
+                  {(w.strongs || w.strongs_base) && w.strongs_base !== "*" && (
+                    <span className="iw-strongs">G{w.strongs || w.strongs_base}</span>
                   )}
                 </div>
               ))}
@@ -551,8 +553,8 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
   const entryMap = useMemo(() => {
     const m = new Map();
     for (const e of allResults) {
-      if (e.book === book && e.chapter === chapter && e.verse === verse && !m.has(e.strongs_base))
-        m.set(e.strongs_base, e);
+      if (e.book === book && e.chapter === chapter && e.verse === verse && !m.has(e.strongs_raw))
+        m.set(e.strongs_raw, e);
     }
     return m;
   }, [allResults, book, chapter, verse]);
@@ -565,10 +567,12 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
         ) : words.map((w, i) => {
           const clickable = w.strongs_base && w.strongs_base !== "*";
-          const entry = clickable && (entryMap.get(w.strongs_base) || {
+          const wnum = w.strongs || w.strongs_base;
+          const entry = clickable && (entryMap.get(wnum) || {
             id: `study-${book}-${chapter}-${verse}-${i}`,
-            strongs: `G${w.strongs_base}`,
+            strongs: `G${wnum}`,
             strongs_base: w.strongs_base,
+            strongs_raw: wnum,
             greek: w.lemma || "",
             translit: w.translit || "",
             gloss: w.english || "",
@@ -779,11 +783,13 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
   const renderVerse = (v) => {
     const isHighlight = nav && nav.highlight === v.verse;
 
-    const makeEntry = (w) => ({
+    const makeEntry = (w) => {
+      const snum = w.strongs_base === "*" ? "*" : (w.strongs || w.strongs_base);
+      return {
       id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
-      strongs: `G${w.strongs_base}`,
+      strongs: snum === "*" ? "PN" : `G${snum}`,
       strongs_base: w.strongs_base,
-      strongs_raw: w.strongs || "",
+      strongs_raw: snum,
       greek: w.lemma || "",
       translit: w.translit || "",
       gloss: w.english || "",
@@ -794,7 +800,8 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
       definition: "",
       derivation: "",
       is_function: false,
-    });
+      };
+    };
 
     // Plain chip (English mode or non-bracketed word in Greek mode)
     const chip = (w, key) => {
@@ -807,7 +814,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
           <span className="lib-iw-english">{w.english}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
-              ? <span className="lib-iw-strongs">G{w.strongs_base}</span>
+              ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
               : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
           )}
         </span>
@@ -827,7 +834,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
           <span className="lib-iw-english">{w.english}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
-              ? <span className="lib-iw-strongs">G{w.strongs_base}</span>
+              ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
               : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
           )}
         </span>
@@ -970,13 +977,13 @@ function GlossGroupings({ groupings, results, onGlossDrill, onStrongsSearch }) {
     const seen = new Set();
     const order = [];
     for (const e of results) {
-      if (e.strongs_base && e.strongs_base !== "*" && !seen.has(e.strongs_base)) {
-        seen.add(e.strongs_base);
-        order.push(e.strongs_base);
+      if (e.strongs_raw && e.strongs_raw !== "*" && !seen.has(e.strongs_raw)) {
+        seen.add(e.strongs_raw);
+        order.push(e.strongs_raw);
       }
     }
     return order
-      .map(sb => ({ sb, glosses: groupings[sb] || [], entry: results.find(e => e.strongs_base === sb) }))
+      .map(sn => ({ sn, glosses: groupings[sn] || [], entry: results.find(e => e.strongs_raw === sn) }))
       .filter(({ glosses }) => glosses.length > 1);
   }, [groupings, results]);
 
@@ -984,17 +991,17 @@ function GlossGroupings({ groupings, results, onGlossDrill, onStrongsSearch }) {
 
   return (
     <div className="gloss-groupings">
-      {rows.map(({ sb, glosses, entry }) => (
-        <div key={sb} className="gloss-group">
+      {rows.map(({ sn, glosses, entry }) => (
+        <div key={sn} className="gloss-group">
           <span className="gloss-group-head">
-            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(`G${sb}`)}>G{sb}</button>
+            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(`G${sn}`)}>G{sn}</button>
             {entry?.translit && <span className="gloss-translit">{entry.translit}</span>}
             <span className="gloss-also">appears as</span>
           </span>
           <span className="gloss-chips">
             {glosses.map(g => (
               <button key={g.gloss} className="gloss-chip"
-                onClick={() => onGlossDrill(sb, entry?.greek || entry?.translit, g.gloss)}>
+                onClick={() => onGlossDrill(sn, entry?.greek || entry?.translit, g.gloss)}>
                 {g.gloss}
                 <span className="gloss-chip-count">{g.count}</span>
               </button>
@@ -1034,8 +1041,8 @@ function AIAnswer({ query, explanation, entries, onPick }) {
     const seen = new Set();
     const result = [];
     for (const e of entries) {
-      if (!seen.has(e.strongs_base)) {
-        seen.add(e.strongs_base);
+      if (!seen.has(e.strongs_raw)) {
+        seen.add(e.strongs_raw);
         result.push(e);
         if (result.length >= 6) break;
       }
@@ -1094,11 +1101,11 @@ function App() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Count occurrences per strongs_base across all results
+  // Count occurrences per dotted strongs across all results
   const countMap = useMemo(() => {
     const map = {};
     for (const e of allResults) {
-      map[e.strongs_base] = (map[e.strongs_base] || 0) + 1;
+      map[e.strongs_raw] = (map[e.strongs_raw] || 0) + 1;
     }
     return map;
   }, [allResults]);
@@ -1106,14 +1113,14 @@ function App() {
   // Sorted display list
   const displayed = useMemo(() => {
     if (sortBy === "alpha") return [...allResults].sort((a, b) => a.translit.localeCompare(b.translit));
-    if (sortBy === "freq") return [...allResults].sort((a, b) => (countMap[b.strongs_base] || 0) - (countMap[a.strongs_base] || 0));
+    if (sortBy === "freq") return [...allResults].sort((a, b) => (countMap[b.strongs_raw] || 0) - (countMap[a.strongs_raw] || 0));
     return allResults; // relevance = original order
   }, [allResults, sortBy, countMap]);
 
-  // Strongs base being searched directly (null in AI/text modes)
+  // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
     if (mode !== "search") return null;
-    const m = /^[Gg](\d+)$/.exec(q1.trim());
+    const m = /^[Gg]([\d.]+)$/.exec(q1.trim());
     return m ? m[1] : null;
   }, [mode, q1]);
 
@@ -1188,9 +1195,9 @@ function App() {
     handleSearch(`G${num}`);
   };
 
-  const handleGlossDrill = (sb, greek, gloss) => {
-    const gq = `G${sb}`;
-    const label = greek ? `${greek} G${sb}` : gq;
+  const handleGlossDrill = (sn, greek, gloss) => {
+    const gq = `G${sn}`;
+    const label = greek ? `${greek} G${sn}` : gq;
     const existingIdx = breadcrumbs.findIndex(c => c.q === gq);
     let newCrumbs;
     if (existingIdx !== -1) {
@@ -1362,7 +1369,7 @@ function App() {
                       entry={entry}
                       active={activeEntry && activeEntry.id === entry.id}
                       onClick={() => setActiveEntry(entry)}
-                      count={countMap[entry.strongs_base] || 0}
+                      count={countMap[entry.strongs_raw] || 0}
                     />
                   ))}
                 </div>
@@ -1383,7 +1390,7 @@ function App() {
           entry={activeEntry}
           isMobile={false}
           onClose={() => setActiveEntry(null)}
-          occurrences={countMap[activeEntry.strongs_base] || 0}
+          occurrences={countMap[activeEntry.strongs_raw] || 0}
           totalResults={allResults.length}
           onStrongsSearch={handleStrongsSearch}
           onReadInContext={handleReadInContext}
@@ -1397,7 +1404,7 @@ function App() {
             entry={activeEntry}
             isMobile={true}
             onClose={() => setActiveEntry(null)}
-            occurrences={countMap[activeEntry.strongs_base] || 0}
+            occurrences={countMap[activeEntry.strongs_raw] || 0}
             totalResults={allResults.length}
             onStrongsSearch={handleStrongsSearch}
             onReadInContext={handleReadInContext}

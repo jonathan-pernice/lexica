@@ -842,39 +842,37 @@ def search():
                     """,
                     (q, f"%{q_plain}%"),
                 ).fetchall()
-        # Gloss groupings: for text searches, query the DB directly for strongs_base
-        # values whose english_head = q — independent of what rows happened to match
-        # (avoids including strongs that only appeared via the translit LIKE branch).
+        # Gloss groupings: keyed by exact dotted strongs number.
         if snum:
-            unique_strongs = list({r["strongs_base"] for r in rows
-                                   if r["strongs_base"] and r["strongs_base"] != "*"})
+            unique_strongs = list({r["strongs"] for r in rows
+                                   if r["strongs"] and r["strongs"] != "*"})
         else:
-            # strongs_base values where english_head = q exists anywhere in corpus
+            # Dotted strongs values where english_head = q exists anywhere in corpus
             corpus_match = {
-                r["strongs_base"] for r in conn.execute(
-                    """SELECT DISTINCT strongs_base FROM words
+                r["strongs"] for r in conn.execute(
+                    """SELECT DISTINCT strongs FROM words
                        WHERE english_head = ? COLLATE NOCASE
-                         AND strongs_base IS NOT NULL AND strongs_base != '*'""",
+                         AND strongs IS NOT NULL AND strongs != '*'""",
                     (q,),
                 ).fetchall()
             }
             # Cross-reference: only include strongs that also appear in the search results
-            result_strongs = {r["strongs_base"] for r in rows
-                              if r["strongs_base"] and r["strongs_base"] != "*"}
+            result_strongs = {r["strongs"] for r in rows
+                              if r["strongs"] and r["strongs"] != "*"}
             unique_strongs = list(corpus_match & result_strongs)
         if unique_strongs:
             placeholders = ",".join("?" * len(unique_strongs))
             for gr in conn.execute(
-                f"""SELECT strongs_base, english_head, COUNT(*) AS cnt
+                f"""SELECT strongs, english_head, COUNT(*) AS cnt
                     FROM words
-                    WHERE strongs_base IN ({placeholders})
+                    WHERE strongs IN ({placeholders})
                       AND english_head IS NOT NULL AND english_head != ''
-                    GROUP BY strongs_base, english_head
-                    ORDER BY strongs_base, cnt DESC""",
+                    GROUP BY strongs, english_head
+                    ORDER BY strongs, cnt DESC""",
                 unique_strongs,
             ).fetchall():
-                sb = gr["strongs_base"]
-                groupings.setdefault(sb, []).append({"gloss": gr["english_head"], "count": gr["cnt"]})
+                s = gr["strongs"]
+                groupings.setdefault(s, []).append({"gloss": gr["english_head"], "count": gr["cnt"]})
     finally:
         conn.close()
 
@@ -1162,7 +1160,7 @@ def strongs_count_route(strongs_base):
     conn = db()
     try:
         row = conn.execute(
-            "SELECT COUNT(*) AS cnt FROM words WHERE strongs_base = ?"
+            "SELECT COUNT(*) AS cnt FROM words WHERE strongs = ?"
             " AND english IS NOT NULL AND english != ''",
             (strongs_base,),
         ).fetchone()
