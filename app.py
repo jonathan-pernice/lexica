@@ -1107,6 +1107,18 @@ def lsj_summary(lemma):
     return jsonify(payload)
 
 
+@app.route("/api/abp-debug")
+def abp_debug():
+    conn = db()
+    try:
+        rows = conn.execute("SELECT strongs, length(def_html) AS dlen FROM abp_ext LIMIT 10").fetchall()
+        return jsonify({"rows": [{"strongs": r["strongs"], "def_html_len": r["dlen"]} for r in rows]})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+
 @app.route("/api/books")
 def books_list():
     conn = db()
