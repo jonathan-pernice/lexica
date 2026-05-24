@@ -1141,7 +1141,7 @@ def books_list():
             FROM books b
             JOIN verses v ON v.book = b.abbrev
             GROUP BY b.abbrev, b.name
-            ORDER BY b.id
+            ORDER BY COALESCE(b.sort_order, b.id)
         """).fetchall()
     finally:
         conn.close()

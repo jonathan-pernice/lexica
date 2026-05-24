@@ -16,6 +16,18 @@ DB = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "bible.db"
 )
 
+# Canonical ordering for the books table sort_order column.
+CANONICAL_ORDER = [
+    "Gen","Exo","Lev","Num","Deu","Jos","Jdg","Rth",
+    "1Sa","2Sa","1Ki","2Ki","1Ch","2Ch","Ezr","Neh","Est",
+    "Job","Psa","Pro","Ecc","Son",
+    "Isa","Jer","Lam","Eze","Dan",
+    "Hos","Joe","Amo","Oba","Jon","Mic","Nah","Hab","Zep","Hag","Zec","Mal",
+    "Mat","Mar","Luk","Joh","Act",
+    "Rom","1Co","2Co","Gal","Eph","Php","Col","1Th","2Th","1Ti","2Ti","Tit","Phm",
+    "Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
+]
+
 # Canonical metadata for every book that may ever be loaded.
 # re_alt  — regex alternative used to match this book in AI-generated text
 # narrative — key narrative sections injected into the AI system prompt
@@ -605,13 +617,18 @@ def main() -> None:
     conn = sqlite3.connect(DB)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS books (
-            id        INTEGER PRIMARY KEY,
-            abbrev    TEXT NOT NULL UNIQUE,
-            name      TEXT NOT NULL,
-            re_alt    TEXT NOT NULL,
-            narrative TEXT
+            id         INTEGER PRIMARY KEY,
+            abbrev     TEXT NOT NULL UNIQUE,
+            name       TEXT NOT NULL,
+            re_alt     TEXT NOT NULL,
+            narrative  TEXT,
+            sort_order INTEGER
         )
     """)
+    try:
+        conn.execute("ALTER TABLE books ADD COLUMN sort_order INTEGER")
+    except Exception:
+        pass
 
     present = {r[0] for r in conn.execute("SELECT DISTINCT abbrev FROM books")}
     loaded  = [r[0] for r in conn.execute(
@@ -625,9 +642,10 @@ def main() -> None:
             skipped += 1
             continue
         m = KNOWN_BOOKS[abbrev]
+        sort_order = CANONICAL_ORDER.index(abbrev) if abbrev in CANONICAL_ORDER else 999
         conn.execute(
-            "INSERT OR REPLACE INTO books (abbrev, name, re_alt, narrative) VALUES (?,?,?,?)",
-            (abbrev, m["name"], m["re_alt"], m.get("narrative")),
+            "INSERT OR REPLACE INTO books (abbrev, name, re_alt, narrative, sort_order) VALUES (?,?,?,?,?)",
+            (abbrev, m["name"], m["re_alt"], m.get("narrative"), sort_order),
         )
         if abbrev in present:
             updated += 1
