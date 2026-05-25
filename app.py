@@ -1432,7 +1432,7 @@ def chapter_text(book, chapter):
     conn = db()
     try:
         rows = conn.execute(
-            """SELECT v.verse, w.position, w.english, w.strongs_base, w.strongs,
+            """SELECT v.verse, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
                       l.lemma, l.translit, w.greek_pos, w.bracket_id
                FROM verses v
                JOIN words w ON w.verse_id = v.id
@@ -1454,6 +1454,7 @@ def chapter_text(book, chapter):
         verses[vn]["words"].append({
             "position":     r["position"],
             "english":      r["english"],
+            "english_head": r["english_head"],
             "strongs_base": r["strongs_base"],
             "strongs":      r["strongs"],
             "lemma":        r["lemma"],
