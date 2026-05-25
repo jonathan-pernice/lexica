@@ -1213,17 +1213,23 @@ input { font-family: inherit; }
   padding: 40px 0;
 }
 
-/* Flowing prose mode */
-.lib-text {
+/* Verse reading container — all modes */
+.lib-text-words {
   font-family: var(--f-serif);
   font-size: 18px;
   line-height: 2;
   color: var(--ink);
-  margin: 0;
-  text-wrap: pretty;
   text-align: left;
 }
-.lib-verse-span { display: inline; }
+
+/* Each verse: fixed number column + content column */
+.lib-verse-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
 .lib-vnum {
   font-family: var(--f-mono);
   font-size: 10px;
@@ -1231,27 +1237,25 @@ input { font-family: inherit; }
   background: var(--gold-soft);
   padding: 2px 5px;
   border-radius: 3px;
-  vertical-align: super;
-  margin-right: 5px;
   letter-spacing: 0.04em;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  margin-top: 8px;
 }
-.lib-highlight { background: color-mix(in oklab, var(--gold-soft) 80%, transparent); border-radius: 3px; }
 
-/* Word-chip mode (Strong's / Interlinear / Greek order) */
-.lib-text-words {
-  display: flex;
-  flex-direction: column;
+/* Verse content — prose: inline text; chips: flex wrap */
+.lib-verse-content {
+  flex: 1;
+  text-align: left;
 }
-.lib-verse-block {
+.lib-verse-chips {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  justify-content: flex-start;
   gap: 4px 6px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  margin-bottom: 10px;
 }
+
+.lib-highlight { background: color-mix(in oklab, var(--gold-soft) 80%, transparent); border-radius: 3px; }
 .lib-word {
   display: inline-flex;
   flex-direction: column;
