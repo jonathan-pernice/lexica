@@ -1111,6 +1111,7 @@ def search():
                 ).fetchall()
             else:
                 # Default mode: exact head-word match (english_head is a single token),
+                # with english fallback for rows where english_head is null,
                 # or transliteration prefix/substring for Greek lookup flexibility.
                 rows = conn.execute(
                     """
@@ -1121,12 +1122,13 @@ def search():
                     JOIN verses v ON w.verse_id = v.id
                     LEFT JOIN lexicon l ON l.strongs = w.strongs_base
                     WHERE (w.english_head = ? COLLATE NOCASE
+                           OR w.english = ? COLLATE NOCASE
                            OR strip_accents(l.translit) LIKE ? COLLATE NOCASE)
                       AND w.english IS NOT NULL AND w.english != ''
                       AND w.strongs_base != '*'
                     ORDER BY v.id, w.position
                     """,
-                    (q, f"%{q_plain}%"),
+                    (q, q, f"%{q_plain}%"),
                 ).fetchall()
         # Gloss groupings: keyed by exact dotted strongs number.
         def _is_content(r):
@@ -1135,13 +1137,14 @@ def search():
         if snum:
             unique_strongs = list({r["strongs"] for r in rows if _is_content(r)})
         else:
-            # Dotted strongs values where english_head = q exists anywhere in corpus
+            # Dotted strongs values where english_head (or english fallback) = q
             corpus_match = {
                 r["strongs"] for r in conn.execute(
                     """SELECT DISTINCT strongs FROM words
-                       WHERE english_head = ? COLLATE NOCASE
+                       WHERE (english_head = ? COLLATE NOCASE
+                              OR (english_head IS NULL AND english = ? COLLATE NOCASE))
                          AND strongs IS NOT NULL AND strongs != '*'""",
-                    (q,),
+                    (q, q),
                 ).fetchall()
             }
             # Cross-reference: only include content-word strongs in the search results

@@ -924,6 +924,14 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
       };
     };
 
+    // For multi-word ABP phrases like "God made", show only the head word (english_head).
+    // For single words like "God", use english directly to preserve casing.
+    const chipLabel = (w) => {
+      const e = w.english || "";
+      if (e.includes(" ")) return w.english_head || e;
+      return e;
+    };
+
     // Plain chip (English mode or non-bracketed word in Greek mode)
     const chip = (w, key) => {
       const clickable = !!(onWordClick && w.strongs_base && w.strongs_base !== "*");
@@ -932,7 +940,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
           className={"lib-word" + (clickable ? " lib-word-clickable" : "")}
           onClick={clickable ? () => onWordClick(makeEntry(w)) : undefined}>
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
-          <span className="lib-iw-english">{w.english_head || w.english}</span>
+          <span className="lib-iw-english">{chipLabel(w)}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
               ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
@@ -952,7 +960,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
           {w.greek_pos !== null && w.greek_pos !== undefined &&
             <span className="lib-iw-pos">{w.greek_pos}</span>}
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
-          <span className="lib-iw-english">{w.english_head || w.english}</span>
+          <span className="lib-iw-english">{chipLabel(w)}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
               ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
