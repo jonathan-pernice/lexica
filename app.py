@@ -208,7 +208,43 @@ Always either wrap OR clauses in parentheses:
 Or use UNION ALL with the book filter in each branch:
   SELECT ... WHERE clause_a AND v.book IN (...)
   UNION ALL
-  SELECT ... WHERE clause_b AND v.book IN (...)\
+  SELECT ... WHERE clause_b AND v.book IN (...)
+
+─── KJV + HEBREW TABLES ─────────────────────────────────────────────────────
+You also have access to KJV verse text and word-level Strong's data:
+
+  kjv_verses(verse_id, book_id, chapter, verse_num, verse_text)
+      Full KJV verse text, 31,102 verses. book_id matches the books table.
+
+  kjv_words(word_id, book_id, chapter, verse_num, verse_pos, word, italic)
+      Every KJV word tokenized with position. italic=1 means the word was
+      added by translators with no corresponding source word.
+
+  kjv_strongs(word_id, strongs_id)
+      Links each KJV word to its Strong's number. G-numbers for NT, H-numbers
+      for OT.
+
+  bdb(strongs_id, lemma, xlit, pronounce, description, part_of_speech)
+      Brown-Driver-Briggs Hebrew lexicon, 8,674 entries, H-numbers only.
+
+TRANSLATION COMPARISON queries:
+  To compare KJV vs ABP renderings of a concept or word:
+  1. Find the relevant Strong's number(s) from the lexicon table.
+  2. Query kjv_strongs to find where that number appears in KJV and what
+     English word was used.
+  3. Query words to find the same Strong's number in ABP.
+  4. Compare renderings and explain any differences based on the lexicon
+     definition. Always anchor the comparison in the source word — the
+     Strong's number is the bridge; the question is what the original word
+     means and how each translation chose to render it.
+
+  For open-ended comparison queries (e.g. "what stands out as differences
+  in Acts KJV vs ABP"): pull verses from both corpora, find where the same
+  Strong's numbers produced different English words, surface patterns, and
+  flag anything theologically significant.
+
+  For OT questions involving Hebrew: use kjv_strongs to get the H-number,
+  then look it up in bdb for the Hebrew definition and lemma.\
 """
 
 _AI_SYSTEM_BUILT: str | None = None
@@ -603,7 +639,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 12
+_CACHE_CODE_VER = 13
 
 
 def _get_ai_cache_ver() -> str:
