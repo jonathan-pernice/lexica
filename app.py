@@ -1470,6 +1470,78 @@ def chapter_text(book, chapter):
     ])
 
 
+@app.route("/api/kjv/chapter/<book>/<int:chapter>")
+def kjv_chapter(book, chapter):
+    conn = db_ro()
+    try:
+        rows = conn.execute("""
+            SELECT kw.verse_num, kw.word_id, kw.verse_pos, kw.word, kw.italic,
+                   GROUP_CONCAT(ks.strongs_id) AS strongs_ids
+            FROM kjv_words kw
+            JOIN books b ON b.id = kw.book_id
+            LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+            WHERE b.abbrev = ? AND kw.chapter = ?
+            GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic
+            ORDER BY kw.verse_num, kw.verse_pos
+        """, (book, chapter)).fetchall()
+    finally:
+        conn.close()
+    verses: dict[int, dict] = {}
+    order: list[int] = []
+    for r in rows:
+        vn = r["verse_num"]
+        if vn not in verses:
+            verses[vn] = {"verse": vn, "words": []}
+            order.append(vn)
+        sids = [s.strip() for s in (r["strongs_ids"] or "").split(",") if s.strip()]
+        verses[vn]["words"].append({
+            "word_id":   r["word_id"],
+            "verse_pos": r["verse_pos"],
+            "word":      r["word"],
+            "italic":    bool(r["italic"]),
+            "strongs_ids": sids,
+        })
+    return jsonify([verses[v] for v in order])
+
+
+@app.route("/api/kjv/verse/<book>/<int:chapter>/<int:verse_num>")
+def kjv_verse_text(book, chapter, verse_num):
+    conn = db_ro()
+    try:
+        row = conn.execute("""
+            SELECT kv.verse_text FROM kjv_verses kv
+            JOIN books b ON b.id = kv.book_id
+            WHERE b.abbrev = ? AND kv.chapter = ? AND kv.verse_num = ?
+        """, (book, chapter, verse_num)).fetchone()
+    finally:
+        conn.close()
+    if not row:
+        return jsonify({"error": "not found"}), 404
+    return jsonify({"text": row["verse_text"]})
+
+
+@app.route("/api/bdb/<path:strongs_id>")
+def bdb_lookup(strongs_id):
+    conn = db_ro()
+    try:
+        row = conn.execute(
+            "SELECT strongs_id, lemma, xlit, pronounce, description, part_of_speech FROM bdb WHERE strongs_id = ?",
+            (strongs_id.upper(),)
+        ).fetchone()
+    finally:
+        conn.close()
+    if not row:
+        return jsonify({"error": "not found"}), 404
+    return jsonify({
+        "strongs_id":     row["strongs_id"],
+        "lemma":          row["lemma"] or "",
+        "xlit":           row["xlit"] or "",
+        "pronounce":      row["pronounce"] or "",
+        "description":    row["description"] or "",
+        "part_of_speech": row["part_of_speech"] or "",
+    })
+
+
 @app.route("/api/strongs-count/<strongs_base>")
 def strongs_count_route(strongs_base):
     if strongs_base == "*":

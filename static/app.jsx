@@ -38,6 +38,12 @@ const api = {
     fetch("/api/books").then(r => r.json()),
   chapter: (book, ch) =>
     fetch(`/api/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  kjvChapter: (book, ch) =>
+    fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  kjvVerse: (book, ch, v) =>
+    fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
+  bdb: (sid) =>
+    fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
 };
 
 // ============================================================
@@ -390,6 +396,34 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     return () => { cancelled = true; };
   }, [entry && entry.strongs_raw]);
 
+  const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H");
+
+  // Hebrew BDB lookup
+  const [bdbEntry, setBdbEntry] = useState(null);
+  const [bdbLoading, setBdbLoading] = useState(false);
+  useEffect(() => {
+    setBdbEntry(null);
+    if (!isHebrew || !entry.strongs) return;
+    let cancelled = false;
+    setBdbLoading(true);
+    api.bdb(entry.strongs)
+      .then(d => { if (!cancelled) { setBdbEntry(d.error ? null : d); setBdbLoading(false); } })
+      .catch(() => { if (!cancelled) { setBdbEntry(null); setBdbLoading(false); } });
+    return () => { cancelled = true; };
+  }, [entry && entry.id]);
+
+  // KJV verse text (when entry came from KJV mode)
+  const [kjvVerseText, setKjvVerseText] = useState("");
+  useEffect(() => {
+    setKjvVerseText("");
+    if (!entry || !entry.isKjv) return;
+    let cancelled = false;
+    api.kjvVerse(entry.book, entry.chapter, entry.verse)
+      .then(d => { if (!cancelled) setKjvVerseText(d.text || ""); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [entry && entry.id]);
+
   const [lsjEntry, setLsjEntry] = useState(null);
   const [lsjLoading, setLsjLoading] = useState(false);
   const [lsjTab, setLsjTab] = useState("def");
@@ -400,7 +434,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setLsjEntry(null);
     setLsjTab("def");
     setLsjSummary(null);
-    const canLookup = entry && (entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.')));
+    const canLookup = !isHebrew && entry && (entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.')));
     if (!canLookup) { setLsjLoading(false); return; }
     let cancelled = false;
     setLsjLoading(true);
@@ -460,7 +494,23 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="detail-gloss">{stripArticles(entry.gloss)}</div>
         </div>
 
-        {(entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.'))) && (
+        {isHebrew ? (
+          <section className="detail-section">
+            <h4 className="detail-h">Brown-Driver-Briggs<span className="bdb-badge">BDB</span></h4>
+            {bdbLoading ? (
+              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
+            ) : bdbEntry ? (
+              <div className="bdb-body">
+                {bdbEntry.lemma && <div className="bdb-lemma" dir="rtl">{bdbEntry.lemma}</div>}
+                {bdbEntry.xlit && <div className="bdb-xlit">{bdbEntry.xlit}{bdbEntry.pronounce ? <span className="bdb-pronounce"> ({bdbEntry.pronounce})</span> : null}</div>}
+                {bdbEntry.part_of_speech && <span className="bdb-pos-badge">{bdbEntry.part_of_speech}</span>}
+                {bdbEntry.description && <p className="detail-p" style={{ marginTop: "10px" }}>{bdbEntry.description}</p>}
+              </div>
+            ) : (
+              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found in BDB.</div>
+            )}
+          </section>
+        ) : (entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.'))) && (
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
@@ -489,7 +539,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </section>
         )}
 
-        {abpCount !== null && (
+        {!isHebrew && abpCount !== null && (
           <section className="detail-section">
             <h4 className="detail-h">ABP Occurrences</h4>
             <button
@@ -518,11 +568,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         <section className="detail-section">
           <h4 className="detail-h">
             Verse — {entry.ref}
-            <span className="detail-h-sub">LXX (ABP English)</span>
+            <span className="detail-h-sub">{entry.isKjv ? "KJV" : "LXX (ABP English)"}</span>
           </h4>
           <blockquote className="verse">
             <span className="verse-num">{entry.verse}</span>
-            {verseLoading ? "Loading…" : verseText || "—"}
+            {entry.isKjv ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
           </blockquote>
           {showInterlinear && (
             <div className="interlinear">
@@ -791,10 +841,13 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
   const [selBook, setSelBook] = useState(null);
   const [selChapter, setSelChapter] = useState(1);
   const [verses, setVerses] = useState([]);
+  const [kjvVerses, setKjvVerses] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [kjvLoading, setKjvLoading] = useState(false);
   const [showStrongs, setShowStrongs] = useState(false);
   const [showInterlinear, setShowInterlinear] = useState(false);
   const [wordOrder, setWordOrder] = useState("english"); // "english" | "greek"
+  const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
 
   useEffect(() => {
@@ -823,6 +876,17 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
       .catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [selBook && selBook.abbrev, selChapter]);
+
+  useEffect(() => {
+    if (!selBook || (translation !== "kjv" && translation !== "parallel")) return;
+    let cancelled = false;
+    setKjvLoading(true);
+    setKjvVerses([]);
+    api.kjvChapter(selBook.abbrev, selChapter)
+      .then(data => { if (!cancelled) { setKjvVerses(data); setKjvLoading(false); } })
+      .catch(() => { if (!cancelled) setKjvLoading(false); });
+    return () => { cancelled = true; };
+  }, [selBook && selBook.abbrev, selChapter, translation]);
 
   useEffect(() => {
     if (!nav?.scroll || !verses.length) return;
@@ -944,6 +1008,42 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     );
   };
 
+  const renderKjvVerse = (v, showVerseNum = true) => {
+    const makeKjvEntry = (w, sid) => ({
+      id: `kjv-${selBook.abbrev}-${selChapter}-${v.verse}-${w.word_id}`,
+      strongs: sid || "",
+      strongs_base: sid ? sid.slice(1) : "",
+      strongs_raw: sid ? sid.slice(1) : "",
+      greek: "",
+      translit: "",
+      gloss: w.word,
+      ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
+      book: selBook.abbrev,
+      chapter: selChapter,
+      verse: v.verse,
+      definition: "", derivation: "", is_function: false,
+      isKjv: true,
+      isHebrew: sid ? sid.startsWith("H") : false,
+    });
+    return (
+      <span key={v.verse} className="lib-verse-block">
+        {showVerseNum && <sup className="lib-vnum">{v.verse}</sup>}
+        {v.words.map((w, i) => {
+          const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
+          const clickable = !!(onWordClick && sid);
+          return (
+            <span key={i}
+              className={"lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
+              onClick={clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined}>
+              <span className="lib-iw-english">{w.word}</span>
+              {showStrongs && sid && <span className="lib-iw-strongs">{sid}</span>}
+            </span>
+          );
+        })}
+      </span>
+    );
+  };
+
   return (
     <div className="library">
       <div className="lib-toolbar">
@@ -984,25 +1084,32 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
             aria-label="Next chapter"
           >›</button>
         </div>
+        <div className="lib-translation-toggle">
+          <button className={"lib-trans-btn" + (translation === "abp" ? " on" : "")} onClick={() => setTranslation("abp")}>ABP</button>
+          <button className={"lib-trans-btn" + (translation === "kjv" ? " on" : "")} onClick={() => setTranslation("kjv")}>KJV</button>
+          <button className={"lib-trans-btn" + (translation === "parallel" ? " on" : "")} onClick={() => setTranslation("parallel")}>Parallel</button>
+        </div>
         <div className="lib-toggles">
           <button
             className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
             onClick={() => setShowStrongs(v => !v)}
           >Strong's</button>
-          <button
-            className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
-            onClick={() => setShowInterlinear(v => !v)}
-          >Interlinear</button>
-          <div className="lib-order-toggle">
+          {translation === "abp" && <>
             <button
-              className={"lib-order-btn" + (wordOrder === "english" ? " on" : "")}
-              onClick={() => setWordOrder("english")}
-            >English</button>
-            <button
-              className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
-              onClick={() => setWordOrder("greek")}
-            >Greek</button>
-          </div>
+              className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
+              onClick={() => setShowInterlinear(v => !v)}
+            >Interlinear</button>
+            <div className="lib-order-toggle">
+              <button
+                className={"lib-order-btn" + (wordOrder === "english" ? " on" : "")}
+                onClick={() => setWordOrder("english")}
+              >English</button>
+              <button
+                className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
+                onClick={() => setWordOrder("greek")}
+              >Greek</button>
+            </div>
+          </>}
         </div>
       </div>
 
@@ -1010,7 +1117,43 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
         <h2 className="lib-heading">
           {selBook ? selBook.name : "—"} <span className="lib-chap-num">{selChapter}</span>
         </h2>
-        {loading ? (
+        {translation === "parallel" ? (
+          <div className="lib-parallel">
+            <div className="lib-parallel-header">
+              <span className="lib-parallel-label">ABP</span>
+              <span className="lib-parallel-label">KJV</span>
+            </div>
+            {(loading || kjvLoading) ? (
+              <div className="lib-loading">Loading…</div>
+            ) : (() => {
+              const kjvMap = Object.fromEntries(kjvVerses.map(v => [v.verse, v]));
+              return verses.map(abpV => {
+                const kjvV = kjvMap[abpV.verse];
+                return (
+                  <div key={abpV.verse} className="lib-parallel-verse">
+                    <div className="lib-parallel-col">
+                      {wordMode
+                        ? <span className="lib-verse-block">{renderVerse(abpV)}</span>
+                        : <span className="lib-verse-span"><sup className="lib-vnum">{abpV.verse}</sup>{getEnglishOrderWords(abpV.words).map(w => w.english).join(" ")}{" "}</span>
+                      }
+                    </div>
+                    <div className="lib-parallel-col">
+                      {kjvV ? renderKjvVerse(kjvV) : <span className="lib-vnum">{abpV.verse}</span>}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        ) : translation === "kjv" ? (
+          kjvLoading ? (
+            <div className="lib-loading">Loading…</div>
+          ) : (
+            <div className="lib-text-words">
+              {kjvVerses.map(v => renderKjvVerse(v))}
+            </div>
+          )
+        ) : loading ? (
           <div className="lib-loading">Loading…</div>
         ) : wordMode ? (
           <div className="lib-text-words">
