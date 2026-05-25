@@ -643,7 +643,7 @@ function studyWordLabel(w) {
   const e = w.english || "";
   if (e) {
     const words = e.trim().split(/\s+/);
-    if (words.length <= 2) return e;
+    if (words.length <= 3) return e;
     const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
     return (w.english_head || words[words.length - 1]) + trailingPunc;
   }
