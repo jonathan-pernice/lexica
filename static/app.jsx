@@ -260,7 +260,9 @@ function SearchBar({ q1, setQ1, q2, setQ2, onSearch, onAiSearch, aiLoading }) {
               onChange={(e) => setQ1(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onSearch()}
             />
-
+            <button className="search-go" onClick={onSearch} aria-label="Search">
+              <Icon.ArrowRight/>
+            </button>
           </div>
         </div>
         <div className="search-divider" aria-hidden="true"></div>
