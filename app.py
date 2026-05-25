@@ -633,10 +633,11 @@ def _curate_primary_verses(
 
 
 _XREF_SYNTHESIS_SYSTEM = """\
-You are a textual scholar. Write 2–3 sentences identifying the thematic thread \
-connecting a set of cross-referenced passages. Focus on the underlying Greek/Hebrew \
-concepts, canonical patterns, and intertextual echoes. Never mention any app, \
-database, data source, or translation by name.\
+You are a textual scholar. Write exactly 3 complete sentences identifying the \
+thematic thread connecting a set of cross-referenced passages. Each sentence must \
+be fully formed — never trail off or end mid-thought. Focus on the underlying \
+Greek/Hebrew concepts, canonical patterns, and intertextual echoes. Never mention \
+any app, database, data source, or translation by name.\
 """
 
 
@@ -1781,7 +1782,7 @@ def cross_ref_synthesis(book, chapter, verse):
     try:
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=200,
+            max_tokens=350,
             temperature=0,
             system=_XREF_SYNTHESIS_SYSTEM,
             messages=[{"role": "user", "content":
