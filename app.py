@@ -132,12 +132,15 @@ Never ask the user for clarification.
 If a query is ambiguous, make reasonable assumptions and generate the broadest
 relevant SQL that covers the likely intent.
 
-If a query is completely unrelated to the Greek Bible text (e.g. recipes, weather,
-math, general knowledge), return this instead:
+If a query is completely unrelated to the Greek Bible (e.g. recipes, weather, math,
+sports, general knowledge with no biblical angle), return this instead:
 {
   "out_of_scope": true,
   "explanation": "one sentence saying this tool searches the Greek Bible corpus"
 }
+Do NOT return out_of_scope for: translation comparison questions, KJV vs ABP
+questions, Hebrew word studies, theological themes, or any question about
+biblical text, language, or translation — even if the SQL will be complex.
 
 Otherwise return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
@@ -239,9 +242,26 @@ TRANSLATION COMPARISON queries:
      means and how each translation chose to render it.
 
   For open-ended comparison queries (e.g. "what stands out as differences
-  in Acts KJV vs ABP"): pull verses from both corpora, find where the same
-  Strong's numbers produced different English words, surface patterns, and
-  flag anything theologically significant.
+  in Acts KJV vs ABP"): find where the same Strong's numbers produced
+  different English words, surface patterns, and flag anything theologically
+  significant. Use this join pattern:
+
+  SELECT v.book, v.chapter, v.verse,
+         w.strongs_base,
+         w.english_head AS abp_gloss,
+         kw.word        AS kjv_word
+  FROM words w
+  JOIN verses v ON w.verse_id = v.id
+  JOIN kjv_strongs ks ON ks.strongs_id = 'G' || w.strongs_base
+  JOIN kjv_words kw
+    ON kw.word_id = ks.word_id
+   AND kw.book_id = (SELECT id FROM books WHERE abbrev = v.book)
+   AND kw.chapter = v.chapter
+   AND kw.verse_num = v.verse
+  WHERE v.book = 'Act'
+    AND w.strongs_base NOT IN ('3588','2532','1161','846','3778','1722')
+    AND LOWER(w.english_head) != LOWER(kw.word)
+  LIMIT 60
 
   For OT questions involving Hebrew: use kjv_strongs to get the H-number,
   then look it up in bdb for the Hebrew definition and lemma.\
@@ -639,7 +659,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 13
+_CACHE_CODE_VER = 14
 
 
 def _get_ai_cache_ver() -> str:
