@@ -1940,6 +1940,19 @@ def cross_refs_curated(book, chapter, verse):
                ORDER BY kv.verse_id""",
             (src["verse_id"],),
         ).fetchall()
+
+        # Fetch ABP text for the source verse so synthesis reflects ABP vocabulary
+        abp_text = ""
+        abp_id_row = conn.execute(
+            "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
+            (book, chapter, verse),
+        ).fetchone()
+        if abp_id_row:
+            abp_words = conn.execute(
+                "SELECT english FROM words WHERE verse_id=? AND english IS NOT NULL ORDER BY position",
+                (abp_id_row["id"],),
+            ).fetchall()
+            abp_text = " ".join(w["english"] for w in abp_words)
     finally:
         conn.close()
 
@@ -1990,6 +2003,11 @@ def cross_refs_curated(book, chapter, verse):
     synthesis = None
     if refs:
         ref_block = "\n".join(f"- {r['kjv_text']}" for r in refs)
+        src_line = (
+            f'Source (ABP): "{abp_text}"\n'
+            "The cross-references below are KJV; let the ABP source vocabulary guide your word choices."
+            if abp_text else f'Source: "{src["verse_text"]}"'
+        )
         try:
             syn_msg = _anthropic.messages.create(
                 model="claude-haiku-4-5-20251001",
@@ -1997,7 +2015,7 @@ def cross_refs_curated(book, chapter, verse):
                 temperature=0,
                 system=_XREF_SYNTHESIS_SYSTEM,
                 messages=[{"role": "user", "content":
-                    f'Source: "{src["verse_text"]}"\n\nCross-references:\n{ref_block}'}],
+                    f'{src_line}\n\nCross-references:\n{ref_block}'}],
             )
             synthesis = re.sub(
                 r"^#+\s*[^:\n]*:\s*", "", syn_msg.content[0].text.strip()
