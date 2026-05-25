@@ -1030,15 +1030,14 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     };
 
     if (!wordMode) {
-      // Prose mode: compute English-ordered text from words
       const englishWords = getEnglishOrderWords(v.words);
       const text = joinProse(englishWords);
       return (
-        <span key={v.verse} ref={isHighlight ? highlightRef : null}
-          className={"lib-verse-span" + (isHighlight ? " lib-highlight" : "")}>
-          <sup className="lib-vnum">{v.verse}</sup>
-          {text}{" "}
-        </span>
+        <div key={v.verse} ref={isHighlight ? highlightRef : null}
+          className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
+          <span className="lib-vnum">{v.verse}</span>
+          <span className="lib-verse-content">{text}</span>
+        </div>
       );
     }
 
@@ -1067,11 +1066,11 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     }
 
     return (
-      <span key={v.verse} ref={isHighlight ? highlightRef : null}
-        className={"lib-verse-block" + (isHighlight ? " lib-highlight" : "")}>
-        <sup className="lib-vnum">{v.verse}</sup>
-        {content}
-      </span>
+      <div key={v.verse} ref={isHighlight ? highlightRef : null}
+        className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
+        <span className="lib-vnum">{v.verse}</span>
+        <span className="lib-verse-content lib-verse-chips">{content}</span>
+      </div>
     );
   };
 
@@ -1093,24 +1092,26 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
       isHebrew: sid ? sid.startsWith("H") : false,
     });
     return (
-      <span key={v.verse} className="lib-verse-block">
-        {showVerseNum && <sup className="lib-vnum">{v.verse}</sup>}
-        {v.words.map((w, i) => {
-          const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
-          const clickable = !!(onWordClick && sid);
-          return (
-            <span key={i}
-              className={"lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
-              onClick={clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined}>
-              <span className="lib-iw-english">{w.word}{w.punc || ""}</span>
-              {showStrongs && (sid
-                ? <span className="lib-iw-strongs">{sid}</span>
-                : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
-              )}
-            </span>
-          );
-        })}
-      </span>
+      <div key={v.verse} className="lib-verse-row">
+        {showVerseNum && <span className="lib-vnum">{v.verse}</span>}
+        <span className="lib-verse-content lib-verse-chips">
+          {v.words.map((w, i) => {
+            const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
+            const clickable = !!(onWordClick && sid);
+            return (
+              <span key={i}
+                className={"lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
+                onClick={clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined}>
+                <span className="lib-iw-english">{w.word}{w.punc || ""}</span>
+                {showStrongs && (sid
+                  ? <span className="lib-iw-strongs">{sid}</span>
+                  : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
+                )}
+              </span>
+            );
+          })}
+        </span>
+      </div>
     );
   };
 
@@ -1208,15 +1209,21 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
                   <div key={abpV.verse} className="lib-parallel-verse">
                     <div className="lib-parallel-col">
                       {wordMode
-                        ? <span className="lib-verse-block">{renderVerse(abpV)}</span>
-                        : <span className="lib-verse-span"><sup className="lib-vnum">{abpV.verse}</sup>{joinProse(getEnglishOrderWords(abpV.words))}{" "}</span>
+                        ? renderVerse(abpV)
+                        : <div className="lib-verse-row">
+                            <span className="lib-vnum">{abpV.verse}</span>
+                            <span className="lib-verse-content">{joinProse(getEnglishOrderWords(abpV.words))}</span>
+                          </div>
                       }
                     </div>
                     <div className="lib-parallel-col">
                       {kjvV
                         ? kjvWordMode
                           ? renderKjvVerse(kjvV)
-                          : <span className="lib-verse-span"><sup className="lib-vnum">{kjvV.verse}</sup>{kjvV.verse_text}{" "}</span>
+                          : <div className="lib-verse-row">
+                              <span className="lib-vnum">{kjvV.verse}</span>
+                              <span className="lib-verse-content">{kjvV.verse_text}</span>
+                            </div>
                         : <span className="lib-vnum">{abpV.verse}</span>
                       }
                     </div>
@@ -1233,11 +1240,12 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
               {kjvVerses.map(v => renderKjvVerse(v))}
             </div>
           ) : (
-            <div className="lib-text">
+            <div className="lib-text-words">
               {kjvVerses.map(v => (
-                <span key={v.verse} className="lib-verse-span">
-                  <sup className="lib-vnum">{v.verse}</sup>{v.verse_text}{" "}
-                </span>
+                <div key={v.verse} className="lib-verse-row">
+                  <span className="lib-vnum">{v.verse}</span>
+                  <span className="lib-verse-content">{v.verse_text}</span>
+                </div>
               ))}
             </div>
           )
@@ -1248,9 +1256,9 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
             {verses.map(v => renderVerse(v))}
           </div>
         ) : (
-          <p className="lib-text">
+          <div className="lib-text-words">
             {verses.map(v => renderVerse(v))}
-          </p>
+          </div>
         )}
       </div>
     </div>
