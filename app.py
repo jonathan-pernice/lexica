@@ -1503,7 +1503,7 @@ def kjv_chapter(book, chapter):
     conn = db_ro()
     try:
         rows = conn.execute("""
-            SELECT kw.verse_num, kw.word_id, kw.verse_pos, kw.word, kw.italic,
+            SELECT kw.verse_num, kw.word_id, kw.verse_pos, kw.word, kw.italic, kw.punc,
                    GROUP_CONCAT(ks.strongs_id) AS strongs_ids,
                    kv.verse_text
             FROM kjv_words kw
@@ -1511,7 +1511,7 @@ def kjv_chapter(book, chapter):
             LEFT JOIN kjv_verses kv ON kv.book_id = kw.book_id
                 AND kv.chapter = kw.chapter AND kv.verse_num = kw.verse_num
             WHERE kw.book_id = ? AND kw.chapter = ?
-            GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic, kv.verse_text
+            GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic, kw.punc, kv.verse_text
             ORDER BY kw.verse_num, kw.verse_pos
         """, (book_id, chapter)).fetchall()
     finally:
@@ -1529,6 +1529,7 @@ def kjv_chapter(book, chapter):
             "verse_pos": r["verse_pos"],
             "word":      r["word"],
             "italic":    bool(r["italic"]),
+            "punc":      r["punc"] or "",
             "strongs_ids": sids,
         })
     return jsonify([verses[v] for v in order])

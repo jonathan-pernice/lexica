@@ -903,6 +903,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
 
   const maxChap = selBook ? selBook.chapters : 1;
   const wordMode = showStrongs || showInterlinear || wordOrder === "greek";
+  const kjvWordMode = showStrongs;
 
   const joinProse = (words) => {
     const tokens = words.map(w => w.english).filter(Boolean);
@@ -1065,7 +1066,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
             <span key={i}
               className={"lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
               onClick={clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined}>
-              <span className="lib-iw-english">{w.word}</span>
+              <span className="lib-iw-english">{w.word}{w.punc || ""}</span>
               {showStrongs && (sid
                 ? <span className="lib-iw-strongs">{sid}</span>
                 : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
@@ -1172,7 +1173,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
                     </div>
                     <div className="lib-parallel-col">
                       {kjvV
-                        ? wordMode
+                        ? kjvWordMode
                           ? renderKjvVerse(kjvV)
                           : <span className="lib-verse-span"><sup className="lib-vnum">{kjvV.verse}</sup>{kjvV.verse_text}{" "}</span>
                         : <span className="lib-vnum">{abpV.verse}</span>
@@ -1186,7 +1187,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
         ) : translation === "kjv" ? (
           kjvLoading ? (
             <div className="lib-loading">Loading…</div>
-          ) : wordMode ? (
+          ) : kjvWordMode ? (
             <div className="lib-text-words">
               {kjvVerses.map(v => renderKjvVerse(v))}
             </div>

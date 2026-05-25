@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS kjv_words (
     verse_num INTEGER NOT NULL,
     verse_pos INTEGER NOT NULL,
     word      TEXT    NOT NULL,
-    italic    INTEGER NOT NULL DEFAULT 0
+    italic    INTEGER NOT NULL DEFAULT 0,
+    punc      TEXT    NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS kjv_strongs (
@@ -130,13 +131,14 @@ with f:
             int(row["VersePos"]),
             row["Word"].strip(),
             italic,
+            row.get("Punc", "").strip(),
         ))
         if len(batch) == 5000:
             conn.executemany(
-                "INSERT INTO kjv_words VALUES (?,?,?,?,?,?,?)", batch)
+                "INSERT INTO kjv_words VALUES (?,?,?,?,?,?,?,?)", batch)
             rows += len(batch); batch = []
     if batch:
-        conn.executemany("INSERT INTO kjv_words VALUES (?,?,?,?,?,?,?)", batch)
+        conn.executemany("INSERT INTO kjv_words VALUES (?,?,?,?,?,?,?,?)", batch)
         rows += len(batch)
 conn.commit()
 print(f"  kjv_words: {rows:,} rows")
