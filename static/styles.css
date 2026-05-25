@@ -787,6 +787,15 @@ input { font-family: inherit; }
 }
 .lsj-text { color: var(--ink-2); }
 
+/* Context-aware synthesis (Definition tab) */
+.lsj-synthesis {
+  font-family: var(--f-serif);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-1);
+  margin: 4px 0 0;
+}
+
 /* Full / raw LSJ */
 .lsj-def {
   font-family: var(--f-serif);

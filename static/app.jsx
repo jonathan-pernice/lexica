@@ -26,11 +26,14 @@ const api = {
     const qs = strongs ? `?strongs=${encodeURIComponent(strongs)}` : '';
     return fetch(`/api/lsj/${encodeURIComponent(path)}${qs}`).then(r => r.json());
   },
-  lsjSummary: (key, strongs) => {
+  lsjSummary: (key, strongs, book, chapter, verse) => {
     const hasDot = strongs && strongs.includes('.');
     const path = key || (hasDot ? strongs : '');
     if (!path) return Promise.resolve({ error: 'not found' });
-    const qs = hasDot ? `?strongs=${encodeURIComponent(strongs)}` : '';
+    const p = new URLSearchParams();
+    if (hasDot) p.set('strongs', strongs);
+    if (book && chapter && verse) { p.set('book', book); p.set('chapter', chapter); p.set('verse', verse); }
+    const qs = p.toString() ? `?${p}` : '';
     return fetch(`/api/lsj-summary/${encodeURIComponent(path)}${qs}`).then(r => r.json());
   },
   books: () =>
@@ -356,19 +359,9 @@ const _REFUSAL_RE = /^(I |A\.\s*I |I'm |I don't|I cannot|I appreciate|I need|Unf
 function LsjSummary({ data, loading }) {
   if (loading)
     return <div className="lsj-def" style={{ color: "var(--muted)", fontStyle: "italic" }}>Summarizing…</div>;
-  const sections = (data?.sections || []).filter(s => s.text && !_REFUSAL_RE.test(s.text));
-  if (!sections.length)
+  if (!data?.summary)
     return <div className="lsj-def" style={{ color: "var(--muted)" }}>No definition available.</div>;
-  return (
-    <div className="lsj-parsed">
-      {sections.map((s, i) => (
-        <div key={i} className={"lsj-sense lsj-l" + _senseLevel(s.marker)}>
-          {s.marker && <span className="lsj-marker">{s.marker}</span>}
-          <span className="lsj-text">{_stripMd(s.text)}</span>
-        </div>
-      ))}
-    </div>
-  );
+  return <p className="lsj-synthesis">{data.summary}</p>;
 }
 
 // ============================================================
@@ -479,12 +472,12 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     let cancelled = false;
     setLsjSummaryLoading(true);
     const summaryStrongs = lsjEntry.source === "abp_ext" ? lsjEntry.key : "";
-    api.lsjSummary(lsjEntry.key, summaryStrongs)
+    api.lsjSummary(lsjEntry.key, summaryStrongs, entry.book, entry.chapter, entry.verse)
       .then(d => { if (!cancelled) setLsjSummary(d); })
       .catch(() => { if (!cancelled) setLsjSummary(null); })
       .finally(() => { if (!cancelled) setLsjSummaryLoading(false); });
     return () => { cancelled = true; };
-  }, [lsjEntry && lsjEntry.key]);
+  }, [lsjEntry && lsjEntry.key, entry && entry.id]);
 
   if (!entry) return null;
 

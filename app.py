@@ -632,6 +632,13 @@ def _curate_primary_verses(
         return [], []
 
 
+_LSJ_SYNTHESIS_SYSTEM = """\
+You are a Greek lexicographer working from a Berean approach: the text speaks first. \
+Anchor all analysis in the Greek source words and their lexical range. \
+No imported systematic theology, no denominational assumptions — follow where the \
+words actually lead. Write in plain prose, no markdown, no headers.\
+"""
+
 _XREF_SYNTHESIS_SYSTEM = """\
 You are a textual scholar working from a Berean approach: the text speaks first. \
 Let the Greek and Hebrew source words anchor the analysis. Import no systematic \
@@ -1460,16 +1467,24 @@ def lsj_lookup(lemma):
 @limiter.limit("60 per hour")
 def lsj_summary(lemma):
     strongs_param = request.args.get("strongs", "")
-    cache_key = f"abp:{strongs_param}" if ("." in strongs_param) else lemma
+    book    = request.args.get("book", "").strip()
+    chapter = request.args.get("chapter", "").strip()
+    verse_n = request.args.get("verse", "").strip()
+    has_ctx = bool(book and chapter and verse_n)
 
-    if cache_key in _lsj_summary_cache:
-        return jsonify(_lsj_summary_cache[cache_key])
+    base_key = f"abp:{strongs_param}" if ("." in strongs_param) else lemma
+    mem_key  = (f"ctx:{base_key}:{book}.{chapter}.{verse_n}"
+                if has_ctx else f"gen:{base_key}")
+
+    if mem_key in _lsj_summary_cache:
+        return jsonify(_lsj_summary_cache[mem_key])
     if not _anthropic:
         return jsonify({"error": "AI unavailable"}), 503
 
     conn = db()
-    exact_key = None    # set for LSJ rows so summary_json is written back
-    abp_strongs = None  # set for abp_ext rows so summary_json is written back
+    exact_key = None
+    abp_strongs = None
+    row = None
     try:
         if "." in strongs_param:
             snum = strongs_param.lstrip("Gg")
@@ -1508,62 +1523,126 @@ def lsj_summary(lemma):
     if not row:
         return jsonify({"error": "not found"}), 404
 
+    # Parse existing summary_json — may contain sections, general, context
+    sj: dict = {}
     if row["summary_json"]:
-        payload = json.loads(row["summary_json"])
-        _lsj_summary_cache[cache_key] = payload
+        try:
+            sj = json.loads(row["summary_json"])
+        except Exception:
+            sj = {}
+
+    # Check DB cache for the requested synthesis type
+    ctx_db_key = f"{book}.{chapter}.{verse_n}"
+    if has_ctx and sj.get("context", {}).get(ctx_db_key):
+        payload = {"summary": sj["context"][ctx_db_key], "contextual": True}
+        _lsj_summary_cache[mem_key] = payload
+        return jsonify(payload)
+    if not has_ctx and sj.get("general"):
+        payload = {"summary": sj["general"], "contextual": False}
+        _lsj_summary_cache[mem_key] = payload
         return jsonify(payload)
 
-    parser = _SectionParser()
-    parser.feed(row["def_html"] or "")
-    sections = parser.get_sections()
-    if not sections:
-        payload = {"sections": []}
-        _lsj_summary_cache[cache_key] = payload
-        return jsonify(payload)
-
-    _lsj_refusal_re = re.compile(
-        r'^(I |A\.\s*I |I\'m |I don\'t|I cannot|I appreciate|I need|Unfortunately)',
-        re.IGNORECASE,
-    )
-    results = []
-    for marker, text in sections:
-        if len(text.strip()) < 20:
-            continue
-        msg = _anthropic.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=200,
-            messages=[{"role": "user", "content": (
-                "You are a lexicon summarizer. Extract the English definition from this LSJ Greek lexicon section. "
-                "Write one to two plain prose sentences stating what the word means. "
-                "No markdown, no headers, no bullet points, no Greek text, no citations, no abbreviations. "
-                "If the section contains only grammatical labels or cross-references with no definition, "
-                "write a single sentence summarizing any meaning present. "
-                "Return only the bare sentences.\n\n" + text
-            )}],
+    # Ensure sections exist in sj for _lsj_concept_lookup (backend AI search context)
+    if not sj.get("sections"):
+        parser = _SectionParser()
+        parser.feed(row["def_html"] or "")
+        sections_raw = parser.get_sections()
+        _lsj_refusal_re = re.compile(
+            r'^(I |A\.\s*I |I\'m |I don\'t|I cannot|I appreciate|I need|Unfortunately)',
+            re.IGNORECASE,
         )
-        response_text = msg.content[0].text.strip()
-        if _lsj_refusal_re.match(response_text):
-            continue
-        results.append({"marker": marker, "text": response_text})
+        sec_results = []
+        for marker, text in sections_raw:
+            if len(text.strip()) < 20:
+                continue
+            sec_msg = _anthropic.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=200,
+                messages=[{"role": "user", "content": (
+                    "You are a lexicon summarizer. Extract the English definition from this LSJ Greek lexicon section. "
+                    "Write one to two plain prose sentences stating what the word means. "
+                    "No markdown, no headers, no bullet points, no Greek text, no citations, no abbreviations. "
+                    "If the section contains only grammatical labels or cross-references with no definition, "
+                    "write a single sentence summarizing any meaning present. "
+                    "Return only the bare sentences.\n\n" + text
+                )}],
+            )
+            resp = sec_msg.content[0].text.strip()
+            if not _lsj_refusal_re.match(resp):
+                sec_results.append({"marker": marker, "text": resp})
+        sj["sections"] = sec_results
 
-    payload = {"sections": results}
+    # Fetch verse text for contextual summary
+    plain_def = re.sub(r"<[^>]+>", " ", row["def_html"] or "").strip()
+    actual_ctx = has_ctx
+    verse_text = ""
+    if has_ctx:
+        try:
+            vconn = db_ro()
+            try:
+                vrow = vconn.execute(
+                    "SELECT text FROM verses WHERE book=? AND chapter=? AND verse=?",
+                    (book, int(chapter), int(verse_n)),
+                ).fetchone()
+                if vrow:
+                    verse_text = vrow["text"]
+            finally:
+                vconn.close()
+        except Exception:
+            pass
+        if not verse_text:
+            actual_ctx = False  # fall back to general if verse not found
+
+    if actual_ctx:
+        user_content = (
+            f"Verse: {book} {chapter}:{verse_n} — {verse_text}\n\n"
+            f"Complete LSJ entry for {lemma}:\n{plain_def[:2000]}\n\n"
+            "In 2-3 complete sentences, identify which definition sense applies to this verse "
+            "and explain what the word means in this specific context. "
+            "Anchor the analysis in the Greek source word."
+        )
+    else:
+        user_content = (
+            f"Complete LSJ entry for {lemma}:\n{plain_def[:2000]}\n\n"
+            "In 2-3 complete sentences, summarize the primary meaning of this word "
+            "across its main definition senses. Anchor the analysis in the Greek."
+        )
+
+    try:
+        synth_msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            temperature=0,
+            system=_LSJ_SYNTHESIS_SYSTEM,
+            messages=[{"role": "user", "content": user_content}],
+        )
+        synthesis = synth_msg.content[0].text.strip()
+    except Exception as exc:
+        log.warning("LSJ synthesis failed: %s", exc)
+        return jsonify({"error": "synthesis failed"}), 500
+
+    # Store synthesis back into summary_json alongside sections
+    if actual_ctx:
+        sj.setdefault("context", {})[ctx_db_key] = synthesis
+    else:
+        sj["general"] = synthesis
+
     conn = db()
     try:
+        sj_str = json.dumps(sj, ensure_ascii=False)
         if exact_key:
-            conn.execute(
-                "UPDATE lsj SET summary_json = ? WHERE key = ?",
-                (json.dumps(payload), exact_key),
-            )
-            conn.commit()
+            conn.execute("UPDATE lsj SET summary_json = ? WHERE key = ?", (sj_str, exact_key))
         elif abp_strongs:
             conn.execute(
                 "UPDATE abp_ext SET summary_json = ? WHERE trim(strongs) = ? OR trim(strongs) = ?",
-                (json.dumps(payload), abp_strongs, "G" + abp_strongs),
+                (sj_str, abp_strongs, "G" + abp_strongs),
             )
-            conn.commit()
+        conn.commit()
     finally:
         conn.close()
-    _lsj_summary_cache[cache_key] = payload
+
+    payload = {"summary": synthesis, "contextual": actual_ctx}
+    _lsj_summary_cache[mem_key] = payload
     return jsonify(payload)
 
 
