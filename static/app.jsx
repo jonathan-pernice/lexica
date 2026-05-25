@@ -1491,8 +1491,8 @@ function App() {
     if (corpusFilter === "all") return groupings;
     const counts = {};
     for (const e of corpusFilteredResults) {
-      if (e.gloss_head) {
-        const key = `${e.strongs_raw}|${e.gloss_head.toLowerCase()}`;
+      if (e.gloss) {
+        const key = `${e.strongs_raw}|${e.gloss.toLowerCase()}`;
         counts[key] = (counts[key] || 0) + 1;
       }
     }
