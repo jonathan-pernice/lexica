@@ -52,11 +52,17 @@ const api = {
 // ============================================================
 // DATA SHAPING
 // ============================================================
+function strongsTag(snum) {
+  if (!snum || snum === "*") return "PN";
+  const n = parseInt(snum, 10);
+  return `${!isNaN(n) && n > 5624 ? "H" : "G"}${snum}`;
+}
+
 function makeEntry(r, idx) {
   const snum = r.strongs_base === "*" ? "*" : (r.strongs || r.strongs_base);
   return {
     id: `${snum}-${r.book}-${r.chapter}-${r.verse}-${idx}`,
-    strongs: snum === "*" ? "PN" : `G${snum}`,
+    strongs: strongsTag(snum),
     strongs_base: r.strongs_base,
     strongs_raw: snum,
     greek: r.lemma || "",
@@ -81,7 +87,7 @@ function flattenAiResults(verses) {
       const snum = w.strongs_base === "*" ? "*" : (w.strongs || w.strongs_base);
       entries.push({
         id: `ai-${v.book}-${v.chapter}-${v.verse}-${snum}-${idx++}`,
-        strongs: snum === "*" ? "PN" : `G${snum}`,
+        strongs: strongsTag(snum),
         strongs_base: w.strongs_base,
         strongs_raw: snum,
         greek: w.lemma || "",
