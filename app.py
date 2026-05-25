@@ -1625,6 +1625,34 @@ def kjv_verse_text(book, chapter, verse_num):
     return jsonify({"text": row["verse_text"]})
 
 
+@app.route("/api/cross-references/debug/<book>/<int:chapter>/<int:verse>")
+def cross_references_debug(book, chapter, verse):
+    book_id = _KJV_BOOK_ID.get(book)
+    if book_id is None:
+        return jsonify({"error": f"book '{book}' not in _KJV_BOOK_ID"})
+    conn = db_ro()
+    try:
+        row = conn.execute(
+            "SELECT verse_id FROM kjv_verses WHERE book_id=? AND chapter=? AND verse_num=?",
+            (book_id, chapter, verse),
+        ).fetchone()
+        verse_id = row["verse_id"] if row else None
+        sample_cr = conn.execute(
+            "SELECT verse_id, verse_ref_id FROM cross_references LIMIT 5"
+        ).fetchall()
+        cr_count = conn.execute(
+            "SELECT COUNT(*) FROM cross_references WHERE verse_id=?", (verse_id,)
+        ).fetchone()[0] if verse_id else None
+    finally:
+        conn.close()
+    return jsonify({
+        "book": book, "book_id": book_id, "chapter": chapter, "verse": verse,
+        "kjv_verse_id": verse_id,
+        "cross_ref_count_for_verse": cr_count,
+        "sample_cross_ref_ids": [{"verse_id": r["verse_id"], "verse_ref_id": r["verse_ref_id"]} for r in sample_cr],
+    })
+
+
 @app.route("/api/cross-references/<book>/<int:chapter>/<int:verse>")
 def cross_references_route(book, chapter, verse):
     book_id = _KJV_BOOK_ID.get(book)
