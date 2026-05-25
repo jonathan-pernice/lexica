@@ -155,9 +155,11 @@ describe the query, the SQL, or which passages were targeted. Never mention
 the app, the database, data sources, or any technical implementation detail.
 Never refer to KJV, ABP, or any specific translation by name — discuss
 concepts and Greek/Hebrew terms directly.
-key_strongs — up to 6 Strong's numbers that your explanation explicitly discusses,
-ordered by centrality to the query. Use "H" prefix for Hebrew (e.g. "H7307", "H5475"),
-"G" prefix or bare digits for Greek (e.g. "G4151" or "4151"). Omit particles,
+key_strongs — up to 6 Strong's numbers central to the query. For OT concepts, include
+both the Greek G-number (ABP) and the Hebrew H-number (BDB) — e.g. a "spirit in
+Genesis" query should cite both G4151 (pneuma) and H7307 (ruach). Give Greek and Hebrew
+equal priority; do not omit one just because the explanation focuses on the other.
+Use "H" prefix for Hebrew, "G" prefix or bare digits for Greek. Omit particles,
 articles, prepositions, and other function words.
 
 sql — SELECT only. Never INSERT, UPDATE, DELETE, DROP.
