@@ -1246,6 +1246,7 @@ input { font-family: inherit; }
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
+  justify-content: flex-start;
   gap: 4px 6px;
   padding: 6px 8px;
   border-radius: 6px;
@@ -1264,7 +1265,6 @@ input { font-family: inherit; }
 .lib-word:hover { background: var(--bg-sunk); }
 .lib-word.lib-word-clickable { cursor: pointer; }
 .lib-word.lib-word-clickable:hover { background: var(--accent-soft); }
-.lib-verse-block .lib-vnum { align-self: flex-start; }
 .lib-iw-pos {
   font-family: var(--f-mono);
   font-size: 8.5px;
