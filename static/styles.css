@@ -1237,6 +1237,7 @@ input { font-family: inherit; }
   align-items: flex-start;
   gap: 8px;
   margin-bottom: 2px;
+  padding-left: 5px;
 }
 
 .lib-vnum {
