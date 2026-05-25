@@ -2006,9 +2006,7 @@ def cross_refs_curated(book, chapter, verse):
         ref_block = "\n".join(f"- {r['kjv_text']}" for r in refs)
         src_line = (
             f'Source (ABP): "{abp_text}"\n'
-            "The cross-references below are KJV. Mirror the ABP source's exact wording — "
-            "do not substitute standard theological terms for ABP's own rendering "
-            "(e.g. if ABP says 'predefined', write 'predefined', not 'predestined' or 'predestination')."
+            "The cross-references below are KJV; let the ABP source vocabulary guide your word choices."
             if abp_text else f'Source: "{src["verse_text"]}"'
         )
         try:
