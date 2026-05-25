@@ -648,7 +648,8 @@ complete sentences identifying the thematic thread connecting a set of \
 cross-referenced passages. Each sentence must be fully formed — never trail off \
 or end mid-thought. Focus on the underlying Greek/Hebrew lexical range, canonical \
 patterns, and intertextual echoes. Never mention any app, database, data source, \
-or translation by name.\
+or translation by name. Do not begin with a label, heading, or prefix of any kind — \
+start directly with the first sentence.\
 """
 
 
@@ -1872,7 +1873,7 @@ def cross_ref_synthesis(book, chapter, verse):
             messages=[{"role": "user", "content":
                 f'Source: "{src["verse_text"]}"\n\nCross-references:\n{ref_block}'}],
         )
-        synthesis = msg.content[0].text.strip()
+        synthesis = re.sub(r"^#+\s*[^:\n]*:\s*", "", msg.content[0].text.strip())
     except Exception as exc:
         log.warning("Cross-ref synthesis failed: %s", exc)
         return jsonify({"synthesis": None})
