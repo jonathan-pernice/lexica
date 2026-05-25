@@ -1218,6 +1218,7 @@ function App() {
   const [groupings, setGroupings] = useState({});
   const [variants, setVariants] = useState({});
   const [breadcrumbs, setBreadcrumbs] = useState([]);
+  const [glossFilter, setGlossFilter] = useState(null); // { sn, gloss, label } | null
   const searchFnRef = useRef(null);
 
   useEffect(() => {
@@ -1236,15 +1237,23 @@ function App() {
     return map;
   }, [allResults]);
 
-  // Sorted display list — for text searches, suppress function word cards
+  // Sorted display list — gloss filter > function word suppression
   const displayed = useMemo(() => {
-    const base = (mode === "search" && !primaryStrongs)
-      ? allResults.filter(e => !e.is_function)
-      : allResults;
+    let base;
+    if (glossFilter) {
+      base = allResults.filter(e =>
+        e.strongs_raw === glossFilter.sn &&
+        (e.gloss || "").toLowerCase().includes(glossFilter.gloss.toLowerCase())
+      );
+    } else if (mode === "search" && !primaryStrongs) {
+      base = allResults.filter(e => !e.is_function);
+    } else {
+      base = allResults;
+    }
     if (sortBy === "alpha") return [...base].sort((a, b) => a.translit.localeCompare(b.translit));
     if (sortBy === "freq") return [...base].sort((a, b) => (countMap[b.strongs_raw] || 0) - (countMap[a.strongs_raw] || 0));
     return base;
-  }, [allResults, sortBy, countMap, mode, primaryStrongs]);
+  }, [allResults, sortBy, countMap, mode, primaryStrongs, glossFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
@@ -1308,6 +1317,7 @@ function App() {
     setActiveEntry(null);
     setGroupings({});
     setVariants({});
+    setGlossFilter(null);
     try {
       const data = await api.search(q);
       if (data.error) {
@@ -1336,6 +1346,12 @@ function App() {
   };
 
   const handleGlossDrill = (sn, greek, gloss) => {
+    // If this strongs is already in the current result set, filter client-side
+    if (allResults.some(e => e.strongs_raw === sn)) {
+      setGlossFilter({ sn, gloss });
+      return;
+    }
+    // Fallback: strongs not in current results — do a full corpus search
     const gq = `G${sn}`;
     const label = greek ? `${greek} G${sn}` : gq;
     const existingIdx = breadcrumbs.findIndex(c => c.q === gq);
@@ -1375,6 +1391,7 @@ function App() {
     setSortBy("relevance");
     setViewMode("study");
     setActiveEntry(null);
+    setGlossFilter(null);
     try {
       const data = await api.aiSearch(q);
       if (data.error) {
@@ -1440,11 +1457,20 @@ function App() {
 
           {mode !== "idle" && (
             <>
-              {mode === "search" && breadcrumbs.length > 0 && (
+              {mode === "search" && (breadcrumbs.length > 0 || glossFilter) && (
                 <SearchBreadcrumb
-                  breadcrumbs={breadcrumbs}
-                  currentLabel={searchLabel}
-                  onNav={handleBreadcrumbNav}
+                  breadcrumbs={glossFilter
+                    ? [...breadcrumbs, { label: searchLabel, q: q1.trim() }]
+                    : breadcrumbs}
+                  currentLabel={glossFilter ? glossFilter.gloss : searchLabel}
+                  onNav={(crumb, idx) => {
+                    if (glossFilter && idx === breadcrumbs.length) {
+                      setGlossFilter(null);
+                    } else {
+                      setGlossFilter(null);
+                      handleBreadcrumbNav(crumb, idx);
+                    }
+                  }}
                 />
               )}
               <div className="results-head">
@@ -1487,7 +1513,7 @@ function App() {
                 </div>
               </div>
 
-              {!loading && allResults.length > 0 && mode === "search" && (
+              {!loading && allResults.length > 0 && mode === "search" && !glossFilter && (
                 <GlossGroupings
                   groupings={groupings}
                   results={allResults}
