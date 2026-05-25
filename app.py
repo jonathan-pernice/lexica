@@ -923,10 +923,10 @@ def _resolve_lsj_xref(conn, def_html: str, columns: str = "key, translit, def_ht
     if after.startswith('('):
         return None
     ref = m.group(1).strip()
-    ref_plain = _strip_accents(ref).lower()
+    ref_plain = _strip_accents(ref).lower().replace('-', '')
     row = conn.execute(f"SELECT {columns} FROM lsj WHERE key = ?", (ref,)).fetchone()
     if not row:
-        row = conn.execute(f"SELECT {columns} FROM lsj WHERE plain = ?", (ref_plain,)).fetchone()
+        row = conn.execute(f"SELECT {columns} FROM lsj WHERE replace(plain,'-','') = ?", (ref_plain,)).fetchone()
     return row
 
 
@@ -1309,13 +1309,13 @@ def lsj_lookup(lemma):
         else:
             snum = strongs_param
             abp_row = None
-        plain = _strip_accents(lemma).lower()
+        plain = _strip_accents(lemma).lower().replace('-', '')
         row = conn.execute(
             "SELECT key, translit, def_html FROM lsj WHERE key = ?", (lemma,)
         ).fetchone()
         if not row and plain:
             row = conn.execute(
-                "SELECT key, translit, def_html FROM lsj WHERE plain = ?", (plain,)
+                "SELECT key, translit, def_html FROM lsj WHERE replace(plain,'-','') = ?", (plain,)
             ).fetchone()
         if row and not abp_row:
             xref = _resolve_lsj_xref(conn, row["def_html"])
@@ -1387,13 +1387,13 @@ def lsj_summary(lemma):
             else:
                 row = None
         else:
-            plain = _strip_accents(lemma).lower()
+            plain = _strip_accents(lemma).lower().replace('-', '')
             row = conn.execute(
                 "SELECT key, def_html, summary_json FROM lsj WHERE key = ?", (lemma,)
             ).fetchone()
             if not row and plain:
                 row = conn.execute(
-                    "SELECT key, def_html, summary_json FROM lsj WHERE plain = ?", (plain,)
+                    "SELECT key, def_html, summary_json FROM lsj WHERE replace(plain,'-','') = ?", (plain,)
                 ).fetchone()
             if row:
                 xref = _resolve_lsj_xref(conn, row["def_html"], "key, def_html, summary_json")
