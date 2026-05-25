@@ -678,17 +678,9 @@ function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile, t
     let cancelled = false;
     setSynthesis(null);
     setSynthLoading(true);
-    const url = `/api/cross-references/synthesis/${encodeURIComponent(source.book)}/${source.chapter}/${source.verse}`;
-    console.log("[xref-synth] fetching", url);
     api.xrefSynthesis(source.book, source.chapter, source.verse)
-      .then(d => {
-        console.log("[xref-synth] response:", d, "cancelled:", cancelled);
-        if (!cancelled) { setSynthesis(d.synthesis || null); setSynthLoading(false); }
-      })
-      .catch(err => {
-        console.error("[xref-synth] error:", err);
-        if (!cancelled) setSynthLoading(false);
-      });
+      .then(d => { if (!cancelled) { setSynthesis(d.synthesis || null); setSynthLoading(false); } })
+      .catch(() => { if (!cancelled) setSynthLoading(false); });
     return () => { cancelled = true; };
   }, [source && source.book, source && source.chapter, source && source.verse]);
 
