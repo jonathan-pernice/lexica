@@ -1059,7 +1059,10 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
               className={"lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
               onClick={clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined}>
               <span className="lib-iw-english">{w.word}</span>
-              {showStrongs && sid && <span className="lib-iw-strongs">{sid}</span>}
+              {showStrongs && (sid
+                ? <span className="lib-iw-strongs">{sid}</span>
+                : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
+              )}
             </span>
           );
         })}
@@ -1117,7 +1120,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
             className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
             onClick={() => setShowStrongs(v => !v)}
           >Strong's</button>
-          {translation === "abp" && <>
+          {translation !== "kjv" && <>
             <button
               className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
               onClick={() => setShowInterlinear(v => !v)}
