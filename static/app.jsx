@@ -1041,9 +1041,9 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
     }
     return order
       .map(sn => {
-        // Only show glosses that appear in the current result set for this strongs number
-        const resultHeads = new Set(results.filter(e => e.strongs_raw === sn).map(e => e.gloss_head).filter(Boolean));
         const allGlosses = groupings[sn] || [];
+        // Filter chips to only glosses present in the current result set (avoids zero-result clicks)
+        const resultHeads = new Set(results.filter(e => e.strongs_raw === sn).map(e => e.gloss_head).filter(Boolean));
         const glosses = resultHeads.size > 0
           ? allGlosses.filter(g => resultHeads.has(g.gloss))
           : allGlosses;
@@ -1051,10 +1051,12 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
         const allVariants = (variants && variants[base]) || [];
         const siblings = sn.includes('.') ? allVariants.filter(v => v !== sn) : [];
         const entry = results.find(e => e.strongs_raw === sn);
-        return { sn, glosses, siblings, entry };
+        // Use full corpus gloss count for visibility — don't hide a multi-sense word
+        // just because the current results happen to contain only one of its senses
+        return { sn, glosses, allGlosses, siblings, entry };
       })
-      .filter(({ glosses, siblings, entry }) =>
-        (glosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
+      .filter(({ allGlosses, siblings, entry }) =>
+        (allGlosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
   }, [groupings, results, variants]);
 
   if (rows.length === 0) return null;
