@@ -936,8 +936,15 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     // For single words like "God", use english directly to preserve casing.
     const chipLabel = (w) => {
       const e = w.english || "";
-      if (e.includes(" ")) return w.english_head || e;
-      return e;
+      if (e) {
+        if (e.includes(" ")) return w.english_head || e;
+        return e;
+      }
+      // Null english: word absorbed into adjacent phrase — derive gloss from lexicon
+      const kd = w.kjv_def || "";
+      if (!kd) return "";
+      const first = kd.split(",").map(t => t.trim()).find(t => !t.startsWith("X ")) || kd.split(",")[0].trim();
+      return first.replace(/\s*[(\[+].*/,'').trim();
     };
 
     // Plain chip (English mode or non-bracketed word in Greek mode)
@@ -994,8 +1001,8 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     // Chip mode
     let content;
     if (wordOrder === "greek") {
-      // Greek syntactic order with bracket notation — only words with a gloss or lemma
-      const sortedWords = [...v.words].filter(w => w.english || w.lemma).sort((a, b) => a.position - b.position);
+      // Greek syntactic order with bracket notation — only words with a gloss or lexicon entry
+      const sortedWords = [...v.words].filter(w => w.english || w.kjv_def || w.lemma).sort((a, b) => a.position - b.position);
       const groups = groupForGreekMode(sortedWords);
       content = groups.map((g, gi) => {
         if (!g.isBracket) {
@@ -1010,8 +1017,8 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
         );
       });
     } else {
-      // English reading order — only words with a gloss
-      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english);
+      // English reading order — words with a gloss or lexicon fallback
+      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.kjv_def);
       content = englishWords.map((w, i) => chip(w, `e${i}`));
     }
 
