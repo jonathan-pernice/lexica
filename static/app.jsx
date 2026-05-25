@@ -932,7 +932,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
           className={"lib-word" + (clickable ? " lib-word-clickable" : "")}
           onClick={clickable ? () => onWordClick(makeEntry(w)) : undefined}>
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
-          <span className="lib-iw-english">{w.english}</span>
+          <span className="lib-iw-english">{w.english_head || w.english}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
               ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
@@ -952,7 +952,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
           {w.greek_pos !== null && w.greek_pos !== undefined &&
             <span className="lib-iw-pos">{w.greek_pos}</span>}
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
-          <span className="lib-iw-english">{w.english}</span>
+          <span className="lib-iw-english">{w.english_head || w.english}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
               ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
