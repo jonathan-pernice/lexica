@@ -1436,7 +1436,7 @@ def chapter_text(book, chapter):
     try:
         rows = conn.execute(
             """SELECT v.verse, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
-                      l.lemma, l.translit, w.greek_pos, w.bracket_id
+                      l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id
                FROM verses v
                JOIN words w ON w.verse_id = v.id
                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
@@ -1461,6 +1461,7 @@ def chapter_text(book, chapter):
             "strongs":      r["strongs"],
             "lemma":        r["lemma"],
             "translit":     r["translit"],
+            "kjv_def":      r["kjv_def"],
             "greek_pos":    r["greek_pos"],
             "bracket_id":   r["bracket_id"],
         })
