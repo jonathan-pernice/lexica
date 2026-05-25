@@ -737,15 +737,29 @@ function studyWordLabel(w) {
 // ============================================================
 function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext }) {
   const [words, setWords] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const rowRef = useRef(null);
 
   useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { rootMargin: "300px" }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible) return;
     let cancelled = false;
     setWords(null);
     api.verseWords(book, chapter, verse)
       .then(d => { if (!cancelled) setWords(d.words || []); })
       .catch(() => { if (!cancelled) setWords([]); });
     return () => { cancelled = true; };
-  }, [book, chapter, verse]);
+  }, [visible, book, chapter, verse]);
 
   const entryMap = useMemo(() => {
     const m = new Map();
@@ -757,7 +771,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
   }, [allResults, book, chapter, verse]);
 
   return (
-    <div className="study-verse">
+    <div className="study-verse" ref={rowRef}>
       <button className="study-ref" onClick={() => onReadInContext?.(book, chapter, verse)}>{label}</button>
       <span className="study-text">
         {words === null ? (
