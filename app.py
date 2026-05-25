@@ -155,12 +155,12 @@ describe the query, the SQL, or which passages were targeted. Never mention
 the app, the database, data sources, or any technical implementation detail.
 Never refer to KJV, ABP, or any specific translation by name — discuss
 concepts and Greek/Hebrew terms directly.
-key_strongs — up to 6 Strong's numbers central to the query. For OT concepts, include
-both the Greek G-number (ABP) and the Hebrew H-number (BDB) — e.g. a "spirit in
-Genesis" query should cite both G4151 (pneuma) and H7307 (ruach). Give Greek and Hebrew
-equal priority; do not omit one just because the explanation focuses on the other.
-Use "H" prefix for Hebrew, "G" prefix or bare digits for Greek. Omit particles,
-articles, prepositions, and other function words.
+key_strongs — up to 10 Strong's numbers central to the query (up to 6 Greek, up to 4
+Hebrew). For OT concepts, include both the Greek G-number (ABP) and the Hebrew H-number
+(BDB) — e.g. a "spirit in Genesis" query should cite both G4151 (pneuma) and H7307
+(ruach). Give Greek and Hebrew equal priority; do not omit one just because the
+explanation focuses on the other. Use "H" prefix for Hebrew, "G" prefix or bare digits
+for Greek. Omit particles, articles, prepositions, and other function words.
 
 sql — SELECT only. Never INSERT, UPDATE, DELETE, DROP.
 Proper nouns (people, places) are tagged strongs = '*' — no Strong's number exists.
@@ -2169,13 +2169,21 @@ def ai_search():
         _ks_raw = parsed.get("key_strongs") or []
         if not isinstance(_ks_raw, list):
             _ks_raw = []
-        _ks_pairs: list[tuple[str, str | None]] = []  # (bare_num, orig_prefix or None)
-        for s in _ks_raw[:6]:
+        _ks_pairs_all: list[tuple[str, str | None]] = []
+        for s in _ks_raw[:12]:
             s = str(s).strip()
             m = re.match(r'^([GgHh]?)(\d+(?:\.\d+)?)$', s)
             if m:
                 orig = m.group(1).upper() if m.group(1) else None
-                _ks_pairs.append((m.group(2), orig))
+                _ks_pairs_all.append((m.group(2), orig))
+        def _is_heb(pair):
+            sn, orig = pair
+            if orig == "H": return True
+            if orig == "G": return False
+            return int(sn.split(".")[0]) > 5624
+        greek_pairs = [p for p in _ks_pairs_all if not _is_heb(p)][:6]
+        hebrew_pairs = [p for p in _ks_pairs_all if _is_heb(p)][:4]
+        _ks_pairs = greek_pairs + hebrew_pairs
         if not _ks_pairs:
             _ks_pairs = [(e["strongs"], None) for e in lsj_entries[:6]]
         key_strongs_data: list[dict] = []
