@@ -1004,9 +1004,11 @@ def search():
                     (q, f"%{q_plain}%"),
                 ).fetchall()
         # Gloss groupings: keyed by exact dotted strongs number.
+        def _is_content(r):
+            return r["strongs"] and r["strongs"] != "*" and r["strongs_base"] not in _FUNCTION_STRONGS
+
         if snum:
-            unique_strongs = list({r["strongs"] for r in rows
-                                   if r["strongs"] and r["strongs"] != "*"})
+            unique_strongs = list({r["strongs"] for r in rows if _is_content(r)})
         else:
             # Dotted strongs values where english_head = q exists anywhere in corpus
             corpus_match = {
@@ -1017,9 +1019,8 @@ def search():
                     (q,),
                 ).fetchall()
             }
-            # Cross-reference: only include strongs that also appear in the search results
-            result_strongs = {r["strongs"] for r in rows
-                              if r["strongs"] and r["strongs"] != "*"}
+            # Cross-reference: only include content-word strongs in the search results
+            result_strongs = {r["strongs"] for r in rows if _is_content(r)}
             unique_strongs = list(corpus_match & result_strongs)
         if unique_strongs:
             placeholders = ",".join("?" * len(unique_strongs))
