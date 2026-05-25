@@ -1291,12 +1291,13 @@ def search():
                     LEFT JOIN lexicon l ON l.strongs = w.strongs_base
                     WHERE (w.english_head = ? COLLATE NOCASE
                            OR w.english = ? COLLATE NOCASE
-                           OR strip_accents(l.translit) LIKE ? COLLATE NOCASE)
+                           OR strip_accents(l.translit) LIKE ? COLLATE NOCASE
+                           OR strip_accents(l.lemma) = ?)
                       AND w.english IS NOT NULL AND w.english != ''
                       AND w.strongs_base != '*'
                     ORDER BY v.id, w.position
                     """,
-                    (q, q, f"%{q_plain}%"),
+                    (q, q, f"%{q_plain}%", q_plain),
                 ).fetchall()
         # Gloss groupings: keyed by exact dotted strongs number.
         def _is_content(r):
@@ -2005,7 +2006,9 @@ def cross_refs_curated(book, chapter, verse):
         ref_block = "\n".join(f"- {r['kjv_text']}" for r in refs)
         src_line = (
             f'Source (ABP): "{abp_text}"\n'
-            "The cross-references below are KJV; let the ABP source vocabulary guide your word choices."
+            "The cross-references below are KJV. Mirror the ABP source's exact wording — "
+            "do not substitute standard theological terms for ABP's own rendering "
+            "(e.g. if ABP says 'predefined', write 'predefined', not 'predestined' or 'predestination')."
             if abp_text else f'Source: "{src["verse_text"]}"'
         )
         try:
