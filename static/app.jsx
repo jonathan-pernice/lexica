@@ -481,7 +481,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         <div className="detail-hero">
           <div className="detail-greek"
                dir={isHebrew ? "rtl" : undefined}
-               style={isHebrew ? {fontFamily: "var(--f-serif)"} : undefined}>
+               style={isHebrew ? {fontFamily: "var(--f-serif)", textAlign: "left"} : undefined}>
             {isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || entry.gloss)}
           </div>
           <div className="detail-translit-row">
