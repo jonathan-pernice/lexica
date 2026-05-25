@@ -1934,7 +1934,7 @@ def ai_search():
         _ks_raw = parsed.get("key_strongs") or []
         if not isinstance(_ks_raw, list):
             _ks_raw = []
-        _ks_raw = [re.sub(r'^[Gg]', '', str(s)).strip() for s in _ks_raw[:6]]
+        _ks_raw = [re.sub(r'^[GgHh]', '', str(s)).strip() for s in _ks_raw[:6]]
         _ks_raw = [s for s in _ks_raw if re.match(r'^\d+(?:\.\d+)?$', s)]
         if not _ks_raw:
             _ks_raw = [e["strongs"] for e in lsj_entries[:6]]
@@ -1946,9 +1946,10 @@ def ai_search():
                     row = ks_conn.execute(
                         "SELECT lemma, translit FROM lexicon WHERE strongs = ?", (sn,)
                     ).fetchone()
+                    prefix = "H" if int(sn.split(".")[0]) > 5624 else "G"
                     key_strongs_data.append({
                         "strongs_base": sn,
-                        "strongs": f"G{sn}",
+                        "strongs": f"{prefix}{sn}",
                         "lemma":   (row["lemma"]   if row else "") or "",
                         "translit":(row["translit"] if row else "") or "",
                     })
