@@ -5,7 +5,7 @@ Lexica is a Flask-based Greek and Hebrew Bible word study app. It is ABP (Aposto
 
 ## Instructions for Claude Code
 - Read only the specific function or section relevant to the task
-- Do not read the entire app.py or app.js unless explicitly asked
+- Do not read the entire app.py or app.jsx unless explicitly asked
 - Do not attempt to access bible.db directly
 - Make minimal changes — do not refactor unrelated code
 - Ask for clarification before making large changes
@@ -14,7 +14,7 @@ Lexica is a Flask-based Greek and Hebrew Bible word study app. It is ABP (Aposto
 
 ## Stack
 - Backend: Flask (Python), SQLite
-- Frontend: Vanilla JS, HTML/CSS
+- Frontend: React 18 + Babel standalone (JSX, no build step), HTML/CSS
 - Deployed: PythonAnywhere (free tier)
 - Version control: GitHub
 
@@ -58,12 +58,16 @@ styles.css       # all styles
 - View toggles: Greek/English, Strong's dots, Interlinear
 - Clicking a word opens LSJ sidebar (G-numbers) or BDB sidebar (H-numbers)
 - Italic KJV words render in muted style
+- Verse layout: unified two-column structure — `lib-verse-row` (flex) → `lib-vnum` (fixed) + `lib-verse-content` (flex:1); chip mode adds `lib-verse-chips`
+- Word label functions (`studyWordLabel`, `chipLabel`): always return full `w.english` gloss — do not truncate to head word
 
 ## Search Tab
 - Left input: lexicon/Strong's search
 - Right input: AI natural language query
 - Results: word cards with Strong's badge, Greek, transliteration, gloss
 - Detail sidebar: LSJ Definition + Full LSJ tabs
+- LSJ lookup chain: exact key → accent+hyphen-stripped plain → xref resolution (stubs discarded) → strongs_def fallback (source: "strongs")
+- Groupings corpus filter (`filteredGroupings`): counts by `strongs_raw` only (not per-gloss) — gloss names kept from full-corpus groupings; `GlossGroupings` requires `glosses.length > 1` to render a group
 
 ## AI Search
 - Uses Claude Haiku
@@ -73,7 +77,7 @@ styles.css       # all styles
 
 ## Deployment
 - Git push to GitHub → git pull on PythonAnywhere
-- Reload the web app in PythonAnywhere dashboard after each pull
+- Deploy command: `cd ~/bible-db && git pull && touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
 - Database is NOT in git (too large) — managed directly on PythonAnywhere
 
 ## Do Not
