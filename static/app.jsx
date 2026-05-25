@@ -1246,6 +1246,7 @@ function App() {
         e.strongs_raw === glossFilter.sn &&
         e.gloss_head.toLowerCase() === glossFilter.gloss.toLowerCase()
       );
+      console.log("[gloss-filter] filter:", glossFilter, "| matches:", base.length, "| sample entry:", allResults.find(e => e.strongs_raw === glossFilter.sn) || null);
     } else if (mode === "search" && !primaryStrongs) {
       base = allResults.filter(e => !e.is_function);
     } else {
@@ -1347,6 +1348,8 @@ function App() {
   };
 
   const handleGlossDrill = (sn, gloss) => {
+    console.log("[gloss-drill] sn:", sn, "| gloss:", gloss);
+    console.log("[gloss-drill] first 3 entries:", allResults.slice(0, 3).map(e => ({ strongs_raw: e.strongs_raw, gloss_head: e.gloss_head, gloss: e.gloss })));
     setGlossFilter({ sn, gloss });
   };
 
