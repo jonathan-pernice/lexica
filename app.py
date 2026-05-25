@@ -784,9 +784,10 @@ def _load_ai_cache_from_db() -> None:
                 _ai_cache[r["query"]] = json.loads(r["result_json"])
             except Exception:
                 pass
-        # Prune wrong-version entries only.
+        # Prune stale AI-search entries only; preserve named caches (e.g. "xref").
         deleted = conn.execute(
-            "DELETE FROM ai_search_cache WHERE ver_key != ?", (ver,)
+            "DELETE FROM ai_search_cache WHERE ver_key != ? AND ver_key NOT LIKE 'xref%'",
+            (ver,)
         ).rowcount
         conn.commit()
         conn.close()
