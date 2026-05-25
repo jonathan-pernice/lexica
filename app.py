@@ -696,9 +696,71 @@ def _is_lsj_function_word(def_html: str) -> bool:
 
 _FUNCTION_STRONGS: set[str] = set()  # strongs_base values that are function words
 
-# Known function words not caught by the LSJ POS detector (manual overrides).
+# Hardcoded function words the LSJ POS detector misses (pronouns, negative particles,
+# and common conjunctions/prepositions whose LSJ entries don't join the lsj table).
 _FUNCTION_STRONGS_OVERRIDE: frozenset[str] = frozenset({
-    "3361",  # μή — negative particle
+    # Negative particles
+    "3361",   # μή
+    "3756",   # οὐ / οὐκ / οὐχ
+    "3761",   # οὐδέ
+    "3762",   # οὐδείς / οὐδεμία / οὐδέν
+    "3763",   # οὐδέποτε
+    "3777",   # οὔτε
+    "3780",   # οὐχί
+    "3364",   # οὐ μή (emphatic negation)
+    # Personal pronouns
+    "1473",   # ἐγώ
+    "4771",   # σύ
+    "846",    # αὐτός / αὐτή / αὐτό
+    "2249",   # ἡμεῖς
+    "5210",   # ὑμεῖς
+    "1438",   # ἑαυτοῦ / ἑαυτῆς (reflexive)
+    # Demonstrative pronouns
+    "3778",   # οὗτος / αὕτη / τοῦτο
+    "1565",   # ἐκεῖνος
+    "3592",   # ὅδε / ἥδε / τόδε
+    # Definite article
+    "3588",   # ὁ / ἡ / τό
+    # Relative / interrogative / indefinite pronouns
+    "3739",   # ὅς / ἥ / ὅ
+    "3748",   # ὅστις / ἥτις / ὅτι
+    "5101",   # τίς / τί (interrogative)
+    "5100",   # τις / τι (indefinite)
+    # Common conjunctions / particles (lsj join fails for these)
+    "2532",   # καί
+    "1161",   # δέ
+    "3767",   # οὖν
+    "235",    # ἀλλά
+    "1063",   # γάρ
+    "3754",   # ὅτι
+    "2443",   # ἵνα
+    "1487",   # εἰ
+    "5613",   # ὡς
+    "1437",   # ἐάν
+    "3303",   # μέν
+    "2228",   # ἤ
+    "686",    # ἄρα
+    "3303",   # μέν
+    "1065",   # γε
+    "4458",   # πως / πώς
+    # Common prepositions (lsj join fails for most)
+    "1722",   # ἐν
+    "1519",   # εἰς
+    "1537",   # ἐκ / ἐξ
+    "575",    # ἀπό
+    "4314",   # πρός
+    "2596",   # κατά
+    "3326",   # μετά
+    "1223",   # διά
+    "1909",   # ἐπί
+    "4012",   # περί
+    "5228",   # ὑπέρ
+    "5259",   # ὑπό
+    "4253",   # πρό
+    "473",    # ἀντί
+    "1722",   # ἐν (dupe, harmless)
+    "303",    # ἀνά
+    "1537",   # ἐκ (dupe, harmless)
 })
 
 
