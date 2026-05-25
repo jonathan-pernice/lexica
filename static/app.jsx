@@ -1111,7 +1111,7 @@ function SearchBreadcrumb({ breadcrumbs, currentLabel, onNav }) {
 // ============================================================
 // AI ANSWER STRIP
 // ============================================================
-function AIAnswer({ query, explanation, keyStrongs, onStrongsSearch }) {
+function AIAnswer({ query, explanation, keyStrongs, onPick }) {
   return (
     <section className="ai-answer">
       <div className="ai-answer-head">
@@ -1126,7 +1126,18 @@ function AIAnswer({ query, explanation, keyStrongs, onStrongsSearch }) {
         <div className="ai-cites">
           <span className="ai-cites-label">Cited:</span>
           {keyStrongs.map((ks) => (
-            <button key={ks.strongs} className="ai-cite" onClick={() => onStrongsSearch(ks.strongs_base)}>
+            <button key={ks.strongs} className="ai-cite" onClick={() => onPick({
+              id: `ks-${ks.strongs_base}`,
+              strongs: ks.strongs,
+              strongs_base: ks.strongs_base,
+              strongs_raw: ks.strongs_base,
+              greek: ks.lemma,
+              translit: ks.translit,
+              gloss: "",
+              ref: "",
+              book: "", chapter: 0, verse: 0,
+              definition: "", derivation: "",
+            })}>
               {ks.strongs} {ks.lemma}
             </button>
           ))}
@@ -1418,7 +1429,7 @@ function App() {
               query={aiMeta.query}
               explanation={aiMeta.explanation}
               keyStrongs={aiMeta.keyStrongs || []}
-              onStrongsSearch={handleStrongsSearch}
+              onPick={(e) => setActiveEntry(e)}
             />
           )}
 
