@@ -638,13 +638,14 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   );
 }
 
-// Condenses multi-word ABP gloss to head word + trailing punc; falls back to kjv_def.
+// Returns display label for a word in study mode. Shows full gloss for ≤2 words; head word for longer phrases.
 function studyWordLabel(w) {
   const e = w.english || "";
   if (e) {
+    const words = e.trim().split(/\s+/);
+    if (words.length <= 2) return e;
     const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
-    if (e.includes(" ")) return (w.english_head || e) + trailingPunc;
-    return e;
+    return (w.english_head || words[words.length - 1]) + trailingPunc;
   }
   const kd = w.kjv_def || "";
   if (kd) {
