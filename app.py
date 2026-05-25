@@ -1597,21 +1597,21 @@ def lsj_summary(lemma):
         user_content = (
             f"Verse: {book} {chapter}:{verse_n} — {verse_text}\n\n"
             f"Complete LSJ entry for {lemma}:\n{plain_def[:2000]}\n\n"
-            "In 2-3 complete sentences, identify which definition sense applies to this verse "
-            "and explain what the word means in this specific context. "
-            "Anchor the analysis in the Greek source word."
+            "In at most 2 sentences and no more than 40 words total, state the single most "
+            "relevant definition sense for this verse. Drop all other senses. "
+            "Anchor the answer in the Greek source word."
         )
     else:
         user_content = (
             f"Complete LSJ entry for {lemma}:\n{plain_def[:2000]}\n\n"
-            "In 2-3 complete sentences, summarize the primary meaning of this word "
-            "across its main definition senses. Anchor the analysis in the Greek."
+            "In at most 2 sentences and no more than 40 words total, state the primary "
+            "meaning of this word. Anchor the answer in the Greek."
         )
 
     try:
         synth_msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=300,
+            max_tokens=80,
             temperature=0,
             system=_LSJ_SYNTHESIS_SYSTEM,
             messages=[{"role": "user", "content": user_content}],
