@@ -1943,10 +1943,16 @@ def ai_search():
             ks_conn = db_ro()
             try:
                 for sn in _ks_raw:
-                    row = ks_conn.execute(
-                        "SELECT lemma, translit FROM lexicon WHERE strongs = ?", (sn,)
-                    ).fetchone()
                     prefix = "H" if int(sn.split(".")[0]) > 5624 else "G"
+                    if prefix == "H":
+                        row = ks_conn.execute(
+                            "SELECT lemma, xlit AS translit FROM bdb WHERE strongs_id = ?",
+                            (f"H{sn}",)
+                        ).fetchone()
+                    else:
+                        row = ks_conn.execute(
+                            "SELECT lemma, translit FROM lexicon WHERE strongs = ?", (sn,)
+                        ).fetchone()
                     key_strongs_data.append({
                         "strongs_base": sn,
                         "strongs": f"{prefix}{sn}",
