@@ -918,6 +918,10 @@ def _resolve_lsj_xref(conn, def_html: str, columns: str = "key, translit, def_ht
     m = _LSJ_XREF_RE.search(def_html)
     if not m:
         return None
+    # Don't follow if xref points to multiple sub-entries like "(A) and (B)" — ambiguous sense
+    after = def_html[m.end():].lstrip()
+    if after.startswith('('):
+        return None
     ref = m.group(1).strip()
     ref_plain = _strip_accents(ref).lower()
     row = conn.execute(f"SELECT {columns} FROM lsj WHERE key = ?", (ref,)).fetchone()
