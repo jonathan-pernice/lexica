@@ -1232,7 +1232,7 @@ input { font-family: inherit; }
 .lib-verse-block {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   gap: 4px 6px;
   padding: 6px 8px;
   border-radius: 6px;
