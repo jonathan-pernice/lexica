@@ -465,7 +465,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.id]);
 
   useEffect(() => {
-    if (!lsjEntry) { setLsjSummary(null); return; }
+    if (!lsjEntry || lsjEntry.source === "strongs") { setLsjSummary(null); setLsjSummaryLoading(false); return; }
     let cancelled = false;
     setLsjSummaryLoading(true);
     const summaryStrongs = lsjEntry.source === "abp_ext" ? lsjEntry.key : "";
@@ -529,7 +529,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found in BDB.</div>
             )}
           </section>
-        ) : (entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.'))) && (
+        ) : (entry.greek || entry.strongs_raw) && (
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
@@ -550,7 +550,9 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
             ) : lsjEntry ? (
               lsjTab === "def"
-                ? <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
+                ? lsjEntry.source === "strongs"
+                  ? <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
+                  : <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
                 : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
             ) : (
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found.</div>
