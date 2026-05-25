@@ -638,6 +638,15 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   );
 }
 
+// Condenses multi-word ABP gloss to its head word + trailing punctuation.
+function studyWordLabel(w) {
+  const e = w.english || "";
+  if (!e) return null;
+  const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
+  if (e.includes(" ")) return (w.english_head || e) + trailingPunc;
+  return e;
+}
+
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
@@ -683,10 +692,14 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             book, chapter, verse,
             definition: "", derivation: "", is_function: false,
           });
-          return clickable ? (
-            <span key={i} className="study-word match" onClick={() => onWordClick(entry)}>{w.english}{" "}</span>
-          ) : (
-            <span key={i} className="study-word">{w.english}{" "}</span>
+          const label = studyWordLabel(w);
+          if (!label) return null;
+          return (
+            <span key={i} className={"study-word-wrap" + (clickable ? " match" : "")}
+                  onClick={clickable ? () => onWordClick(entry) : undefined}>
+              <sup className="study-pos">{w.position + 1}</sup>
+              <span className="study-word">{label}</span>
+            </span>
           );
         })}
       </span>

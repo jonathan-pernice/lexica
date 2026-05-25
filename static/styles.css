@@ -943,6 +943,23 @@ input { font-family: inherit; }
   color: var(--ink);
   flex: 1;
 }
+.study-word-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: top;
+  margin-right: 4px;
+}
+.study-word-wrap.match { cursor: pointer; }
+.study-word-wrap.match .study-word { background: var(--accent-soft); border-radius: 3px; padding: 0 2px; }
+.study-word-wrap.match:hover .study-word { background: color-mix(in oklab, var(--accent-soft) 170%, transparent); }
+.study-pos {
+  font-family: var(--f-mono);
+  font-size: 8px;
+  color: var(--ink-4);
+  line-height: 1;
+  margin-bottom: 2px;
+}
 .study-word { display: inline; }
 .study-word.match {
   cursor: pointer;
