@@ -58,7 +58,7 @@ _FUNCTION_WORDS = frozenset({
 def _clean_english(text: str) -> str | None:
     t = _BRACKET_RE.sub('', text)       # remove [ ]
     t = _NUMMARK_RE.sub('', t)          # remove positional digits (2spirit->spirit)
-    t = t.strip(' .')                   # strip flanking dots/spaces
+    t = t.strip()                        # strip flanking whitespace only
     t = re.sub(r'\s+', ' ', t)         # normalize whitespace
     return t or None
 
