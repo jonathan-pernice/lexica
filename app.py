@@ -909,6 +909,10 @@ def _lsj_concept_lookup(terms: list[str]) -> list[dict]:
 
 _LSJ_XREF_RE = re.compile(r'\bv\.\s*<i>([^<]+)</i>')
 
+def _is_lsj_stub(def_html: str) -> bool:
+    text = re.sub(r'<[^>]+>', '', def_html or '').strip()
+    return len(text) <= 150 and bool(_LSJ_XREF_RE.search(def_html or ''))
+
 def _resolve_lsj_xref(conn, def_html: str, columns: str = "key, translit, def_html"):
     """If def_html is a bare cross-reference stub (v. <i>word</i>), fetch the referenced entry."""
     if not def_html:
@@ -1321,6 +1325,8 @@ def lsj_lookup(lemma):
             xref = _resolve_lsj_xref(conn, row["def_html"])
             if xref:
                 row = xref
+            elif _is_lsj_stub(row["def_html"]):
+                row = None
         lex_row = None
         if not row and not abp_row:
             lex_row = conn.execute(
@@ -1399,6 +1405,9 @@ def lsj_summary(lemma):
                 xref = _resolve_lsj_xref(conn, row["def_html"], "key, def_html, summary_json")
                 if xref:
                     row = xref
+                elif _is_lsj_stub(row["def_html"]):
+                    row = None
+            if row:
                 exact_key = row["key"]
     finally:
         conn.close()
