@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 .claude/
 .env
+abp_texts/
+abp_nt_texts/
