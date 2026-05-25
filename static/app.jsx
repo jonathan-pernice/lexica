@@ -1135,7 +1135,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
           <button className={"lib-trans-btn" + (translation === "parallel" ? " on" : "")} onClick={() => setTranslation("parallel")}>Parallel</button>
         </div>
         <div className="lib-toggles">
-          {(translation !== "abp" || wordOrder === "greek") && <>
+          {(translation === "kjv" || wordOrder === "greek") && <>
             <button
               className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
               onClick={() => setOpt("showStrongs", !showStrongs)}
@@ -1151,8 +1151,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
                 className={"lib-order-btn" + (wordOrder === "english" ? " on" : "")}
                 onClick={() => setLibOptions(prev => ({
                   ...prev,
-                  [translation]: { ...prev[translation], wordOrder: "english",
-                    ...(translation === "abp" ? { showStrongs: false, showInterlinear: false } : {}) }
+                  [translation]: { ...prev[translation], wordOrder: "english", showStrongs: false, showInterlinear: false }
                 }))}
               >English</button>
               <button
