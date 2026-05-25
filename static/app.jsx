@@ -647,9 +647,12 @@ function studyWordLabel(w) {
     return e;
   }
   const kd = w.kjv_def || "";
-  if (!kd) return null;
-  const first = kd.split(",").map(t => t.trim()).find(t => !t.startsWith("X ")) || kd.split(",")[0].trim();
-  return first.replace(/\s*[(\[+].*/,'').trim() || null;
+  if (kd) {
+    const first = kd.split(",").map(t => t.trim()).find(t => !t.startsWith("X ")) || kd.split(",")[0].trim();
+    const result = first.replace(/\s*[(\[+].*/,'').trim();
+    if (result) return result;
+  }
+  return w.translit || w.lemma || null;
 }
 
 // ============================================================
