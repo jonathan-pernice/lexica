@@ -1347,7 +1347,16 @@ function App() {
   };
 
   const handleGlossDrill = (sn, gloss) => {
-    setGlossFilter({ sn, gloss });
+    const hasMatch = allResults.some(
+      e => e.strongs_raw === sn && e.gloss_head.toLowerCase() === gloss.toLowerCase()
+    );
+    if (hasMatch) {
+      setGlossFilter({ sn, gloss });
+      return;
+    }
+    // Gloss not in current results — search the full strongs entry, then apply filter
+    const crumbsWithCurrent = [...breadcrumbs, { label: searchLabel, q: q1.trim() }];
+    handleSearch(`G${sn}`, crumbsWithCurrent, true).then(() => setGlossFilter({ sn, gloss }));
   };
 
   const handleBreadcrumbNav = (crumb, idx) => {
