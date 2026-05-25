@@ -1041,22 +1041,15 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
     }
     return order
       .map(sn => {
-        const allGlosses = groupings[sn] || [];
-        // Filter chips to only glosses present in the current result set (avoids zero-result clicks)
-        const resultHeads = new Set(results.filter(e => e.strongs_raw === sn).map(e => e.gloss_head).filter(Boolean));
-        const glosses = resultHeads.size > 0
-          ? allGlosses.filter(g => resultHeads.has(g.gloss))
-          : allGlosses;
+        const glosses = groupings[sn] || [];
         const base = sn.includes('.') ? sn.split('.')[0] : sn;
         const allVariants = (variants && variants[base]) || [];
         const siblings = sn.includes('.') ? allVariants.filter(v => v !== sn) : [];
         const entry = results.find(e => e.strongs_raw === sn);
-        // Use full corpus gloss count for visibility — don't hide a multi-sense word
-        // just because the current results happen to contain only one of its senses
-        return { sn, glosses, allGlosses, siblings, entry };
+        return { sn, glosses, siblings, entry };
       })
-      .filter(({ allGlosses, siblings, entry }) =>
-        (allGlosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
+      .filter(({ glosses, siblings, entry }) =>
+        (glosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
   }, [groupings, results, variants]);
 
   if (rows.length === 0) return null;
@@ -1354,12 +1347,14 @@ function App() {
   };
 
   const handleGlossDrill = (sn, greek, gloss) => {
-    // If this strongs is already in the current result set, filter client-side
-    if (allResults.some(e => e.strongs_raw === sn)) {
+    const hasMatch = allResults.some(
+      e => e.strongs_raw === sn && e.gloss_head.toLowerCase() === gloss.toLowerCase()
+    );
+    if (hasMatch) {
       setGlossFilter({ sn, gloss });
       return;
     }
-    // Fallback: strongs not in current results — do a full corpus search
+    // Fallback: gloss not in current results — do a full corpus search
     const gq = `G${sn}`;
     const label = greek ? `${greek} G${sn}` : gq;
     const existingIdx = breadcrumbs.findIndex(c => c.q === gq);
