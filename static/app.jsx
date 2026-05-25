@@ -46,10 +46,8 @@ const api = {
     fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   bdb: (sid) =>
     fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
-  crossRefs: (book, chapter, verse) =>
-    fetch(`/api/cross-references/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
-  xrefSynthesis: (book, chapter, verse) =>
-    fetch(`/api/cross-references/synthesis/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  crossRefsCurated: (book, chapter, verse) =>
+    fetch(`/api/cross-references/curated/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
 };
 
 // ============================================================
@@ -645,48 +643,45 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 // ============================================================
 // CROSS-REFERENCE PANEL
 // ============================================================
-function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile, translation }) {
-  const [abpTexts, setAbpTexts] = useState({});
+function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation }) {
+  const [refs, setRefs] = useState([]);
   const [synthesis, setSynthesis] = useState(null);
-  const [synthLoading, setSynthLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [abpTexts, setAbpTexts] = useState({});
   const showAbp = translation === "abp" || translation === "parallel";
 
   useEffect(() => {
-    if (!showAbp || !data.length) { setAbpTexts({}); return; }
+    if (!source) return;
+    let cancelled = false;
+    setRefs([]);
+    setSynthesis(null);
+    setAbpTexts({});
+    setLoading(true);
+    api.crossRefsCurated(source.book, source.chapter, source.verse)
+      .then(d => {
+        if (cancelled) return;
+        setRefs(d.refs || []);
+        setSynthesis(d.synthesis || null);
+        setLoading(false);
+      })
+      .catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [source && source.book, source && source.chapter, source && source.verse]);
+
+  useEffect(() => {
+    if (!showAbp || !refs.length) { setAbpTexts({}); return; }
     let cancelled = false;
     Promise.all(
-      data.map(ref =>
+      refs.map(ref =>
         api.verse(ref.book, ref.chapter, ref.verse)
           .then(d => [ref.ref, d.text || ""])
           .catch(() => [ref.ref, ""])
       )
-    ).then(pairs => {
-      if (!cancelled) setAbpTexts(Object.fromEntries(pairs));
-    });
+    ).then(pairs => { if (!cancelled) setAbpTexts(Object.fromEntries(pairs)); });
     return () => { cancelled = true; };
-  }, [data, showAbp]);
+  }, [refs, showAbp]);
 
-  // Clear synthesis immediately when source changes so stale text doesn't linger
-  useEffect(() => {
-    setSynthesis(null);
-    setSynthLoading(false);
-  }, [source && source.book, source && source.chapter, source && source.verse]);
-
-  // Fire synthesis only after the verse list has loaded — prevents the Haiku call
-  // from blocking the server thread that serves the cross-refs list request
-  useEffect(() => {
-    if (!source || !data.length) return;
-    let cancelled = false;
-    setSynthLoading(true);
-    api.xrefSynthesis(source.book, source.chapter, source.verse)
-      .then(d => { if (!cancelled) { setSynthesis(d.synthesis || null); setSynthLoading(false); } })
-      .catch(() => { if (!cancelled) setSynthLoading(false); });
-    return () => { cancelled = true; };
-  }, [source && source.book, source && source.chapter, source && source.verse, !!data.length]);
-
-  const verseText = (ref) => showAbp
-    ? (abpTexts[ref.ref] || ref.kjv_text)
-    : ref.kjv_text;
+  const verseText = (ref) => showAbp ? (abpTexts[ref.ref] || ref.kjv_text) : ref.kjv_text;
 
   const sourceRef = `${source.book} ${source.chapter}:${source.verse}`;
   return (
@@ -701,18 +696,18 @@ function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile, t
       </div>
       <div className="xref-body">
         <h3 className="xref-title">Related Passages</h3>
-        {synthLoading ? (
-          <p className="xref-synthesis-loading">Analyzing thematic connections…</p>
+        {loading ? (
+          <p className="xref-synthesis-loading">Selecting relevant passages…</p>
         ) : synthesis ? (
           <p className="xref-synthesis">{synthesis}</p>
         ) : null}
         {loading ? (
           <div className="lib-loading">Loading…</div>
-        ) : data.length === 0 ? (
+        ) : refs.length === 0 ? (
           <p className="detail-p">No cross-references found.</p>
         ) : (
           <div className="xref-list">
-            {data.map(ref => (
+            {refs.map(ref => (
               <div key={ref.ref} className="xref-verse" onClick={() => onNavigate(ref.book, ref.chapter, ref.verse)}>
                 <span className="xref-ref">{ref.ref}</span>
                 <p className="xref-text">{verseText(ref)}</p>
@@ -1556,8 +1551,6 @@ function App() {
   const [mainView, setMainView] = useState("search");
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
-  const [crossRefData, setCrossRefData] = useState([]);
-  const [crossRefLoading, setCrossRefLoading] = useState(false);
   const [groupings, setGroupings] = useState({});
   const [variants, setVariants] = useState({});
   const [breadcrumbs, setBreadcrumbs] = useState([]);
@@ -1571,16 +1564,6 @@ function App() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  useEffect(() => {
-    if (!libCrossRef) return;
-    let cancelled = false;
-    setCrossRefLoading(true);
-    setCrossRefData([]);
-    api.crossRefs(libCrossRef.book, libCrossRef.chapter, libCrossRef.verse)
-      .then(data => { if (!cancelled) { setCrossRefData(Array.isArray(data) ? data : []); setCrossRefLoading(false); } })
-      .catch(() => { if (!cancelled) setCrossRefLoading(false); });
-    return () => { cancelled = true; };
-  }, [libCrossRef]);
 
   const handleVerseNumberClick = (book, chapter, verse, translation) => {
     setActiveEntry(null);
@@ -1980,8 +1963,6 @@ function App() {
       {libCrossRef && !isMobile && (
         <CrossRefPanel
           source={libCrossRef}
-          data={crossRefData}
-          loading={crossRefLoading}
           translation={libCrossRef.translation}
           onClose={() => setLibCrossRef(null)}
           onNavigate={(book, chapter, verse) => {
@@ -1997,8 +1978,6 @@ function App() {
           <div className="sheet-scrim" onClick={() => setLibCrossRef(null)} />
           <CrossRefPanel
             source={libCrossRef}
-            data={crossRefData}
-            loading={crossRefLoading}
             translation={libCrossRef.translation}
             onClose={() => setLibCrossRef(null)}
             onNavigate={(book, chapter, verse) => {
