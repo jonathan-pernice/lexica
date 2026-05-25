@@ -1451,7 +1451,7 @@ function App() {
               {mode === "search" && (breadcrumbs.length > 0 || glossFilter) && (
                 <SearchBreadcrumb
                   breadcrumbs={glossFilter
-                    ? [...breadcrumbs, { label: searchLabel, q: q1.trim() }, { label: `G${glossFilter.sn}` }]
+                    ? [...breadcrumbs, { label: searchLabel, q: q1.trim() }, ...(searchLabel !== `G${glossFilter.sn}` ? [{ label: `G${glossFilter.sn}` }] : [])]
                     : breadcrumbs}
                   currentLabel={glossFilter ? glossFilter.gloss : searchLabel}
                   onNav={(crumb, idx) => {
