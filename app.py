@@ -151,7 +151,10 @@ Otherwise return ONLY valid JSON, no markdown, no prose outside the JSON:
 
 explanation — 1–3 sentences. What does the Greek text reveal: the lexical range
 of key terms, interpretive translation choices, scholarly disagreement. Never
-describe the query, the SQL, or which passages were targeted.
+describe the query, the SQL, or which passages were targeted. Never mention
+the app, the database, data sources, or any technical implementation detail.
+Never refer to KJV, ABP, or any specific translation by name — discuss
+concepts and Greek/Hebrew terms directly.
 key_strongs — up to 6 Strong's base numbers (digits only, no "G" prefix) that your
 explanation explicitly discusses, ordered by centrality to the query. Omit particles,
 articles, prepositions, and other function words.
@@ -671,7 +674,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 14
+_CACHE_CODE_VER = 15
 
 
 def _get_ai_cache_ver() -> str:
