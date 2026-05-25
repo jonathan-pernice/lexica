@@ -1041,21 +1041,15 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
     }
     return order
       .map(sn => {
-        const allGlosses = groupings[sn] || [];
-        const inResults = new Set(
-          results.filter(e => e.strongs_raw === sn).map(e => e.gloss_head).filter(Boolean)
-        );
-        // Only show chips for glosses actually present in the current result set
-        const glosses = inResults.size > 0 ? allGlosses.filter(g => inResults.has(g.gloss)) : allGlosses;
+        const glosses = groupings[sn] || [];
         const base = sn.includes('.') ? sn.split('.')[0] : sn;
         const allVariants = (variants && variants[base]) || [];
         const siblings = sn.includes('.') ? allVariants.filter(v => v !== sn) : [];
         const entry = results.find(e => e.strongs_raw === sn);
-        // Use full corpus count for row visibility so multi-sense words still appear
-        return { sn, glosses, allGlosses, siblings, entry };
+        return { sn, glosses, siblings, entry };
       })
-      .filter(({ allGlosses, siblings, entry }) =>
-        (allGlosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
+      .filter(({ glosses, siblings, entry }) =>
+        (glosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
   }, [groupings, results, variants]);
 
   if (rows.length === 0) return null;
