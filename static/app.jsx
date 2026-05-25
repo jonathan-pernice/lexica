@@ -479,13 +479,17 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
       <div className="detail-body">
         <div className="detail-hero">
-          <div className="detail-greek">{entry.greek || entry.gloss}</div>
+          <div className="detail-greek"
+               dir={isHebrew ? "rtl" : undefined}
+               style={isHebrew ? {fontFamily: "var(--f-serif)"} : undefined}>
+            {isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || entry.gloss)}
+          </div>
           <div className="detail-translit-row">
-            <span className="detail-translit">{entry.translit}</span>
+            <span className="detail-translit">{isHebrew ? bdbEntry?.xlit : entry.translit}</span>
             <button
               className="tool-btn"
               title="Copy"
-              onClick={() => navigator.clipboard?.writeText(entry.greek)}
+              onClick={() => navigator.clipboard?.writeText(isHebrew ? (bdbEntry?.lemma || "") : entry.greek)}
             >
               <Icon.Copy/>
             </button>
@@ -501,8 +505,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
             ) : bdbEntry ? (
               <div className="bdb-body">
-                {bdbEntry.lemma && <div className="bdb-lemma" dir="rtl">{bdbEntry.lemma}</div>}
-                {bdbEntry.xlit && <div className="bdb-xlit">{bdbEntry.xlit}{bdbEntry.pronounce ? <span className="bdb-pronounce"> ({bdbEntry.pronounce})</span> : null}</div>}
+                {bdbEntry.pronounce && <div className="bdb-xlit"><span className="bdb-pronounce">{bdbEntry.pronounce}</span></div>}
                 {bdbEntry.part_of_speech && <span className="bdb-pos-badge">{bdbEntry.part_of_speech}</span>}
                 {bdbEntry.description && <p className="detail-p" style={{ marginTop: "10px" }}>{bdbEntry.description}</p>}
               </div>
@@ -937,7 +940,11 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     const chipLabel = (w) => {
       const e = w.english || "";
       if (e) {
-        if (e.includes(" ")) return w.english_head || e;
+        if (e.includes(" ")) {
+          const head = w.english_head || e;
+          const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
+          return head + trailingPunc;
+        }
         return e;
       }
       // Null english: word absorbed into adjacent phrase — derive gloss from lexicon
@@ -1164,7 +1171,12 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
                       }
                     </div>
                     <div className="lib-parallel-col">
-                      {kjvV ? renderKjvVerse(kjvV) : <span className="lib-vnum">{abpV.verse}</span>}
+                      {kjvV
+                        ? wordMode
+                          ? renderKjvVerse(kjvV)
+                          : <span className="lib-verse-span"><sup className="lib-vnum">{kjvV.verse}</sup>{kjvV.verse_text}{" "}</span>
+                        : <span className="lib-vnum">{abpV.verse}</span>
+                      }
                     </div>
                   </div>
                 );
@@ -1174,9 +1186,17 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
         ) : translation === "kjv" ? (
           kjvLoading ? (
             <div className="lib-loading">Loading…</div>
-          ) : (
+          ) : wordMode ? (
             <div className="lib-text-words">
               {kjvVerses.map(v => renderKjvVerse(v))}
+            </div>
+          ) : (
+            <div className="lib-text">
+              {kjvVerses.map(v => (
+                <span key={v.verse} className="lib-verse-span">
+                  <sup className="lib-vnum">{v.verse}</sup>{v.verse_text}{" "}
+                </span>
+              ))}
             </div>
           )
         ) : loading ? (
