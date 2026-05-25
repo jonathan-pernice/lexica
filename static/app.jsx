@@ -987,17 +987,13 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
       };
     };
 
-    // For multi-word ABP phrases like "God made", show only the head word (english_head).
-    // For single words like "God", use english directly to preserve casing.
     const chipLabel = (w) => {
       const e = w.english || "";
       if (e) {
-        if (e.includes(" ")) {
-          const head = w.english_head || e;
-          const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
-          return head + trailingPunc;
-        }
-        return e;
+        const words = e.trim().split(/\s+/);
+        if (words.length <= 3) return e;
+        const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
+        return (w.english_head || words[words.length - 1]) + trailingPunc;
       }
       // Null english: word absorbed into adjacent phrase — derive gloss from lexicon
       const kd = w.kjv_def || "";
