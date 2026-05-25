@@ -901,6 +901,14 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
   const maxChap = selBook ? selBook.chapters : 1;
   const wordMode = showStrongs || showInterlinear || wordOrder === "greek";
 
+  const joinProse = (words) => {
+    const tokens = words.map(w => w.english).filter(Boolean);
+    return tokens.reduce((acc, tok, i) => {
+      if (i === 0) return tok;
+      return /^[.,;:?!—)]/.test(tok) ? acc + tok : acc + " " + tok;
+    }, "");
+  };
+
   const renderVerse = (v) => {
     const isHighlight = nav && nav.highlight === v.verse;
 
@@ -973,7 +981,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     if (!wordMode) {
       // Prose mode: compute English-ordered text from words
       const englishWords = getEnglishOrderWords(v.words);
-      const text = englishWords.map(w => w.english).join(' ');
+      const text = joinProse(englishWords);
       return (
         <span key={v.verse} ref={isHighlight ? highlightRef : null}
           className={"lib-verse-span" + (isHighlight ? " lib-highlight" : "")}>
@@ -986,8 +994,8 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     // Chip mode
     let content;
     if (wordOrder === "greek") {
-      // Greek syntactic order with bracket notation
-      const sortedWords = [...v.words].sort((a, b) => a.position - b.position);
+      // Greek syntactic order with bracket notation — only words with a gloss or lemma
+      const sortedWords = [...v.words].filter(w => w.english || w.lemma).sort((a, b) => a.position - b.position);
       const groups = groupForGreekMode(sortedWords);
       content = groups.map((g, gi) => {
         if (!g.isBracket) {
@@ -1002,8 +1010,8 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
         );
       });
     } else {
-      // English reading order
-      const englishWords = getEnglishOrderWords(v.words);
+      // English reading order — only words with a gloss
+      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english);
       content = englishWords.map((w, i) => chip(w, `e${i}`));
     }
 
@@ -1142,7 +1150,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
                     <div className="lib-parallel-col">
                       {wordMode
                         ? <span className="lib-verse-block">{renderVerse(abpV)}</span>
-                        : <span className="lib-verse-span"><sup className="lib-vnum">{abpV.verse}</sup>{getEnglishOrderWords(abpV.words).map(w => w.english).join(" ")}{" "}</span>
+                        : <span className="lib-verse-span"><sup className="lib-vnum">{abpV.verse}</sup>{joinProse(getEnglishOrderWords(abpV.words))}{" "}</span>
                       }
                     </div>
                     <div className="lib-parallel-col">

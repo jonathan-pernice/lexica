@@ -1441,7 +1441,6 @@ def chapter_text(book, chapter):
                JOIN words w ON w.verse_id = v.id
                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
                WHERE v.book = ? AND v.chapter = ?
-                 AND w.english IS NOT NULL AND w.english != ''
                ORDER BY v.verse, w.position""",
             (book, chapter),
         ).fetchall()
