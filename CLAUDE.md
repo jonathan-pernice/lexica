@@ -12,6 +12,17 @@ Lexica is a Flask-based Greek and Hebrew Bible word study app. It is ABP (Aposto
 - Limit tool calls — do not read files for context unless strictly necessary
 - Go straight to the relevant function, do not scan the whole codebase first
 
+## Important
+- bible.db lives on PythonAnywhere only, not locally
+- Never query or test against a local database
+- All db changes must be made on PythonAnywhere
+
+## cross_references table
+- Columns: id, verse_id, verse_ref_id
+- Both IDs map to kjv_verses.verse_id
+- 386,518 rows loaded from MetaV/Torrey's TSK
+- Join pattern: cross_references cr JOIN kjv_verses kv ON cr.verse_ref_id = kv.verse_id
+
 ## Stack
 - Backend: Flask (Python), SQLite
 - Frontend: React 18 + Babel standalone (JSX, no build step), HTML/CSS

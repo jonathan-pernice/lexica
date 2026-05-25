@@ -632,6 +632,79 @@ def _curate_primary_verses(
         return [], []
 
 
+_XREF_SYNTHESIS_SYSTEM = """\
+You are a textual scholar. Write 2–3 sentences identifying the thematic thread \
+connecting a set of cross-referenced passages. Focus on the underlying Greek/Hebrew \
+concepts, canonical patterns, and intertextual echoes. Never mention any app, \
+database, data source, or translation by name.\
+"""
+
+
+def _enrich_explanation_with_cross_refs(
+    query: str, results: list[dict], explanation: str
+) -> str:
+    """Generate a cross-ref-enriched explanation. Only called when result count ≤ 10."""
+    if not _anthropic:
+        return explanation
+    conn = db_ro()
+    try:
+        verse_ids: list[int] = []
+        verse_texts: list[str] = []
+        for v in results[:10]:
+            book_id = _KJV_BOOK_ID.get(v["book"])
+            if book_id is None:
+                continue
+            row = conn.execute(
+                "SELECT verse_id, verse_text FROM kjv_verses"
+                " WHERE book_id=? AND chapter=? AND verse_num=?",
+                (book_id, v["chapter"], v["verse"]),
+            ).fetchone()
+            if row:
+                verse_ids.append(row["verse_id"])
+                verse_texts.append(
+                    f"{v['book']} {v['chapter']}:{v['verse']}: {row['verse_text'][:200]}"
+                )
+        if not verse_ids:
+            return explanation
+        ph = ",".join("?" * len(verse_ids))
+        xrefs = conn.execute(
+            f"""SELECT kv.verse_text, COUNT(*) AS freq
+                FROM cross_references cr
+                JOIN kjv_verses kv ON kv.verse_id = cr.verse_ref_id
+                WHERE cr.verse_id IN ({ph})
+                  AND cr.verse_ref_id NOT IN ({ph})
+                GROUP BY cr.verse_ref_id
+                ORDER BY freq DESC
+                LIMIT 5""",
+            verse_ids + verse_ids,
+        ).fetchall()
+    finally:
+        conn.close()
+
+    if not xrefs:
+        return explanation
+
+    verse_block = "\n".join(verse_texts)
+    xref_block  = "\n".join(f"- {r['verse_text'][:200]}" for r in xrefs)
+    try:
+        msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=250,
+            temperature=0,
+            system=_XREF_SYNTHESIS_SYSTEM,
+            messages=[{"role": "user", "content": (
+                f"Query: {query}\n\n"
+                f"Result verses:\n{verse_block}\n\n"
+                f"Related passages from cross-references:\n{xref_block}\n\n"
+                "Write a 2-3 sentence synthesis."
+            )}],
+        )
+        return msg.content[0].text.strip()
+    except Exception as exc:
+        log.warning("Cross-ref enrichment failed: %s", exc)
+        return explanation
+
+
 def _clean_gloss(s: str | None) -> str | None:
     """Strip trailing punctuation that ABP interlinear leaves on phrase-boundary words."""
     if not s:
@@ -1666,6 +1739,72 @@ def cross_references_route(book, chapter, verse):
     return jsonify(result)
 
 
+@app.route("/api/cross-references/synthesis/<book>/<int:chapter>/<int:verse>")
+@limiter.limit("30 per hour")
+def cross_ref_synthesis(book, chapter, verse):
+    if not _anthropic:
+        return jsonify({"synthesis": None})
+    book_id = _KJV_BOOK_ID.get(book)
+    if book_id is None:
+        return jsonify({"synthesis": None})
+    cache_key = f"xref_synth:{book}:{chapter}:{verse}"
+    if cache_key in _ai_cache:
+        return jsonify(_ai_cache[cache_key])
+    conn = db_ro()
+    try:
+        cached = conn.execute(
+            "SELECT result_json FROM ai_search_cache WHERE query=?", (cache_key,)
+        ).fetchone()
+        if cached:
+            payload = json.loads(cached["result_json"])
+            _ai_cache[cache_key] = payload
+            return jsonify(payload)
+        src = conn.execute(
+            "SELECT verse_id, verse_text FROM kjv_verses"
+            " WHERE book_id=? AND chapter=? AND verse_num=?",
+            (book_id, chapter, verse),
+        ).fetchone()
+        if not src:
+            return jsonify({"synthesis": None})
+        refs = conn.execute(
+            """SELECT kv.verse_text FROM cross_references cr
+               JOIN kjv_verses kv ON kv.verse_id = cr.verse_ref_id
+               WHERE cr.verse_id = ? LIMIT 20""",
+            (src["verse_id"],),
+        ).fetchall()
+    finally:
+        conn.close()
+    if not refs:
+        return jsonify({"synthesis": None})
+    ref_block = "\n".join(f"- {r['verse_text']}" for r in refs)
+    try:
+        msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=200,
+            temperature=0,
+            system=_XREF_SYNTHESIS_SYSTEM,
+            messages=[{"role": "user", "content":
+                f'Source: "{src["verse_text"]}"\n\nCross-references:\n{ref_block}'}],
+        )
+        synthesis = msg.content[0].text.strip()
+    except Exception as exc:
+        log.warning("Cross-ref synthesis failed: %s", exc)
+        return jsonify({"synthesis": None})
+    payload = {"synthesis": synthesis}
+    conn = db()
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO ai_search_cache"
+            " (query, result_json, ver_key, created_at) VALUES (?,?,?,?)",
+            (cache_key, json.dumps(payload), "xref", time.time()),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    _ai_cache[cache_key] = payload
+    return jsonify(payload)
+
+
 @app.route("/api/bdb/<path:strongs_id>")
 def bdb_lookup(strongs_id):
     conn = db_ro()
@@ -2048,6 +2187,9 @@ def ai_search():
         results.sort(
             key=lambda v: (book_order.get(v["book"], 9999), v["chapter"], v["verse"])
         )
+
+        if len(results) <= 10:
+            explanation = _enrich_explanation_with_cross_refs(q, results, explanation)
 
         payload = {"results": results, "total": len(results),
                    "explanation": explanation, "key_strongs": key_strongs_data}

@@ -1280,6 +1280,23 @@ input { font-family: inherit; }
   text-transform: uppercase;
   margin: 18px 0 12px;
 }
+.xref-synthesis {
+  font-family: var(--f-serif, Georgia, serif);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--ink-1);
+  margin: 0 0 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.xref-synthesis-loading {
+  font-family: var(--f-serif, Georgia, serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-3);
+  margin: 0 0 16px;
+}
 .xref-list { display: flex; flex-direction: column; gap: 2px; }
 .xref-verse {
   padding: 10px 12px;

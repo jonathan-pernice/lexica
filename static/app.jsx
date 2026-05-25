@@ -45,6 +45,8 @@ const api = {
     fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
   crossRefs: (book, chapter, verse) =>
     fetch(`/api/cross-references/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  xrefSynthesis: (book, chapter, verse) =>
+    fetch(`/api/cross-references/synthesis/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
 };
 
 // ============================================================
@@ -646,6 +648,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 // ============================================================
 function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile, translation }) {
   const [abpTexts, setAbpTexts] = useState({});
+  const [synthesis, setSynthesis] = useState(null);
+  const [synthLoading, setSynthLoading] = useState(false);
   const showAbp = translation === "abp" || translation === "parallel";
 
   useEffect(() => {
@@ -662,6 +666,17 @@ function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile, t
     });
     return () => { cancelled = true; };
   }, [data, showAbp]);
+
+  useEffect(() => {
+    if (!source) return;
+    let cancelled = false;
+    setSynthesis(null);
+    setSynthLoading(true);
+    api.xrefSynthesis(source.book, source.chapter, source.verse)
+      .then(d => { if (!cancelled) { setSynthesis(d.synthesis || null); setSynthLoading(false); } })
+      .catch(() => { if (!cancelled) setSynthLoading(false); });
+    return () => { cancelled = true; };
+  }, [source && source.book, source && source.chapter, source && source.verse]);
 
   const verseText = (ref) => showAbp
     ? (abpTexts[ref.ref] || ref.kjv_text)
@@ -680,6 +695,11 @@ function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile, t
       </div>
       <div className="xref-body">
         <h3 className="xref-title">Related Passages</h3>
+        {synthLoading ? (
+          <p className="xref-synthesis-loading">Analyzing thematic connections…</p>
+        ) : synthesis ? (
+          <p className="xref-synthesis">{synthesis}</p>
+        ) : null}
         {loading ? (
           <div className="lib-loading">Loading…</div>
         ) : data.length === 0 ? (
