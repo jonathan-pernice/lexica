@@ -21,10 +21,9 @@ const api = {
   strongsCount: (strongs_base) =>
     fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
   lsj: (lemma, strongs) => {
-    const hasDot = strongs && strongs.includes('.');
-    const path = lemma || (hasDot ? strongs : '');
+    const path = lemma || strongs || '';
     if (!path) return Promise.resolve({ error: 'not found' });
-    const qs = hasDot ? `?strongs=${encodeURIComponent(strongs)}` : '';
+    const qs = strongs ? `?strongs=${encodeURIComponent(strongs)}` : '';
     return fetch(`/api/lsj/${encodeURIComponent(path)}${qs}`).then(r => r.json());
   },
   lsjSummary: (key, strongs) => {
@@ -451,7 +450,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setLsjEntry(null);
     setLsjTab("def");
     setLsjSummary(null);
-    const canLookup = !isHebrew && entry && (entry.greek || (entry.strongs_raw && entry.strongs_raw.includes('.')));
+    const canLookup = !isHebrew && entry && (entry.greek || entry.strongs_raw);
     if (!canLookup) { setLsjLoading(false); return; }
     let cancelled = false;
     setLsjLoading(true);
@@ -1489,19 +1488,10 @@ function App() {
   // Grouping counts recomputed from corpus-filtered results
   const filteredGroupings = useMemo(() => {
     if (corpusFilter === "all") return groupings;
-    const counts = {};
-    for (const e of corpusFilteredResults) {
-      if (e.gloss) {
-        const key = `${e.strongs_raw}|${e.gloss.toLowerCase()}`;
-        counts[key] = (counts[key] || 0) + 1;
-      }
-    }
+    const presentSns = new Set(corpusFilteredResults.map(e => e.strongs_raw));
     const result = {};
     for (const [sn, glossList] of Object.entries(groupings)) {
-      const filtered = glossList
-        .map(g => ({ ...g, count: counts[`${sn}|${g.gloss.toLowerCase()}`] || 0 }))
-        .filter(g => g.count > 0);
-      if (filtered.length > 0) result[sn] = filtered;
+      if (presentSns.has(sn)) result[sn] = glossList;
     }
     return result;
   }, [groupings, corpusFilteredResults, corpusFilter]);
