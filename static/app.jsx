@@ -847,9 +847,11 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
   const [kjvVerses, setKjvVerses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [kjvLoading, setKjvLoading] = useState(false);
-  const [showStrongs, setShowStrongs] = useState(false);
-  const [showInterlinear, setShowInterlinear] = useState(false);
-  const [wordOrder, setWordOrder] = useState("english"); // "english" | "greek"
+  const [libOptions, setLibOptions] = useState({
+    abp:      { wordOrder: "english", showStrongs: false, showInterlinear: false },
+    kjv:      { wordOrder: "english", showStrongs: false, showInterlinear: false },
+    parallel: { wordOrder: "english", showStrongs: false, showInterlinear: false },
+  });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
 
@@ -902,7 +904,16 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
   }, [nav?.scroll, verses]);
 
   const maxChap = selBook ? selBook.chapters : 1;
-  const wordMode = showStrongs || showInterlinear || wordOrder === "greek";
+  const opts          = libOptions[translation] || {};
+  const showStrongs   = opts.showStrongs    || false;
+  const showInterlinear = opts.showInterlinear || false;
+  const wordOrder     = opts.wordOrder      || "english";
+  const setOpt = (key, val) => setLibOptions(prev => ({
+    ...prev,
+    [translation]: { ...prev[translation], [key]: val },
+  }));
+
+  const wordMode    = showStrongs || showInterlinear || wordOrder === "greek";
   const kjvWordMode = showStrongs;
 
   const joinProse = (words) => {
@@ -1126,24 +1137,24 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
         <div className="lib-toggles">
           <button
             className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
-            onClick={() => setShowStrongs(v => !v)}
+            onClick={() => setOpt("showStrongs", !showStrongs)}
           >Strong's</button>
-          {translation !== "kjv" && <>
-            <button
-              className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
-              onClick={() => setShowInterlinear(v => !v)}
-            >Interlinear</button>
+          <button
+            className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
+            onClick={() => setOpt("showInterlinear", !showInterlinear)}
+          >Interlinear</button>
+          {translation !== "kjv" && (
             <div className="lib-order-toggle">
               <button
                 className={"lib-order-btn" + (wordOrder === "english" ? " on" : "")}
-                onClick={() => setWordOrder("english")}
+                onClick={() => setOpt("wordOrder", "english")}
               >English</button>
               <button
                 className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
-                onClick={() => setWordOrder("greek")}
+                onClick={() => setOpt("wordOrder", "greek")}
               >Greek</button>
             </div>
-          </>}
+          )}
         </div>
       </div>
 
