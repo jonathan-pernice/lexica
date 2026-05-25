@@ -102,6 +102,12 @@ function flattenAiResults(verses) {
 // ============================================================
 // BOOK LABELS
 // ============================================================
+const NT_BOOKS = new Set([
+  "Mat","Mrk","Luk","Jhn","Act","Rom","1Co","2Co","Gal","Eph",
+  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Hbr","Jam",
+  "1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
+]);
+
 const BOOK_LABELS = {
   Gen: "Genesis",      Exo: "Exodus",       Lev: "Leviticus",    Num: "Numbers",
   Deu: "Deuteronomy",  Jos: "Joshua",        Jdg: "Judges",       Rth: "Ruth",
@@ -1420,6 +1426,7 @@ function App() {
   const [activeEntry, setActiveEntry] = useState(null);
   const [sortBy, setSortBy] = useState("relevance");
   const [viewMode, setViewMode] = useState("browse");
+  const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
   const [isMobile, setIsMobile] = useState(false);
   const [mainView, setMainView] = useState("search");
   const [libNav, setLibNav] = useState(null);
@@ -1445,7 +1452,7 @@ function App() {
     return map;
   }, [allResults]);
 
-  // Sorted display list — gloss filter > function word suppression
+  // Sorted display list — gloss filter > function word suppression > corpus filter
   const displayed = useMemo(() => {
     let base;
     if (glossFilter) {
@@ -1458,10 +1465,12 @@ function App() {
     } else {
       base = allResults;
     }
+    if (corpusFilter === "ot") base = base.filter(e => !NT_BOOKS.has(e.book));
+    if (corpusFilter === "nt") base = base.filter(e => NT_BOOKS.has(e.book));
     if (sortBy === "alpha") return [...base].sort((a, b) => a.translit.localeCompare(b.translit));
     if (sortBy === "freq") return [...base].sort((a, b) => (countMap[b.strongs_raw] || 0) - (countMap[a.strongs_raw] || 0));
     return base;
-  }, [allResults, sortBy, countMap, mode, primaryStrongs, glossFilter]);
+  }, [allResults, sortBy, countMap, mode, primaryStrongs, glossFilter, corpusFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
@@ -1715,6 +1724,12 @@ function App() {
                       <button className={"sort-btn " + (sortBy === "freq" ? "on" : "")} onClick={() => setSortBy("freq")}>Frequency</button>
                     </div>
                   )}
+                  <div className="results-sort">
+                    <span className="sort-label">Corpus</span>
+                    <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
+                    <button className={"sort-btn " + (corpusFilter === "ot" ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
+                    <button className={"sort-btn " + (corpusFilter === "nt" ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
+                  </div>
                   <div className="view-toggle">
                     <button className={"view-btn " + (viewMode === "browse" ? "on" : "")} onClick={() => setViewMode("browse")} title="Browse mode">
                       <Icon.Grid/>

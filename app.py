@@ -1419,15 +1419,16 @@ def books_list():
     conn = db()
     try:
         rows = conn.execute("""
-            SELECT b.abbrev, b.name, MAX(v.chapter) AS chapters
+            SELECT b.abbrev, b.name, b.testament, MAX(v.chapter) AS chapters
             FROM books b
-            JOIN verses v ON v.book = b.abbrev
-            GROUP BY b.abbrev, b.name
+            LEFT JOIN verses v ON v.book = b.abbrev
+            GROUP BY b.abbrev, b.name, b.testament
+            HAVING chapters IS NOT NULL
             ORDER BY COALESCE(b.sort_order, b.id)
         """).fetchall()
     finally:
         conn.close()
-    return jsonify([{"abbrev": r["abbrev"], "name": r["name"], "chapters": r["chapters"]} for r in rows])
+    return jsonify([{"abbrev": r["abbrev"], "name": r["name"], "chapters": r["chapters"], "testament": r["testament"]} for r in rows])
 
 
 @app.route("/api/chapter/<book>/<int:chapter>")
