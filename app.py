@@ -1504,11 +1504,14 @@ def kjv_chapter(book, chapter):
     try:
         rows = conn.execute("""
             SELECT kw.verse_num, kw.word_id, kw.verse_pos, kw.word, kw.italic,
-                   GROUP_CONCAT(ks.strongs_id) AS strongs_ids
+                   GROUP_CONCAT(ks.strongs_id) AS strongs_ids,
+                   kv.verse_text
             FROM kjv_words kw
             LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+            LEFT JOIN kjv_verses kv ON kv.book_id = kw.book_id
+                AND kv.chapter = kw.chapter AND kv.verse_num = kw.verse_num
             WHERE kw.book_id = ? AND kw.chapter = ?
-            GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic
+            GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic, kv.verse_text
             ORDER BY kw.verse_num, kw.verse_pos
         """, (book_id, chapter)).fetchall()
     finally:
@@ -1518,7 +1521,7 @@ def kjv_chapter(book, chapter):
     for r in rows:
         vn = r["verse_num"]
         if vn not in verses:
-            verses[vn] = {"verse": vn, "words": []}
+            verses[vn] = {"verse": vn, "words": [], "verse_text": r["verse_text"]}
             order.append(vn)
         sids = [s.strip() for s in (r["strongs_ids"] or "").split(",") if s.strip()]
         verses[vn]["words"].append({
