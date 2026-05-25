@@ -230,6 +230,18 @@ You also have access to KJV verse text and word-level Strong's data:
   bdb(strongs_id, lemma, xlit, pronounce, description, part_of_speech)
       Brown-Driver-Briggs Hebrew lexicon, 8,674 entries, H-numbers only.
 
+  cross_references(id INTEGER, verse_id INTEGER, verse_ref_id INTEGER)
+      Torrey's Treasury of Scripture Knowledge — thematic cross-references.
+      Both columns reference kjv_verses.verse_id (not ABP verses.id).
+      Use when asked about cross-references, related passages, where NT quotes OT,
+      or thematic connections between verses.
+      Example — passages cross-referenced to John 3:16 (book_id=43):
+        SELECT kv.book_id, kv.chapter, kv.verse_num, kv.verse_text
+        FROM cross_references cr
+        JOIN kjv_verses kv ON kv.verse_id = cr.verse_ref_id
+        WHERE cr.verse_id = (SELECT verse_id FROM kjv_verses
+                             WHERE book_id=43 AND chapter=3 AND verse_num=16)
+
 TRANSLATION COMPARISON queries:
   To compare KJV vs ABP renderings of a concept or word:
   1. Find the relevant Strong's number(s) from the lexicon table.
@@ -1552,6 +1564,7 @@ _KJV_BOOK_ID: dict[str, int] = {
     "1Pe": 60, "2Pe": 61, "1Jn": 62, "2Jn": 63, "3Jn": 64,
     "Jud": 65, "Rev": 66,
 }
+_KJV_BOOK_ID_REV: dict[int, str] = {v: k for k, v in _KJV_BOOK_ID.items()}
 
 
 @app.route("/api/kjv/chapter/<book>/<int:chapter>")
@@ -1610,6 +1623,43 @@ def kjv_verse_text(book, chapter, verse_num):
     if not row:
         return jsonify({"error": "not found"}), 404
     return jsonify({"text": row["verse_text"]})
+
+
+@app.route("/api/cross-references/<book>/<int:chapter>/<int:verse>")
+def cross_references_route(book, chapter, verse):
+    book_id = _KJV_BOOK_ID.get(book)
+    if book_id is None:
+        return jsonify([])
+    conn = db_ro()
+    try:
+        row = conn.execute(
+            "SELECT verse_id FROM kjv_verses WHERE book_id=? AND chapter=? AND verse_num=?",
+            (book_id, chapter, verse),
+        ).fetchone()
+        if not row:
+            return jsonify([])
+        refs = conn.execute(
+            """SELECT kv.book_id, kv.chapter, kv.verse_num, kv.verse_text
+               FROM cross_references cr
+               JOIN kjv_verses kv ON kv.verse_id = cr.verse_ref_id
+               WHERE cr.verse_id = ?
+               ORDER BY kv.verse_id""",
+            (row["verse_id"],),
+        ).fetchall()
+    finally:
+        conn.close()
+    result = []
+    for r in refs:
+        abbrev = _KJV_BOOK_ID_REV.get(r["book_id"])
+        if abbrev:
+            result.append({
+                "book":     abbrev,
+                "chapter":  r["chapter"],
+                "verse":    r["verse_num"],
+                "ref":      f"{abbrev} {r['chapter']}:{r['verse_num']}",
+                "kjv_text": r["verse_text"],
+            })
+    return jsonify(result)
 
 
 @app.route("/api/bdb/<path:strongs_id>")

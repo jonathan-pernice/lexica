@@ -1243,6 +1243,68 @@ input { font-family: inherit; }
   margin-top: 8px;
 }
 
+.lib-vnum-click {
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.lib-vnum-click:hover {
+  background: var(--gold);
+  color: #fff;
+}
+
+/* ============================================================
+   CROSS-REFERENCE PANEL
+============================================================ */
+.xref-panel .detail-head { border-bottom: 1px solid var(--rule); }
+.xref-badge {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  background: var(--gold-soft);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.xref-body {
+  padding: 0 24px 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+.xref-title {
+  font-family: var(--f-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 18px 0 12px;
+}
+.xref-list { display: flex; flex-direction: column; gap: 2px; }
+.xref-verse {
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.xref-verse:hover { background: var(--bg-sunk); }
+.xref-ref {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 4px;
+}
+.xref-text {
+  font-family: var(--f-serif);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin: 0;
+}
+
 /* Verse content — prose: inline text; chips: flex wrap */
 .lib-verse-content {
   flex: 1;

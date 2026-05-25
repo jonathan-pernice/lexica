@@ -43,6 +43,8 @@ const api = {
     fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   bdb: (sid) =>
     fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
+  crossRefs: (book, chapter, verse) =>
+    fetch(`/api/cross-references/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
 };
 
 // ============================================================
@@ -639,6 +641,42 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   );
 }
 
+// ============================================================
+// CROSS-REFERENCE PANEL
+// ============================================================
+function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile }) {
+  const sourceRef = `${source.book} ${source.chapter}:${source.verse}`;
+  return (
+    <aside className={"xref-panel " + (isMobile ? "detail-sheet" : "detail-side")} role="dialog" aria-label="Related Passages">
+      {isMobile && <div className="sheet-handle" aria-hidden="true" />}
+      <div className="detail-head">
+        <div className="detail-head-l">
+          <span className="detail-pos">{sourceRef}</span>
+          <span className="xref-badge">TSK</span>
+        </div>
+        <button className="detail-close" onClick={onClose} aria-label="Close">✕</button>
+      </div>
+      <div className="xref-body">
+        <h3 className="xref-title">Related Passages</h3>
+        {loading ? (
+          <div className="lib-loading">Loading…</div>
+        ) : data.length === 0 ? (
+          <p className="detail-p">No cross-references found.</p>
+        ) : (
+          <div className="xref-list">
+            {data.map(ref => (
+              <div key={ref.ref} className="xref-verse" onClick={() => onNavigate(ref.book, ref.chapter, ref.verse)}>
+                <span className="xref-ref">{ref.ref}</span>
+                <p className="xref-text">{ref.kjv_text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+}
+
 function studyWordLabel(w) {
   const e = w.english || "";
   if (e) return e;
@@ -874,7 +912,7 @@ function groupForGreekMode(words) {
 // ============================================================
 // LIBRARY VIEW
 // ============================================================
-function LibraryView({ nav, onNavChange, onWordClick }) {
+function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick }) {
   const [books, setBooks] = useState([]);
   const [selBook, setSelBook] = useState(null);
   const [selChapter, setSelChapter] = useState(1);
@@ -950,6 +988,17 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
 
   const wordMode    = showStrongs || showInterlinear || wordOrder === "greek";
   const kjvWordMode = showStrongs || (translation === "parallel" && wordOrder === "greek");
+
+  const handleVerseNum = onVerseNumberClick && selBook
+    ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse)
+    : null;
+
+  const vnumEl = (verse) => (
+    <span
+      className={"lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "")}
+      onClick={handleVerseNum ? () => handleVerseNum(verse) : undefined}
+    >{verse}</span>
+  );
 
   const joinProse = (words) => {
     const tokens = words.map(w => w.english).filter(Boolean);
@@ -1036,7 +1085,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
       return (
         <div key={v.verse} ref={isHighlight ? highlightRef : null}
           className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
-          <span className="lib-vnum">{v.verse}</span>
+          {vnumEl(v.verse)}
           <span className="lib-verse-content">{text}</span>
         </div>
       );
@@ -1069,7 +1118,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     return (
       <div key={v.verse} ref={isHighlight ? highlightRef : null}
         className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
-        <span className="lib-vnum">{v.verse}</span>
+        {vnumEl(v.verse)}
         <span className="lib-verse-content lib-verse-chips">{content}</span>
       </div>
     );
@@ -1094,7 +1143,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
     });
     return (
       <div key={v.verse} className="lib-verse-row">
-        {showVerseNum && <span className="lib-vnum">{v.verse}</span>}
+        {showVerseNum && vnumEl(v.verse)}
         <span className="lib-verse-content lib-verse-chips">
           {v.words.map((w, i) => {
             const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
@@ -1212,7 +1261,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
                       {wordMode
                         ? renderVerse(abpV)
                         : <div className="lib-verse-row">
-                            <span className="lib-vnum">{abpV.verse}</span>
+                            {vnumEl(abpV.verse)}
                             <span className="lib-verse-content">{joinProse(getEnglishOrderWords(abpV.words))}</span>
                           </div>
                       }
@@ -1222,10 +1271,10 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
                         ? kjvWordMode
                           ? renderKjvVerse(kjvV)
                           : <div className="lib-verse-row">
-                              <span className="lib-vnum">{kjvV.verse}</span>
+                              {vnumEl(kjvV.verse)}
                               <span className="lib-verse-content">{kjvV.verse_text}</span>
                             </div>
-                        : <span className="lib-vnum">{abpV.verse}</span>
+                        : vnumEl(abpV.verse)
                       }
                     </div>
                   </div>
@@ -1244,7 +1293,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
             <div className="lib-text-words">
               {kjvVerses.map(v => (
                 <div key={v.verse} className="lib-verse-row">
-                  <span className="lib-vnum">{v.verse}</span>
+                  {vnumEl(v.verse)}
                   <span className="lib-verse-content">{v.verse_text}</span>
                 </div>
               ))}
@@ -1458,6 +1507,9 @@ function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [mainView, setMainView] = useState("search");
   const [libNav, setLibNav] = useState(null);
+  const [libCrossRef, setLibCrossRef] = useState(null);
+  const [crossRefData, setCrossRefData] = useState([]);
+  const [crossRefLoading, setCrossRefLoading] = useState(false);
   const [groupings, setGroupings] = useState({});
   const [variants, setVariants] = useState({});
   const [breadcrumbs, setBreadcrumbs] = useState([]);
@@ -1470,6 +1522,22 @@ function App() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  useEffect(() => {
+    if (!libCrossRef) return;
+    let cancelled = false;
+    setCrossRefLoading(true);
+    setCrossRefData([]);
+    api.crossRefs(libCrossRef.book, libCrossRef.chapter, libCrossRef.verse)
+      .then(data => { if (!cancelled) { setCrossRefData(Array.isArray(data) ? data : []); setCrossRefLoading(false); } })
+      .catch(() => { if (!cancelled) setCrossRefLoading(false); });
+    return () => { cancelled = true; };
+  }, [libCrossRef]);
+
+  const handleVerseNumberClick = (book, chapter, verse) => {
+    setActiveEntry(null);
+    setLibCrossRef({ book, chapter, verse });
+  };
 
   // Corpus-filtered results (OT/NT filter applied before everything else)
   const corpusFilteredResults = useMemo(() => {
@@ -1682,7 +1750,7 @@ function App() {
         <div className="main-inner">
           {libEverVisited && (
             <div style={{ display: mainView === "library" ? undefined : "none" }}>
-              <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => setActiveEntry(e)} />
+              <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} />
             </div>
           )}
           <div style={{ display: mainView === "library" ? "none" : undefined }}>
@@ -1858,6 +1926,37 @@ function App() {
             totalResults={allResults.length}
             onStrongsSearch={handleStrongsSearch}
             onReadInContext={handleReadInContext}
+          />
+        </>
+      )}
+      {libCrossRef && !isMobile && (
+        <CrossRefPanel
+          source={libCrossRef}
+          data={crossRefData}
+          loading={crossRefLoading}
+          onClose={() => setLibCrossRef(null)}
+          onNavigate={(book, chapter, verse) => {
+            setMainView("library");
+            setLibCrossRef(null);
+            setLibNav({ book, chapter, scroll: true, highlight: verse });
+          }}
+          isMobile={false}
+        />
+      )}
+      {libCrossRef && isMobile && (
+        <>
+          <div className="sheet-scrim" onClick={() => setLibCrossRef(null)} />
+          <CrossRefPanel
+            source={libCrossRef}
+            data={crossRefData}
+            loading={crossRefLoading}
+            onClose={() => setLibCrossRef(null)}
+            onNavigate={(book, chapter, verse) => {
+              setMainView("library");
+              setLibCrossRef(null);
+              setLibNav({ book, chapter, scroll: true, highlight: verse });
+            }}
+            isMobile={true}
           />
         </>
       )}
