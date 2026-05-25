@@ -1500,10 +1500,10 @@ function AIAnswer({ query, explanation, keyStrongs, onPick }) {
 // GUIDED TOUR
 // ============================================================
 const TOUR_STEPS = [
-  { icon: "Search",  label: "The Lexicon",   body: "Search by Greek word, transliteration, or Strong's number to find every occurrence across the corpus." },
-  { icon: "Book",    label: "The Library",   body: "Read any book with interlinear display and clickable Strong's badges on every word." },
-  { icon: "Sparkle", label: "Ask the Corpus", body: "Type a question in plain language and the AI searches the full Greek Bible on your behalf." },
-  { icon: "Panel",   label: "Word Sidebar",  body: "Click any word in the results to open its full LSJ lexicon entry and ABP definition." },
+  { icon: "Search",  label: "The Lexicon",      body: "Search by English, Greek, transliteration, or Strong's number. Every word links to its full LSJ (Greek) or BDB (Hebrew) entry with a context-aware AI summary." },
+  { icon: "Book",    label: "The Library",      body: "Read in ABP, KJV, or parallel interlinear. Switch to Greek word order, enable Strong's badges, or go fully interlinear. Click any verse number to open its cross-references." },
+  { icon: "Panel",   label: "Cross-References", body: "Every verse connects to Torrey's Treasury of Scripture Knowledge — AI-curated to the strongest matches and synthesized into a thematic overview." },
+  { icon: "Sparkle", label: "Ask the Corpus",  body: "Ask in plain language: 'Where does Paul use pistis in Romans?' or 'Divine council passages in the OT.' The AI searches Greek and Hebrew simultaneously." },
 ];
 
 function GuidedTour({ onDone }) {
