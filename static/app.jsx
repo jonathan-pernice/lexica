@@ -644,7 +644,29 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 // ============================================================
 // CROSS-REFERENCE PANEL
 // ============================================================
-function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile }) {
+function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile, translation }) {
+  const [abpTexts, setAbpTexts] = useState({});
+  const showAbp = translation === "abp" || translation === "parallel";
+
+  useEffect(() => {
+    if (!showAbp || !data.length) { setAbpTexts({}); return; }
+    let cancelled = false;
+    Promise.all(
+      data.map(ref =>
+        api.verse(ref.book, ref.chapter, ref.verse)
+          .then(d => [ref.ref, d.text || ""])
+          .catch(() => [ref.ref, ""])
+      )
+    ).then(pairs => {
+      if (!cancelled) setAbpTexts(Object.fromEntries(pairs));
+    });
+    return () => { cancelled = true; };
+  }, [data, showAbp]);
+
+  const verseText = (ref) => showAbp
+    ? (abpTexts[ref.ref] || ref.kjv_text)
+    : ref.kjv_text;
+
   const sourceRef = `${source.book} ${source.chapter}:${source.verse}`;
   return (
     <aside className={"xref-panel " + (isMobile ? "detail-sheet" : "detail-side")} role="dialog" aria-label="Related Passages">
@@ -667,7 +689,7 @@ function CrossRefPanel({ source, data, loading, onClose, onNavigate, isMobile })
             {data.map(ref => (
               <div key={ref.ref} className="xref-verse" onClick={() => onNavigate(ref.book, ref.chapter, ref.verse)}>
                 <span className="xref-ref">{ref.ref}</span>
-                <p className="xref-text">{ref.kjv_text}</p>
+                <p className="xref-text">{verseText(ref)}</p>
               </div>
             ))}
           </div>
@@ -990,7 +1012,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick }) {
   const kjvWordMode = showStrongs || (translation === "parallel" && wordOrder === "greek");
 
   const handleVerseNum = onVerseNumberClick && selBook
-    ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse)
+    ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse, translation)
     : null;
 
   const vnumEl = (verse) => (
@@ -1534,9 +1556,9 @@ function App() {
     return () => { cancelled = true; };
   }, [libCrossRef]);
 
-  const handleVerseNumberClick = (book, chapter, verse) => {
+  const handleVerseNumberClick = (book, chapter, verse, translation) => {
     setActiveEntry(null);
-    setLibCrossRef({ book, chapter, verse });
+    setLibCrossRef({ book, chapter, verse, translation: translation || "abp" });
   };
 
   // Corpus-filtered results (OT/NT filter applied before everything else)
@@ -1934,6 +1956,7 @@ function App() {
           source={libCrossRef}
           data={crossRefData}
           loading={crossRefLoading}
+          translation={libCrossRef.translation}
           onClose={() => setLibCrossRef(null)}
           onNavigate={(book, chapter, verse) => {
             setMainView("library");
@@ -1950,6 +1973,7 @@ function App() {
             source={libCrossRef}
             data={crossRefData}
             loading={crossRefLoading}
+            translation={libCrossRef.translation}
             onClose={() => setLibCrossRef(null)}
             onNavigate={(book, chapter, verse) => {
               setMainView("library");
