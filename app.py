@@ -155,8 +155,9 @@ describe the query, the SQL, or which passages were targeted. Never mention
 the app, the database, data sources, or any technical implementation detail.
 Never refer to KJV, ABP, or any specific translation by name — discuss
 concepts and Greek/Hebrew terms directly.
-key_strongs — up to 6 Strong's base numbers (digits only, no "G" prefix) that your
-explanation explicitly discusses, ordered by centrality to the query. Omit particles,
+key_strongs — up to 6 Strong's numbers that your explanation explicitly discusses,
+ordered by centrality to the query. Use "H" prefix for Hebrew (e.g. "H7307", "H5475"),
+"G" prefix or bare digits for Greek (e.g. "G4151" or "4151"). Omit particles,
 articles, prepositions, and other function words.
 
 sql — SELECT only. Never INSERT, UPDATE, DELETE, DROP.
@@ -1543,36 +1544,6 @@ def lsj_summary(lemma):
         _lsj_summary_cache[mem_key] = payload
         return jsonify(payload)
 
-    # Ensure sections exist in sj for _lsj_concept_lookup (backend AI search context)
-    if not sj.get("sections"):
-        parser = _SectionParser()
-        parser.feed(row["def_html"] or "")
-        sections_raw = parser.get_sections()
-        _lsj_refusal_re = re.compile(
-            r'^(I |A\.\s*I |I\'m |I don\'t|I cannot|I appreciate|I need|Unfortunately)',
-            re.IGNORECASE,
-        )
-        sec_results = []
-        for marker, text in sections_raw:
-            if len(text.strip()) < 20:
-                continue
-            sec_msg = _anthropic.messages.create(
-                model="claude-haiku-4-5-20251001",
-                max_tokens=200,
-                messages=[{"role": "user", "content": (
-                    "You are a lexicon summarizer. Extract the English definition from this LSJ Greek lexicon section. "
-                    "Write one to two plain prose sentences stating what the word means. "
-                    "No markdown, no headers, no bullet points, no Greek text, no citations, no abbreviations. "
-                    "If the section contains only grammatical labels or cross-references with no definition, "
-                    "write a single sentence summarizing any meaning present. "
-                    "Return only the bare sentences.\n\n" + text
-                )}],
-            )
-            resp = sec_msg.content[0].text.strip()
-            if not _lsj_refusal_re.match(resp):
-                sec_results.append({"marker": marker, "text": resp})
-        sj["sections"] = sec_results
-
     # Fetch verse text for contextual summary
     plain_def = re.sub(r"<[^>]+>", " ", row["def_html"] or "").strip()
     actual_ctx = has_ctx
@@ -2018,19 +1989,29 @@ def ai_search():
         app.logger.warning("AI generated SQL: %s", sql)
 
         # Extract key_strongs from AI response; fall back to LSJ lookup entries
+        # Preserve original H/G prefix from AI before stripping digits
         _ks_raw = parsed.get("key_strongs") or []
         if not isinstance(_ks_raw, list):
             _ks_raw = []
-        _ks_raw = [re.sub(r'^[GgHh]', '', str(s)).strip() for s in _ks_raw[:6]]
-        _ks_raw = [s for s in _ks_raw if re.match(r'^\d+(?:\.\d+)?$', s)]
-        if not _ks_raw:
-            _ks_raw = [e["strongs"] for e in lsj_entries[:6]]
+        _ks_pairs: list[tuple[str, str | None]] = []  # (bare_num, orig_prefix or None)
+        for s in _ks_raw[:6]:
+            s = str(s).strip()
+            m = re.match(r'^([GgHh]?)(\d+(?:\.\d+)?)$', s)
+            if m:
+                orig = m.group(1).upper() if m.group(1) else None
+                _ks_pairs.append((m.group(2), orig))
+        if not _ks_pairs:
+            _ks_pairs = [(e["strongs"], None) for e in lsj_entries[:6]]
         key_strongs_data: list[dict] = []
-        if _ks_raw:
+        if _ks_pairs:
             ks_conn = db_ro()
             try:
-                for sn in _ks_raw:
-                    prefix = "H" if int(sn.split(".")[0]) > 5624 else "G"
+                for sn, orig_prefix in _ks_pairs:
+                    # Use AI-provided prefix when present; fall back to range heuristic
+                    if orig_prefix:
+                        prefix = orig_prefix
+                    else:
+                        prefix = "H" if int(sn.split(".")[0]) > 5624 else "G"
                     if prefix == "H":
                         row = ks_conn.execute(
                             "SELECT lemma, xlit AS translit FROM bdb WHERE strongs_id = ?",
