@@ -1,18 +1,24 @@
-# Lexica
+# Lexica — Greek & Hebrew Word Study
 
-A Greek and Hebrew Bible word study app built on the **Apostolic Bible Polyglot (ABP)** interlinear. Designed for serious study without requiring prior knowledge of Greek or Hebrew.
+Lexica is a free, open Bible study tool built for anyone who wants to go deeper than the English text — without needing years of seminary training.
 
-**Live app:** [appssanding720.pythonanywhere.com](https://appssanding720.pythonanywhere.com)
+Think of it as an AI-supercharged eSword: every Greek and Hebrew word is one click away from its full lexicon entry, and a natural language search engine lets you ask the text questions directly.
 
----
+## The Berean Approach
+
+Lexica is built on a simple principle: **the text speaks first**. No imported systematic theology, no denominational assumptions. When you search a word or ask a question, the app anchors every answer in the Greek and Hebrew source words — then lets you draw your own conclusions.
 
 ## What You Can Do
 
-- **Read** any book of the Bible in ABP, KJV, or side-by-side parallel — with optional Greek word order, interlinear display, and Strong's number badges
-- **Search** by English gloss, Greek word (with or without accents), transliteration, or Strong's number — and see every occurrence across the corpus with gloss groupings and OT/NT filtering
-- **Ask** natural language questions ("Where does hesed appear in the Psalms?") and get AI-generated SQL queries against the full interlinear database, with Hebrew and Greek citation chips
-- **Explore** cross-references from Torrey's Treasury of Scripture Knowledge — AI-curated to the 8–10 most relevant passages per verse, with a thematic synthesis anchored in ABP vocabulary
-- **Look up** any word in the Liddell-Scott-Jones Greek lexicon or Brown-Driver-Briggs Hebrew lexicon, with an AI-generated contextual summary
+**Read** — The Apostolic Bible Polyglot (ABP) interlinear alongside the King James Version, with parallel view. Every word is clickable.
+
+**Study words** — Click any word to open its full Liddell-Scott-Jones (Greek) or Brown-Driver-Briggs (Hebrew) lexicon entry, with an AI-generated summary of the sense most relevant to that passage.
+
+**Search the corpus** — Search by English, Greek, transliteration, or Strong's number. Results show every occurrence across all 66 books with gloss variants and occurrence counts, filterable by OT or NT.
+
+**Ask questions** — The AI search understands natural language: "where does Paul use pistis in Romans", "divine council passages in the OT", "where does pneuma appear in Genesis". It reasons across Greek and Hebrew simultaneously.
+
+**Explore connections** — Click any verse number to open its Torrey's Treasury of Scripture Knowledge cross-references, curated and synthesized by AI to surface the strongest thematic connections.
 
 ---
 
@@ -30,20 +36,21 @@ A Greek and Hebrew Bible word study app built on the **Apostolic Bible Polyglot 
 
 ---
 
-## Stack
+## What's Under the Hood
 
-- **Backend:** Python / Flask, SQLite
-- **Frontend:** React 18 + Babel standalone (no build step)
-- **AI:** Claude Haiku — AI search, LSJ summaries, TSK curation and synthesis
-- **Hosting:** PythonAnywhere
+- **ABP interlinear** — full 66-book Greek/English word-level text with Strong's tagging
+- **KJV** — full 31,102 verse text with word-level Strong's mapping
+- **LSJ** — Liddell-Scott-Jones Greek lexicon
+- **BDB** — Brown-Driver-Briggs Hebrew lexicon (8,674 entries)
+- **TSK** — Torrey's Treasury of Scripture Knowledge (386,518 cross-reference pairs)
+- **AI** — Claude Haiku for natural language search, lexicon summaries, and cross-reference synthesis
 
-## Lexicons & Data
+## Support This Project
 
-| Source | Coverage |
-|---|---|
-| Apostolic Bible Polyglot | Greek interlinear, OT + NT |
-| Liddell-Scott-Jones (LSJ) | Classical Greek lexicon |
-| Brown-Driver-Briggs (BDB) | Hebrew lexicon |
-| Strong's | G/H number definitions |
-| Torrey's TSK | 386,518 cross-reference pairs |
-| KJV | 31,102 verses with word-level Strong's tagging |
+Lexica is free and will stay free. AI queries have a small cost — if this tool has been useful to your studies, consider supporting it.
+
+⭐ Star this repo | ☕ Ko-fi coming soon
+
+## Built With
+
+Flask · SQLite · React 18 · Claude Haiku · PythonAnywhere
