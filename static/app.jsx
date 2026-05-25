@@ -931,7 +931,7 @@ function LibraryView({ nav, onNavChange, onWordClick }) {
   }));
 
   const wordMode    = showStrongs || showInterlinear || wordOrder === "greek";
-  const kjvWordMode = showStrongs;
+  const kjvWordMode = showStrongs || (translation === "parallel" && wordOrder === "greek");
 
   const joinProse = (words) => {
     const tokens = words.map(w => w.english).filter(Boolean);
