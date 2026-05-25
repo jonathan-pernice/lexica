@@ -237,8 +237,9 @@ You also have access to KJV verse text and word-level Strong's data:
   cross_references(id INTEGER, verse_id INTEGER, verse_ref_id INTEGER)
       Torrey's Treasury of Scripture Knowledge — thematic cross-references.
       Both columns reference kjv_verses.verse_id (not ABP verses.id).
-      Use when asked about cross-references, related passages, where NT quotes OT,
-      or thematic connections between verses.
+      Use this table at your own judgment when a query would benefit from
+      cross-testament thematic connections. Do not use it for focused
+      single-word lexical queries where it would add noise.
       Example — passages cross-referenced to John 3:16 (book_id=43):
         SELECT kv.book_id, kv.chapter, kv.verse_num, kv.verse_text
         FROM cross_references cr
@@ -2262,9 +2263,6 @@ def ai_search():
         results.sort(
             key=lambda v: (book_order.get(v["book"], 9999), v["chapter"], v["verse"])
         )
-
-        if len(results) <= 10:
-            explanation = _enrich_explanation_with_cross_refs(q, results, explanation)
 
         payload = {"results": results, "total": len(results),
                    "explanation": explanation, "key_strongs": key_strongs_data}
