@@ -747,7 +747,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 15
+_CACHE_CODE_VER = 16
 
 
 def _get_ai_cache_ver() -> str:
