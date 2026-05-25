@@ -955,8 +955,9 @@ input { font-family: inherit; }
 .study-word-wrap.match:hover .study-word { background: color-mix(in oklab, var(--accent-soft) 170%, transparent); }
 .study-pos {
   font-family: var(--f-mono);
-  font-size: 8px;
+  font-size: 8.5px;
   color: var(--ink-4);
+  letter-spacing: 0.02em;
   line-height: 1;
   margin-bottom: 2px;
 }

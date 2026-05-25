@@ -638,13 +638,18 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   );
 }
 
-// Condenses multi-word ABP gloss to its head word + trailing punctuation.
+// Condenses multi-word ABP gloss to head word + trailing punc; falls back to kjv_def.
 function studyWordLabel(w) {
   const e = w.english || "";
-  if (!e) return null;
-  const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
-  if (e.includes(" ")) return (w.english_head || e) + trailingPunc;
-  return e;
+  if (e) {
+    const trailingPunc = e.match(/[.,;:?!—)]+$/)?.[0] || "";
+    if (e.includes(" ")) return (w.english_head || e) + trailingPunc;
+    return e;
+  }
+  const kd = w.kjv_def || "";
+  if (!kd) return null;
+  const first = kd.split(",").map(t => t.trim()).find(t => !t.startsWith("X ")) || kd.split(",")[0].trim();
+  return first.replace(/\s*[(\[+].*/,'').trim() || null;
 }
 
 // ============================================================
@@ -694,10 +699,11 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
           });
           const label = studyWordLabel(w);
           if (!label) return null;
+          const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
           return (
             <span key={i} className={"study-word-wrap" + (clickable ? " match" : "")}
                   onClick={clickable ? () => onWordClick(entry) : undefined}>
-              <sup className="study-pos">{w.position + 1}</sup>
+              {hasPos && <span className="study-pos">{w.greek_pos}</span>}
               <span className="study-word">{label}</span>
             </span>
           );
@@ -1467,35 +1473,60 @@ function App() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Count occurrences per dotted strongs across all results
+  // Corpus-filtered results (OT/NT filter applied before everything else)
+  const corpusFilteredResults = useMemo(() => {
+    if (corpusFilter === "ot") return allResults.filter(e => !NT_BOOKS.has(e.book));
+    if (corpusFilter === "nt") return allResults.filter(e => NT_BOOKS.has(e.book));
+    return allResults;
+  }, [allResults, corpusFilter]);
+
+  // Count occurrences per dotted strongs across corpus-filtered results
   const countMap = useMemo(() => {
     const map = {};
-    for (const e of allResults) {
+    for (const e of corpusFilteredResults) {
       map[e.strongs_raw] = (map[e.strongs_raw] || 0) + 1;
     }
     return map;
-  }, [allResults]);
+  }, [corpusFilteredResults]);
 
-  // Sorted display list — gloss filter > function word suppression > corpus filter
+  // Grouping counts recomputed from corpus-filtered results
+  const filteredGroupings = useMemo(() => {
+    if (corpusFilter === "all") return groupings;
+    const counts = {};
+    for (const e of corpusFilteredResults) {
+      if (e.gloss_head) {
+        const key = `${e.strongs_raw}|${e.gloss_head.toLowerCase()}`;
+        counts[key] = (counts[key] || 0) + 1;
+      }
+    }
+    const result = {};
+    for (const [sn, glossList] of Object.entries(groupings)) {
+      const filtered = glossList
+        .map(g => ({ ...g, count: counts[`${sn}|${g.gloss.toLowerCase()}`] || 0 }))
+        .filter(g => g.count > 0);
+      if (filtered.length > 0) result[sn] = filtered;
+    }
+    return result;
+  }, [groupings, corpusFilteredResults, corpusFilter]);
+
+  // Sorted display list — gloss filter > function word suppression (corpus already filtered)
   const displayed = useMemo(() => {
     let base;
     if (glossFilter) {
-      base = allResults.filter(e =>
+      base = corpusFilteredResults.filter(e =>
         e.strongs_raw === glossFilter.sn &&
         e.gloss_head.toLowerCase() === glossFilter.gloss.toLowerCase()
       );
     } else if (mode === "search" && !primaryStrongs) {
-      base = allResults.filter(e => !e.is_function);
+      base = corpusFilteredResults.filter(e => !e.is_function);
     } else {
-      base = allResults;
+      base = corpusFilteredResults;
     }
-    if (corpusFilter === "ot") base = base.filter(e => !NT_BOOKS.has(e.book));
-    if (corpusFilter === "nt") base = base.filter(e => NT_BOOKS.has(e.book));
     if (sortBy === "alpha") return [...base].sort((a, b) =>
       (BOOK_LABELS[a.book] || a.book).localeCompare(BOOK_LABELS[b.book] || b.book));
     return [...base].sort((a, b) =>
       (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
-  }, [allResults, sortBy, countMap, mode, primaryStrongs, glossFilter, corpusFilter]);
+  }, [corpusFilteredResults, sortBy, countMap, mode, primaryStrongs, glossFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
@@ -1767,8 +1798,8 @@ function App() {
 
               {!loading && allResults.length > 0 && mode === "search" && !glossFilter && (
                 <GlossGroupings
-                  groupings={groupings}
-                  results={allResults}
+                  groupings={filteredGroupings}
+                  results={corpusFilteredResults}
                   variants={variants}
                   onGlossDrill={handleGlossDrill}
                   onStrongsSearch={handleStrongsSearch}
@@ -1785,7 +1816,7 @@ function App() {
                   <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
                 </div>
               ) : viewMode === "study" ? (
-                <StudyMode allResults={allResults} primaryStrongs={primaryStrongs} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
+                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
               ) : (
                 <div className="results">
                   {displayed.map((entry) => (
