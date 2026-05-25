@@ -49,7 +49,7 @@ Lexica is built on a simple principle: **the text speaks first**. No imported sy
 
 Lexica is free and will stay free. AI queries have a small cost — if this tool has been useful to your studies, consider supporting it.
 
-☕ [Support on GitHub Sponsors](https://github.com/sponsors/jonathan-pernice) | ⭐ Star this repo
+☕ [Support on Ko-fi](https://ko-fi.com/lexica) | 💖 [GitHub Sponsors](https://github.com/sponsors/jonathan-pernice) | ⭐ Star this repo
 
 ## Built With
 
