@@ -108,6 +108,17 @@ const NT_BOOKS = new Set([
   "1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
 ]);
 
+const BOOK_ORDER = {};
+[
+  "Gen","Exo","Lev","Num","Deu","Jos","Jdg","Rth","1Sa","2Sa",
+  "1Ki","2Ki","1Ch","2Ch","Ezr","Neh","Est","Job","Psa","Pro",
+  "Ecc","Son","Isa","Jer","Lam","Eze","Dan","Hos","Joe","Amo",
+  "Oba","Jon","Mic","Nah","Hab","Zep","Hag","Zec","Mal",
+  "Mat","Mrk","Luk","Jhn","Act","Rom","1Co","2Co","Gal","Eph",
+  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Hbr","Jam",
+  "1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
+].forEach((b, i) => { BOOK_ORDER[b] = i; });
+
 const BOOK_LABELS = {
   Gen: "Genesis",      Exo: "Exodus",       Lev: "Leviticus",    Num: "Numbers",
   Deu: "Deuteronomy",  Jos: "Joshua",        Jdg: "Judges",       Rth: "Ruth",
@@ -1467,9 +1478,10 @@ function App() {
     }
     if (corpusFilter === "ot") base = base.filter(e => !NT_BOOKS.has(e.book));
     if (corpusFilter === "nt") base = base.filter(e => NT_BOOKS.has(e.book));
-    if (sortBy === "alpha") return [...base].sort((a, b) => a.translit.localeCompare(b.translit));
-    if (sortBy === "freq") return [...base].sort((a, b) => (countMap[b.strongs_raw] || 0) - (countMap[a.strongs_raw] || 0));
-    return base;
+    if (sortBy === "alpha") return [...base].sort((a, b) =>
+      (BOOK_LABELS[a.book] || a.book).localeCompare(BOOK_LABELS[b.book] || b.book));
+    return [...base].sort((a, b) =>
+      (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
   }, [allResults, sortBy, countMap, mode, primaryStrongs, glossFilter, corpusFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
@@ -1719,9 +1731,8 @@ function App() {
                   {viewMode === "browse" && (
                     <div className="results-sort">
                       <span className="sort-label">Sort</span>
-                      <button className={"sort-btn " + (sortBy === "relevance" ? "on" : "")} onClick={() => setSortBy("relevance")}>Relevance</button>
+                      <button className={"sort-btn " + (sortBy === "relevance" ? "on" : "")} onClick={() => setSortBy("relevance")}>Canonical</button>
                       <button className={"sort-btn " + (sortBy === "alpha" ? "on" : "")} onClick={() => setSortBy("alpha")}>A–Z</button>
-                      <button className={"sort-btn " + (sortBy === "freq" ? "on" : "")} onClick={() => setSortBy("freq")}>Frequency</button>
                     </div>
                   )}
                   <div className="results-sort">
