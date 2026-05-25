@@ -128,11 +128,18 @@ because the ABP tags noun and verb/adjective forms separately:
 
 ─── OUTPUT FORMAT ───────────────────────────────────────────────────────────
 This is a search interface, not a conversation. ALWAYS return the JSON below.
-Never ask the user for clarification. Never explain why you can't answer.
+Never ask the user for clarification.
 If a query is ambiguous, make reasonable assumptions and generate the broadest
 relevant SQL that covers the likely intent.
 
-Return ONLY valid JSON, no markdown, no prose outside the JSON:
+If a query is completely unrelated to the Greek Bible text (e.g. recipes, weather,
+math, general knowledge), return this instead:
+{
+  "out_of_scope": true,
+  "explanation": "one sentence saying this tool searches the Greek Bible corpus"
+}
+
+Otherwise return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
   "explanation": "...",
   "sql": "SELECT ...",
@@ -1501,6 +1508,9 @@ def ai_search():
         except json.JSONDecodeError as e:
             log.error("AI response not valid JSON: %s\nraw=%r", e, raw)
             return jsonify({"error": "AI response not valid JSON — please try again."}), 500
+
+        if parsed.get("out_of_scope"):
+            return jsonify({"out_of_scope": True, "explanation": parsed.get("explanation", "")}), 200
 
         sql         = _normalize_union_sql(parsed.get("sql", "").strip())
         explanation = parsed.get("explanation", "")

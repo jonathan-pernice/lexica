@@ -1210,6 +1210,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [error, setError] = useState("");
+  const [aiNotice, setAiNotice] = useState("");
   const [activeEntry, setActiveEntry] = useState(null);
   const [sortBy, setSortBy] = useState("relevance");
   const [viewMode, setViewMode] = useState("browse");
@@ -1377,6 +1378,7 @@ function App() {
     setMainView("search");
     setAiLoading(true);
     setError("");
+    setAiNotice("");
     setMode("ai");
     setShowAllAi(false);
     setSortBy("relevance");
@@ -1385,7 +1387,11 @@ function App() {
     setGlossFilter(null);
     try {
       const data = await api.aiSearch(q);
-      if (data.error) {
+      if (data.out_of_scope) {
+        setAiNotice(data.explanation || "This tool searches the Greek Bible corpus — try a question about a word, theme, or passage.");
+        setAllResults([]);
+        setAiMeta(null);
+      } else if (data.error) {
         setError(data.error);
         setAllResults([]);
         setAiMeta(null);
@@ -1422,6 +1428,20 @@ function App() {
             onAiSearch={handleAiSearch}
             aiLoading={aiLoading}
           />
+
+          {aiNotice && (
+            <div style={{
+              marginTop: "14px",
+              padding: "12px 16px",
+              background: "var(--accent-soft, #f0f4ff)",
+              border: "1px solid var(--accent, #b0bfff)",
+              borderRadius: "10px",
+              color: "var(--ink-2, #444)",
+              fontSize: "14px",
+            }}>
+              {aiNotice}
+            </div>
+          )}
 
           {error && (
             <div style={{
