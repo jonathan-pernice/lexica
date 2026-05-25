@@ -907,6 +907,25 @@ def _lsj_concept_lookup(terms: list[str]) -> list[dict]:
     return results
 
 
+_LSJ_XREF_RE = re.compile(r'\bv\.\s*<i>([^<]+)</i>')
+
+def _resolve_lsj_xref(conn, def_html: str, columns: str = "key, translit, def_html"):
+    """If def_html is a bare cross-reference stub (v. <i>word</i>), fetch the referenced entry."""
+    if not def_html:
+        return None
+    if len(re.sub(r'<[^>]+>', '', def_html).strip()) > 150:
+        return None
+    m = _LSJ_XREF_RE.search(def_html)
+    if not m:
+        return None
+    ref = m.group(1).strip()
+    ref_plain = _strip_accents(ref).lower()
+    row = conn.execute(f"SELECT {columns} FROM lsj WHERE key = ?", (ref,)).fetchone()
+    if not row:
+        row = conn.execute(f"SELECT {columns} FROM lsj WHERE plain = ?", (ref_plain,)).fetchone()
+    return row
+
+
 def _format_lsj_context(entries: list[dict]) -> str:
     if not entries:
         return ""
@@ -1294,6 +1313,20 @@ def lsj_lookup(lemma):
             row = conn.execute(
                 "SELECT key, translit, def_html FROM lsj WHERE plain = ?", (plain,)
             ).fetchone()
+        if row and not abp_row:
+            xref = _resolve_lsj_xref(conn, row["def_html"])
+            if xref:
+                row = xref
+        lex_row = None
+        if not row and not abp_row:
+            lex_row = conn.execute(
+                "SELECT strongs_def, translit FROM lexicon WHERE lemma = ?", (lemma,)
+            ).fetchone()
+            if not lex_row and snum:
+                lex_row = conn.execute(
+                    "SELECT strongs_def, translit FROM lexicon WHERE strongs = ?",
+                    (snum.lstrip("Gg"),),
+                ).fetchone()
     finally:
         conn.close()
     if abp_row:
@@ -1302,6 +1335,13 @@ def lsj_lookup(lemma):
             "translit": "",
             "def_html": abp_row["def_html"],
             "source":   "abp_ext",
+        })
+    if lex_row and lex_row["strongs_def"]:
+        return jsonify({
+            "key":      lemma,
+            "translit": lex_row["translit"] or "",
+            "def_html": f"<p>{lex_row['strongs_def']}</p>",
+            "source":   "strongs",
         })
     if not row:
         return jsonify({"error": "not found"}), 404
@@ -1352,6 +1392,9 @@ def lsj_summary(lemma):
                     "SELECT key, def_html, summary_json FROM lsj WHERE plain = ?", (plain,)
                 ).fetchone()
             if row:
+                xref = _resolve_lsj_xref(conn, row["def_html"], "key, def_html, summary_json")
+                if xref:
+                    row = xref
                 exact_key = row["key"]
     finally:
         conn.close()
