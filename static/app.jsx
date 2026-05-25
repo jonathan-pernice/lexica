@@ -59,6 +59,7 @@ function makeEntry(r, idx) {
     verse: r.verse,
     definition: r.strongs_def || "",
     derivation: r.derivation || "",
+    is_function: r.is_function || false,
   };
 }
 
@@ -1046,7 +1047,8 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
         const entry = results.find(e => e.strongs_raw === sn);
         return { sn, glosses, siblings, entry };
       })
-      .filter(({ glosses, siblings }) => glosses.length > 1 || siblings.length > 0);
+      .filter(({ glosses, siblings, entry }) =>
+        (glosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
   }, [groupings, results, variants]);
 
   if (rows.length === 0) return null;
@@ -1234,12 +1236,15 @@ function App() {
     return map;
   }, [allResults]);
 
-  // Sorted display list
+  // Sorted display list — for text searches, suppress function word cards
   const displayed = useMemo(() => {
-    if (sortBy === "alpha") return [...allResults].sort((a, b) => a.translit.localeCompare(b.translit));
-    if (sortBy === "freq") return [...allResults].sort((a, b) => (countMap[b.strongs_raw] || 0) - (countMap[a.strongs_raw] || 0));
-    return allResults; // relevance = original order
-  }, [allResults, sortBy, countMap]);
+    const base = (mode === "search" && !primaryStrongs)
+      ? allResults.filter(e => !e.is_function)
+      : allResults;
+    if (sortBy === "alpha") return [...base].sort((a, b) => a.translit.localeCompare(b.translit));
+    if (sortBy === "freq") return [...base].sort((a, b) => (countMap[b.strongs_raw] || 0) - (countMap[a.strongs_raw] || 0));
+    return base;
+  }, [allResults, sortBy, countMap, mode, primaryStrongs]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {

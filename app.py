@@ -1067,6 +1067,7 @@ def search():
             "strongs_def": (r["strongs_def"] or "").strip(),
             "kjv_def":    r["kjv_def"],
             "derivation": (r["derivation"] or "").strip(),
+            "is_function": r["strongs_base"] in _FUNCTION_STRONGS,
         }
         for r in rows
     ]
