@@ -233,9 +233,6 @@ function Header({ activeView, onNavChange }) {
           <button className={"hdr-link " + (activeView === "search" ? "active" : "")} onClick={() => onNavChange("search")}>Search</button>
           <button className={"hdr-link " + (activeView === "library" ? "active" : "")} onClick={() => onNavChange("library")}>Library</button>
         </nav>
-        <div className="hdr-right">
-          <div className="hdr-avatar">JM</div>
-        </div>
       </div>
     </header>
   );
