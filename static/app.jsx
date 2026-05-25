@@ -1041,15 +1041,21 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
     }
     return order
       .map(sn => {
-        const glosses = groupings[sn] || [];
+        const allGlosses = groupings[sn] || [];
+        const inResults = new Set(
+          results.filter(e => e.strongs_raw === sn).map(e => e.gloss_head).filter(Boolean)
+        );
+        // Only show chips for glosses actually present in the current result set
+        const glosses = inResults.size > 0 ? allGlosses.filter(g => inResults.has(g.gloss)) : allGlosses;
         const base = sn.includes('.') ? sn.split('.')[0] : sn;
         const allVariants = (variants && variants[base]) || [];
         const siblings = sn.includes('.') ? allVariants.filter(v => v !== sn) : [];
         const entry = results.find(e => e.strongs_raw === sn);
-        return { sn, glosses, siblings, entry };
+        // Use full corpus count for row visibility so multi-sense words still appear
+        return { sn, glosses, allGlosses, siblings, entry };
       })
-      .filter(({ glosses, siblings, entry }) =>
-        (glosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
+      .filter(({ allGlosses, siblings, entry }) =>
+        (allGlosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
   }, [groupings, results, variants]);
 
   if (rows.length === 0) return null;
@@ -1246,7 +1252,6 @@ function App() {
         e.strongs_raw === glossFilter.sn &&
         e.gloss_head.toLowerCase() === glossFilter.gloss.toLowerCase()
       );
-      console.log("[gloss-filter] filter:", glossFilter, "| matches:", base.length, "| sample entry:", allResults.find(e => e.strongs_raw === glossFilter.sn) || null);
     } else if (mode === "search" && !primaryStrongs) {
       base = allResults.filter(e => !e.is_function);
     } else {
@@ -1348,8 +1353,6 @@ function App() {
   };
 
   const handleGlossDrill = (sn, gloss) => {
-    console.log("[gloss-drill] sn:", sn, "| gloss:", gloss);
-    console.log("[gloss-drill] first 3 entries:", allResults.slice(0, 3).map(e => ({ strongs_raw: e.strongs_raw, gloss_head: e.gloss_head, gloss: e.gloss })));
     setGlossFilter({ sn, gloss });
   };
 
