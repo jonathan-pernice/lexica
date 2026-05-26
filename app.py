@@ -1409,7 +1409,7 @@ def verse_words(book, chapter, verse):
         if not row:
             return jsonify({"error": "verse not found"}), 404
         wrows = conn.execute(
-            """SELECT w.position, w.english, w.english_head, w.greek_pos, w.strongs_base, w.strongs,
+            """SELECT w.position, w.english, w.english_head, w.greek_pos, w.bracket_id, w.strongs_base, w.strongs,
                       l.lemma, l.translit, l.kjv_def, l.strongs_def, l.derivation
                FROM words w
                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
@@ -1426,6 +1426,7 @@ def verse_words(book, chapter, verse):
                 "english":    w["english"],
                 "english_head": w["english_head"],
                 "greek_pos":  w["greek_pos"],
+                "bracket_id": w["bracket_id"],
                 "kjv_def":    w["kjv_def"],
                 "strongs_base": w["strongs_base"],
                 "strongs":    w["strongs"],
