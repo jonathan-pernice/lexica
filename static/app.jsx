@@ -809,7 +809,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
               </span>
             );
           }
-          const groups = groupForGreekMode(words.filter(w => w.english));
+          const groups = groupForGreekMode(words.filter(w => w.english).sort((a, b) => a.position - b.position));
           return groups.map((g, gi) => {
             if (!g.isBracket) return renderStudyWord(g.word, `g${gi}`);
             return (
