@@ -91,6 +91,9 @@ To target a specific dotted variant, filter on w.strongs (the exact field):
 The LSJ LEXICAL CONTEXT block lists dotted variants present in the corpus.
 Prefer the specific dotted variant when the query targets a distinct concept.
 Never invent dotted numbers — only use ones listed in the LSJ context block.
+IMPORTANT: strongs_base is stored inconsistently — some rows use the bare number
+('4151'), others use the prefixed form ('G4151'). Always match both:
+  WHERE (w.strongs_base = '4151' OR w.strongs_base = 'G4151')
 
 ─── LSJ LEXICAL CONTEXT ─────────────────────────────────────────────────────
 Each query is prepended with an "LSJ LEXICAL CONTEXT" block listing relevant Greek
