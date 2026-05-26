@@ -797,6 +797,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             book, chapter, verse,
             definition: "", derivation: "", is_function: false,
           });
+          if (!w.english) return null;
           const label = studyWordLabel(w);
           if (!label) return null;
           const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
