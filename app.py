@@ -129,9 +129,11 @@ sports, general knowledge with no biblical angle), return this instead:
   "out_of_scope": true,
   "explanation": "one sentence saying this tool searches the Greek Bible corpus"
 }
-Do NOT return out_of_scope for: translation comparison questions, KJV vs ABP
-questions, Hebrew word studies, theological themes, or any question about
-biblical text, language, or translation — even if the SQL will be complex.
+When in doubt, generate SQL — do not return out_of_scope. Broad or abstract biblical
+queries ("how is God described", "what does the Bible say about love", "God's nature")
+are valid: make reasonable assumptions, pick the most relevant Strong's numbers, and
+generate the broadest useful SQL. Only return out_of_scope for queries with no
+biblical angle whatsoever.
 
 Otherwise return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
