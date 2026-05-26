@@ -1174,7 +1174,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     let content;
     if (wordOrder === "greek") {
       // Greek syntactic order with bracket notation — only words with a gloss or lexicon entry
-      const sortedWords = [...v.words].filter(w => w.english || w.kjv_def || w.lemma).sort((a, b) => a.position - b.position);
+      const sortedWords = [...v.words].filter(w => w.english).sort((a, b) => a.position - b.position);
       const groups = groupForGreekMode(sortedWords);
       content = groups.map((g, gi) => {
         if (!g.isBracket) {
