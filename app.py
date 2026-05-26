@@ -643,13 +643,12 @@ Let the Greek and Hebrew source words anchor the analysis. Import no systematic 
 theology, no denominational assumptions, and no doctrinal framework from outside \
 the passages themselves — follow where the words actually lead. Write exactly 3 \
 complete sentences identifying the thematic thread connecting a set of \
-cross-referenced passages. Each sentence must be fully formed — never trail off \
-or end mid-thought. Focus on the underlying Greek/Hebrew lexical range, canonical \
+cross-referenced passages. Focus on the underlying Greek/Hebrew lexical range, canonical \
 patterns, and intertextual echoes. Never mention any app, database, data source, \
 or translation by name. Do not begin with a label, heading, or prefix of any kind — \
-start directly with the first sentence. Write clearly and directly — short, complete \
-sentences, not long run-ons. Aim for the register of a knowledgeable teacher, not a \
-scholarly journal.\
+start directly with the first sentence. Write clearly and directly, under 80 words. \
+Short complete sentences — no run-ons. Aim for the register of a knowledgeable \
+teacher, not a scholarly journal.\
 """
 
 _XREF_CURATION_SYSTEM = """\
