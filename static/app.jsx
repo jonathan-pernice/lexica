@@ -113,8 +113,8 @@ function flattenAiResults(verses) {
 // BOOK LABELS
 // ============================================================
 const NT_BOOKS = new Set([
-  "Mat","Mrk","Luk","Jhn","Act","Rom","1Co","2Co","Gal","Eph",
-  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jam",
+  "Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph",
+  "Php","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas",
   "1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
 ]);
 
@@ -124,8 +124,8 @@ const BOOK_ORDER = {};
   "1Ki","2Ki","1Ch","2Ch","Ezr","Neh","Est","Job","Psa","Pro",
   "Ecc","Son","Isa","Jer","Lam","Eze","Dan","Hos","Joe","Amo",
   "Oba","Jon","Mic","Nah","Hab","Zep","Hag","Zec","Mal",
-  "Mat","Mrk","Luk","Jhn","Act","Rom","1Co","2Co","Gal","Eph",
-  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jam",
+  "Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph",
+  "Php","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas",
   "1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
 ].forEach((b, i) => { BOOK_ORDER[b] = i; });
 
@@ -140,6 +140,13 @@ const BOOK_LABELS = {
   Joe: "Joel",         Amo: "Amos",          Oba: "Obadiah",      Jon: "Jonah",
   Mic: "Micah",        Nah: "Nahum",         Hab: "Habakkuk",     Zep: "Zephaniah",
   Hag: "Haggai",       Zec: "Zechariah",     Mal: "Malachi",
+  Mat: "Matthew",      Mar: "Mark",          Luk: "Luke",         Joh: "John",
+  Act: "Acts",         Rom: "Romans",        "1Co": "1 Corinthians", "2Co": "2 Corinthians",
+  Gal: "Galatians",    Eph: "Ephesians",     Php: "Philippians",  Col: "Colossians",
+  "1Th": "1 Thessalonians", "2Th": "2 Thessalonians", "1Ti": "1 Timothy", "2Ti": "2 Timothy",
+  Tit: "Titus",        Phm: "Philemon",      Heb: "Hebrews",      Jas: "James",
+  "1Pe": "1 Peter",    "2Pe": "2 Peter",     "1Jn": "1 John",     "2Jn": "2 John",
+  "3Jn": "3 John",     Jud: "Jude",          Rev: "Revelation",
 };
 
 // ============================================================
