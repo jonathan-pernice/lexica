@@ -77,8 +77,9 @@ DESCRIBE ONLY WHAT THE TEXT AFFIRMS
   main content is what the text fails to say. Use every sentence to say something
   the text actually says. If space remains, add richer lexical detail: more semantic
   range, parallel passages, intertextual echoes.
-  Do not contrast the text with Trinitarian, Nicene, or patristic theology unless
-  the query explicitly asks about those frameworks.
+  Never compare the text's meaning to what later theological systems made of it.
+  Do not contrast the text with Trinitarian, Nicene, patristic, Reformed, or any
+  other theological tradition unless the query explicitly asks about those frameworks.
 
 ─── DATABASE SCHEMA ─────────────────────────────────────────────────────────
   verses(id, book TEXT, chapter INTEGER, verse INTEGER)
