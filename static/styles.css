@@ -1487,7 +1487,7 @@ input { font-family: inherit; }
   .hdr-inner { padding: 12px 16px; gap: 16px; }
   .brand-sub { display: none; }
   .hdr-nav { display: none; }
-  .main-inner { padding: 20px 16px 80px; max-width: 100%; }
+  .main-inner { padding: 20px 16px calc(80px + env(safe-area-inset-bottom, 0px)); max-width: 100%; }
   .mobile-tabs {
     display: flex;
     position: fixed;
@@ -1495,6 +1495,7 @@ input { font-family: inherit; }
     background: var(--bg);
     border-top: 1px solid var(--border);
     z-index: 200;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   .mobile-tab {
     flex: 1;
