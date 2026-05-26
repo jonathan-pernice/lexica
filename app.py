@@ -2048,7 +2048,7 @@ def strongs_count_route(strongs_base):
 
 
 @app.route("/api/ai-search")
-@limiter.limit("20 per hour")
+@limiter.limit("50 per hour")
 def ai_search():
     try:
         q = request.args.get("q", "").strip()
