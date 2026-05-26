@@ -782,33 +782,45 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
       <span className="study-text">
         {words === null ? (
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
-        ) : words.map((w, i) => {
-          const clickable = w.strongs_base && w.strongs_base !== "*";
-          const wnum = w.strongs || w.strongs_base;
-          const entry = clickable && (entryMap.get(wnum) || {
-            id: `study-${book}-${chapter}-${verse}-${i}`,
-            strongs: `G${wnum}`,
-            strongs_base: w.strongs_base,
-            strongs_raw: wnum,
-            greek: w.lemma || "",
-            translit: w.translit || "",
-            gloss: w.english || "",
-            ref: `${book} ${chapter}:${verse}`,
-            book, chapter, verse,
-            definition: "", derivation: "", is_function: false,
+        ) : (() => {
+          function renderStudyWord(w, key) {
+            const label = studyWordLabel(w);
+            if (!label) return null;
+            const clickable = w.strongs_base && w.strongs_base !== "*";
+            const wnum = w.strongs || w.strongs_base;
+            const entry = clickable && (entryMap.get(wnum) || {
+              id: `study-${book}-${chapter}-${verse}-${key}`,
+              strongs: `G${wnum}`,
+              strongs_base: w.strongs_base,
+              strongs_raw: wnum,
+              greek: w.lemma || "",
+              translit: w.translit || "",
+              gloss: w.english || "",
+              ref: `${book} ${chapter}:${verse}`,
+              book, chapter, verse,
+              definition: "", derivation: "", is_function: false,
+            });
+            const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
+            return (
+              <span key={key} className={"study-word-wrap" + (clickable ? " match" : "")}
+                    onClick={clickable ? () => onWordClick(entry) : undefined}>
+                {hasPos && <span className="study-pos">{w.greek_pos}</span>}
+                <span className="study-word">{label}</span>
+              </span>
+            );
+          }
+          const groups = groupForGreekMode(words.filter(w => w.english));
+          return groups.map((g, gi) => {
+            if (!g.isBracket) return renderStudyWord(g.word, `g${gi}`);
+            return (
+              <span key={`bg${gi}`} className="study-bracket-group">
+                <span className="study-bracket">[</span>
+                {g.words.map((w, wi) => renderStudyWord(w, `bg${gi}w${wi}`))}
+                <span className="study-bracket">]</span>
+              </span>
+            );
           });
-          if (!w.english) return null;
-          const label = studyWordLabel(w);
-          if (!label) return null;
-          const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
-          return (
-            <span key={i} className={"study-word-wrap" + (clickable ? " match" : "")}
-                  onClick={clickable ? () => onWordClick(entry) : undefined}>
-              {hasPos && <span className="study-pos">{w.greek_pos}</span>}
-              <span className="study-word">{label}</span>
-            </span>
-          );
-        })}
+        })()}
       </span>
     </div>
   );

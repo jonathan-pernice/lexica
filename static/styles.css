@@ -966,10 +966,17 @@ input { font-family: inherit; }
   margin-right: 4px;
 }
 .study-word-wrap.match { cursor: pointer; }
-.study-word-wrap.match .study-word {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-color: var(--ink-3);
+.study-bracket-group {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  flex-wrap: nowrap;
+}
+.study-bracket {
+  font-family: var(--f-serif);
+  font-size: 20px;
+  color: var(--accent);
+  line-height: 1;
 }
 .study-word-wrap.match:hover .study-word { opacity: 0.7; }
 .study-pos {
