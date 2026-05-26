@@ -967,10 +967,7 @@ input { font-family: inherit; }
 }
 .study-word-wrap.match { cursor: pointer; }
 .study-bracket-group {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 2px;
-  flex-wrap: nowrap;
+  display: inline;
 }
 .study-bracket {
   font-family: var(--f-serif);
