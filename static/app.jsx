@@ -1201,11 +1201,18 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         if (!g.isBracket) {
           return chip(g.word, `g${gi}`);
         }
+        const bracketChar = (ch, k) => (
+          <span key={k} className="lib-bracket">
+            {showInterlinear && <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>}
+            <span className="lib-bracket-glyph">{ch}</span>
+            {showStrongs && <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>}
+          </span>
+        );
         return (
           <span key={`bg${gi}`} className="lib-bracket-group">
-            <span className="lib-bracket">[</span>
+            {bracketChar("[", "bl")}
             {g.words.map((w, wi) => bracketChip(w, `bg${gi}w${wi}`))}
-            <span className="lib-bracket">]</span>
+            {bracketChar("]", "br")}
           </span>
         );
       });
