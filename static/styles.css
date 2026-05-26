@@ -1260,7 +1260,7 @@ input { font-family: inherit; }
   flex: 0 0 auto;
   white-space: nowrap;
   align-self: flex-start;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .lib-vnum-click {
@@ -1418,18 +1418,21 @@ input { font-family: inherit; }
   flex-wrap: nowrap;
 }
 .lib-bracket {
-  font-family: var(--f-serif);
-  font-size: 20px;
-  color: var(--accent);
-  line-height: 1;
-  padding: 0;
-  align-self: flex-end;
-  margin-bottom: 4px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   flex-shrink: 0;
   user-select: none;
 }
 .lib-bracket:first-child { margin-right: -3px; }
 .lib-bracket:last-child  { margin-left:  -3px; }
+.lib-bracket-glyph {
+  font-family: var(--f-serif);
+  font-size: 20px;
+  color: var(--accent);
+  line-height: 1;
+}
 /* Bracketed word chip — slightly tighter than the normal chip */
 .lib-word-bracketed {
   padding: 4px 3px 5px;
