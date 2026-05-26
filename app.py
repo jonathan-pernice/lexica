@@ -2206,13 +2206,15 @@ def ai_search():
                         ).fetchone()
                     else:
                         row = ks_conn.execute(
-                            "SELECT lemma, translit FROM lexicon WHERE strongs = ?", (sn,)
+                            "SELECT lemma, translit, strongs_def, derivation FROM lexicon WHERE strongs = ?", (sn,)
                         ).fetchone()
                     key_strongs_data.append({
                         "strongs_base": sn,
                         "strongs": f"{prefix}{sn}",
-                        "lemma":   (row["lemma"]   if row else "") or "",
-                        "translit":(row["translit"] if row else "") or "",
+                        "lemma":      (row["lemma"]       if row else "") or "",
+                        "translit":   (row["translit"]    if row else "") or "",
+                        "definition": (row["strongs_def"] if row and prefix == "G" else "") or "",
+                        "derivation": (row["derivation"]  if row and prefix == "G" else "") or "",
                     })
             finally:
                 ks_conn.close()

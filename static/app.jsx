@@ -1523,7 +1523,7 @@ function AIAnswer({ query, explanation, keyStrongs, onPick }) {
               gloss: "",
               ref: "",
               book: "", chapter: 0, verse: 0,
-              definition: "", derivation: "",
+              definition: ks.definition || "", derivation: ks.derivation || "",
             })}>
               {ks.strongs} {ks.lemma}
             </button>
