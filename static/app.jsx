@@ -713,7 +713,7 @@ function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation, onA
         ) : null}
         {!loading && onAiSearch && (
           <button className="xref-ai-btn" onClick={() => { onClose(); onAiSearch(sourceRef); }}>
-            Explore in AI search →
+            Explore in the corpus →
           </button>
         )}
         {loading ? (
