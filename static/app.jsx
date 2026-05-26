@@ -1181,7 +1181,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       });
     } else {
       // English reading order — words with a gloss or lexicon fallback
-      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.kjv_def);
+      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english);
       content = englishWords.map((w, i) => chip(w, `e${i}`));
     }
 
