@@ -647,7 +647,9 @@ cross-referenced passages. Each sentence must be fully formed — never trail of
 or end mid-thought. Focus on the underlying Greek/Hebrew lexical range, canonical \
 patterns, and intertextual echoes. Never mention any app, database, data source, \
 or translation by name. Do not begin with a label, heading, or prefix of any kind — \
-start directly with the first sentence.\
+start directly with the first sentence. Write clearly and directly — short, complete \
+sentences, not long run-ons. Aim for the register of a knowledgeable teacher, not a \
+scholarly journal.\
 """
 
 _XREF_CURATION_SYSTEM = """\
