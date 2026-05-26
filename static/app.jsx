@@ -854,6 +854,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext 
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
 function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInContext }) {
+  const [studySort, setStudySort] = useState("curated");
 
   const groups = useMemo(() => {
     const gMap = {};
@@ -884,11 +885,15 @@ function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInC
         verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
       }))
       .sort((a, b) => {
+        if (studySort === "canonical") {
+          const bookDiff = (BOOK_ORDER[a.verses[0]?.book] ?? 99) - (BOOK_ORDER[b.verses[0]?.book] ?? 99);
+          return bookDiff || (a.verses[0]?.chapter ?? 0) - (b.verses[0]?.chapter ?? 0);
+        }
         const aPrimary = a.verses.filter(v => v.is_primary).length;
         const bPrimary = b.verses.filter(v => v.is_primary).length;
         return bPrimary - aPrimary || b.verses.length - a.verses.length;
       });
-  }, [allResults]);
+  }, [allResults, studySort]);
 
   const hasPrimary = allResults.some(e => e.is_primary);
   const hasAdditional = allResults.some(e => e.is_additional);
@@ -909,6 +914,10 @@ function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInC
 
   return (
     <div className="study-groups">
+      <div className="study-sort-toggle">
+        <button className={"sort-btn " + (studySort === "curated" ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
+        <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
+      </div>
       {primaryGroups.map(g => (
         <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
       ))}
