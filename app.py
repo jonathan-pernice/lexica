@@ -645,8 +645,8 @@ the passages themselves — follow where the words actually lead. Write 3 to 5 c
 cross-referenced passages. Focus on the underlying Greek/Hebrew lexical range, canonical \
 patterns, and intertextual echoes. Never mention any app, database, data source, \
 or translation by name. Do not begin with a label, heading, or prefix of any kind — \
-start directly with the first sentence. Write in plain, direct language — clear \
-and readable, not academic jargon. Complete sentences, no run-ons.\
+start directly with the first sentence. Write in plain, direct language — clear and readable, not academic jargon. \
+Each sentence should be one complete thought — not a fragment, not a paragraph.\
 """
 
 _XREF_CURATION_SYSTEM = """\
