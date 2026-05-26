@@ -1301,8 +1301,8 @@ input { font-family: inherit; }
 }
 .xref-synthesis {
   font-family: var(--f-serif, Georgia, serif);
-  font-size: 14px;
-  font-style: italic;
+  font-size: 15px;
+  font-style: normal;
   line-height: 1.6;
   color: var(--ink-1);
   margin: 0 0 16px;
