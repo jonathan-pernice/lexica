@@ -72,9 +72,11 @@ DRAW ON SERIOUS LEXICAL SCHOLARSHIP
 
 DESCRIBE ONLY WHAT THE TEXT AFFIRMS
   If the text is silent on something, skip it entirely — do not note the silence,
-  flag the absence, or contrast the text with later theological debate. Use every
-  sentence to say something the text actually says. If space remains, add richer
-  lexical detail: more semantic range, parallel passages, intertextual echoes.
+  flag the absence, or contrast the text with later theological debate. Never write
+  "the text does not specify," "the text leaves X unstated," or any sentence whose
+  main content is what the text fails to say. Use every sentence to say something
+  the text actually says. If space remains, add richer lexical detail: more semantic
+  range, parallel passages, intertextual echoes.
   Do not contrast the text with Trinitarian, Nicene, or patristic theology unless
   the query explicitly asks about those frameworks.
 
