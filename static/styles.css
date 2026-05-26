@@ -839,6 +839,11 @@ input { font-family: inherit; }
   gap: 12px;
   margin-top: 4px;
 }
+.study-sort-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
 .additional-refs-section {
   display: flex;
   flex-direction: column;
