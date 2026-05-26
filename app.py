@@ -2165,7 +2165,6 @@ def ai_search():
         sql         = _normalize_union_sql(parsed.get("sql", "").strip())
         explanation = parsed.get("explanation", "")
         log.info("SQL from AI: %s", sql)
-        app.logger.warning("AI generated SQL: %s", sql)
 
         # Extract key_strongs from AI response; fall back to LSJ lookup entries
         # Preserve original H/G prefix from AI before stripping digits
