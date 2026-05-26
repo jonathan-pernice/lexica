@@ -1250,12 +1250,12 @@ def search():
                 FROM words w
                 JOIN verses v ON w.verse_id = v.id
                 LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-                WHERE {col} = ?
+                WHERE ({col} = ? OR {col} = ? OR {col} = ?)
                   AND w.english IS NOT NULL AND w.english != ''
                   AND w.strongs_base != '*'
                 ORDER BY v.id, w.position
                 """,
-                (snum,),
+                (snum, f"G{snum}", f"H{snum}"),
             ).fetchall()
         else:
             q_plain = _strip_accents(q)
