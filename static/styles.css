@@ -1362,7 +1362,7 @@ input { font-family: inherit; }
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 4px 1px;
+  gap: 4px 0;
 }
 
 .lib-highlight {
@@ -1375,7 +1375,7 @@ input { font-family: inherit; }
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 4px 4px 5px;
+  padding: 4px 2px 5px;
   border-radius: 5px;
   cursor: default;
   transition: background 0.12s;
@@ -1422,7 +1422,7 @@ input { font-family: inherit; }
   color: var(--accent);
   line-height: 1;
   padding: 0;
-  align-self: flex-end;
+  align-self: center;
   flex-shrink: 0;
   user-select: none;
 }
