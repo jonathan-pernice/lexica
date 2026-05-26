@@ -877,10 +877,12 @@ function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInC
         gMap[gk].verseOrder.push(vk);
       }
     }
-    return gOrder.map(gk => ({
-      label:  gMap[gk].label,
-      verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
-    }));
+    return gOrder
+      .map(gk => ({
+        label:  gMap[gk].label,
+        verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
+      }))
+      .sort((a, b) => b.verses.length - a.verses.length);
   }, [allResults]);
 
   const hasPrimary = allResults.some(e => e.is_primary);
