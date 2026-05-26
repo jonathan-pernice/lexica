@@ -105,14 +105,11 @@ sports, general knowledge with no biblical angle), return this instead:
   "out_of_scope": true,
   "explanation": "one sentence saying this tool searches the Greek Bible corpus"
 }
-When in doubt, generate SQL — do not return out_of_scope. Questions that sound like
-doctrine, tradition, or church history are almost always answerable from the Greek
-text: search for the relevant words and let the lexical data speak. Examples that
-MUST generate SQL: "did Mary remain a virgin" (search adelphos, prototokos),
-"is the eucharist the literal body of Christ" (search sarx, soma, John 6),
-"was Peter the first church leader" (search petros, apostolos, keys).
-Only return out_of_scope for queries with no biblical angle whatsoever (recipes,
-weather, sports, math).
+When in doubt, generate SQL — do not return out_of_scope. Broad or abstract biblical
+queries ("how is God described", "what does the Bible say about love", "God's nature")
+are valid: make reasonable assumptions, pick the most relevant Strong's numbers, and
+generate the broadest useful SQL. Only return out_of_scope for queries with no
+biblical angle whatsoever.
 
 Otherwise return ONLY valid JSON, no markdown, no prose outside the JSON:
 {
