@@ -2151,7 +2151,7 @@ def ai_search():
         if parsed.get("out_of_scope"):
             return jsonify({"out_of_scope": True, "explanation": parsed.get("explanation", "")}), 200
 
-        sql         = _normalize_union_sql(parsed.get("sql", "").strip())
+        sql         = _normalize_union_sql((parsed.get("sql") or "").strip())
         explanation = parsed.get("explanation", "")
         log.info("SQL from AI: %s", sql)
 
