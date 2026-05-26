@@ -1807,7 +1807,7 @@ def cross_references_route(book, chapter, verse):
 
 
 @app.route("/api/cross-references/synthesis/<book>/<int:chapter>/<int:verse>")
-@limiter.limit("30 per hour")
+@limiter.limit("50 per hour")
 def cross_ref_synthesis(book, chapter, verse):
     if not _anthropic:
         return jsonify({"synthesis": None})
@@ -1873,7 +1873,7 @@ def cross_ref_synthesis(book, chapter, verse):
 
 
 @app.route("/api/cross-references/curated/<book>/<int:chapter>/<int:verse>")
-@limiter.limit("20 per hour")
+@limiter.limit("50 per hour")
 def cross_refs_curated(book, chapter, verse):
     if not _anthropic:
         return jsonify({"refs": [], "synthesis": None})
