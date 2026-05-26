@@ -1912,25 +1912,18 @@ def cross_refs_curated(book, chapter, verse):
             (src["verse_id"],),
         ).fetchall()
 
-        # Fetch ABP text + Greek lemmas for the source verse
+        # Fetch ABP text for the source verse so synthesis reflects ABP vocabulary
         abp_text = ""
-        abp_greek = ""
         abp_id_row = conn.execute(
             "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
             (book, chapter, verse),
         ).fetchone()
         if abp_id_row:
             abp_words = conn.execute(
-                """SELECT w.english, l.lemma, l.translit
-                   FROM words w
-                   LEFT JOIN lexicon l ON l.strongs = w.strongs_base
-                   WHERE w.verse_id=? AND w.english IS NOT NULL
-                   ORDER BY w.position""",
+                "SELECT english FROM words WHERE verse_id=? AND english IS NOT NULL ORDER BY position",
                 (abp_id_row["id"],),
             ).fetchall()
             abp_text = " ".join(w["english"] for w in abp_words)
-            greek_terms = [f"{w['lemma']} ({w['translit']})" for w in abp_words if w["lemma"]]
-            abp_greek = ", ".join(greek_terms)
     finally:
         conn.close()
 
@@ -1981,13 +1974,11 @@ def cross_refs_curated(book, chapter, verse):
     synthesis = None
     if refs:
         ref_block = "\n".join(f"- {r['kjv_text']}" for r in refs)
-        if abp_text:
-            src_line = f'Source (ABP): "{abp_text}"'
-            if abp_greek:
-                src_line += f'\nGreek terms: {abp_greek}'
-            src_line += "\nThe cross-references below are KJV; anchor your synthesis in the Greek source terms above."
-        else:
-            src_line = f'Source: "{src["verse_text"]}"'
+        src_line = (
+            f'Source (ABP): "{abp_text}"\n'
+            "The cross-references below are KJV; let the ABP source vocabulary guide your word choices."
+            if abp_text else f'Source: "{src["verse_text"]}"'
+        )
         try:
             syn_msg = _anthropic.messages.create(
                 model="claude-haiku-4-5-20251001",
