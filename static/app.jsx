@@ -114,7 +114,7 @@ function flattenAiResults(verses) {
 // ============================================================
 const NT_BOOKS = new Set([
   "Mat","Mrk","Luk","Jhn","Act","Rom","1Co","2Co","Gal","Eph",
-  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Hbr","Jam",
+  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jam",
   "1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
 ]);
 
@@ -125,7 +125,7 @@ const BOOK_ORDER = {};
   "Ecc","Son","Isa","Jer","Lam","Eze","Dan","Hos","Joe","Amo",
   "Oba","Jon","Mic","Nah","Hab","Zep","Hag","Zec","Mal",
   "Mat","Mrk","Luk","Jhn","Act","Rom","1Co","2Co","Gal","Eph",
-  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Hbr","Jam",
+  "Phi","Col","1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jam",
   "1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev",
 ].forEach((b, i) => { BOOK_ORDER[b] = i; });
 
