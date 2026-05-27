@@ -811,9 +811,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
-                {clickable && <span className="study-strongs">G{wnum}</span>}
                 {hasPos && <span className="study-pos">{w.greek_pos}</span>}
                 <span className="study-word">{label}</span>
+                {clickable && <span className="study-strongs">G{wnum}</span>}
               </span>
             );
           }
