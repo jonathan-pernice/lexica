@@ -257,7 +257,7 @@ function SearchBar({ q1, setQ1, q2, setQ2, onSearch, onAiSearch, aiLoading }) {
             <span className="search-eyebrow">Lexicon</span>
             <span className="search-hint">Word, transliteration, or Strong's №</span>
           </label>
-          <div className="search-field">
+          <form className="search-field" onSubmit={(e) => { e.preventDefault(); onSearch(); }}>
             <Icon.Search className="search-icon"/>
             <input
               type="text"
@@ -265,12 +265,11 @@ function SearchBar({ q1, setQ1, q2, setQ2, onSearch, onAiSearch, aiLoading }) {
               placeholder="πνεῦμα  ·  pneuma  ·  G4151"
               value={q1}
               onChange={(e) => setQ1(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && onSearch()}
             />
-            <button className="search-go" onClick={onSearch} aria-label="Search">
+            <button type="submit" className="search-go" aria-label="Search">
               <Icon.ArrowRight/>
             </button>
-          </div>
+          </form>
         </div>
         <div className="search-divider" aria-hidden="true"></div>
         <div className="search-cell">
@@ -281,7 +280,7 @@ function SearchBar({ q1, setQ1, q2, setQ2, onSearch, onAiSearch, aiLoading }) {
             </span>
             <span className="search-hint">Natural language across the lexicon</span>
           </label>
-          <div className="search-field ai-field">
+          <form className="search-field ai-field" onSubmit={(e) => { e.preventDefault(); onAiSearch(); }}>
             <Icon.Sparkle className="search-icon"/>
             <input
               type="text"
@@ -289,12 +288,11 @@ function SearchBar({ q1, setQ1, q2, setQ2, onSearch, onAiSearch, aiLoading }) {
               placeholder="Where does the divine council appear?"
               value={q2}
               onChange={(e) => setQ2(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && onAiSearch()}
             />
-            <button className="search-go" onClick={onAiSearch} aria-label="Submit">
+            <button type="submit" className="search-go" aria-label="Submit">
               {aiLoading ? <span className="spinner"/> : <Icon.ArrowRight/>}
             </button>
-          </div>
+          </form>
           <div className="search-chips">
             <button className="chip suggest" onClick={() => setQ2("Where does pneuma appear in Genesis")}>"Where does pneuma appear in Genesis"</button>
             <button className="chip suggest" onClick={() => setQ2("Faith in Paul's letters")}>"Faith in Paul's letters"</button>
