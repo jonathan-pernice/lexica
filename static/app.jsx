@@ -813,7 +813,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
                 {hasPos && <span className="study-pos">{w.greek_pos}</span>}
                 <span className="study-word">{label}</span>
-                {clickable && <span className="study-strongs">G{wnum}</span>}
+                {clickable
+                  ? <span className="study-strongs">G{wnum}</span>
+                  : <span className="study-strongs" style={{visibility:"hidden"}}>G0</span>}
               </span>
             );
           }
