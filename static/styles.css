@@ -985,6 +985,14 @@ input { font-family: inherit; }
   margin-bottom: 2px;
 }
 .study-word { display: inline; }
+.study-strongs {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-top: 2px;
+}
 .word-badge {
   position: absolute;
   bottom: calc(100% + 4px);
