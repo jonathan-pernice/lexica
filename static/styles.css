@@ -962,7 +962,7 @@ input { font-family: inherit; }
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  vertical-align: bottom;
+  vertical-align: top;
   margin-right: 4px;
 }
 .study-word-wrap.match { cursor: pointer; }
