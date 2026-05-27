@@ -974,15 +974,21 @@ input { font-family: inherit; }
   gap: 0;
 }
 .study-bracket {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  user-select: none;
+}
+.study-bracket:first-child { margin-right: -3px; }
+.study-bracket:last-child  { margin-left:  -3px; }
+.study-bracket-glyph {
   font-family: var(--f-serif);
   font-size: 20px;
   color: var(--accent);
   line-height: 1;
-  align-self: flex-end;
-  margin-bottom: 4px;
 }
-.study-bracket:first-child { margin-right: -3px; }
-.study-bracket:last-child  { margin-left:  -3px; }
 .study-pos {
   font-family: var(--f-mono);
   font-size: 8.5px;

@@ -820,11 +820,17 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
           const groups = groupForGreekMode(words.filter(w => w.english).sort((a, b) => a.position - b.position));
           return groups.map((g, gi) => {
             if (!g.isBracket) return renderStudyWord(g.word, `g${gi}`);
+            const studyBracketChar = (ch, k) => (
+              <span key={k} className="study-bracket">
+                <span className="study-bracket-glyph">{ch}</span>
+                <span className="study-strongs" style={{visibility:"hidden"}}>G0</span>
+              </span>
+            );
             return (
               <span key={`bg${gi}`} className="study-bracket-group">
-                <span className="study-bracket">[</span>
+                {studyBracketChar("[", "bl")}
                 {g.words.map((w, wi) => renderStudyWord(w, `bg${gi}w${wi}`))}
-                <span className="study-bracket">]</span>
+                {studyBracketChar("]", "br")}
               </span>
             );
           });
