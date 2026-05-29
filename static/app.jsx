@@ -697,7 +697,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </section>
         )}
 
-        {isPN && entry.gloss && onNameSearch && (
+        {isPN && metavType !== "place" && entry.gloss && onNameSearch && (
           <section className="detail-section">
             <h4 className="detail-h">Corpus</h4>
             <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
