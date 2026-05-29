@@ -2179,9 +2179,9 @@ def ai_search():
         log.debug("Calling Haiku for SQL generation…")
         msg = _anthropic.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=2000,
+            max_tokens=1200,
             temperature=0,
-            system=_get_ai_system(),
+            system=[{"type": "text", "text": _get_ai_system(), "cache_control": {"type": "ephemeral"}}],
             messages=[{"role": "user", "content": user_content}],
         )
         raw = msg.content[0].text.strip() if msg.content else ""
@@ -2283,9 +2283,9 @@ def ai_search():
             try:
                 retry_msg = _anthropic.messages.create(
                     model="claude-haiku-4-5-20251001",
-                    max_tokens=2000,
+                    max_tokens=1200,
                     temperature=0,
-                    system=_get_ai_system(),
+                    system=[{"type": "text", "text": _get_ai_system(), "cache_control": {"type": "ephemeral"}}],
                     messages=[
                         {"role": "user", "content": user_content},
                         {"role": "assistant", "content": raw},
