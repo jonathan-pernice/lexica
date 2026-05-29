@@ -319,7 +319,7 @@ def _get_ai_system() -> str:
     log.debug("Built AI system prompt for books: %s", abbrevs)
     return _AI_SYSTEM_BUILT
 
-_STRONGS_RE = re.compile(r'^G?(\d+(?:\.\d+)*)$', re.IGNORECASE)
+_STRONGS_RE = re.compile(r'^[GH]?(\d+(?:\.\d+)*)$', re.IGNORECASE)
 
 # Words that start with a capital but are NOT proper nouns for the english LIKE fallback.
 # Theological terms with Strong's numbers (God, Lord, Jesus, Christ) are excluded because
@@ -1201,6 +1201,42 @@ def index():
     return render_template("index.html")
 
 
+def _hebrew_search(conn, h_id, out_rows, out_groupings):
+    h_id = h_id.upper()
+    bdb_row = conn.execute(
+        "SELECT strongs_id, lemma, xlit, description FROM bdb WHERE strongs_id = ?",
+        (h_id,)
+    ).fetchone()
+    if not bdb_row:
+        return
+    for r in conn.execute("""
+        SELECT b.abbrev AS book, kw.chapter, kw.verse_num AS verse, kw.word AS kjv_word
+        FROM kjv_strongs ks
+        JOIN kjv_words kw ON kw.word_id = ks.word_id
+        JOIN books b ON b.id = kw.book_id
+        WHERE ks.strongs_id = ?
+        ORDER BY kw.book_id, kw.chapter, kw.verse_num
+        LIMIT 500
+    """, (h_id,)).fetchall():
+        out_rows.append({
+            "ref": f"{r['book']} {r['chapter']}:{r['verse']}",
+            "book": r['book'], "chapter": r['chapter'], "verse": r['verse'],
+            "strongs": h_id, "strongs_base": h_id,
+            "gloss": r['kjv_word'], "gloss_head": r['kjv_word'],
+            "lemma": bdb_row['lemma'] or "", "translit": bdb_row['xlit'] or "",
+            "strongs_def": bdb_row['description'] or "",
+            "kjv_def": "", "derivation": "", "is_function": False,
+        })
+    for gr in conn.execute("""
+        SELECT kw.word AS w, COUNT(*) AS cnt
+        FROM kjv_strongs ks
+        JOIN kjv_words kw ON kw.word_id = ks.word_id
+        WHERE ks.strongs_id = ?
+        GROUP BY kw.word ORDER BY cnt DESC
+    """, (h_id,)).fetchall():
+        out_groupings.setdefault(h_id, []).append({"gloss": gr['w'], "count": gr['cnt']})
+
+
 @app.route("/api/search")
 def search():
     q = request.args.get("q", "").strip()
@@ -1214,6 +1250,7 @@ def search():
     variants: dict = {}
     try:
         snum = _strongs_num(q)
+        q_plain = _strip_accents(q)
         if snum:
             col = "w.strongs" if "." in snum else "w.strongs_base"
             rows = conn.execute(
@@ -1232,7 +1269,6 @@ def search():
                 (snum, f"G{snum}", f"H{snum}"),
             ).fetchall()
         else:
-            q_plain = _strip_accents(q)
             if phrase_mode:
                 # Phrase mode: word-boundary match within the full multi-word gloss.
                 rows = conn.execute(
@@ -1321,6 +1357,26 @@ def search():
             all_v = [v["strongs"] for v in var_rows]
             if len(all_v) > 1:
                 variants[base] = all_v
+        # ── Hebrew parallel search ────────────────────────────────────────
+        h_rows = []
+        h_groupings = {}
+        _is_h = False
+        if snum:
+            try:
+                _is_h = q.strip().upper().startswith('H') or int(snum.split('.')[0]) > 5624
+            except ValueError:
+                pass
+        if _is_h:
+            _hebrew_search(conn, f"H{snum}", h_rows, h_groupings)
+        elif not snum:
+            for hit in conn.execute(
+                """SELECT strongs_id FROM bdb
+                   WHERE xlit LIKE ? COLLATE NOCASE
+                      OR description LIKE ? COLLATE NOCASE
+                   LIMIT 10""",
+                (f"%{q_plain}%", f"%{q}%")
+            ).fetchall():
+                _hebrew_search(conn, hit['strongs_id'], h_rows, h_groupings)
     finally:
         conn.close()
 
@@ -1344,6 +1400,8 @@ def search():
         for r in rows
     ]
 
+    results.extend(h_rows)
+    groupings.update(h_groupings)
     return jsonify({"results": results, "total": len(results), "groupings": groupings, "variants": variants})
 
 
