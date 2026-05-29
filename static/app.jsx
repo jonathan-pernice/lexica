@@ -580,11 +580,14 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setLsjEntry(null);
     setLsjTab("def");
     setLsjSummary(null);
-    const canLookup = !isHebrew && entry && (entry.greek || entry.strongs_raw);
+    // For PN place entries with a mapped strongs_g, use that for LSJ lookup
+    const placeStrongs = (isPN && metavType === "place" && metavData?.strongs_g)
+      ? metavData.strongs_g.replace(/^G/i, "") : null;
+    const canLookup = !isHebrew && entry && (entry.greek || entry.strongs_raw || placeStrongs);
     if (!canLookup) { setLsjLoading(false); return; }
     let cancelled = false;
     setLsjLoading(true);
-    api.lsj(entry.greek, entry.strongs_raw)
+    api.lsj(entry.greek || "", placeStrongs || entry.strongs_raw)
       .then(d => {
         if (!cancelled) { setLsjEntry(d.error ? null : d); setLsjLoading(false); }
       })
@@ -592,7 +595,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         if (!cancelled) { setLsjEntry(null); setLsjLoading(false); }
       });
     return () => { cancelled = true; };
-  }, [entry && entry.id]);
+  }, [entry && entry.id, metavType, metavData?.strongs_g]);
 
   useEffect(() => {
     if (!lsjEntry || lsjEntry.source === "strongs") { setLsjSummary(null); setLsjSummaryLoading(false); return; }
