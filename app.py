@@ -2768,6 +2768,21 @@ def ai_search():
             key=lambda v: (book_order.get(v["book"], 9999), v["chapter"], v["verse"])
         )
 
+        # ── Hardcoded divine council key_strongs ─────────────────────────────
+        if dc_query:
+            dc_strongs = [
+                {"strongs_base": "5207", "strongs": "G5207", "lemma": "υἱός",    "translit": "huiós",   "definition": "", "derivation": ""},
+                {"strongs_base": "2316", "strongs": "G2316", "lemma": "θεός",    "translit": "theós",   "definition": "", "derivation": ""},
+                {"strongs_base": "5475", "strongs": "H5475", "lemma": "סוֹד",    "translit": "sôd",     "definition": "", "derivation": ""},
+                {"strongs_base": "5712", "strongs": "H5712", "lemma": "עֵדָה",   "translit": "ʿēdâh",  "definition": "", "derivation": ""},
+                {"strongs_base": "1121", "strongs": "H1121", "lemma": "בֵּן",    "translit": "bēn",     "definition": "", "derivation": ""},
+                {"strongs_base": "430",  "strongs": "H430",  "lemma": "אֱלֹהִים","translit": "ʾĕlōhîm","definition": "", "derivation": ""},
+            ]
+            existing_bases = {k["strongs_base"] for k in key_strongs_data}
+            for ks in dc_strongs:
+                if ks["strongs_base"] not in existing_bases:
+                    key_strongs_data.append(ks)
+
         payload = {"results": results, "total": len(results),
                    "explanation": explanation, "key_strongs": key_strongs_data}
         _ai_cache[q] = payload
