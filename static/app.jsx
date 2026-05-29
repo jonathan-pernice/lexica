@@ -447,11 +447,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     return () => { cancelled = true; };
   }, [entry && entry.id]);
 
-  // KJV verse text (when entry came from KJV mode)
+  // KJV verse text (when entry came from KJV mode, or is a Hebrew word)
   const [kjvVerseText, setKjvVerseText] = useState("");
   useEffect(() => {
     setKjvVerseText("");
-    if (!entry || !entry.isKjv) return;
+    if (!entry || (!entry.isKjv && !isHebrew)) return;
     let cancelled = false;
     api.kjvVerse(entry.book, entry.chapter, entry.verse)
       .then(d => { if (!cancelled) setKjvVerseText(d.text || ""); })
@@ -610,11 +610,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         <section className="detail-section">
           <h4 className="detail-h">
             Verse — {entry.ref}
-            <span className="detail-h-sub">{entry.isKjv ? "KJV" : "LXX (ABP English)"}</span>
+            <span className="detail-h-sub">{(entry.isKjv || isHebrew) ? "KJV" : "LXX (ABP English)"}</span>
           </h4>
           <blockquote className="verse">
             <span className="verse-num">{entry.verse}</span>
-            {entry.isKjv ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
+            {(entry.isKjv || isHebrew) ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
           </blockquote>
           {showInterlinear && (
             <div className="interlinear">
