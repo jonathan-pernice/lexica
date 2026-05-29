@@ -1040,8 +1040,12 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
   const entryMap = useMemo(() => {
     const m = new Map();
     for (const e of allResults) {
-      if (e.book === book && e.chapter === chapter && e.verse === verse && !m.has(e.strongs_raw))
-        m.set(e.strongs_raw, e);
+      if (e.book === book && e.chapter === chapter && e.verse === verse) {
+        if (!m.has(e.strongs_raw)) m.set(e.strongs_raw, e);
+        // Also index by bare number to handle G/H prefix inconsistency
+        const bare = (e.strongs_raw || "").replace(/^[GH]/i, "");
+        if (bare && !m.has(bare)) m.set(bare, e);
+      }
     }
     return m;
   }, [allResults, book, chapter, verse]);
