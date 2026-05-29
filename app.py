@@ -2296,11 +2296,11 @@ def metav_place(name):
     conn = db_ro()
     try:
         row = conn.execute("""
-            SELECT p.place_id, p.name, p.comment, p.lat, p.lon
+            SELECT p.place_id, p.name, p.comment, p.lat, p.lon, p.strongs_g
             FROM metav_places p
             WHERE p.name = ? COLLATE NOCASE
             UNION
-            SELECT p.place_id, p.name, p.comment, p.lat, p.lon
+            SELECT p.place_id, p.name, p.comment, p.lat, p.lon, p.strongs_g
             FROM metav_places p
             JOIN metav_place_aliases a ON a.place_id = p.place_id
             WHERE a.alias = ? COLLATE NOCASE
@@ -2318,6 +2318,7 @@ def metav_place(name):
         "comment":  row["comment"] or "",
         "lat":      row["lat"],
         "lon":      row["lon"],
+        "strongs_g": row["strongs_g"] or "",
     })
 
 

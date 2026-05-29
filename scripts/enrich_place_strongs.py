@@ -51,7 +51,9 @@ def main():
     updated = 0
     not_found = 0
 
-    for place in places:
+    for idx, place in enumerate(places):
+        if idx % 100 == 0:
+            print(f"  Processing {idx}/{len(places)}...")
         pid = place["place_id"]
         name = place["name"]
 
