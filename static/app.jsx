@@ -633,7 +633,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             </button>
             <button className="tool-btn" title="Share"><Icon.Share/></button>
           </div>
-          <div className="detail-gloss">{stripArticles(isPN ? (entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim().split(/\s+/).find(w => /^[A-Z]/.test(w)) || entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim()) : entry.gloss)}</div>
+          <div className="detail-gloss">{stripArticles((isPN ? (entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim().split(/\s+/).find(w => /^[A-Z]/.test(w)) || entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim()) : entry.gloss)?.replace(/[.,;:!?—-]+$/, "").trim())}</div>
         </div>
 
         {(metavData || metavLoading) && (
