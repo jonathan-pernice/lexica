@@ -596,13 +596,13 @@ def _curate_primary_verses(
     # Scale input window and primary target with result pool size.
     n = len(results)
     if n >= 200:
-        input_cap, primary_cap = 80, 30
+        input_cap, primary_cap = 60, 15
     elif n >= 100:
-        input_cap, primary_cap = 65, 25
+        input_cap, primary_cap = 50, 12
     elif n >= 50:
-        input_cap, primary_cap = 50, 20
+        input_cap, primary_cap = 40, 10
     else:
-        input_cap, primary_cap = max(n, 1), 12
+        input_cap, primary_cap = max(n, 1), 8
 
     capped = results[:input_cap]
     if capped:
@@ -796,7 +796,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 23
+_CACHE_CODE_VER = 24
 
 
 def _get_ai_cache_ver() -> str:
