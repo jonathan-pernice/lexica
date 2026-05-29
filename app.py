@@ -783,7 +783,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 19
+_CACHE_CODE_VER = 20
 
 
 def _get_ai_cache_ver() -> str:
@@ -2431,13 +2431,16 @@ def ai_search():
                         row = ks_conn.execute(
                             "SELECT lemma, translit, strongs_def, derivation FROM lexicon WHERE strongs = ?", (sn,)
                         ).fetchone()
+                    if not row:
+                        log.debug("key_strongs %s%s not found in DB — dropping", prefix, sn)
+                        continue
                     key_strongs_data.append({
                         "strongs_base": sn,
                         "strongs": f"{prefix}{sn}",
-                        "lemma":      (row["lemma"]       if row else "") or "",
-                        "translit":   (row["translit"]    if row else "") or "",
-                        "definition": (row["strongs_def"] if row and prefix == "G" else "") or "",
-                        "derivation": (row["derivation"]  if row and prefix == "G" else "") or "",
+                        "lemma":      row["lemma"] or "",
+                        "translit":   row["translit"] or "",
+                        "definition": (row["strongs_def"] if prefix == "G" else "") or "",
+                        "derivation": (row["derivation"]  if prefix == "G" else "") or "",
                     })
             finally:
                 ks_conn.close()
