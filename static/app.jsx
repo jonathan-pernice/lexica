@@ -505,7 +505,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [kjvCount, setKjvCount] = useState(null);
   useEffect(() => {
     setKjvCount(null);
-    if (!isHebrew || !entry.strongs) return;
+    if ((!isHebrew && !entry.isKjv) || !entry.strongs) return;
     let cancelled = false;
     api.kjvStrongsCount(entry.strongs)
       .then(d => { if (!cancelled) setKjvCount(d.count ?? null); })
@@ -745,7 +745,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         )}
 
 
-        {!isHebrew && !isPN && !metavData && abpCount !== null && abpCount > 0 && (
+        {!isHebrew && !isPN && !metavData && !entry.isKjv && abpCount !== null && abpCount > 0 && (
           <section className="detail-section">
             <h4 className="detail-h">ABP Occurrences</h4>
             <button
@@ -754,6 +754,16 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               onClick={() => onStrongsSearch(entry.strongs_raw)}
             >
               <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
+            </button>
+          </section>
+        )}
+
+        {entry.isKjv && !isHebrew && !isPN && !metavData && kjvCount !== null && kjvCount > 0 && (
+          <section className="detail-section">
+            <h4 className="detail-h">KJV Occurrences</h4>
+            <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
+              onClick={() => onStrongsSearch(entry.strongs)}>
+              <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
             </button>
           </section>
         )}
