@@ -521,7 +521,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setMetavData(null);
     setMetavType(null);
     // Skip metaV for words with a real Greek lemma — those belong to LSJ
-    if (!isPN && entry.greek && entry.translit) return;
+    // Exception: KJV entries may be proper nouns even with Greek lemmas
+    if (!isPN && !entry.isKjv && entry.greek && entry.translit) return;
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
     let cancelled = false;
