@@ -482,9 +482,10 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [pnCount, setPnCount] = useState(null);
   useEffect(() => {
     setPnCount(null);
-    if (!isPN || !entry.gloss) return;
-    const name = entry.gloss.replace(/[^a-zA-Z\s'-]/g, "").trim();
-    if (!name) return;
+    if (!entry.gloss) return;
+    const rawName = entry.gloss.replace(/[^a-zA-Z\s'-]/g, "").trim();
+    const name = rawName.split(/\s+/).find(w => /^[A-Z]/.test(w)) || rawName;
+    if (!name || name.length < 2) return;
     let cancelled = false;
     api.pnCount(name)
       .then(d => { if (!cancelled) setPnCount(d.count ?? null); })
@@ -749,7 +750,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </section>
         )}
 
-        {isPN && pnCount !== null && pnCount > 0 && onNameSearch && (
+        {(isPN || (metavData && metavType === "person")) && pnCount !== null && pnCount > 0 && onNameSearch && (
           <section className="detail-section">
             <h4 className="detail-h">ABP Occurrences</h4>
             <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
