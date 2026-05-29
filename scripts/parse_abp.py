@@ -126,6 +126,41 @@ def parse_words(verse_text: str) -> list:
         english = _clean_english(raw) if raw.strip() else None
         words.append((seq, english, m.group(1), greek_pos, cur_bracket_id))
 
+    # Post-process G* tokens to clean up proper noun names
+    _PN_STOP = frozenset({
+        'and','but','or','the','a','an','in','of','to','for','with','from','by','at',
+        'his','her','its','their','my','your','our','not','so','then','thus','even',
+        'also','now','yet','when','as','if','that','which','who','where','how',
+    })
+
+    for i, (seq, eng, strongs, gpos, bid) in enumerate(words):
+        if strongs != '*':
+            continue
+
+        if eng is None and i > 0:
+            # Pattern: "Abel becameG1096 G*" → split ("became", G1096) + ("Abel", G*)
+            prev_seq, prev_eng, prev_strongs, prev_gpos, prev_bid = words[i - 1]
+            if prev_eng:
+                tokens = prev_eng.split()
+                for j, tok in enumerate(tokens):
+                    clean_tok = re.sub(r"[^\w'-]", '', tok)
+                    if clean_tok and clean_tok[0].isupper() and clean_tok.lower() not in _PN_STOP:
+                        name = _clean_english(tok)
+                        remainder = ' '.join(tokens[:j] + tokens[j+1:]).strip()
+                        remainder = _clean_english(remainder) if remainder else None
+                        words[i - 1] = (prev_seq, remainder, prev_strongs, prev_gpos, prev_bid)
+                        words[i]     = (seq, name, strongs, gpos, bid)
+                        break
+
+        elif eng is not None:
+            # Pattern: "to Philemon", "of Jesus" — strip leading stop words from G* gloss
+            tokens = eng.split()
+            while tokens and re.sub(r"[^\w'-]", '', tokens[0]).lower() in _PN_STOP:
+                tokens = tokens[1:]
+            if tokens and len(tokens) < len(eng.split()):
+                cleaned = _clean_english(' '.join(tokens))
+                words[i] = (seq, cleaned, strongs, gpos, bid)
+
     return words
 
 
