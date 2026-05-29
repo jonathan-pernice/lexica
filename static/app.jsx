@@ -1943,6 +1943,7 @@ function App() {
   const [sortBy, setSortBy] = useState("relevance");
   const [viewMode, setViewMode] = useState("browse");
   const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
+  const [langFilter, setLangFilter] = useState("all"); // "all" | "greek" | "hebrew"
   const [isMobile, setIsMobile] = useState(false);
   const [mainView, setMainView] = useState("search");
   const [libNav, setLibNav] = useState(null);
@@ -1970,10 +1971,13 @@ function App() {
 
   // Corpus-filtered results (OT/NT filter applied before everything else)
   const corpusFilteredResults = useMemo(() => {
-    if (corpusFilter === "ot") return allResults.filter(e => !NT_BOOKS.has(e.book));
-    if (corpusFilter === "nt") return allResults.filter(e => NT_BOOKS.has(e.book));
-    return allResults;
-  }, [allResults, corpusFilter]);
+    let r = allResults;
+    if (corpusFilter === "ot") r = r.filter(e => !NT_BOOKS.has(e.book));
+    if (corpusFilter === "nt") r = r.filter(e => NT_BOOKS.has(e.book));
+    if (langFilter === "greek") r = r.filter(e => e.strongs && !String(e.strongs).startsWith("H"));
+    if (langFilter === "hebrew") r = r.filter(e => e.strongs && String(e.strongs).startsWith("H"));
+    return r;
+  }, [allResults, corpusFilter, langFilter]);
 
   // Count occurrences per dotted strongs across corpus-filtered results
   const countMap = useMemo(() => {
@@ -2082,6 +2086,7 @@ function App() {
     setGroupings({});
     setVariants({});
     setGlossFilter(null);
+    setLangFilter("all");
     try {
       const data = await api.search(q);
       if (data.error) {
@@ -2280,6 +2285,10 @@ function App() {
                     <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
                     <button className={"sort-btn " + (corpusFilter === "ot" ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
                     <button className={"sort-btn " + (corpusFilter === "nt" ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
+                    <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
+                    <button className={"sort-btn " + (langFilter === "all" ? "on" : "")} onClick={() => setLangFilter("all")}>All</button>
+                    <button className={"sort-btn " + (langFilter === "greek" ? "on" : "")} onClick={() => setLangFilter("greek")}>Greek</button>
+                    <button className={"sort-btn " + (langFilter === "hebrew" ? "on" : "")} onClick={() => setLangFilter("hebrew")}>Hebrew</button>
                   </div>
                   <div className="view-toggle">
                     <button className={"view-btn " + (viewMode === "browse" ? "on" : "")} onClick={() => setViewMode("browse")} title="Browse mode">
