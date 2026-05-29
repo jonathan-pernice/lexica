@@ -860,10 +860,9 @@ input { font-family: inherit; }
   display: flex;
   gap: 6px;
 }
-.study-kjv-text {
-  font-size: 15px;
-  color: var(--ink-2);
-  line-height: 1.6;
+.study-word-italic {
+  color: var(--ink-3);
+  font-style: italic;
 }
 .additional-refs-section {
   display: flex;

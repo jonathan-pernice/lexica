@@ -1379,12 +1379,14 @@ def search():
         if _is_h:
             _hebrew_search(conn, f"H{snum}", h_rows, h_groupings)
         elif not snum:
+            q_no_w = q_plain.replace('w', '').replace('W', '')
             for hit in conn.execute(
                 """SELECT strongs_id FROM bdb
                    WHERE strip_accents(xlit) LIKE ? COLLATE NOCASE
+                      OR REPLACE(REPLACE(strip_accents(xlit),'w',''),'W','') LIKE ? COLLATE NOCASE
                       OR description LIKE ? COLLATE NOCASE
                    LIMIT 10""",
-                (f"%{q_plain}%", f"%{q}%")
+                (f"%{q_plain}%", f"%{q_no_w}%", f"%{q}%")
             ).fetchall():
                 _hebrew_search(conn, hit['strongs_id'], h_rows, h_groupings)
     finally:
@@ -1846,6 +1848,42 @@ def kjv_verse_text(book, chapter, verse_num):
         return jsonify({"error": "not found"}), 404
     return jsonify({"text": row["verse_text"]})
 
+
+@app.route("/api/kjv/verse_words/<book>/<int:chapter>/<int:verse_num>")
+def kjv_verse_words(book, chapter, verse_num):
+    book_id = _KJV_BOOK_ID.get(book)
+    if book_id is None:
+        return jsonify([])
+    conn = db_ro()
+    try:
+        rows = conn.execute("""
+            SELECT kw.word_id, kw.verse_pos, kw.word, kw.italic, kw.punc,
+                   GROUP_CONCAT(ks.strongs_id) AS strongs_ids,
+                   MAX(COALESCE(bdb.lemma, lex.lemma)) AS lemma,
+                   MAX(COALESCE(bdb.xlit, lex.translit)) AS xlit
+            FROM kjv_words kw
+            LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+            LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
+            LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+            WHERE kw.book_id = ? AND kw.chapter = ? AND kw.verse_num = ?
+            GROUP BY kw.word_id, kw.verse_pos, kw.word, kw.italic, kw.punc
+            ORDER BY kw.verse_pos
+        """, (book_id, chapter, verse_num)).fetchall()
+    finally:
+        conn.close()
+    words = []
+    for r in rows:
+        sids = [s.strip() for s in (r["strongs_ids"] or "").split(",") if s.strip()]
+        words.append({
+            "word_id":    r["word_id"],
+            "word":       r["word"],
+            "italic":     bool(r["italic"]),
+            "punc":       r["punc"] or "",
+            "strongs_ids": sids,
+            "lemma":      r["lemma"] or "",
+            "xlit":       r["xlit"] or "",
+        })
+    return jsonify(words)
 
 
 @app.route("/api/cross-references/<book>/<int:chapter>/<int:verse>")
