@@ -1298,7 +1298,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     };
 
     const chipLabel = (w) => {
-      const e = w.english || "";
+      const e = w.english || w.english_head || "";
       if (e) return e;
       // Null english: word absorbed into adjacent phrase — derive gloss from lexicon
       const kd = w.kjv_def || "";
@@ -1310,11 +1310,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     // Plain chip (English mode or non-bracketed word in Greek mode)
     const chip = (w, key) => {
       const isPN = w.strongs_base === "*";
-      const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english));
+      const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english || w.english_head));
       return (
         <span key={key}
           className={"lib-word" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
-          onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english } : makeEntry(w)) : undefined}>
+          onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
           <span className="lib-iw-english">{chipLabel(w)}</span>
           {showStrongs && (
@@ -1333,7 +1333,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       return (
         <span key={key}
           className={"lib-word lib-word-bracketed" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
-          onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english } : makeEntry(w)) : undefined}>
+          onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
           {w.greek_pos !== null && w.greek_pos !== undefined &&
             <span className="lib-iw-pos">{w.greek_pos}</span>}
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
@@ -1363,7 +1363,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     let content;
     if (wordOrder === "greek") {
       // Greek syntactic order with bracket notation — only words with a gloss or lexicon entry
-      const sortedWords = [...v.words].filter(w => w.english).sort((a, b) => a.position - b.position);
+      const sortedWords = [...v.words].filter(w => w.english || w.strongs_base === "*").sort((a, b) => a.position - b.position);
       const groups = groupForGreekMode(sortedWords);
       content = groups.map((g, gi) => {
         if (!g.isBracket) {
@@ -1386,7 +1386,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       });
     } else {
       // English reading order — words with a gloss or lexicon fallback
-      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english);
+      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.strongs_base === "*");
       content = englishWords.map((w, i) => chip(w, `e${i}`));
     }
 
