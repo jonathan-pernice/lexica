@@ -162,6 +162,10 @@ Match them with english LIKE or english_head LIKE. Examples:
       SELECT verse_id FROM words WHERE strongs_base = '4198')  -- travel + Paul
 For purely proper-noun queries (e.g. "where did Paul travel"), the WHERE clause
 MUST use english LIKE — a strongs_base filter alone will return nothing.
+For geographical queries (e.g. "places in Acts", "cities Paul visited"), query
+strongs_base = '*' to get all proper nouns, optionally filtered by book:
+  WHERE v.book = 'Act' AND w.strongs_base = '*' AND w.english IS NOT NULL
+This returns all named people, places, and groups in that book.
 Function words (articles,
 prepositions, conjunctions) are filtered from highlighting automatically by LSJ
 part-of-speech data — include them freely in SQL without concern. Return exactly:
@@ -792,7 +796,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 22
+_CACHE_CODE_VER = 23
 
 
 def _get_ai_cache_ver() -> str:
