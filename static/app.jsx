@@ -1137,7 +1137,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       const snum = w.strongs_base === "*" ? "*" : (w.strongs || w.strongs_base);
       return {
       id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
-      strongs: snum === "*" ? "PN" : `G${snum}`,
+      strongs: strongsTag(snum),
       strongs_base: w.strongs_base,
       strongs_raw: snum,
       greek: w.lemma || "",
