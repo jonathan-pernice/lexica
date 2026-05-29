@@ -2165,6 +2165,19 @@ def bdb_lookup(strongs_id):
     })
 
 
+@app.route("/api/kjv/strongs-count/<strongs_id>")
+def kjv_strongs_count(strongs_id):
+    conn = db_ro()
+    try:
+        row = conn.execute(
+            "SELECT COUNT(*) AS cnt FROM kjv_strongs WHERE strongs_id = ?",
+            (strongs_id.upper(),)
+        ).fetchone()
+    finally:
+        conn.close()
+    return jsonify({"count": row["cnt"] if row else 0})
+
+
 @app.route("/api/metav/person/<path:name>")
 def metav_person(name):
     conn = db_ro()

@@ -46,6 +46,8 @@ const api = {
     fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWords: (book, ch, v) =>
     fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
+  kjvStrongsCount: (strongs_id) =>
+    fetch(`/api/kjv/strongs-count/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
   metavPerson: (name) =>
     fetch(`/api/metav/person/${encodeURIComponent(name)}`).then(r => r.json()),
   metavPlace: (name) =>
@@ -471,6 +473,18 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H");
   const isPN = entry && (entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
 
+  // KJV occurrence count for Hebrew words
+  const [kjvCount, setKjvCount] = useState(null);
+  useEffect(() => {
+    setKjvCount(null);
+    if (!isHebrew || !entry.strongs) return;
+    let cancelled = false;
+    api.kjvStrongsCount(entry.strongs)
+      .then(d => { if (!cancelled) setKjvCount(d.count ?? null); })
+      .catch(() => { if (!cancelled) setKjvCount(null); });
+    return () => { cancelled = true; };
+  }, [entry && entry.strongs]);
+
   // metaV person/place lookup — runs on any word click where gloss may be a name
   const [metavData, setMetavData] = useState(null);
   const [metavType, setMetavType] = useState(null); // "person" | "place" | null
@@ -717,6 +731,15 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             >
               <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
             </button>
+          </section>
+        )}
+
+        {isHebrew && kjvCount !== null && kjvCount > 0 && (
+          <section className="detail-section">
+            <h4 className="detail-h">KJV Occurrences</h4>
+            <p style={{ fontSize: "15px", fontWeight: "600", margin: 0 }}>
+              <b>{kjvCount}</b>× in KJV
+            </p>
           </section>
         )}
 
