@@ -133,26 +133,44 @@ def parse_words(verse_text: str) -> list:
         'also','now','yet','when','as','if','that','which','who','where','how',
     })
 
+    # Common function word strongs to skip when looking for embedded names
+    _FUNC_STRONGS = frozenset({
+        '3588','3789','2532','1161','1473','846','3778','3739','3754','1722',
+        '1519','1537','4314','3326','1909','575','3844','1223','2596','4862',
+        '3756','3361','3780','4771','2249','5210','1438','3364','3762','3777',
+    })
+
     for i, (seq, eng, strongs, gpos, bid) in enumerate(words):
-        if strongs != '*':
+        is_pn = (strongs == '*')
+        is_null_content = (eng is None and strongs not in _FUNC_STRONGS and strongs != '*')
+
+        if not is_pn and not is_null_content:
             continue
 
         if eng is None and i > 0:
-            # Pattern: "Abel becameG1096 G*"
-            # Swap so: G* gets name "Abel" at prev position, G1096 gets "became" at current position
-            # Result: "Abel"(G*) then "became"(G1096) = correct English reading order
-            prev_seq, prev_eng, prev_strongs, prev_gpos, prev_bid = words[i - 1]
+            # Pattern: "Abel becameG1096 G*" or "God madeG4160 G3588 G2316"
+            # Find the nearest preceding word with english (skip over null function words)
+            prev_idx = i - 1
+            while prev_idx >= 0 and words[prev_idx][1] is None:
+                prev_idx -= 1
+            if prev_idx < 0:
+                continue
+            prev_seq, prev_eng, prev_strongs, prev_gpos, prev_bid = words[prev_idx]
             if prev_eng:
                 tokens = prev_eng.split()
                 for j, tok in enumerate(tokens):
                     clean_tok = re.sub(r"[^\w'-]", '', tok)
                     if clean_tok and clean_tok[0].isupper() and clean_tok.lower() not in _PN_STOP:
                         name = _clean_english(tok)
-                        remainder = ' '.join(tokens[:j] + tokens[j+1:]).strip()
+                        remainder_tokens = tokens[:j] + tokens[j+1:]
+                        # Strip leading stop words from remainder (e.g. "the said," → "said,")
+                        while remainder_tokens and re.sub(r"[^\w'-]", '', remainder_tokens[0]).lower() in _PN_STOP:
+                            remainder_tokens = remainder_tokens[1:]
+                        remainder = ' '.join(remainder_tokens).strip()
                         remainder = _clean_english(remainder) if remainder else None
-                        # Swap: G* takes prev position+strongs slot, verb takes current
-                        words[i - 1] = (prev_seq, name,      strongs,      gpos,      bid)
-                        words[i]     = (seq,      remainder, prev_strongs, prev_gpos, prev_bid)
+                        # Swap: name token takes prev position+strongs slot, verb takes current
+                        words[prev_idx] = (prev_seq, name,      strongs,      gpos,      bid)
+                        words[i]        = (seq,      remainder, prev_strongs, prev_gpos, prev_bid)
                         break
 
         elif eng is not None:
