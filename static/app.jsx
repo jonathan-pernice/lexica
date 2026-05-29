@@ -590,12 +590,16 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                 )}
                 {metavData.relationships.length > 0 && (
                   <div className="metav-rels">
-                    {["father","mother","spouseOrConcubine","child","sibling"].map(type => {
-                      const matching = metavData.relationships.filter(r => r.type === type);
+                    {[
+                      { types: ["child"],                    label: "Parent"   },
+                      { types: ["father","mother"],          label: "Children" },
+                      { types: ["spouseOrConcubine"],        label: "Spouse"   },
+                      { types: ["sibling","halfSiblingSameFather","halfSiblingSameMother"], label: "Siblings" },
+                    ].map(({ types, label }) => {
+                      const matching = metavData.relationships.filter(r => types.includes(r.type));
                       if (!matching.length) return null;
-                      const label = {father:"Father",mother:"Mother",spouseOrConcubine:"Spouse",child:"Children",sibling:"Siblings"}[type];
                       return (
-                        <div key={type} className="metav-rel-row">
+                        <div key={label} className="metav-rel-row">
                           <span className="metav-rel-label">{label}</span>
                           <span className="metav-rel-names">{matching.slice(0,5).map(r => r.name).join(", ")}{matching.length > 5 ? ` +${matching.length - 5}` : ""}</span>
                         </div>
