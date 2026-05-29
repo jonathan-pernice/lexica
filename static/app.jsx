@@ -438,7 +438,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.strongs_raw]);
 
   const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H");
-  const isPN = entry && entry.isPN;
+  const isPN = entry && (entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
 
   // metaV person/place lookup — runs on any word click where gloss may be a name
   const [metavData, setMetavData] = useState(null);
