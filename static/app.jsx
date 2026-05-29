@@ -754,7 +754,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <section className="detail-section">
             <h4 className="detail-h">ABP Occurrences</h4>
             <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onNameSearch(entry.gloss.replace(/[^a-zA-Z\s'-]/g, "").trim())}>
+              onClick={() => { const raw = (entry.gloss || "").replace(/[^a-zA-Z\s'-]/g, "").trim(); const name = raw.split(/\s+/).find(w => /^[A-Z]/.test(w)) || raw; onNameSearch(name); }}>
               <b>{pnCount}</b>× in LXX <Icon.ArrowRight/>
             </button>
           </section>
