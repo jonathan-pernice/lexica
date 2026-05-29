@@ -511,7 +511,10 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   useEffect(() => {
     setMetavData(null);
     setMetavType(null);
-    const name = (entry.pnName || entry.gloss || "").replace(/[^a-zA-Z\s'-]/g, "").trim();
+    const rawName = (entry.pnName || entry.gloss || "").replace(/[^a-zA-Z\s'-]/g, "").trim();
+    // If multi-word gloss starts with a capital (e.g. "Abel became"), try first word as name
+    const firstWord = rawName.split(/\s+/)[0];
+    const name = (firstWord && /^[A-Z]/.test(firstWord)) ? firstWord : rawName;
     if (!name || name.length < 2) return;
     let cancelled = false;
     setMetavLoading(true);
