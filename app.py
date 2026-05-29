@@ -2319,7 +2319,7 @@ def metav_ai_description(name):
             system="You are a concise biblical reference. Answer in 1-2 sentences only. "
                    "State who the person is, their role, key relationships, and main passages. "
                    "No speculation, no theology — text first. No markdown.",
-            messages=[{"role": "user", "content": f"Who is {name} in the Bible?"}],
+            messages=[{"role": "user", "content": f"Describe {name} in the Bible in 1-2 sentences — person, place, or group."}],
         )
         description = msg.content[0].text.strip() if msg.content else ""
     except Exception as e:
