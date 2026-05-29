@@ -2301,7 +2301,7 @@ def metav_ai_description(name):
     conn = db_ro()
     try:
         cached = conn.execute(
-            "SELECT payload FROM ai_search_cache WHERE query = ? AND ver_key = 'pn'",
+            "SELECT result_json FROM ai_search_cache WHERE query = ? AND ver_key = 'pn'",
             (cache_key,)
         ).fetchone()
     finally:
@@ -2309,7 +2309,7 @@ def metav_ai_description(name):
 
     if cached:
         import json as _json
-        return jsonify(_json.loads(cached["payload"]))
+        return jsonify(_json.loads(cached["result_json"]))
 
     try:
         msg = _anthropic.messages.create(
@@ -2329,9 +2329,10 @@ def metav_ai_description(name):
     payload = {"name": name, "description": description}
     conn2 = db()
     try:
+        import json as _json2, time as _time
         conn2.execute(
-            "INSERT OR REPLACE INTO ai_search_cache (query, payload, ver_key) VALUES (?,?,?)",
-            (cache_key, __import__('json').dumps(payload), "pn")
+            "INSERT OR REPLACE INTO ai_search_cache (query, result_json, ver_key, created_at) VALUES (?,?,?,?)",
+            (cache_key, _json2.dumps(payload), "pn", _time.time())
         )
         conn2.commit()
     finally:

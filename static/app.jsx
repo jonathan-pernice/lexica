@@ -553,7 +553,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setAiDescription(null);
     if (metavLoading) return;
     if (metavData && metavType === "person") return; // person bio replaces AI
-    if (metavData && metavType === "place" && metavData.strongs_g) return; // place has LSJ
+    if (metavData && metavType === "place" && metavData.strongs_g?.length > 0) return; // place has LSJ via strongs_g
+    if (isHebrew) return; // BDB covers Hebrew words
     if (!isPN && !entry.isKjv) return; // only for proper nouns
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
@@ -603,7 +604,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setLsjTab("def");
     setLsjSummary(null);
     // For PN place entries with a mapped strongs_g, use that for LSJ lookup
-    const placeStrongs = (isPN && metavType === "place" && metavData?.strongs_g)
+    const placeStrongs = (isPN && metavType === "place" && metavData?.strongs_g?.length > 0)
       ? metavData.strongs_g.replace(/^G/i, "") : null;
     const canLookup = !isHebrew && entry && (entry.greek || entry.strongs_raw || placeStrongs);
     if (!canLookup) { setLsjLoading(false); return; }
@@ -749,7 +750,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found in BDB.</div>
             )}
           </section>
-        ) : (!isPN || (metavType === "place" && metavData?.strongs_g)) && metavType !== "person" && (entry.greek || entry.strongs_raw || metavData?.strongs_g) && (
+        ) : (!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person" && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0) && (
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
