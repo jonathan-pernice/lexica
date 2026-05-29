@@ -1276,10 +1276,7 @@ function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordCl
 
   return (
     <div className="study-groups">
-      {/* DEBUG: remove after testing */}
-      <div style={{fontSize:"11px",color:"var(--ink-3)",padding:"4px 8px"}}>
-        citedStrongs: {citedStrongs ? `Set(${citedStrongs.size}): ${[...citedStrongs].slice(0,5).join(",")}` : "null"}
-      </div>
+
       <div className="study-toolbar">
         <div className="study-sort-toggle">
           <button className={"sort-btn " + (studySort === "curated" ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
@@ -2100,7 +2097,7 @@ function App() {
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
     if (mode === "ai") {
-      if (aiMeta && aiMeta.key_strongs && aiMeta.key_strongs.length > 0) return aiMeta.key_strongs;
+      if (aiMeta && aiMeta.keyStrongs && aiMeta.keyStrongs.length > 0) return aiMeta.keyStrongs;
       return null;
     }
     if (mode !== "search") return null;
