@@ -1311,13 +1311,13 @@ def search():
                     LEFT JOIN lexicon l ON l.strongs = w.strongs_base
                     WHERE (w.english_head = ? COLLATE NOCASE
                            OR w.english = ? COLLATE NOCASE
-                           OR strip_accents(l.translit) LIKE ? COLLATE NOCASE
+                           OR word_boundary(strip_accents(l.translit), ?)
                            OR strip_accents(l.lemma) = ?)
                       AND w.english IS NOT NULL AND w.english != ''
                       AND w.strongs_base != '*'
                     ORDER BY v.id, w.position
                     """,
-                    (q, q, f"{q_plain}%", q_plain),
+                    (q, q, q_plain, q_plain),
                 ).fetchall()
                 # Also search proper nouns (strongs='*') by name
                 pn_rows = conn.execute(
