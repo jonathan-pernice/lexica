@@ -620,7 +620,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="detail-greek"
                dir={isHebrew ? "rtl" : undefined}
                style={isHebrew ? {fontFamily: "var(--f-serif)", textAlign: "left"} : undefined}>
-            {isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || (isPN ? entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim() : entry.gloss))}
+            {isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || (isPN ? (entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim().split(/\s+/).find(w => /^[A-Z]/.test(w)) || entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim()) : entry.gloss))}
           </div>
           <div className="detail-translit-row">
             <span className="detail-translit">{isHebrew ? bdbEntry?.xlit : entry.translit}</span>
@@ -633,7 +633,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             </button>
             <button className="tool-btn" title="Share"><Icon.Share/></button>
           </div>
-          <div className="detail-gloss">{stripArticles(isPN ? entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim() : entry.gloss)}</div>
+          <div className="detail-gloss">{stripArticles(isPN ? (entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim().split(/\s+/).find(w => /^[A-Z]/.test(w)) || entry.gloss?.replace(/[^a-zA-Z\s'-]/g, "").trim()) : entry.gloss)}</div>
         </div>
 
         {(metavData || metavLoading) && (
