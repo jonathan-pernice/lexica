@@ -122,7 +122,9 @@ Otherwise return ONLY valid JSON, no markdown, no prose outside the JSON:
   "key_strongs": ["4102", "26"]
 }
 
-explanation — 1–3 sentences. What does the Greek text reveal: the lexical range
+explanation — 1–3 sentences. You MUST mention every term in key_strongs by its
+Greek or Hebrew lemma or transliteration. Conversely, every Greek or Hebrew term
+you discuss in the explanation MUST appear in key_strongs. What does the Greek text reveal: the lexical range
 of key terms, interpretive translation choices, scholarly disagreement. Never
 describe the query, the SQL, or which passages were targeted. Never mention
 the app, the database, data sources, or any technical implementation detail.
