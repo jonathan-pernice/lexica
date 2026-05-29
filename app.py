@@ -2220,6 +2220,30 @@ def metav_person(name):
                      (death_year IS NOT NULL) DESC
             LIMIT 1
         """, (name, name)).fetchone()
+        # Fallback: strip Greek suffix 'a' or 'as' (LXX adds vowel endings to Hebrew names)
+        if not row:
+            for suffix in ('as', 'a'):
+                if name.lower().endswith(suffix) and len(name) > len(suffix) + 2:
+                    alt = name[:-len(suffix)]
+                    row = conn.execute("""
+                        SELECT * FROM (
+                            SELECT p.person_id, p.name, p.surname, p.gender,
+                                   p.birth_year, p.death_year, p.birth_place, p.death_place
+                            FROM metav_people p
+                            WHERE p.name = ? COLLATE NOCASE
+                            UNION
+                            SELECT p.person_id, p.name, p.surname, p.gender,
+                                   p.birth_year, p.death_year, p.birth_place, p.death_place
+                            FROM metav_people p
+                            JOIN metav_people_aliases a ON a.person_id = p.person_id
+                            WHERE a.alias = ? COLLATE NOCASE
+                        )
+                        ORDER BY (birth_year IS NOT NULL) DESC,
+                                 (death_year IS NOT NULL) DESC
+                        LIMIT 1
+                    """, (alt, alt)).fetchone()
+                    if row:
+                        break
         if not row:
             return jsonify({"error": "not found"}), 404
 
