@@ -1994,7 +1994,7 @@ function App() {
                 />
               )}
 
-              {loading ? (
+              {(loading || aiLoading) ? (
                 <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--ink-3)", fontSize: "14px" }}>
                   Searching…
                 </div>
