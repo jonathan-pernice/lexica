@@ -1478,7 +1478,7 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
       {rows.map(({ sn, glosses, siblings, entry }) => (
         <div key={sn} className="gloss-group">
           <span className="gloss-group-head">
-            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(`G${sn}`)}>G{sn}</button>
+            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(strongsTag(sn))}>{strongsTag(sn)}</button>
             {entry && entry.translit && <span className="gloss-translit">{entry.translit}</span>}
             {glosses.length > 1 && <span className="gloss-also">appears as</span>}
           </span>
