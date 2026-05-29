@@ -1485,7 +1485,17 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     } else {
       // English reading order — words with a gloss or lexicon fallback
       const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.strongs_base === "*");
-      content = englishWords.map((w, i) => chip(w, `e${i}`));
+      content = englishWords.map((w, i) => {
+        // For null-english G* tokens, derive PN name from previous word's leading capital
+        if (w.strongs_base === "*" && !w.english && !w.english_head && i > 0) {
+          const prev = englishWords[i - 1];
+          const firstWord = (prev.english || "").split(/\s+/)[0];
+          if (firstWord && /^[A-Z]/.test(firstWord)) {
+            w = { ...w, english: firstWord, english_head: firstWord.toLowerCase() };
+          }
+        }
+        return chip(w, `e${i}`);
+      });
     }
 
     return (
