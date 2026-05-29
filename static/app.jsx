@@ -240,6 +240,7 @@ function Header({ activeView, onNavChange }) {
         <nav className="hdr-nav">
           <button className={"hdr-link " + (activeView === "search" ? "active" : "")} onClick={() => onNavChange("search")}>Search</button>
           <button className={"hdr-link " + (activeView === "library" ? "active" : "")} onClick={() => onNavChange("library")}>Library</button>
+          <button className={"hdr-link " + (activeView === "about" ? "active" : "")} onClick={() => onNavChange("about")}>About</button>
         </nav>
       </div>
     </header>
@@ -1581,10 +1582,11 @@ function AIAnswer({ query, explanation, keyStrongs, onPick }) {
 // GUIDED TOUR
 // ============================================================
 const TOUR_STEPS = [
-  { icon: "Search",  label: "The Lexicon",      body: "Search by English, Greek, transliteration, or Strong's number. Every word links to its full LSJ (Greek) or BDB (Hebrew) entry with a context-aware AI summary." },
-  { icon: "Book",    label: "The Library",      body: "Read in ABP, KJV, or parallel interlinear. Switch to Greek word order, enable Strong's badges, or go fully interlinear. Click any verse number to open its cross-references." },
-  { icon: "Panel",   label: "Cross-References", body: "Every verse connects to Torrey's Treasury of Scripture Knowledge — AI-curated to the strongest matches and synthesized into a thematic overview." },
-  { icon: "Sparkle", label: "Ask the Corpus",  body: "Ask in plain language: 'Where does Paul use pistis in Romans?' or 'Divine council passages in the OT.' The AI searches Greek and Hebrew simultaneously." },
+  { icon: "Book",    label: "Welcome to Lexica", body: "Lexica is a Greek and Hebrew word study tool built for the diligent Berean. No prior training required. Every word traces back to its Greek or Hebrew source so you can read what the text actually says — before any theological framework is applied. You won't be a scholar overnight, but you'll immediately be a Berean." },
+  { icon: "Search",  label: "The Lexicon",       body: "Search by English, Greek, Hebrew, transliteration, or Strong's number. Results span both Greek (LSJ) and Hebrew (BDB) — click any word for its full lexicon entry and a context-aware AI summary anchored in the source text." },
+  { icon: "Book",    label: "The Library",       body: "Read in ABP, KJV, or parallel. Enable Strong's badges or go fully interlinear — Hebrew script appears above OT words, Greek above NT. Click any word to open its lexicon entry. Click any verse number for cross-references." },
+  { icon: "Panel",   label: "Cross-References",  body: "Every verse connects to Torrey's Treasury of Scripture Knowledge — AI-curated to the strongest matches and synthesized into a thematic overview anchored in ABP vocabulary." },
+  { icon: "Sparkle", label: "Ask the Corpus",   body: "Ask in plain language: 'Where does pneuma appear in Genesis?' or 'Differences in how KJV and ABP render spirit in the OT.' The AI searches Greek and Hebrew simultaneously and cites specific passages.", donate: true },
 ];
 
 function GuidedTour({ onDone }) {
@@ -1604,6 +1606,15 @@ function GuidedTour({ onDone }) {
         <div className="tour-step-num">{step + 1} of {TOUR_STEPS.length}</div>
         <h2 className="tour-title">{cur.label}</h2>
         <p className="tour-body">{cur.body}</p>
+        {cur.donate && (
+          <p className="tour-donate">
+            Lexica is free and independent. If it's useful to you,{" "}
+            <a href="https://ko-fi.com/lexica" target="_blank" rel="noopener noreferrer">Ko-fi</a>
+            {" or "}
+            <a href="https://github.com/sponsors/jonathan-pernice" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a>
+            {" keeps it running."}
+          </p>
+        )}
         <div className="tour-dots">
           {TOUR_STEPS.map((_, i) => (
             <button key={i} className={"tour-dot" + (i === step ? " active" : "")} onClick={() => setStep(i)} aria-label={`Step ${i + 1}`} />
@@ -1621,6 +1632,44 @@ function GuidedTour({ onDone }) {
         </div>
       </div>
     </>
+  );
+}
+
+// ============================================================
+// ABOUT VIEW
+// ============================================================
+function AboutView() {
+  return (
+    <div className="about-view">
+      <div className="about-inner">
+        <h1 className="about-title">About Lexica</h1>
+        <p className="about-lead">A Greek and Hebrew word study tool for the diligent Berean. No seminary required.</p>
+
+        <h2 className="about-h2">What Lexica does</h2>
+        <p className="about-p">Lexica lets you trace any English word in the Bible back to its Greek or Hebrew source and explore its full meaning — not just the translation choice made by one committee. Every word links to the Liddell-Scott-Jones Greek lexicon (LSJ) or Brown-Driver-Briggs Hebrew lexicon (BDB), the two most comprehensive scholarly references available.</p>
+        <p className="about-p">The primary text is the <b>Apostolic Bible Polyglot (ABP)</b> — a word-for-word Greek interlinear covering both the Septuagint (OT) and New Testament. The <b>King James Version (KJV)</b> is available in parallel and interlinear modes for comparison. Cross-references come from Torrey's Treasury of Scripture Knowledge.</p>
+
+        <h2 className="about-h2">The Berean approach</h2>
+        <p className="about-p">The Bereans "received the word with all readiness of mind, and searched the scriptures daily" (Acts 17:11). Lexica is built on that same posture: let the Greek and Hebrew speak first, before any theological system is imported. No commentary, no denominational lens, no conclusions pre-loaded. The text speaks — you decide what it means.</p>
+        <p className="about-p">Every AI-generated summary is anchored in the source vocabulary of the ABP. The system prompt explicitly forbids importing theology from outside the text.</p>
+
+        <h2 className="about-h2">Methodology</h2>
+        <ul className="about-ul">
+          <li>Strong's numbers are the bridge between English, Greek, and Hebrew</li>
+          <li>Greek definitions draw from LSJ — the standard classical Greek reference</li>
+          <li>Hebrew definitions draw from BDB — the standard OT Hebrew reference</li>
+          <li>AI search generates SQL against the full lexicon corpus — not a summary or paraphrase</li>
+          <li>Translation comparisons surface where KJV and ABP make different rendering choices for the same source word</li>
+        </ul>
+
+        <h2 className="about-h2">Support Lexica</h2>
+        <p className="about-p">Lexica is free, independent, and has no ads. It's maintained by one person who thinks serious Bible study tools shouldn't cost hundreds of dollars or require a seminary login. If it's been useful to you, a small contribution keeps the lights on.</p>
+        <div className="about-donate">
+          <a className="donate-btn kofi" href="https://ko-fi.com/lexica" target="_blank" rel="noopener noreferrer">☕ Ko-fi</a>
+          <a className="donate-btn github" href="https://github.com/sponsors/jonathan-pernice" target="_blank" rel="noopener noreferrer">♥ GitHub Sponsors</a>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1874,12 +1923,13 @@ function App() {
       <Header activeView={mainView} onNavChange={handleNavChange}/>
       <main className="main">
         <div className="main-inner">
+          {mainView === "about" && <AboutView />}
           {libEverVisited && (
             <div style={{ display: mainView === "library" ? undefined : "none" }}>
               <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onTranslationChange={setLibTranslation} />
             </div>
           )}
-          <div style={{ display: mainView === "library" ? "none" : undefined }}>
+          <div style={{ display: (mainView === "library" || mainView === "about") ? "none" : undefined }}>
           <><SearchBar
             q1={q1} setQ1={setQ1}
             q2={q2} setQ2={setQ2}
@@ -2098,6 +2148,10 @@ function App() {
           <button className={"mobile-tab" + (mainView === "library" ? " active" : "")} onClick={() => handleNavChange("library")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3"/></svg>
             Library
+          </button>
+          <button className={"mobile-tab" + (mainView === "about" ? " active" : "")} onClick={() => handleNavChange("about")}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+            About
           </button>
         </nav>
       )}

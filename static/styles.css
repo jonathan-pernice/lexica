@@ -1816,3 +1816,83 @@ input { font-family: inherit; }
 }
 .tour-btn-next:hover,
 .tour-btn-done:hover { opacity: 0.85; }
+
+/* ── Tour donate nudge ───────────────────────────────────── */
+.tour-donate {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ink-3);
+  text-align: center;
+}
+.tour-donate a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ── About view ──────────────────────────────────────────── */
+.about-view {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+.about-inner { display: flex; flex-direction: column; gap: 0; }
+.about-title {
+  font-family: var(--f-serif);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.about-lead {
+  font-size: 18px;
+  color: var(--ink-2);
+  margin: 0 0 36px;
+  line-height: 1.5;
+}
+.about-h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 32px 0 10px;
+}
+.about-p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  margin: 0 0 12px;
+}
+.about-ul {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink-2);
+  padding-left: 20px;
+  margin: 0 0 12px;
+}
+.about-donate {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.donate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.12s;
+}
+.donate-btn:hover { opacity: 0.85; }
+.donate-btn.kofi {
+  background: #ff5e5b;
+  color: #fff;
+}
+.donate-btn.github {
+  background: var(--ink);
+  color: #fff;
+}
