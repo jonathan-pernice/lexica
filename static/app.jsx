@@ -1110,7 +1110,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   }));
 
   const wordMode    = showStrongs || showInterlinear || wordOrder === "greek";
-  const kjvWordMode = showStrongs || (translation === "parallel" && wordOrder === "greek");
+  const kjvWordMode = showStrongs || showInterlinear || (translation === "parallel" && wordOrder === "greek");
 
   const handleVerseNum = onVerseNumberClick && selBook
     ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse, translation)
@@ -1283,13 +1283,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <span key={i}
                 className={"lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
                 onClick={clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined}>
-                <span className="lib-iw-english">{w.word}{w.punc || ""}</span>
                 {showInterlinear && w.lemma && (
                   <span className="lib-iw-greek" dir={isHebrew ? "rtl" : undefined}
                     style={isHebrew ? {fontFamily: "var(--f-serif)"} : undefined}>
                     {w.lemma}
                   </span>
                 )}
+                <span className="lib-iw-english">{w.word}{w.punc || ""}</span>
                 {showStrongs && (sid
                   ? <span className="lib-iw-strongs">{sid}</span>
                   : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
