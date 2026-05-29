@@ -527,7 +527,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (!isPN && !entry.isKjv && entry.greek && entry.translit) return;
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
-    const _DIVINE_SKIP = new Set(["God","LORD","Lord","YHWH","Yahweh","Jehovah","Elohim","Adonai","El","Holy"]);
+    const _DIVINE_SKIP = new Set(["LORD","Lord","YHWH","Yahweh","Jehovah","Holy"]);
     if (_DIVINE_SKIP.has(name)) return;
     let cancelled = false;
     setMetavLoading(true);
@@ -2073,7 +2073,10 @@ function App() {
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
-    if (mode === "ai") return (aiMeta && aiMeta.key_strongs) ? aiMeta.key_strongs : []; // empty = no highlight
+    if (mode === "ai") {
+      if (aiMeta && aiMeta.key_strongs && aiMeta.key_strongs.length > 0) return aiMeta.key_strongs;
+      return null; // null = highlight all matched words from entryMap
+    }
     if (mode !== "search") return null; // null = highlight all matched
     const m = /^[Gg]([\d.]+)$/.exec(q1.trim());
     return m ? [{ strongs_base: m[1], strongs: `G${m[1]}` }] : null;
