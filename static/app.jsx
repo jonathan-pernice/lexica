@@ -529,7 +529,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [kjvVerseText, setKjvVerseText] = useState("");
   useEffect(() => {
     setKjvVerseText("");
-    if (!entry || (!entry.isKjv && !isHebrew)) return;
+    if (!entry || (!entry.isKjv && !isHebrew && metavType !== "place")) return;
     let cancelled = false;
     api.kjvVerse(entry.book, entry.chapter, entry.verse)
       .then(d => { if (!cancelled) setKjvVerseText(d.text || ""); })
@@ -680,7 +680,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found in BDB.</div>
             )}
           </section>
-        ) : !isPN && (entry.greek || entry.strongs_raw) && (
+        ) : !isPN && metavType !== "place" && (entry.greek || entry.strongs_raw) && (
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
@@ -760,11 +760,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         <section className="detail-section">
           <h4 className="detail-h">
             Verse — {entry.ref}
-            <span className="detail-h-sub">{(entry.isKjv || isHebrew) ? "KJV" : "LXX (ABP English)"}</span>
+            <span className="detail-h-sub">{(entry.isKjv || isHebrew || metavType === "place") ? "KJV" : "LXX (ABP English)"}</span>
           </h4>
           <blockquote className="verse">
             <span className="verse-num">{entry.verse}</span>
-            {(entry.isKjv || isHebrew) ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
+            {(entry.isKjv || isHebrew || metavType === "place") ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
           </blockquote>
           {showInterlinear && (
             <div className="interlinear">
