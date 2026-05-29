@@ -500,7 +500,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
   return (
     <aside className={"detail " + (isMobile ? "detail-sheet" : "detail-side")} style={isMobile ? sheetStyle : {}} role="dialog" aria-label="Lexicon detail">
-      {isMobile && <div className="sheet-handle" aria-hidden="true" {...handleProps}></div>}
+      {isMobile && <div className="sheet-drag-zone" aria-hidden="true" {...handleProps}><div className="sheet-handle"></div></div>}
       <div className="detail-head">
         <div className="detail-head-l">
           <span className="card-badge solid">{entry.strongs}</span>
@@ -709,7 +709,7 @@ function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation, onA
 
   return (
     <aside className={"xref-panel " + (isMobile ? "detail-sheet" : "detail-side")} style={isMobile ? xrefSheetStyle : {}} role="dialog" aria-label="Related Passages">
-      {isMobile && <div className="sheet-handle" aria-hidden="true" {...swipeProps} />}
+      {isMobile && <div className="sheet-drag-zone" aria-hidden="true" {...swipeProps}><div className="sheet-handle"></div></div>}
       <div className="detail-head">
         <div className="detail-head-l">
           <span className="detail-pos">{sourceRef}</span>
