@@ -447,7 +447,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   useEffect(() => {
     setMetavData(null);
     setMetavType(null);
-    const name = (entry.pnName || entry.gloss || "").trim();
+    const name = (entry.pnName || entry.gloss || "").replace(/[^a-zA-Z\s'-]/g, "").trim();
     if (!name || name.length < 2) return;
     let cancelled = false;
     setMetavLoading(true);
@@ -633,7 +633,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found in BDB.</div>
             )}
           </section>
-        ) : (entry.greek || entry.strongs_raw) && (
+        ) : !isPN && (entry.greek || entry.strongs_raw) && (
           <section className="detail-section">
             <div className="lsj-head">
               <h4 className="detail-h" style={{ margin: 0 }}>
