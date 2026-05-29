@@ -521,12 +521,14 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     api.metavPerson(name)
       .then(d => {
         if (cancelled) return;
-        if (!d.error) { setMetavData(d); setMetavType("person"); setMetavLoading(false); return; }
+        const hasData = !d.error && (d.birth_year || d.death_year || d.groups?.length || d.relationships?.length);
+        if (hasData) { setMetavData(d); setMetavType("person"); setMetavLoading(false); return; }
         return api.metavPlace(name);
       })
       .then(d => {
         if (cancelled || !d) return;
         if (!d.error) { setMetavData(d); setMetavType("place"); }
+        else if (!metavData) setMetavLoading(false);
         setMetavLoading(false);
       })
       .catch(() => { if (!cancelled) setMetavLoading(false); });
