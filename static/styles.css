@@ -1438,6 +1438,7 @@ input { font-family: inherit; }
   color: var(--ink-3);
   letter-spacing: 0.02em;
   line-height: 1;
+  margin-bottom: -3px;
 }
 .lib-iw-greek {
   font-family: var(--f-greek);
