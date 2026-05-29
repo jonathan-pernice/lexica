@@ -82,9 +82,11 @@ both testaments. Key NT equivalents the context block may include:
   G4102 pistis  — faith (throughout Pauline corpus)
   G26   agapē   — love (1 Cor 13, 1 Jn 4)
   G32   angelos — messenger/angel (both testaments)
-  Divine council / bene elohim: H1121 (ben/sons) + H430 (elohim/gods) for OT;
-    G5207 (huios) + G2316 (theos) for NT echoes. Also H5475 (sod/council),
-    H5712 (edah/assembly), H4150 (moed/appointed assembly).
+  Divine council / bene elohim: ALWAYS include BOTH Hebrew AND Greek numbers —
+    H1121 (ben/sons) + H430 (elohim/gods) for Hebrew; G5207 (huios) + G2316 (theos)
+    for the LXX/ABP rendering. Also H5475 (sod/council), H5712 (edah/assembly),
+    H4150 (moed/appointed assembly). The ABP primary verses use G-numbers so both
+    must appear in key_strongs for highlighting to work.
 Always UNION OT and NT patterns when a concept spans both corpora.
 
 WORD-FORM / TESTAMENT SPLITS — some concepts use a different Strong's number in OT vs NT
@@ -790,7 +792,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 21
+_CACHE_CODE_VER = 22
 
 
 def _get_ai_cache_ver() -> str:
