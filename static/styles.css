@@ -1770,6 +1770,7 @@ input { font-family: inherit; }
 .tour-dots {
   display: flex;
   gap: 7px;
+  margin-top: 20px;
   margin-bottom: 24px;
 }
 
@@ -1822,6 +1823,7 @@ input { font-family: inherit; }
   display: flex;
   gap: 10px;
   margin-top: 16px;
+  margin-bottom: 8px;
   justify-content: center;
   flex-wrap: wrap;
 }
