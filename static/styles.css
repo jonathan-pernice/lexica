@@ -543,11 +543,8 @@ input { font-family: inherit; }
   width: 38px; height: 4px;
   background: var(--rule-2);
   border-radius: 2px;
-  margin: 10px auto 0;
-  padding: 12px 30px;
-  box-sizing: content-box;
+  margin: 10px auto 6px;
   cursor: grab;
-  touch-action: none;
 }
 
 .detail-head {
