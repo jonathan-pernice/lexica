@@ -177,14 +177,8 @@ def parse_words(verse_text: str) -> list:
                         words[i]        = (seq,      remainder, prev_strongs, prev_gpos, prev_bid)
                         break
 
-        elif eng is not None:
-            # Pattern: "to Philemon", "of Jesus" — strip leading stop words from G* gloss
-            tokens = eng.split()
-            while tokens and re.sub(r"[^\w'-]", '', tokens[0]).lower() in _PN_STOP:
-                tokens = tokens[1:]
-            if tokens and len(tokens) < len(eng.split()):
-                cleaned = _clean_english(' '.join(tokens))
-                words[i] = (seq, cleaned, strongs, gpos, bid)
+        # Note: G* tokens with existing english (e.g. "to Philemon") are kept as-is.
+        # extractProperName() in the frontend handles stripping for metaV lookup.
 
     return words
 
