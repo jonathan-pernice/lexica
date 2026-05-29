@@ -551,6 +551,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [aiDescLoading, setAiDescLoading] = useState(false);
   useEffect(() => {
     setAiDescription(null);
+    setAiDescLoading(false);
     if (metavLoading) return;
     if (metavData && metavType === "person") return; // person bio replaces AI
     if (metavData && metavType === "place" && metavData.strongs_g?.length > 0) return; // place has LSJ via strongs_g
