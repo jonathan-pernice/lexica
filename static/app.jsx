@@ -524,7 +524,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setMetavType(null);
     // Skip metaV for words with a real Greek lemma — those belong to LSJ
     // Exception: KJV entries may be proper nouns even with Greek lemmas
-    if (!isPN && !entry.isKjv && entry.greek && entry.translit) return;
+    if (!isPN && !entry.isKjv && entry.greek && entry.translit && entry.strongs_raw !== "2316") return;
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
     const _DIVINE_SKIP = new Set(["LORD","Lord","YHWH","Yahweh","Jehovah","Holy"]);
