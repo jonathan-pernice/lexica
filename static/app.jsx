@@ -527,6 +527,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (!isPN && !entry.isKjv && entry.greek && entry.translit) return;
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
+    const _DIVINE_SKIP = new Set(["God","LORD","Lord","YHWH","Yahweh","Jehovah","Elohim","Adonai","El","Holy"]);
+    if (_DIVINE_SKIP.has(name)) return;
     let cancelled = false;
     setMetavLoading(true);
     api.metavPerson(name)
@@ -728,7 +730,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
         {(aiDescription || aiDescLoading) && (
           <section className="detail-section">
-            <h4 className="detail-h">{metavType === "place" ? "Biblical Place" : "Biblical Person"}<span className="lsj-badge" style={{background:"var(--accent)", color:"#fff"}}>AI</span></h4>
+            <h4 className="detail-h">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}<span className="lsj-badge" style={{background:"var(--accent)", color:"#fff"}}>AI</span></h4>
             {aiDescLoading
               ? <div className="lsj-def" style={{color:"var(--ink-4)", fontStyle:"italic", padding:"8px 0"}}>Looking up…</div>
               : <p className="detail-p" style={{marginTop:"8px"}}>{aiDescription}</p>
