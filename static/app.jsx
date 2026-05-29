@@ -766,7 +766,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <section className="detail-section">
             <h4 className="detail-h">KJV Occurrences</h4>
             <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onNameSearch && onNameSearch((entry.translit || entry.gloss || "").replace(/[^a-zA-Z\s'-]/g, "").trim())}>
+              onClick={() => onStrongsSearch && onStrongsSearch(entry.strongs)}>
               <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
             </button>
           </section>
