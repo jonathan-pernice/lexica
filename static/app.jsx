@@ -1489,6 +1489,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       // English reading order — words with a gloss or lexicon fallback
       const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.english_head);
       content = englishWords.map((w, i) => {
+        // If this G* chip's name already appears in the preceding chip's gloss,
+        // hide it visually but wire the preceding chip to also do metaV lookup
+        if (w.strongs_base === "*" && w.english && i > 0) {
+          const prev = englishWords[i - 1];
+          if (prev.english && prev.english.includes(w.english.replace(/[.,;:!?]/g, ""))) {
+            return null; // hidden — preceding chip handles metaV via extractProperName
+          }
+        }
         return chip(w, `e${i}`);
       });
     }
