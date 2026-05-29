@@ -735,15 +735,6 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </section>
         )}
 
-        {isPN && metavType !== "place" && entry.gloss && onNameSearch && (
-          <section className="detail-section">
-            <h4 className="detail-h">Corpus</h4>
-            <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onNameSearch(entry.gloss.replace(/[^a-zA-Z\s'-]/g, "").trim())}>
-              Search all appearances <Icon.ArrowRight/>
-            </button>
-          </section>
-        )}
 
         {!isHebrew && !isPN && abpCount !== null && abpCount > 0 && (
           <section className="detail-section">
