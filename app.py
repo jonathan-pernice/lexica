@@ -2291,6 +2291,55 @@ def metav_person(name):
     })
 
 
+@app.route("/api/metav/ai-description/<path:name>")
+def metav_ai_description(name):
+    """Generate a brief AI description for a biblical person or place with no metaV data."""
+    if not _anthropic:
+        return jsonify({"error": "AI not available"}), 503
+
+    cache_key = f"pn:{name.lower()}"
+    conn = db_ro()
+    try:
+        cached = conn.execute(
+            "SELECT payload FROM ai_search_cache WHERE query = ? AND ver_key = 'pn'",
+            (cache_key,)
+        ).fetchone()
+    finally:
+        conn.close()
+
+    if cached:
+        import json as _json
+        return jsonify(_json.loads(cached["payload"]))
+
+    try:
+        msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=120,
+            temperature=0,
+            system="You are a concise biblical reference. Answer in 1-2 sentences only. "
+                   "State who the person is, their role, key relationships, and main passages. "
+                   "No speculation, no theology — text first. No markdown.",
+            messages=[{"role": "user", "content": f"Who is {name} in the Bible?"}],
+        )
+        description = msg.content[0].text.strip() if msg.content else ""
+    except Exception as e:
+        log.error("AI description failed for %s: %s", name, e)
+        return jsonify({"error": "AI unavailable"}), 500
+
+    payload = {"name": name, "description": description}
+    conn2 = db()
+    try:
+        conn2.execute(
+            "INSERT OR REPLACE INTO ai_search_cache (query, payload, ver_key) VALUES (?,?,?)",
+            (cache_key, __import__('json').dumps(payload), "pn")
+        )
+        conn2.commit()
+    finally:
+        conn2.close()
+
+    return jsonify(payload)
+
+
 @app.route("/api/metav/place/<path:name>")
 def metav_place(name):
     conn = db_ro()

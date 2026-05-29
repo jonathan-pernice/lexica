@@ -52,6 +52,8 @@ const api = {
     fetch(`/api/pn-count/${encodeURIComponent(name)}`).then(r => r.json()),
   metavPerson: (name) =>
     fetch(`/api/metav/person/${encodeURIComponent(name)}`).then(r => r.json()),
+  metavAiDescription: (name) =>
+    fetch(`/api/metav/ai-description/${encodeURIComponent(name)}`).then(r => r.json()),
   metavPlace: (name) =>
     fetch(`/api/metav/place/${encodeURIComponent(name)}`).then(r => r.json()),
   bdb: (sid) =>
@@ -544,6 +546,25 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     return () => { cancelled = true; };
   }, [entry && entry.id]);
 
+  // AI description fallback for PN entries with no metaV data
+  const [aiDescription, setAiDescription] = useState(null);
+  const [aiDescLoading, setAiDescLoading] = useState(false);
+  useEffect(() => {
+    setAiDescription(null);
+    if (metavLoading) return;
+    if (metavData) return; // metaV has data, no need for AI
+    if (!isPN && !entry.isKjv) return; // only for proper nouns
+    const name = extractProperName(entry.pnName || entry.gloss || "");
+    if (!name || name.length < 2) return;
+    let cancelled = false;
+    setAiDescLoading(true);
+    api.metavAiDescription(name)
+      .then(d => { if (!cancelled && !d.error) setAiDescription(d.description || null); })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setAiDescLoading(false); });
+    return () => { cancelled = true; };
+  }, [entry && entry.id, metavData, metavLoading]);
+
   // Hebrew BDB lookup
   const [bdbEntry, setBdbEntry] = useState(null);
   const [bdbLoading, setBdbLoading] = useState(false);
@@ -699,6 +720,16 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                 }
               </div>
             ) : null}
+          </section>
+        )}
+
+        {(aiDescription || aiDescLoading) && (
+          <section className="detail-section">
+            <h4 className="detail-h">Biblical Person<span className="lsj-badge" style={{background:"var(--accent)", color:"#fff"}}>AI</span></h4>
+            {aiDescLoading
+              ? <div className="lsj-def" style={{color:"var(--ink-4)", fontStyle:"italic", padding:"8px 0"}}>Looking up…</div>
+              : <p className="detail-p" style={{marginTop:"8px"}}>{aiDescription}</p>
+            }
           </section>
         )}
 
