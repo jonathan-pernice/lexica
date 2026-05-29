@@ -1049,8 +1049,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
               definition: "", derivation: "", is_function: false,
             });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
+            const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
             const isCited = clickable && entryMap.has(wnum) &&
-              (!citedStrongs || citedStrongs.has(w.strongs_base) || citedStrongs.has(w.strongs));
+              (!citedStrongs || citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum) || citedStrongs.has(w.strongs));
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
