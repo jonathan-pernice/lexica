@@ -1910,10 +1910,12 @@ function App() {
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
+    if (mode === "ai" && aiMeta && aiMeta.key_strongs && aiMeta.key_strongs.length)
+      return aiMeta.key_strongs;
     if (mode !== "search") return null;
     const m = /^[Gg]([\d.]+)$/.exec(q1.trim());
-    return m ? m[1] : null;
-  }, [mode, q1]);
+    return m ? [{ strongs_base: m[1], strongs: `G${m[1]}` }] : null;
+  }, [mode, q1, aiMeta]);
 
   // Count of distinct primary verses (AI mode only)
   const primaryVerseCount = useMemo(() => {
