@@ -824,8 +824,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
               definition: "", derivation: "", is_function: false,
             });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
+            const isCited = clickable && entryMap.has(wnum);
             return (
-              <span key={key} className={"study-word-wrap" + (clickable ? " match" : "")}
+              <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
                 {hasPos && <span className="study-pos">{w.greek_pos}</span>}
                 <span className="study-word">{label}</span>
