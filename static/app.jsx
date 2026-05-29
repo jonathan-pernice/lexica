@@ -1411,7 +1411,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     // Plain chip (English mode or non-bracketed word in Greek mode)
     const chip = (w, key) => {
       const isPN = w.strongs_base === "*";
-      const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english || w.english_head));
+      const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english || w.english_head) && (w.english || w.english_head));
       return (
         <span key={key}
           className={"lib-word" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
@@ -1487,16 +1487,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       });
     } else {
       // English reading order — words with a gloss or lexicon fallback
-      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.strongs_base === "*");
+      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.english_head);
       content = englishWords.map((w, i) => {
-        // For null-english G* tokens, derive PN name from previous word's leading capital
-        if (w.strongs_base === "*" && !w.english && !w.english_head && i > 0) {
-          const prev = englishWords[i - 1];
-          const capitalWord = extractProperName(prev.english || "");
-          if (capitalWord && capitalWord !== (prev.english || "").replace(/[^a-zA-Z\s'-]/g, "").trim()) {
-            w = { ...w, english: capitalWord, english_head: capitalWord.toLowerCase() };
-          }
-        }
         return chip(w, `e${i}`);
       });
     }
