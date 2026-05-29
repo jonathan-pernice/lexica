@@ -1002,7 +1002,7 @@ function studyWordLabel(w) {
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, kjvCache }) {
+function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
   const [words, setWords] = useState(null);
   const [kjvText, setKjvText] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -1057,12 +1057,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
     return m;
   }, [allResults, book, chapter, verse]);
 
-  // Only highlight words whose strongs matches the primary searched strongs
-  const citedStrongs = useMemo(() => {
-    if (primaryStrongs === null) return null; // null = highlight all matched (search mode)
-    if (!primaryStrongs.length) return new Set(); // empty = highlight nothing (AI with no key_strongs)
-    return new Set(primaryStrongs.map(s => s.strongs_base));
-  }, [primaryStrongs]);
+  // citedStrongs is now passed directly as a prop from App level — no local computation needed
 
   return (
     <div className="study-verse" ref={rowRef}>
@@ -1165,7 +1160,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, kjvCache }) {
+function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
@@ -1192,6 +1187,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
               onReadInContext={onReadInContext}
               textMode={textMode}
               primaryStrongs={primaryStrongs}
+              citedStrongs={citedStrongs}
               kjvCache={kjvCache}
             />
           ))}
@@ -1204,7 +1200,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
-function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInContext }) {
+function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordClick, onReadInContext }) {
   const [studySort, setStudySort] = useState("curated");
   const [textMode, setTextMode] = useState("abp"); // "abp" | "kjv"
   const [kjvCache, setKjvCache] = useState({}); // pre-fetched KJV verse words
@@ -1280,7 +1276,7 @@ function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInC
     ? groups.map(g => ({ ...g, verses: g.verses.filter(v => !v.is_primary && !v.is_additional) })).filter(g => g.verses.length > 0)
     : [];
 
-  const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode, primaryStrongs, kjvCache };
+  const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache };
 
   return (
     <div className="study-groups">
@@ -2105,12 +2101,25 @@ function App() {
   const primaryStrongs = useMemo(() => {
     if (mode === "ai") {
       if (aiMeta && aiMeta.key_strongs && aiMeta.key_strongs.length > 0) return aiMeta.key_strongs;
-      return null; // null = highlight all matched words from entryMap
+      return null;
     }
-    if (mode !== "search") return null; // null = highlight all matched
+    if (mode !== "search") return null;
     const m = /^[Gg]([\d.]+)$/.exec(q1.trim());
     return m ? [{ strongs_base: m[1], strongs: `G${m[1]}` }] : null;
   }, [mode, q1, aiMeta]);
+
+  // Compute citedStrongs at App level — single source of truth, no prop-threading issues
+  const citedStrongsApp = useMemo(() => {
+    if (!primaryStrongs || !primaryStrongs.length) return null;
+    const s = new Set();
+    for (const p of primaryStrongs) {
+      if (p.strongs_base) {
+        s.add(p.strongs_base);
+        s.add(p.strongs_base.replace(/^[GH]/i, "")); // bare number
+      }
+    }
+    return s.size > 0 ? s : null;
+  }, [primaryStrongs]);
 
   // Count of distinct primary verses (AI mode only)
   const primaryVerseCount = useMemo(() => {
@@ -2403,7 +2412,7 @@ function App() {
                   <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
                 </div>
               ) : viewMode === "study" ? (
-                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
+                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
               ) : (
                 <div className="results">
                   {displayed.map((entry) => (
