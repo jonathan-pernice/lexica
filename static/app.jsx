@@ -406,8 +406,8 @@ function LeafletMap({ lat, lon, name }) {
       scrollWheelZoom: false,
       attributionControl: false,
     });
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
+    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
     }).addTo(map);
     window.L.marker([lat, lon]).addTo(map).bindPopup(name).openPopup();
     instanceRef.current = map;
