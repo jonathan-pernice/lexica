@@ -1818,15 +1818,12 @@ input { font-family: inherit; }
 .tour-btn-done:hover { opacity: 0.85; }
 
 /* ── Tour donate nudge ───────────────────────────────────── */
-.tour-donate {
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--ink-3);
-  text-align: center;
-}
-.tour-donate a {
-  color: var(--accent);
-  text-decoration: underline;
+.tour-donate-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 /* ── About view ──────────────────────────────────────────── */

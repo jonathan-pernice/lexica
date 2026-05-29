@@ -1586,7 +1586,8 @@ const TOUR_STEPS = [
   { icon: "Search",  label: "The Lexicon",       body: "Search by English, Greek, Hebrew, transliteration, or Strong's number. Results span both Greek (LSJ) and Hebrew (BDB) — click any word for its full lexicon entry and a context-aware AI summary anchored in the source text." },
   { icon: "Book",    label: "The Library",       body: "Read in ABP, KJV, or parallel. Enable Strong's badges or go fully interlinear — Hebrew script appears above OT words, Greek above NT. Click any word to open its lexicon entry. Click any verse number for cross-references." },
   { icon: "Panel",   label: "Cross-References",  body: "Every verse connects to Torrey's Treasury of Scripture Knowledge — AI-curated to the strongest matches and synthesized into a thematic overview anchored in ABP vocabulary." },
-  { icon: "Sparkle", label: "Ask the Corpus",   body: "Ask in plain language: 'Where does pneuma appear in Genesis?' or 'Differences in how KJV and ABP render spirit in the OT.' The AI searches Greek and Hebrew simultaneously and cites specific passages.", donate: true },
+  { icon: "Sparkle", label: "Ask the Corpus",    body: "Ask in plain language: 'Where does pneuma appear in Genesis?' or 'Differences in how KJV and ABP render spirit in the OT.' The AI searches Greek and Hebrew simultaneously and cites specific passages." },
+  { icon: "Book",    label: "Support Lexica",    body: "Lexica is free, independent, and has no ads. It's maintained by one person who thinks serious Bible study tools shouldn't cost hundreds of dollars. If it's been useful to your studies, a small contribution keeps it running.", donate: true },
 ];
 
 function GuidedTour({ onDone }) {
@@ -1607,13 +1608,10 @@ function GuidedTour({ onDone }) {
         <h2 className="tour-title">{cur.label}</h2>
         <p className="tour-body">{cur.body}</p>
         {cur.donate && (
-          <p className="tour-donate">
-            Lexica is free and independent. If it's useful to you,{" "}
-            <a href="https://ko-fi.com/lexica" target="_blank" rel="noopener noreferrer">Ko-fi</a>
-            {" or "}
-            <a href="https://github.com/sponsors/jonathan-pernice" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a>
-            {" keeps it running."}
-          </p>
+          <div className="tour-donate-btns">
+            <a className="donate-btn kofi" href="https://ko-fi.com/lexica" target="_blank" rel="noopener noreferrer">☕ Ko-fi</a>
+            <a className="donate-btn github" href="https://github.com/sponsors/jonathan-pernice" target="_blank" rel="noopener noreferrer">♥ GitHub Sponsors</a>
+          </div>
         )}
         <div className="tour-dots">
           {TOUR_STEPS.map((_, i) => (
