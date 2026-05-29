@@ -1069,9 +1069,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             : kjvText.map((w, i) => {
                 const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
                 const sidBare = sid ? sid.replace(/^[GH]/i, "") : null;
-                const isCited = sid &&
-                  citedStrongs != null && citedStrongs.size > 0 &&
-                  (entryMap.has(sid) || entryMap.has(sidBare)) &&
+                const isCited = sid && citedStrongs != null && citedStrongs.size > 0 &&
                   (citedStrongs.has(sid) || citedStrongs.has(sidBare));
                 const kjvEntry = sid ? {
                   id: `kjvstudy-${book}-${chapter}-${verse}-${i}`,
@@ -1119,10 +1117,8 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
             const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
-            const isCited = clickable &&
-              citedStrongs != null && citedStrongs.size > 0 &&
-              entryMap.has(wnum) &&
-              (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum) || citedStrongs.has(wnum));
+            const isCited = clickable && citedStrongs != null && citedStrongs.size > 0 &&
+              (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum));
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
@@ -2114,8 +2110,10 @@ function App() {
     const s = new Set();
     for (const p of primaryStrongs) {
       if (p.strongs_base) {
-        s.add(p.strongs_base);
-        s.add(p.strongs_base.replace(/^[GH]/i, "")); // bare number
+        s.add(p.strongs_base);                            // as-is (e.g. "4151" or "G4151")
+        s.add(p.strongs_base.replace(/^[GH]/i, ""));     // bare (e.g. "4151")
+        s.add(`G${p.strongs_base.replace(/^[GH]/i, "")}`); // G-prefixed
+        s.add(`H${p.strongs_base.replace(/^[GH]/i, "")}`); // H-prefixed
       }
     }
     return s.size > 0 ? s : null;
