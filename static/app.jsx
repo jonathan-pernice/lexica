@@ -527,9 +527,6 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (!isPN && !entry.isKjv && entry.greek && entry.translit) return;
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
-    // Skip metaV for divine names — these are theological titles, not biographical persons
-    const _DIVINE_NAMES = new Set(["God","LORD","Lord","YHWH","Yahweh","Jehovah","Elohim","Adonai","El"]);
-    if (_DIVINE_NAMES.has(name)) return;
     let cancelled = false;
     setMetavLoading(true);
     api.metavPerson(name)
