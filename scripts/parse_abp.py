@@ -139,6 +139,7 @@ def parse_words(verse_text: str) -> list:
 
         if eng is None and i > 0:
             # Pattern: "Abel becameG1096 G*" → split ("became", G1096) + ("Abel", G*)
+            # Swap positions so name (G*) appears before the verb
             prev_seq, prev_eng, prev_strongs, prev_gpos, prev_bid = words[i - 1]
             if prev_eng:
                 tokens = prev_eng.split()
@@ -149,7 +150,7 @@ def parse_words(verse_text: str) -> list:
                         remainder = ' '.join(tokens[:j] + tokens[j+1:]).strip()
                         remainder = _clean_english(remainder) if remainder else None
                         words[i - 1] = (prev_seq, remainder, prev_strongs, prev_gpos, prev_bid)
-                        words[i]     = (seq, name, strongs, gpos, bid)
+                        words[i]     = (seq,      name,      strongs,      gpos,      bid)
                         break
 
         elif eng is not None:

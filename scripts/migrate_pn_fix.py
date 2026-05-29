@@ -72,13 +72,14 @@ def migrate(db_path: str, text_dirs: list[Path]) -> None:
                     old_eng = old_row["english"]
                     new_head = _head_word(new_eng) if new_eng else None
 
-                    # Only update if something changed
+                    # Update english/english_head if changed
                     if old_eng != new_eng:
                         conn.execute(
                             "UPDATE words SET english=?, english_head=? WHERE id=?",
                             (new_eng, new_head, old_row["id"]),
                         )
                         total_updated += 1
+
 
     conn.commit()
     conn.close()
