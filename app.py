@@ -2431,6 +2431,15 @@ def ai_search():
                         row = ks_conn.execute(
                             "SELECT lemma, translit, strongs_def, derivation FROM lexicon WHERE strongs = ?", (sn,)
                         ).fetchone()
+                        # Fallback: bare number without prefix may be Hebrew — try BDB
+                        if not row and not orig_prefix:
+                            bdb_row = ks_conn.execute(
+                                "SELECT lemma, xlit AS translit FROM bdb WHERE strongs_id = ?",
+                                (f"H{sn}",)
+                            ).fetchone()
+                            if bdb_row:
+                                row = bdb_row
+                                prefix = "H"
                     if not row:
                         log.debug("key_strongs %s%s not found in DB — dropping", prefix, sn)
                         continue
