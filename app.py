@@ -122,20 +122,24 @@ Otherwise return ONLY valid JSON, no markdown, no prose outside the JSON:
   "key_strongs": ["4102", "26"]
 }
 
-explanation — 1–3 sentences written as a scholar, not as a search engine.
+explanation — 2–3 sentences written as a scholar, not as a search engine.
 Start immediately with the Greek or Hebrew term and what it means. Never begin
 with "This query", "This search", "The results", "The passages", or any sentence
 that describes what the system did. Pretend you are writing a lexicon note.
+Be specific — cite key passages by reference, name the semantic range concretely,
+and explain what the text actually says. Do not write vague generalities.
 
-GOOD: "Pistis (G4102) carries the sense of trust, faithfulness, and conviction..."
+GOOD: "Pneuma (G4151) in Genesis spans breath, wind, and divine spirit — the LXX
+rendering of ruach (H7307). At Gen 1:2 the spirit moves over the waters; at Gen
+6:3 God's pneuma strives with humanity; at Gen 41:8 Pharaoh's pneuma is troubled.
+The word unifies physical breath and divine agency under one term."
 BAD:  "This query searches for pistis across Paul's letters..."
-BAD:  "This search surfaces all occurrences of G4102..."
-BAD:  "The results show pistis appearing..."
+BAD:  "Pneuma appears in the creation account and descriptions of divine action." (too vague)
 
 You MUST mention every term in key_strongs by its Greek or Hebrew lemma or
 transliteration. Every Greek or Hebrew term you discuss MUST appear in key_strongs.
-Focus on: lexical range of key terms, interpretive translation choices, scholarly
-disagreement. For translation comparison queries, name translations directly
+Focus on: lexical range of key terms, specific passages, interpretive translation
+choices. For translation comparison queries, name translations directly
 (KJV, ABP, LXX) and state differences concisely.
 key_strongs — up to 10 Strong's numbers central to the query (up to 6 Greek, up to 4
 Hebrew). For OT concepts, include both the Greek G-number (ABP) and the Hebrew H-number
@@ -779,7 +783,7 @@ _ai_cache_ver: str | None = None  # computed once from prompt template + book li
 
 # Bump this integer whenever server-side search logic changes in a way that
 # affects results but doesn't change _AI_SYSTEM_TMPL (e.g. new fallback steps).
-_CACHE_CODE_VER = 18
+_CACHE_CODE_VER = 19
 
 
 def _get_ai_cache_ver() -> str:
