@@ -765,8 +765,9 @@ function studyWordLabel(w) {
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext }) {
+function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode }) {
   const [words, setWords] = useState(null);
+  const [kjvText, setKjvText] = useState(null);
   const [visible, setVisible] = useState(false);
   const rowRef = useRef(null);
 
@@ -791,6 +792,16 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
     return () => { cancelled = true; };
   }, [visible, book, chapter, verse]);
 
+  useEffect(() => {
+    if (!visible || textMode !== "kjv") return;
+    let cancelled = false;
+    setKjvText(null);
+    api.kjvVerse(book, chapter, verse)
+      .then(d => { if (!cancelled) setKjvText(d.text || ""); })
+      .catch(() => { if (!cancelled) setKjvText(""); });
+    return () => { cancelled = true; };
+  }, [visible, book, chapter, verse, textMode]);
+
   const entryMap = useMemo(() => {
     const m = new Map();
     for (const e of allResults) {
@@ -804,7 +815,11 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
     <div className="study-verse" ref={rowRef}>
       <button className="study-ref" onClick={() => onReadInContext?.(book, chapter, verse)}>{label}</button>
       <span className="study-text">
-        {words === null ? (
+        {textMode === "kjv" ? (
+          kjvText === null
+            ? <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
+            : <span className="study-kjv-text">{kjvText}</span>
+        ) : words === null ? (
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
         ) : (() => {
           function renderStudyWord(w, key) {
@@ -863,7 +878,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext }) {
+function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
@@ -888,6 +903,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext 
               allResults={allResults}
               onWordClick={onWordClick}
               onReadInContext={onReadInContext}
+              textMode={textMode}
             />
           ))}
         </div>
@@ -901,6 +917,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext 
 // ============================================================
 function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInContext }) {
   const [studySort, setStudySort] = useState("curated");
+  const [textMode, setTextMode] = useState("abp"); // "abp" | "kjv"
 
   const groups = useMemo(() => {
     const gMap = {};
@@ -956,13 +973,19 @@ function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInC
     ? groups.map(g => ({ ...g, verses: g.verses.filter(v => !v.is_primary && !v.is_additional) })).filter(g => g.verses.length > 0)
     : [];
 
-  const passageGroupProps = { allResults, onWordClick, onReadInContext };
+  const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode };
 
   return (
     <div className="study-groups">
-      <div className="study-sort-toggle">
-        <button className={"sort-btn " + (studySort === "curated" ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
-        <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
+      <div className="study-toolbar">
+        <div className="study-sort-toggle">
+          <button className={"sort-btn " + (studySort === "curated" ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
+          <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
+        </div>
+        <div className="study-text-toggle">
+          <button className={"sort-btn " + (textMode === "abp" ? "on" : "")} onClick={() => setTextMode("abp")}>ABP</button>
+          <button className={"sort-btn " + (textMode === "kjv" ? "on" : "")} onClick={() => setTextMode("kjv")}>KJV</button>
+        </div>
       </div>
       {primaryGroups.map(g => (
         <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />

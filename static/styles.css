@@ -846,10 +846,24 @@ input { font-family: inherit; }
   gap: 12px;
   margin-top: 4px;
 }
+.study-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
 .study-sort-toggle {
   display: flex;
   gap: 6px;
-  margin-bottom: 4px;
+}
+.study-text-toggle {
+  display: flex;
+  gap: 6px;
+}
+.study-kjv-text {
+  font-size: 15px;
+  color: var(--ink-2);
+  line-height: 1.6;
 }
 .additional-refs-section {
   display: flex;
