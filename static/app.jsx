@@ -1067,8 +1067,8 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             : kjvText.map((w, i) => {
                 const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
                 const sidBare = sid ? sid.replace(/^[GH]/i, "") : null;
-                const isCited = sid && (entryMap.has(sid) || entryMap.has(sidBare)) &&
-                  (!citedStrongs || citedStrongs.has(sid) || citedStrongs.has(sidBare));
+                const isCited = sid && citedStrongs?.size > 0 &&
+                  (citedStrongs.has(sid) || citedStrongs.has(sidBare));
                 const kjvEntry = sid ? {
                   id: `kjvstudy-${book}-${chapter}-${verse}-${i}`,
                   strongs: sid,
@@ -1115,11 +1115,8 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
             const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
-            const isCited = clickable && (
-              citedStrongs?.size > 0
-                ? (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum) || citedStrongs.has(wnum))
-                : citedStrongs === null && entryMap.has(wnum) // null = search mode only
-            );
+            const isCited = clickable && citedStrongs?.size > 0 &&
+              (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum) || citedStrongs.has(wnum));
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
