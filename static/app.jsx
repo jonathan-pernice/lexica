@@ -518,15 +518,15 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (!name || name.length < 2) return;
     let cancelled = false;
     setMetavLoading(true);
-    api.metavPlace(name)
+    api.metavPerson(name)
       .then(d => {
         if (cancelled) return;
-        if (!d.error) { setMetavData(d); setMetavType("place"); setMetavLoading(false); return; }
-        return api.metavPerson(name);
+        if (!d.error) { setMetavData(d); setMetavType("person"); setMetavLoading(false); return; }
+        return api.metavPlace(name);
       })
       .then(d => {
         if (cancelled || !d) return;
-        if (!d.error) { setMetavData(d); setMetavType("person"); }
+        if (!d.error) { setMetavData(d); setMetavType("place"); }
         setMetavLoading(false);
       })
       .catch(() => { if (!cancelled) setMetavLoading(false); });
