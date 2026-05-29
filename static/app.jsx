@@ -1067,7 +1067,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             : kjvText.map((w, i) => {
                 const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
                 const sidBare = sid ? sid.replace(/^[GH]/i, "") : null;
-                const isCited = sid && citedStrongs?.size > 0 &&
+                const isCited = sid &&
+                  citedStrongs != null && citedStrongs.size > 0 &&
+                  (entryMap.has(sid) || entryMap.has(sidBare)) &&
                   (citedStrongs.has(sid) || citedStrongs.has(sidBare));
                 const kjvEntry = sid ? {
                   id: `kjvstudy-${book}-${chapter}-${verse}-${i}`,
@@ -1115,7 +1117,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
             const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
-            const isCited = clickable && citedStrongs?.size > 0 &&
+            const isCited = clickable &&
+              citedStrongs != null && citedStrongs.size > 0 &&
+              entryMap.has(wnum) &&
               (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum) || citedStrongs.has(wnum));
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
