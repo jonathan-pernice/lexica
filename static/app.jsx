@@ -366,6 +366,18 @@ function LsjSummary({ data, loading }) {
   return <p className="lsj-synthesis">{data.summary}</p>;
 }
 
+function useSwipeToDismiss(onClose) {
+  const [dragY, setDragY] = React.useState(0);
+  const startY = React.useRef(0);
+  const onTouchStart = (e) => { startY.current = e.touches[0].clientY; setDragY(0); };
+  const onTouchMove  = (e) => { const d = Math.max(0, e.touches[0].clientY - startY.current); setDragY(d); };
+  const onTouchEnd   = ()  => { if (dragY > 80) onClose(); setDragY(0); };
+  return {
+    handleProps: { onTouchStart, onTouchMove, onTouchEnd },
+    sheetStyle:  dragY > 0 ? { transform: `translateY(${dragY}px)`, transition: 'none' } : {}
+  };
+}
+
 // ============================================================
 // DETAIL PANEL — SIDEBAR / BOTTOM SHEET
 // ============================================================
@@ -484,10 +496,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   if (!entry) return null;
 
   const barWidth = Math.min(100, (occurrences / Math.max(1, totalResults)) * 100);
+  const { handleProps, sheetStyle } = useSwipeToDismiss(onClose);
 
   return (
-    <aside className={"detail " + (isMobile ? "detail-sheet" : "detail-side")} role="dialog" aria-label="Lexicon detail">
-      {isMobile && <div className="sheet-handle" aria-hidden="true"></div>}
+    <aside className={"detail " + (isMobile ? "detail-sheet" : "detail-side")} style={isMobile ? sheetStyle : {}} role="dialog" aria-label="Lexicon detail">
+      {isMobile && <div className="sheet-handle" aria-hidden="true" {...handleProps}></div>}
       <div className="detail-head">
         <div className="detail-head-l">
           <span className="card-badge solid">{entry.strongs}</span>
@@ -692,9 +705,11 @@ function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation, onA
   const verseText = (ref) => showAbp ? (abpTexts[ref.ref] || ref.kjv_text) : ref.kjv_text;
 
   const sourceRef = `${source.book} ${source.chapter}:${source.verse}`;
+  const { handleProps: swipeProps, sheetStyle: xrefSheetStyle } = useSwipeToDismiss(onClose);
+
   return (
-    <aside className={"xref-panel " + (isMobile ? "detail-sheet" : "detail-side")} role="dialog" aria-label="Related Passages">
-      {isMobile && <div className="sheet-handle" aria-hidden="true" />}
+    <aside className={"xref-panel " + (isMobile ? "detail-sheet" : "detail-side")} style={isMobile ? xrefSheetStyle : {}} role="dialog" aria-label="Related Passages">
+      {isMobile && <div className="sheet-handle" aria-hidden="true" {...swipeProps} />}
       <div className="detail-head">
         <div className="detail-head-l">
           <span className="detail-pos">{sourceRef}</span>

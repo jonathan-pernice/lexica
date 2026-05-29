@@ -524,8 +524,9 @@ input { font-family: inherit; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 .detail-sheet {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
-  max-height: 88vh;
+  left: 0; right: 0;
+  bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+  max-height: 80vh;
   background: var(--paper);
   border-top-left-radius: 18px;
   border-top-right-radius: 18px;
@@ -543,6 +544,10 @@ input { font-family: inherit; }
   background: var(--rule-2);
   border-radius: 2px;
   margin: 10px auto 0;
+  padding: 12px 30px;
+  box-sizing: content-box;
+  cursor: grab;
+  touch-action: none;
 }
 
 .detail-head {
