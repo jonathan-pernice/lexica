@@ -823,8 +823,23 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             : kjvText.map((w, i) => {
                 const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
                 const isCited = sid && (entryMap.has(sid.slice(1)) || entryMap.has(sid));
+                const kjvEntry = sid ? {
+                  id: `kjvstudy-${book}-${chapter}-${verse}-${i}`,
+                  strongs: sid,
+                  strongs_base: sid.slice(1),
+                  strongs_raw: sid.slice(1),
+                  greek: w.lemma || "",
+                  translit: w.xlit || "",
+                  gloss: w.word,
+                  ref: `${book} ${chapter}:${verse}`,
+                  book, chapter, verse,
+                  definition: "", derivation: "", is_function: false,
+                  isKjv: true,
+                  isHebrew: sid.startsWith("H"),
+                } : null;
                 return (
-                  <span key={i} className={"study-word-wrap" + (sid ? " match" : "") + (isCited ? " cited" : "")}>
+                  <span key={i} className={"study-word-wrap" + (sid ? " match" : "") + (isCited ? " cited" : "")}
+                    onClick={kjvEntry && onWordClick ? () => onWordClick(kjvEntry) : undefined}>
                     <span className={"study-word" + (w.italic ? " study-word-italic" : "")}>{w.word}{w.punc || ""}</span>
                     {sid
                       ? <span className="study-strongs">{sid}</span>
