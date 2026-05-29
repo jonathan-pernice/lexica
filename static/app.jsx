@@ -1492,9 +1492,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         // For null-english G* tokens, derive PN name from previous word's leading capital
         if (w.strongs_base === "*" && !w.english && !w.english_head && i > 0) {
           const prev = englishWords[i - 1];
-          const firstWord = (prev.english || "").split(/\s+/)[0];
-          if (firstWord && /^[A-Z]/.test(firstWord)) {
-            w = { ...w, english: firstWord, english_head: firstWord.toLowerCase() };
+          const capitalWord = (prev.english || "").split(/\s+/).find(wd => /^[A-Z]/.test(wd));
+          if (capitalWord) {
+            w = { ...w, english: capitalWord, english_head: capitalWord.toLowerCase() };
           }
         }
         return chip(w, `e${i}`);
