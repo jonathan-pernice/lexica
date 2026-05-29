@@ -759,7 +759,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </section>
         )}
 
-        {entry.isKjv && !isHebrew && !isPN && !metavData && kjvCount !== null && kjvCount > 0 && (
+        {entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0 && (
           <section className="detail-section">
             <h4 className="detail-h">KJV Occurrences</h4>
             <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
