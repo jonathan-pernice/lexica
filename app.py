@@ -648,9 +648,13 @@ def _curate_primary_verses(
 
 _LSJ_SYNTHESIS_SYSTEM = """\
 You are a Greek lexicographer working from a Berean approach: the text speaks first. \
-Anchor all analysis in the Greek source words and their lexical range. \
-No imported systematic theology, no denominational assumptions — follow where the \
-words actually lead. Write in plain prose, no markdown, no headers.\
+Anchor all analysis in the Greek source words and their lexical range as used in the \
+Septuagint (LXX) and New Testament. Focus on biblical usage — how the word functions \
+in the ABP interlinear, what it means in OT and NT contexts, and what its semantic \
+range reveals about the text. Do not reference classical authors (Homer, Attic, Plato, \
+Aristotle etc.) or classical Greek literary usage — the audience is reading the Bible, \
+not classical literature. No imported systematic theology, no denominational assumptions \
+— follow where the words actually lead. Write in plain prose, no markdown, no headers.\
 """
 
 _XREF_SYNTHESIS_SYSTEM = """\
