@@ -1306,12 +1306,11 @@ input { font-family: inherit; }
   letter-spacing: 0.04em;
   flex: 0 0 auto;
   white-space: nowrap;
-  align-self: flex-start;
-  margin-top: 4px;
+  align-self: center;
+  margin-top: 0;
 }
 
 .lib-vnum-il { margin-top: 22px; }
-.lib-vnum-greek { margin-top: 14px; }
 .lib-vnum-click {
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
@@ -1462,7 +1461,7 @@ input { font-family: inherit; }
 /* Bracket group wrapper — inline-flex so [ words ] stay on one visual unit */
 .lib-bracket-group {
   display: inline-flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 0;
   flex-wrap: nowrap;
 }
@@ -1481,6 +1480,8 @@ input { font-family: inherit; }
   font-size: 20px;
   color: var(--accent);
   line-height: 1;
+  position: relative;
+  top: -2px;
 }
 /* Bracketed word chip — slightly tighter than the normal chip */
 .lib-word-bracketed {
