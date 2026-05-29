@@ -2154,16 +2154,18 @@ def metav_person(name):
     try:
         # Look up by name or alias — prefer entries with more biographical data
         row = conn.execute("""
-            SELECT p.person_id, p.name, p.surname, p.gender,
-                   p.birth_year, p.death_year, p.birth_place, p.death_place
-            FROM metav_people p
-            WHERE p.name = ? COLLATE NOCASE
-            UNION
-            SELECT p.person_id, p.name, p.surname, p.gender,
-                   p.birth_year, p.death_year, p.birth_place, p.death_place
-            FROM metav_people p
-            JOIN metav_people_aliases a ON a.person_id = p.person_id
-            WHERE a.alias = ? COLLATE NOCASE
+            SELECT * FROM (
+                SELECT p.person_id, p.name, p.surname, p.gender,
+                       p.birth_year, p.death_year, p.birth_place, p.death_place
+                FROM metav_people p
+                WHERE p.name = ? COLLATE NOCASE
+                UNION
+                SELECT p.person_id, p.name, p.surname, p.gender,
+                       p.birth_year, p.death_year, p.birth_place, p.death_place
+                FROM metav_people p
+                JOIN metav_people_aliases a ON a.person_id = p.person_id
+                WHERE a.alias = ? COLLATE NOCASE
+            )
             ORDER BY (birth_year IS NOT NULL) DESC,
                      (death_year IS NOT NULL) DESC
             LIMIT 1
