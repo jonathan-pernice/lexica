@@ -1397,17 +1397,13 @@ def search():
             _hebrew_search(conn, f"H{snum}", h_rows, h_groupings)
         elif not snum:
             q_no_w = q_plain.replace('w', '').replace('W', '')
-            # Only match description for lowercase English concept words, not names/transliterations
-            use_desc = q == q.lower() and not any(c in q for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-            desc_clause = "OR word_boundary(description, ?)" if use_desc else ""
-            desc_params = (q,) if use_desc else ()
             for hit in conn.execute(
-                f"""SELECT strongs_id FROM bdb
+                """SELECT strongs_id FROM bdb
                    WHERE strip_accents(xlit) LIKE ? COLLATE NOCASE
                       OR REPLACE(REPLACE(strip_accents(xlit),'w',''),'W','') LIKE ? COLLATE NOCASE
-                      {desc_clause}
+                      OR word_boundary(description, ?)
                    LIMIT 10""",
-                (f"{q_plain}%", f"{q_no_w}%") + desc_params
+                (f"{q_plain}%", f"{q_no_w}%", q)
             ).fetchall():
                 _hebrew_search(conn, hit['strongs_id'], h_rows, h_groupings)
     finally:
