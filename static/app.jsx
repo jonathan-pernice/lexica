@@ -682,9 +682,10 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <div className="metav-place">
                 <h4 className="detail-h">Biblical Place<span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
                 {metavData.comment && <p className="detail-p" style={{marginTop:"8px"}}>{metavData.comment}</p>}
-                {metavData.lat && metavData.lon && (
-                  <LeafletMap lat={metavData.lat} lon={metavData.lon} name={metavData.name} />
-                )}
+                {metavData.lat && metavData.lon
+                  ? <LeafletMap lat={metavData.lat} lon={metavData.lon} name={metavData.name} />
+                  : <p className="detail-p" style={{marginTop:"8px", color:"var(--ink-4)", fontStyle:"italic"}}>Location unknown</p>
+                }
               </div>
             ) : null}
           </section>
