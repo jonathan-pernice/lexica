@@ -44,6 +44,8 @@ const api = {
     fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) =>
     fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
+  kjvVerseWords: (book, ch, v) =>
+    fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   bdb: (sid) =>
     fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
   crossRefsCurated: (book, chapter, verse) =>
@@ -796,9 +798,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
     if (!visible || textMode !== "kjv") return;
     let cancelled = false;
     setKjvText(null);
-    api.kjvVerse(book, chapter, verse)
-      .then(d => { if (!cancelled) setKjvText(d.text || ""); })
-      .catch(() => { if (!cancelled) setKjvText(""); });
+    api.kjvVerseWords(book, chapter, verse)
+      .then(d => { if (!cancelled) setKjvText(Array.isArray(d) ? d : []); })
+      .catch(() => { if (!cancelled) setKjvText([]); });
     return () => { cancelled = true; };
   }, [visible, book, chapter, verse, textMode]);
 
@@ -818,7 +820,18 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
         {textMode === "kjv" ? (
           kjvText === null
             ? <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
-            : <span className="study-kjv-text">{kjvText}</span>
+            : kjvText.map((w, i) => {
+                const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
+                const isCited = sid && (entryMap.has(sid.slice(1)) || entryMap.has(sid));
+                return (
+                  <span key={i} className={"study-word-wrap" + (sid ? " match" : "") + (isCited ? " cited" : "")}>
+                    <span className={"study-word" + (w.italic ? " study-word-italic" : "")}>{w.word}{w.punc || ""}</span>
+                    {sid
+                      ? <span className="study-strongs">{sid}</span>
+                      : <span className="study-strongs" style={{visibility:"hidden"}}>G0</span>}
+                  </span>
+                );
+              })
         ) : words === null ? (
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
         ) : (() => {
