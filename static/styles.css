@@ -975,6 +975,8 @@ input { font-family: inherit; }
 }
 .study-word-wrap.match { cursor: pointer; }
 .study-word-wrap.match:hover { background: var(--accent-soft); }
+.study-word-wrap.cited { background: var(--gold-soft); border-radius: 5px; }
+.study-word-wrap.cited:hover { background: oklch(0.88 0.06 75); }
 .study-bracket-group {
   display: inline-flex;
   align-items: flex-end;
