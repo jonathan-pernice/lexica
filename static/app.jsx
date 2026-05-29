@@ -851,7 +851,7 @@ function studyWordLabel(w) {
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode }) {
+function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs }) {
   const [words, setWords] = useState(null);
   const [kjvText, setKjvText] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -896,6 +896,12 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
     }
     return m;
   }, [allResults, book, chapter, verse]);
+
+  // Only highlight words whose strongs matches the primary searched strongs
+  const citedStrongs = useMemo(() => {
+    if (!primaryStrongs || !primaryStrongs.length) return null; // null = highlight all matched
+    return new Set(primaryStrongs.map(s => s.strongs_base));
+  }, [primaryStrongs]);
 
   return (
     <div className="study-verse" ref={rowRef}>
@@ -952,7 +958,8 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
               definition: "", derivation: "", is_function: false,
             });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
-            const isCited = clickable && entryMap.has(wnum);
+            const isCited = clickable && entryMap.has(wnum) &&
+              (!citedStrongs || citedStrongs.has(w.strongs_base) || citedStrongs.has(w.strongs));
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
@@ -990,7 +997,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode }) {
+function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode, primaryStrongs }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
@@ -1016,6 +1023,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
               onWordClick={onWordClick}
               onReadInContext={onReadInContext}
               textMode={textMode}
+              primaryStrongs={primaryStrongs}
             />
           ))}
         </div>
@@ -1085,7 +1093,7 @@ function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInC
     ? groups.map(g => ({ ...g, verses: g.verses.filter(v => !v.is_primary && !v.is_additional) })).filter(g => g.verses.length > 0)
     : [];
 
-  const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode };
+  const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode, primaryStrongs };
 
   return (
     <div className="study-groups">
