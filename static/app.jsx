@@ -46,6 +46,8 @@ const api = {
     fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWords: (book, ch, v) =>
     fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
+  kjvVerseWordsBatch: (refs) =>
+    fetch('/api/kjv/verse_words_batch', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(refs)}).then(r => r.json()),
   kjvStrongsCount: (strongs_id) =>
     fetch(`/api/kjv/strongs-count/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
   pnCount: (name) =>
@@ -1000,7 +1002,7 @@ function studyWordLabel(w) {
 // ============================================================
 // STUDY MODE — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs }) {
+function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, kjvCache }) {
   const [words, setWords] = useState(null);
   const [kjvText, setKjvText] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -1029,13 +1031,18 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
 
   useEffect(() => {
     if (!visible || textMode !== "kjv") return;
+    const cacheKey = `${book}:${chapter}:${verse}`;
+    if (kjvCache && kjvCache[cacheKey]) {
+      setKjvText(kjvCache[cacheKey]);
+      return;
+    }
     let cancelled = false;
     setKjvText(null);
     api.kjvVerseWords(book, chapter, verse)
       .then(d => { if (!cancelled) setKjvText(Array.isArray(d) ? d : []); })
       .catch(() => { if (!cancelled) setKjvText([]); });
     return () => { cancelled = true; };
-  }, [visible, book, chapter, verse, textMode]);
+  }, [visible, book, chapter, verse, textMode, kjvCache]);
 
   const entryMap = useMemo(() => {
     const m = new Map();
@@ -1158,7 +1165,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
 // ============================================================
 // STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode, primaryStrongs }) {
+function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, kjvCache }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="study-group">
@@ -1185,6 +1192,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
               onReadInContext={onReadInContext}
               textMode={textMode}
               primaryStrongs={primaryStrongs}
+              kjvCache={kjvCache}
             />
           ))}
         </div>
@@ -1199,6 +1207,24 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
 function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInContext }) {
   const [studySort, setStudySort] = useState("curated");
   const [textMode, setTextMode] = useState("abp"); // "abp" | "kjv"
+  const [kjvCache, setKjvCache] = useState({}); // pre-fetched KJV verse words
+
+  // Pre-fetch all KJV verse words in one batch when switching to KJV mode
+  React.useEffect(() => {
+    if (textMode !== "kjv" || !allResults.length) return;
+    const seen = new Set();
+    const refs = [];
+    for (const e of allResults) {
+      const key = `${e.book}:${e.chapter}:${e.verse}`;
+      if (!seen.has(key)) { seen.add(key); refs.push({book: e.book, chapter: e.chapter, verse: e.verse}); }
+    }
+    if (!refs.length) return;
+    let cancelled = false;
+    api.kjvVerseWordsBatch(refs)
+      .then(data => { if (!cancelled) setKjvCache(data); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [textMode, allResults]);
 
   const groups = useMemo(() => {
     const gMap = {};
@@ -1254,7 +1280,7 @@ function StudyMode({ allResults, primaryStrongs, showAll, onWordClick, onReadInC
     ? groups.map(g => ({ ...g, verses: g.verses.filter(v => !v.is_primary && !v.is_additional) })).filter(g => g.verses.length > 0)
     : [];
 
-  const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode, primaryStrongs };
+  const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode, primaryStrongs, kjvCache };
 
   return (
     <div className="study-groups">

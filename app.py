@@ -1916,6 +1916,52 @@ def kjv_verse_words(book, chapter, verse_num):
     return jsonify(words)
 
 
+@app.route("/api/kjv/verse_words_batch", methods=["POST"])
+def kjv_verse_words_batch():
+    """Batch fetch KJV verse words for multiple verses at once."""
+    refs = request.json or []  # [{book, chapter, verse}, ...]
+    conn = db_ro()
+    result = {}
+    try:
+        for ref in refs[:30]:  # cap at 30
+            book = ref.get("book", "")
+            chapter = ref.get("chapter", 0)
+            verse_num = ref.get("verse", 0)
+            book_id = _KJV_BOOK_ID.get(book)
+            if not book_id:
+                continue
+            rows = conn.execute("""
+                SELECT kw.word_id, kw.verse_pos, kw.word, kw.italic, kw.punc,
+                       GROUP_CONCAT(ks.strongs_id) AS strongs_ids,
+                       MAX(COALESCE(bdb.lemma, lex.lemma)) AS lemma,
+                       MAX(COALESCE(bdb.xlit, lex.translit)) AS xlit
+                FROM kjv_words kw
+                LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+                LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
+                LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+                WHERE kw.book_id = ? AND kw.chapter = ? AND kw.verse_num = ?
+                GROUP BY kw.word_id, kw.verse_pos, kw.word, kw.italic, kw.punc
+                ORDER BY kw.verse_pos
+            """, (book_id, chapter, verse_num)).fetchall()
+            words = []
+            for r in rows:
+                sids = [s.strip() for s in (r["strongs_ids"] or "").split(",") if s.strip()]
+                words.append({
+                    "word_id": r["word_id"],
+                    "word": r["word"],
+                    "italic": bool(r["italic"]),
+                    "punc": r["punc"] or "",
+                    "strongs_ids": sids,
+                    "lemma": r["lemma"] or "",
+                    "xlit": r["xlit"] or "",
+                })
+            key = f"{book}:{chapter}:{verse_num}"
+            result[key] = words
+    finally:
+        conn.close()
+    return jsonify(result)
+
+
 @app.route("/api/cross-references/<book>/<int:chapter>/<int:verse>")
 def cross_references_route(book, chapter, verse):
     book_id = _KJV_BOOK_ID.get(book)
