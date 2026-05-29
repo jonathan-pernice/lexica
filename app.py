@@ -1401,9 +1401,9 @@ def search():
                 """SELECT strongs_id FROM bdb
                    WHERE strip_accents(xlit) LIKE ? COLLATE NOCASE
                       OR REPLACE(REPLACE(strip_accents(xlit),'w',''),'W','') LIKE ? COLLATE NOCASE
-                      OR description LIKE ? COLLATE NOCASE
+                      OR word_boundary(description, ?)
                    LIMIT 10""",
-                (f"%{q_plain}%", f"%{q_no_w}%", f"%{q}%")
+                (f"%{q_plain}%", f"%{q_no_w}%", q)
             ).fetchall():
                 _hebrew_search(conn, hit['strongs_id'], h_rows, h_groupings)
     finally:
