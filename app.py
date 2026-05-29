@@ -1213,7 +1213,7 @@ def _hebrew_search(conn, h_id, out_rows, out_groupings):
         SELECT b.abbrev AS book, kw.chapter, kw.verse_num AS verse, kw.word AS kjv_word
         FROM kjv_strongs ks
         JOIN kjv_words kw ON kw.word_id = ks.word_id
-        JOIN books b ON b.id = kw.book_id
+        JOIN books b ON b.sort_order = kw.book_id - 1
         WHERE ks.strongs_id = ?
         ORDER BY kw.book_id, kw.chapter, kw.verse_num
         LIMIT 500
