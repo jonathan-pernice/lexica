@@ -1317,7 +1317,7 @@ def search():
                       AND w.strongs_base != '*'
                     ORDER BY v.id, w.position
                     """,
-                    (q, q, f"%{q_plain}%", q_plain),
+                    (q, q, f"{q_plain}%", q_plain),
                 ).fetchall()
                 # Also search proper nouns (strongs='*') by name
                 pn_rows = conn.execute(
