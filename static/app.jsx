@@ -664,6 +664,16 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </section>
         )}
 
+        {isPN && entry.gloss && onStrongsSearch && (
+          <section className="detail-section">
+            <h4 className="detail-h">Corpus</h4>
+            <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
+              onClick={() => onStrongsSearch(entry.gloss.replace(/[^a-zA-Z\s'-]/g, "").trim())}>
+              Search all appearances <Icon.ArrowRight/>
+            </button>
+          </section>
+        )}
+
         {!isHebrew && !isPN && abpCount !== null && (
           <section className="detail-section">
             <h4 className="detail-h">ABP Occurrences</h4>
