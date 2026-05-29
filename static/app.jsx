@@ -1276,6 +1276,10 @@ function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordCl
 
   return (
     <div className="study-groups">
+      {/* DEBUG: remove after testing */}
+      <div style={{fontSize:"11px",color:"var(--ink-3)",padding:"4px 8px"}}>
+        citedStrongs: {citedStrongs ? `Set(${citedStrongs.size}): ${[...citedStrongs].slice(0,5).join(",")}` : "null"}
+      </div>
       <div className="study-toolbar">
         <div className="study-sort-toggle">
           <button className={"sort-btn " + (studySort === "curated" ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
