@@ -1944,7 +1944,7 @@ function App() {
                 <div className="results-meta">
                   {mode === "ai" ? (
                     <>
-                      <span className="results-count">{loading ? "…" : primaryVerseCount}</span>
+                      <span className="results-count">{(loading || aiLoading) ? "…" : primaryVerseCount}</span>
                       <span className="results-label">primary {primaryVerseCount === 1 ? "verse" : "verses"}</span>
                       {!loading && aiMeta && aiMeta.total > primaryVerseCount && (
                         <button className="see-all-link" onClick={() => setShowAllAi(v => !v)}>
@@ -1958,7 +1958,7 @@ function App() {
                       <span className="results-label">results</span>
                     </>
                   )}
-                  {searchLabel && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
+                  {searchLabel && !aiLoading && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
                 <div className="results-controls">
                   {viewMode === "browse" && (
