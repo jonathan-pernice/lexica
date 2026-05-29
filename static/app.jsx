@@ -1116,9 +1116,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
             const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
             const isCited = clickable && (
-              citedStrongs
+              citedStrongs?.size > 0
                 ? (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum) || citedStrongs.has(wnum))
-                : entryMap.has(wnum) // search mode: highlight matched words
+                : citedStrongs === null && entryMap.has(wnum) // null = search mode only
             );
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
