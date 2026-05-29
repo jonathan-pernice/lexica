@@ -1319,6 +1319,23 @@ def search():
                     """,
                     (q, q, f"%{q_plain}%", q_plain),
                 ).fetchall()
+                # Also search proper nouns (strongs='*') by name
+                pn_rows = conn.execute(
+                    """
+                    SELECT w.strongs_base, w.strongs, w.english, w.english_head,
+                           v.id AS verse_id, v.book, v.chapter, v.verse,
+                           NULL AS lemma, NULL AS translit, NULL AS strongs_def,
+                           NULL AS kjv_def, NULL AS derivation
+                    FROM words w
+                    JOIN verses v ON w.verse_id = v.id
+                    WHERE w.english_head = ? COLLATE NOCASE
+                      AND w.strongs_base = '*'
+                    ORDER BY v.id, w.position
+                    LIMIT 300
+                    """,
+                    (q,),
+                ).fetchall()
+                rows = list(rows) + list(pn_rows)
         # Gloss groupings: keyed by exact dotted strongs number.
         def _is_content(r):
             return r["strongs"] and r["strongs"] != "*" and r["strongs_base"] not in _FUNCTION_STRONGS
