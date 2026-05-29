@@ -46,6 +46,10 @@ const api = {
     fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWords: (book, ch, v) =>
     fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
+  metavPerson: (name) =>
+    fetch(`/api/metav/person/${encodeURIComponent(name)}`).then(r => r.json()),
+  metavPlace: (name) =>
+    fetch(`/api/metav/place/${encodeURIComponent(name)}`).then(r => r.json()),
   bdb: (sid) =>
     fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
   crossRefsCurated: (book, chapter, verse) =>
@@ -434,6 +438,33 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.strongs_raw]);
 
   const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H");
+  const isPN = entry && entry.isPN;
+
+  // metaV person/place lookup for proper nouns
+  const [metavData, setMetavData] = useState(null);
+  const [metavType, setMetavType] = useState(null); // "person" | "place" | null
+  const [metavLoading, setMetavLoading] = useState(false);
+  useEffect(() => {
+    setMetavData(null);
+    setMetavType(null);
+    if (!isPN || !entry.pnName) return;
+    let cancelled = false;
+    setMetavLoading(true);
+    const name = entry.pnName.trim();
+    api.metavPerson(name)
+      .then(d => {
+        if (cancelled) return;
+        if (!d.error) { setMetavData(d); setMetavType("person"); setMetavLoading(false); return; }
+        return api.metavPlace(name);
+      })
+      .then(d => {
+        if (cancelled || !d) return;
+        if (!d.error) { setMetavData(d); setMetavType("place"); }
+        setMetavLoading(false);
+      })
+      .catch(() => { if (!cancelled) setMetavLoading(false); });
+    return () => { cancelled = true; };
+  }, [entry && entry.id]);
 
   // Hebrew BDB lookup
   const [bdbEntry, setBdbEntry] = useState(null);
@@ -536,7 +567,60 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="detail-gloss">{stripArticles(entry.gloss)}</div>
         </div>
 
-        {isHebrew ? (
+        {isPN && (
+          <section className="detail-section">
+            {metavLoading ? (
+              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Looking up…</div>
+            ) : metavType === "person" && metavData ? (
+              <div className="metav-person">
+                <h4 className="detail-h">Biblical Person<span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
+                <div className="metav-meta">
+                  {metavData.gender && <span className="metav-tag">{metavData.gender === "M" ? "Male" : "Female"}</span>}
+                  {metavData.groups.filter(g => g.startsWith("Tribe")).map(g => (
+                    <span key={g} className="metav-tag">{g}</span>
+                  ))}
+                  {metavData.groups.includes("Genealogy of Jesus") && <span className="metav-tag metav-tag-gold">Genealogy of Jesus</span>}
+                </div>
+                {(metavData.birth_year || metavData.death_year) && (
+                  <p className="detail-p" style={{marginTop:"8px", fontSize:"13px"}}>
+                    {metavData.birth_year && <span>Born: {metavData.birth_year}{metavData.birth_place ? `, ${metavData.birth_place}` : ""}</span>}
+                    {metavData.birth_year && metavData.death_year && " · "}
+                    {metavData.death_year && <span>Died: {metavData.death_year}{metavData.death_place ? `, ${metavData.death_place}` : ""}</span>}
+                  </p>
+                )}
+                {metavData.relationships.length > 0 && (
+                  <div className="metav-rels">
+                    {["father","mother","spouseOrConcubine","child","sibling"].map(type => {
+                      const matching = metavData.relationships.filter(r => r.type === type);
+                      if (!matching.length) return null;
+                      const label = {father:"Father",mother:"Mother",spouseOrConcubine:"Spouse",child:"Children",sibling:"Siblings"}[type];
+                      return (
+                        <div key={type} className="metav-rel-row">
+                          <span className="metav-rel-label">{label}</span>
+                          <span className="metav-rel-names">{matching.slice(0,5).map(r => r.name).join(", ")}{matching.length > 5 ? ` +${matching.length - 5}` : ""}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ) : metavType === "place" && metavData ? (
+              <div className="metav-place">
+                <h4 className="detail-h">Biblical Place<span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
+                {metavData.comment && <p className="detail-p" style={{marginTop:"8px"}}>{metavData.comment}</p>}
+                {metavData.lat && metavData.lon && (
+                  <a className="metav-map-link" href={`https://www.google.com/maps?q=${metavData.lat},${metavData.lon}`} target="_blank" rel="noopener noreferrer">
+                    View on map →
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>No metaV data found for "{entry.pnName}".</div>
+            )}
+          </section>
+        )}
+
+        {!isPN && isHebrew ? (
           <section className="detail-section">
             <h4 className="detail-h">Brown-Driver-Briggs<span className="bdb-badge">BDB</span></h4>
             {bdbLoading ? (
@@ -1219,11 +1303,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
     // Plain chip (English mode or non-bracketed word in Greek mode)
     const chip = (w, key) => {
-      const clickable = !!(onWordClick && w.strongs_base && w.strongs_base !== "*");
+      const isPN = w.strongs_base === "*";
+      const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english));
       return (
         <span key={key}
-          className={"lib-word" + (clickable ? " lib-word-clickable" : "")}
-          onClick={clickable ? () => onWordClick(makeEntry(w)) : undefined}>
+          className={"lib-word" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
+          onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english } : makeEntry(w)) : undefined}>
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
           <span className="lib-iw-english">{chipLabel(w)}</span>
           {showStrongs && (
