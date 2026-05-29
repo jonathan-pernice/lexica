@@ -138,8 +138,9 @@ def parse_words(verse_text: str) -> list:
             continue
 
         if eng is None and i > 0:
-            # Pattern: "Abel becameG1096 G*" → G1096 keeps "Abel became", G* gets "Abel"
-            # We keep the full gloss on the verb for display, and set the name on G* for metaV
+            # Pattern: "Abel becameG1096 G*"
+            # Swap so: G* gets name "Abel" at prev position, G1096 gets "became" at current position
+            # Result: "Abel"(G*) then "became"(G1096) = correct English reading order
             prev_seq, prev_eng, prev_strongs, prev_gpos, prev_bid = words[i - 1]
             if prev_eng:
                 tokens = prev_eng.split()
@@ -147,9 +148,11 @@ def parse_words(verse_text: str) -> list:
                     clean_tok = re.sub(r"[^\w'-]", '', tok)
                     if clean_tok and clean_tok[0].isupper() and clean_tok.lower() not in _PN_STOP:
                         name = _clean_english(tok)
-                        # Keep G1096's full gloss "Abel became" unchanged
-                        # Only set the name on the G* token
-                        words[i] = (seq, name, strongs, gpos, bid)
+                        remainder = ' '.join(tokens[:j] + tokens[j+1:]).strip()
+                        remainder = _clean_english(remainder) if remainder else None
+                        # Swap: G* takes prev position+strongs slot, verb takes current
+                        words[i - 1] = (prev_seq, name,      strongs,      gpos,      bid)
+                        words[i]     = (seq,      remainder, prev_strongs, prev_gpos, prev_bid)
                         break
 
         elif eng is not None:
