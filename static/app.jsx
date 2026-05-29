@@ -2089,8 +2089,10 @@ function App() {
 
   const handleStrongsSearch = (strongs_base) => {
     if (!strongs_base || strongs_base === "*") return;
-    const num = String(strongs_base).replace(/^G/i, "");
-    handleSearch(`G${num}`);
+    const s = String(strongs_base);
+    const isH = /^H/i.test(s);
+    const num = s.replace(/^[GH]/i, "");
+    handleSearch(isH ? `H${num}` : `G${num}`);
   };
 
   const handleGlossDrill = (sn, gloss) => {
