@@ -440,17 +440,17 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H");
   const isPN = entry && entry.isPN;
 
-  // metaV person/place lookup for proper nouns
+  // metaV person/place lookup — runs on any word click where gloss may be a name
   const [metavData, setMetavData] = useState(null);
   const [metavType, setMetavType] = useState(null); // "person" | "place" | null
   const [metavLoading, setMetavLoading] = useState(false);
   useEffect(() => {
     setMetavData(null);
     setMetavType(null);
-    if (!isPN || !entry.pnName) return;
+    const name = (entry.pnName || entry.gloss || "").trim();
+    if (!name || name.length < 2) return;
     let cancelled = false;
     setMetavLoading(true);
-    const name = entry.pnName.trim();
     api.metavPerson(name)
       .then(d => {
         if (cancelled) return;
@@ -567,7 +567,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="detail-gloss">{stripArticles(entry.gloss)}</div>
         </div>
 
-        {isPN && (
+        {(metavData || metavLoading) && (
           <section className="detail-section">
             {metavLoading ? (
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Looking up…</div>
@@ -614,13 +614,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                   </a>
                 )}
               </div>
-            ) : (
-              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>No metaV data found for "{entry.pnName}".</div>
-            )}
+            ) : null}
           </section>
         )}
 
-        {!isPN && isHebrew ? (
+        {isHebrew ? (
           <section className="detail-section">
             <h4 className="detail-h">Brown-Driver-Briggs<span className="bdb-badge">BDB</span></h4>
             {bdbLoading ? (
