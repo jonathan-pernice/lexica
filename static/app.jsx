@@ -1066,7 +1066,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             ? <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
             : kjvText.map((w, i) => {
                 const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
-                const isCited = sid && (entryMap.has(sid.slice(1)) || entryMap.has(sid));
+                const sidBare = sid ? sid.replace(/^[GH]/i, "") : null;
+                const isCited = sid && (entryMap.has(sid) || entryMap.has(sidBare)) &&
+                  (!citedStrongs || citedStrongs.has(sid) || citedStrongs.has(sidBare));
                 const kjvEntry = sid ? {
                   id: `kjvstudy-${book}-${chapter}-${verse}-${i}`,
                   strongs: sid,
