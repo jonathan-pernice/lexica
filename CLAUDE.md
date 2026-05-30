@@ -49,7 +49,7 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 
 ## Database Tables
 - `verses` — ABP verse text
-- `words` — ABP word-level interlinear, Strong's tagged. Planned: add `italic` column (BibleHub scrape) and `morph` column (MorphGNT/CATSS)
+- `words` — ABP word-level interlinear, Strong's tagged. Has `italic` column (live). Planned: add `morph` column (MorphGNT/CATSS)
 - `lexicon` — Greek Strong's definitions
 - `lsj` — Liddell-Scott-Jones Greek lexicon
 - `abp_ext` — extended ABP data
@@ -85,7 +85,7 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - All words are always clickable (chip mode by default)
 - Word clicks → LSJ sidebar (G-numbers), BDB sidebar (H-numbers), or metaV (proper nouns)
 - KJV word clicks correctly route: common words → LSJ, proper nouns → metaV, Hebrew → BDB
-- Italic KJV words render muted/italic; ABP bracket words `[word]` are translator additions
+- Italic words render muted/italic: KJV (italic=1) and ABP (words.italic=1, last-word heuristic); ABP bracket words `[word]` are also translator additions
 - Verse layout: `lib-verse-row` (flex-start) → `lib-vnum` (fixed, min-width) + `lib-verse-content`
 - Clicking a verse number opens the TSK Cross-Reference Panel
 
@@ -115,12 +115,13 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - Hebrew word bridge: BDB → kjv_strongs → ABP verses
 - Cached in ai_search_cache; _CACHE_CODE_VER invalidates AI cache but preserves xref cache
 
-## Planned: BibleHub ABP Scrape
-- Scrape `https://biblehub.com/interlinear/apostolic/{book}/{chapter}.htm` for all 66 books
-- Goals: fix strongs assignment per word (current data has compound-strongs issues), add `italic` column to `words` table (`<span class="ital">` markup)
+## BibleHub ABP Scrape — status
+- Scraper: `scripts/scrape_biblehub_abp.py` — captures strongs, greek_pos, italic (last-word heuristic), strips `[ ]` brackets
+- Fresh re-scrape running on PA (new `bh_scrape.db` with `greek_pos` column)
+- Rebuild script: `scripts/build_words_from_bh.py` — DELETEs words table and rebuilds from bh_scrape.db
+- After rebuild: words table will have correct per-word strongs, english, italic, greek_pos, bracket_id
 - Do NOT add conjugated manuscript forms — audience are non-Greek readers
-- After scrape: integrate MorphGNT (NT) + CATSS/CCAT (LXX OT) for morphological data (`morph` column)
-- Morphology displayed in plain English in sidebar: "Verb · Aorist · Active · Indicative · 3rd Person · Singular"
+- Next planned: integrate MorphGNT (NT) + CATSS/CCAT (LXX OT) for `morph` column; display plain English in sidebar
 
 ## cross_references table
 - Columns: id, verse_id, verse_ref_id
