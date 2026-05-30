@@ -1353,6 +1353,7 @@ def search():
         def _is_content(r):
             return r["strongs"] and r["strongs"] != "*" and r["strongs_base"] not in _FUNCTION_STRONGS
 
+        hebrew_strongs = []
         if snum:
             unique_strongs = list({r["strongs"] for r in rows if _is_content(r)})
         else:
@@ -1386,9 +1387,6 @@ def search():
                 ).fetchall()
             ]
             unique_strongs = greek_strongs
-            # Add Hebrew strongs to groupings via _hebrew_search
-            for h_id in hebrew_strongs:
-                _hebrew_search(conn, h_id, h_rows, h_groupings)
         if unique_strongs:
             placeholders = ",".join("?" * len(unique_strongs))
             for gr in conn.execute(
@@ -1429,16 +1427,20 @@ def search():
         if _is_h:
             _hebrew_search(conn, f"H{snum}", h_rows, h_groupings)
         elif not snum:
+            # Add Hebrew groupings from KJV direct matches
+            for h_id in hebrew_strongs:
+                _hebrew_search(conn, h_id, h_rows, h_groupings)
+            # Also search BDB by transliteration
             q_no_w = q_plain.replace('w', '').replace('W', '')
             for hit in conn.execute(
                 """SELECT strongs_id FROM bdb
                    WHERE strip_accents(xlit) LIKE ? COLLATE NOCASE
                       OR REPLACE(REPLACE(strip_accents(xlit),'w',''),'W','') LIKE ? COLLATE NOCASE
-                      OR word_boundary(description, ?)
-                   LIMIT 30""",
-                (f"{q_plain}%", f"{q_no_w}%", q)
+                   LIMIT 10""",
+                (f"{q_plain}%", f"{q_no_w}%")
             ).fetchall():
-                _hebrew_search(conn, hit['strongs_id'], h_rows, h_groupings)
+                if hit['strongs_id'] not in {r for r in hebrew_strongs}:
+                    _hebrew_search(conn, hit['strongs_id'], h_rows, h_groupings)
     finally:
         conn.close()
 
