@@ -1425,8 +1425,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     [translation]: { ...prev[translation], [key]: val },
   }));
 
-  const wordMode    = showStrongs || showInterlinear || wordOrder === "greek";
-  const kjvWordMode = showStrongs || showInterlinear || (translation === "parallel" && wordOrder === "greek");
+  const wordMode    = true; // always chip mode — words are always individually clickable
+  const kjvWordMode = showStrongs || showInterlinear || (translation === "parallel" && wordOrder === "greek") || translation === "kjv";
 
   const handleVerseNum = onVerseNumberClick && selBook
     ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse, translation)
