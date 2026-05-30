@@ -1469,6 +1469,13 @@ def search():
     ]
 
 
+    # Only keep Hebrew groupings where the searched term actually appears as a KJV gloss
+    if not snum and q:
+        h_groupings = {
+            h_id: glosses for h_id, glosses in h_groupings.items()
+            if any(g["gloss"].lower() == q.lower() for g in glosses)
+        }
+
     results.extend(h_rows)
     groupings.update(h_groupings)
     return jsonify({"results": results, "total": len(results), "groupings": groupings, "variants": variants})
