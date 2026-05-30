@@ -791,6 +791,7 @@ def _normalize_union_sql(sql: str) -> str:
 
 
 _ai_cache: dict = {}            # in-memory L1 cache (query → payload)
+_search_cache: dict = {}        # in-memory lexicon search cache (q → payload)
 _lsj_summary_cache: dict = {}  # keyed on LSJ key; persists for server lifetime
 _ai_cache_ver: str | None = None  # computed once from prompt template + book list
 
@@ -1268,6 +1269,10 @@ def search():
     if not q:
         return jsonify({"results": [], "total": 0})
 
+    cache_key = f"{q}|{phrase_mode}"
+    if cache_key in _search_cache:
+        return jsonify(_search_cache[cache_key])
+
     conn = db()
     groupings: dict = {}
     variants: dict = {}
@@ -1375,11 +1380,17 @@ def search():
             # Hebrew groupings: top H-strongs from KJV where the English word matches
             hebrew_strongs = [
                 r["strongs_id"] for r in conn.execute(
-                    """SELECT ks.strongs_id,
+                    """WITH totals AS (
+                           SELECT strongs_id, COUNT(*) AS total
+                           FROM kjv_strongs WHERE strongs_id LIKE 'H%'
+                           GROUP BY strongs_id
+                       )
+                       SELECT ks.strongs_id,
                               COUNT(*) AS match_cnt,
-                              (SELECT COUNT(*) FROM kjv_strongs WHERE strongs_id = ks.strongs_id) AS total_cnt
+                              t.total AS total_cnt
                        FROM kjv_strongs ks
                        JOIN kjv_words kw ON kw.word_id = ks.word_id
+                       JOIN totals t ON t.strongs_id = ks.strongs_id
                        WHERE kw.word = ? COLLATE NOCASE
                          AND ks.strongs_id LIKE 'H%'
                        GROUP BY ks.strongs_id
@@ -1483,7 +1494,10 @@ def search():
 
     results.extend(h_rows)
     groupings.update(h_groupings)
-    return jsonify({"results": results, "total": len(results), "groupings": groupings, "variants": variants})
+    payload = {"results": results, "total": len(results), "groupings": groupings, "variants": variants}
+    if len(_search_cache) < 200:  # cap cache size
+        _search_cache[cache_key] = payload
+    return jsonify(payload)
 
 
 @app.route("/api/verse/<book>/<int:chapter>/<int:verse>")
