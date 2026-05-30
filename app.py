@@ -2313,7 +2313,7 @@ def kjv_strongs_search(strongs_id):
             SELECT kw.book_id, kw.chapter, kw.verse_num, kw.word,
                    MAX(COALESCE(bdb.lemma, lex.lemma))   AS lemma,
                    MAX(COALESCE(bdb.xlit, lex.translit)) AS xlit,
-                   MAX(COALESCE(lex.strongs_def, bdb.definition)) AS definition
+                   MAX(COALESCE(lex.strongs_def, bdb.description)) AS definition
             FROM kjv_strongs ks
             JOIN kjv_words kw ON kw.word_id = ks.word_id
             LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'

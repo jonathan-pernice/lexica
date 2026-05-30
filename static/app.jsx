@@ -2219,6 +2219,8 @@ function App() {
       setGroupings({});
       setVariants({});
       setGlossFilter(null);
+      setLangFilter("all");
+      setCorpusFilter("all");
       api.kjvStrongsSearch(sid)
         .then(data => {
           setAllResults((data.results || []).map((r, idx) => ({ ...r, id: `kjv-sr-${idx}`, gloss_head: r.gloss })));
