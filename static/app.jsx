@@ -805,7 +805,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <section className="detail-section">
             <h4 className="detail-h">KJV Occurrences</h4>
             <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onStrongsSearch(entry.strongs)}>
+              onClick={() => onStrongsSearch(entry.strongs, true)}>
               <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
             </button>
           </section>
@@ -2015,8 +2015,8 @@ function App() {
   const [error, setError] = useState("");
   const [aiNotice, setAiNotice] = useState("");
   const [activeEntry, setActiveEntry] = useState(null);
-  const [sortBy, setSortBy] = useState("relevance");
   const [viewMode, setViewMode] = useState("browse");
+  const [browseTranslation, setBrowseTranslation] = useState("abp"); // "abp" | "kjv"
   const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
   const [langFilter, setLangFilter] = useState("all"); // "all" | "greek" | "hebrew"
   const [isMobile, setIsMobile] = useState(false);
@@ -2090,11 +2090,9 @@ function App() {
     } else {
       base = corpusFilteredResults;
     }
-    if (sortBy === "alpha") return [...base].sort((a, b) =>
-      (BOOK_LABELS[a.book] || a.book).localeCompare(BOOK_LABELS[b.book] || b.book));
     return [...base].sort((a, b) =>
       (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
-  }, [corpusFilteredResults, sortBy, countMap, mode, primaryStrongs, glossFilter]);
+  }, [corpusFilteredResults, countMap, mode, primaryStrongs, glossFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
@@ -2201,11 +2199,12 @@ function App() {
   };
   searchFnRef.current = handleSearch;
 
-  const handleStrongsSearch = (strongs_base) => {
+  const handleStrongsSearch = (strongs_base, fromKjv = false) => {
     if (!strongs_base || strongs_base === "*") return;
     const s = String(strongs_base);
     const isH = /^H/i.test(s);
     const num = s.replace(/^[GH]/i, "");
+    setBrowseTranslation(fromKjv ? "kjv" : "abp");
     handleSearch(isH ? `H${num}` : `G${num}`);
   };
 
@@ -2362,9 +2361,9 @@ function App() {
                 <div className="results-controls">
                   {viewMode === "browse" && (
                     <div className="results-sort">
-                      <span className="sort-label">Sort</span>
-                      <button className={"sort-btn " + (sortBy === "relevance" ? "on" : "")} onClick={() => setSortBy("relevance")}>Canonical</button>
-                      <button className={"sort-btn " + (sortBy === "alpha" ? "on" : "")} onClick={() => setSortBy("alpha")}>A–Z</button>
+                      <span className="sort-label">Text</span>
+                      <button className={"sort-btn " + (browseTranslation === "abp" ? "on" : "")} onClick={() => setBrowseTranslation("abp")}>ABP</button>
+                      <button className={"sort-btn " + (browseTranslation === "kjv" ? "on" : "")} onClick={() => setBrowseTranslation("kjv")}>KJV</button>
                     </div>
                   )}
                   <div className="results-sort">
@@ -2416,7 +2415,7 @@ function App() {
                       key={entry.id}
                       entry={entry}
                       active={activeEntry && activeEntry.id === entry.id}
-                      onClick={() => setActiveEntry(entry)}
+                      onClick={() => setActiveEntry(browseTranslation === "kjv" ? {...entry, isKjv: true} : entry)}
                       count={countMap[entry.strongs_raw] || 0}
                     />
                   ))}
