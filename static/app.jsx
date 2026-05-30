@@ -1662,37 +1662,33 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             aria-label="Next chapter"
           >›</button>
         </div>
-        <div className="lib-translation-toggle">
+        <div className="lib-toggles">
           <button className={"lib-trans-btn" + (translation === "abp" ? " on" : "")} onClick={() => { setTranslation("abp"); onTranslationChange?.("abp"); }}>ABP</button>
           <button className={"lib-trans-btn" + (translation === "kjv" ? " on" : "")} onClick={() => { setTranslation("kjv"); onTranslationChange?.("kjv"); }}>KJV</button>
           <button className={"lib-trans-btn" + (translation === "parallel" ? " on" : "")} onClick={() => { setTranslation("parallel"); onTranslationChange?.("parallel"); }}>Parallel</button>
-        </div>
-        <div className="lib-toggles">
-          {(translation === "kjv" || wordOrder === "greek") && <>
-            <button
-              className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
-              onClick={() => setOpt("showStrongs", !showStrongs)}
-            >Strong's</button>
-            <button
-              className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
-              onClick={() => setOpt("showInterlinear", !showInterlinear)}
-            >Interlinear</button>
-          </>}
-          {translation !== "kjv" && (
-            <div className="lib-order-toggle">
-              <button
-                className={"lib-order-btn" + (wordOrder === "english" ? " on" : "")}
-                onClick={() => setLibOptions(prev => ({
-                  ...prev,
-                  [translation]: { ...prev[translation], wordOrder: "english", showStrongs: false, showInterlinear: false }
-                }))}
-              >English</button>
-              <button
-                className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
-                onClick={() => setOpt("wordOrder", "greek")}
-              >Greek</button>
-            </div>
-          )}
+          <span className="lib-toggle-sep">|</span>
+          <button
+            className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
+            onClick={() => setOpt("showStrongs", !showStrongs)}
+          >Strong's</button>
+          <button
+            className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
+            onClick={() => setOpt("showInterlinear", !showInterlinear)}
+          >Interlinear</button>
+          <span className="lib-toggle-sep">|</span>
+          <button
+            className={"lib-order-btn" + (wordOrder === "english" || translation === "kjv" ? " on" : "")}
+            onClick={() => translation !== "kjv" && setLibOptions(prev => ({
+              ...prev,
+              [translation]: { ...prev[translation], wordOrder: "english", showStrongs: false, showInterlinear: false }
+            }))}
+          >English</button>
+          <button
+            className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
+            disabled={translation === "kjv"}
+            style={translation === "kjv" ? { opacity: 0.35, cursor: "default" } : undefined}
+            onClick={() => translation !== "kjv" && setOpt("wordOrder", "greek")}
+          >Greek</button>
         </div>
       </div>
 

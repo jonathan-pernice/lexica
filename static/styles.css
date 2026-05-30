@@ -1134,6 +1134,12 @@ input { font-family: inherit; }
   gap: 6px;
   margin-left: auto;
 }
+.lib-toggle-sep {
+  color: var(--rule-2);
+  font-size: 13px;
+  padding: 0 2px;
+  user-select: none;
+}
 .lib-toggle-btn {
   font-size: 12px;
   padding: 5px 11px;
