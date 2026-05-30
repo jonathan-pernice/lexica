@@ -32,16 +32,13 @@ In Parallel mode, the ABP and KJV columns scroll independently. Synchronized scr
 ### Parallel Mode Versification Alignment
 ABP follows LXX verse numbering (Psalms especially can be off by 1 from KJV). In Parallel mode, mismatched verses currently show blank on one side. Need to: (1) audit how bad the mismatch is in practice, (2) decide whether to offset-map or leave gaps.
 
-## Future Projects (MetaV Data)
+## MetaV
 
-### People & Genealogies
-Use MetaV `People.csv`, `PeopleRelationships.csv`, and `PeopleAliases.csv` to build a people browser — click a name in a verse to see their genealogy, relationships, and every verse they appear in with the underlying Greek/Hebrew text.
-
-### Places
-Use MetaV `Places.csv` and `PlaceAliases.csv` to surface geographic context — click a place name to see all verses referencing it and potentially a map view.
+### ✓ People & Places — DONE
+People sidebar (bio, relationships, genealogy), places sidebar (Leaflet map, coordinates), proper noun routing in both ABP and KJV. All live.
 
 ### Topic Index
-Use MetaV `Topics.csv` and `TopicIndex.csv` as a structured alternative to AI search — browse by topic and see curated verse sets with Greek/Hebrew anchoring.
+Use MetaV `Topics.csv` and `TopicIndex.csv` as a structured alternative to AI search — browse by concept (Atonement, Covenant, Resurrection, Holy Spirit etc.) rather than searching. Each topic → curated verse set with full interlinear. Could be a fourth nav tab or a browse mode within Search. Good entry point for users who don't know what to search for.
 
 ## Library Expansion (texts + morphology)
 
