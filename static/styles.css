@@ -1318,7 +1318,7 @@ input { font-family: inherit; }
   text-align: center;
   white-space: nowrap;
   align-self: flex-start;
-  margin-top: 3px;
+  margin-top: 6px;
 }
 
 .lib-vnum-il { margin-top: 22px; }
@@ -1437,10 +1437,12 @@ input { font-family: inherit; }
   align-items: center;
   gap: 2px;
   padding: 4px 2px 5px;
-  padding-top: 14px;
   border-radius: 5px;
   cursor: default;
   transition: background 0.12s;
+}
+.lib-word:has(.lib-iw-pos) {
+  padding-top: 14px;
 }
 .lib-word:hover { background: var(--bg-sunk); }
 .lib-word.lib-word-clickable { cursor: pointer; }
