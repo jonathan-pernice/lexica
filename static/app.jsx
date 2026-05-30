@@ -1199,7 +1199,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
-function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordClick, onReadInContext }) {
+function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordClick, onReadInContext, corpusFilter, onCorpusFilter }) {
   const [studySort, setStudySort] = useState("curated");
   const [textMode, setTextMode] = useState("abp"); // "abp" | "kjv"
   const [kjvCache, setKjvCache] = useState({}); // pre-fetched KJV verse words
@@ -1281,6 +1281,13 @@ function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordCl
     <div className="study-groups">
 
       <div className="study-toolbar">
+        {onCorpusFilter && (
+          <div className="study-sort-toggle">
+            <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => onCorpusFilter("all")}>All</button>
+            <button className={"sort-btn " + (corpusFilter === "ot"  ? "on" : "")} onClick={() => onCorpusFilter("ot")}>OT</button>
+            <button className={"sort-btn " + (corpusFilter === "nt"  ? "on" : "")} onClick={() => onCorpusFilter("nt")}>NT</button>
+          </div>
+        )}
         <div className="study-sort-toggle">
           <button className={"sort-btn " + (studySort === "curated" ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
           <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
@@ -2369,21 +2376,15 @@ function App() {
                   )}
                   {searchLabel && !aiLoading && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
-                <div className="results-controls">
-                  <div className="results-sort">
-                    {mode === "ai" && <>
-                      <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
-                      <button className={"sort-btn " + (corpusFilter === "ot" ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
-                      <button className={"sort-btn " + (corpusFilter === "nt" ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
-                      <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
-                    </>}
-                    {mode === "search" && <>
+                {mode === "search" && (
+                  <div className="results-controls">
+                    <div className="results-sort">
                       <button className={"sort-btn " + (browseTranslation === "abp" ? "on" : "")} onClick={() => setBrowseTranslation("abp")}>ABP</button>
                       <button className={"sort-btn " + (browseTranslation === "kjv" ? "on" : "")} onClick={() => setBrowseTranslation("kjv")}>KJV</button>
                       <button className={"sort-btn " + (browseTranslation === "all" ? "on" : "")} onClick={() => setBrowseTranslation("all")}>All</button>
-                    </>}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {!loading && allResults.length > 0 && mode === "search" && !glossFilter && (
@@ -2406,7 +2407,7 @@ function App() {
                   <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
                 </div>
               ) : viewMode === "study" ? (
-                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} />
+                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} corpusFilter={corpusFilter} onCorpusFilter={setCorpusFilter} />
               ) : (
                 <div className="results">
                   {displayed.map((entry) => (
