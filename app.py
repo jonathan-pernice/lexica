@@ -1375,14 +1375,17 @@ def search():
             # Hebrew groupings: top H-strongs from KJV where the English word matches
             hebrew_strongs = [
                 r["strongs_id"] for r in conn.execute(
-                    """SELECT ks.strongs_id, COUNT(*) AS cnt
+                    """SELECT ks.strongs_id,
+                              COUNT(*) AS match_cnt,
+                              (SELECT COUNT(*) FROM kjv_strongs WHERE strongs_id = ks.strongs_id) AS total_cnt
                        FROM kjv_strongs ks
                        JOIN kjv_words kw ON kw.word_id = ks.word_id
                        WHERE kw.word = ? COLLATE NOCASE
                          AND ks.strongs_id LIKE 'H%'
                        GROUP BY ks.strongs_id
-                       ORDER BY cnt DESC
-                       LIMIT 3""",
+                       HAVING match_cnt * 10 >= total_cnt
+                       ORDER BY match_cnt DESC
+                       LIMIT 4""",
                     (q,),
                 ).fetchall()
             ]
