@@ -1,5 +1,26 @@
 # TODO
 
+## Quick Wins
+
+### AI: Prompt Caching
+Add Anthropic `cache_control` to the system prompt. Biggest cost lever — system prompt is long and constant across every request.
+
+### AI: System Prompt Improvements
+- Avoid circular definitions (don't use the English gloss to define the word)
+- Front-load concrete/relational meanings before abstract ones
+- Distinguish grammatical form from semantic scope (e.g. πᾶς — "every" vs "all" is a form question, not semantic)
+- Dictionary entry style output: form, gloss, usage note, 2–3 references
+- Consider few-shot examples showing target output style
+
+### AI: Cap max_tokens
+Tighter limit for simple lookups — most answers don't need 1000 tokens.
+
+### Cross-Reference Count Badge
+Show a small ref count on each verse in Library so heavily cross-referenced verses (Isaiah 53, Psalm 22, etc.) are visible at a glance. Data already in `cross_references` table — just needs a count query and a UI badge.
+
+### Transliteration Search — Verify
+CLAUDE.md says transliteration search is implemented. Test `ἄρχων` / `archon` specifically to confirm it works end-to-end.
+
 ## Planned Features
 
 ### Hebrew Lexicon Search (main Search tab)
@@ -14,6 +35,9 @@ In Parallel mode, the ABP and KJV columns scroll independently. Synchronized scr
 
 ### Parallel Mode Versification Alignment
 ABP follows LXX verse numbering (Psalms especially can be off by 1 from KJV). In Parallel mode, mismatched verses currently show blank on one side. Need to: (1) audit how bad the mismatch is in practice, (2) decide whether to offset-map or leave gaps.
+
+### Morphology Display
+Show grammatical parsing (case, tense, number, etc.) in the word click sidebar in plain English: "Verb · Aorist · Active · Indicative · 3rd Person · Singular". Morphological data source: MorphGNT (NT) + CATSS/CCAT (LXX OT) — needs import into a `morph` column on the `words` table.
 
 ## Future Projects (MetaV Data)
 
