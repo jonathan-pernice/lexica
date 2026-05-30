@@ -659,7 +659,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
       </div>
 
       <div className="detail-body">
-        <div className="detail-hero">
+        <div className={"detail-hero" + (isPN && !entry.greek && !isHebrew ? " no-gloss" : "")}>
           <div className="detail-greek"
                dir={isHebrew ? "rtl" : undefined}
                style={isHebrew ? {fontFamily: "var(--f-serif)", textAlign: "left"} : undefined}>
