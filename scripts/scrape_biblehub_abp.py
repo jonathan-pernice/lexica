@@ -272,7 +272,7 @@ def _is_italic(eng_span) -> int:
     leading italic article ('the beginning') does not flag the whole word italic.
     """
     for child in reversed(list(eng_span.children)):
-        if hasattr(child, "name"):
+        if child.name:
             if child.name == "span" and "num" in (child.get("class") or []):
                 continue  # skip position-marker spacers
             text = child.get_text(strip=True)
