@@ -1322,7 +1322,6 @@ input { font-family: inherit; }
 }
 
 .lib-vnum-il { margin-top: 22px; }
-.lib-vnum-pos { margin-top: 11px; }
 .lib-vnum-click {
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
@@ -1432,11 +1431,13 @@ input { font-family: inherit; }
   box-shadow: inset 3px 0 0 var(--gold);
 }
 .lib-word {
+  position: relative;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
   padding: 4px 2px 5px;
+  padding-top: 14px;
   border-radius: 5px;
   cursor: default;
   transition: background 0.12s;
@@ -1445,12 +1446,13 @@ input { font-family: inherit; }
 .lib-word.lib-word-clickable { cursor: pointer; }
 .lib-word.lib-word-clickable:hover { background: var(--accent-soft); }
 .lib-iw-pos {
+  position: absolute;
+  top: 2px;
   font-family: var(--f-mono);
   font-size: 8.5px;
   color: var(--ink-3);
   letter-spacing: 0.02em;
   line-height: 1;
-  margin-bottom: -3px;
 }
 .lib-iw-greek {
   font-family: var(--f-greek);
