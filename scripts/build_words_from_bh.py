@@ -134,7 +134,7 @@ def build_verse_words(bh_rows):
 
             if comp is None:
                 strongs      = "*"
-                strongs_base = None
+                strongs_base = "*"
             else:
                 strongs      = comp
                 strongs_base = _base(comp)
