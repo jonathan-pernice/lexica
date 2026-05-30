@@ -201,6 +201,13 @@ CREATE TABLE IF NOT EXISTS bh_progress (
 def open_db(path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(path)
     conn.executescript(SCHEMA + PROGRESS_SCHEMA)
+    # Guard: if bh_words exists but predates greek_pos column, add it now.
+    cols = {row[1] for row in conn.execute("PRAGMA table_info(bh_words)")}
+    if "greek_pos" not in cols:
+        print("  [migration] ALTER TABLE bh_words ADD COLUMN greek_pos INTEGER")
+        conn.execute("ALTER TABLE bh_words ADD COLUMN greek_pos INTEGER")
+        conn.commit()
+    print(f"  [db] bh_words columns: {sorted(cols | {'greek_pos'})}")
     return conn
 
 
