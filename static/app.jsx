@@ -667,14 +667,6 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </div>
           <div className="detail-translit-row">
             <span className="detail-translit">{isHebrew ? bdbEntry?.xlit : entry.translit}</span>
-            <button
-              className="tool-btn"
-              title="Copy"
-              onClick={() => navigator.clipboard?.writeText(isHebrew ? (bdbEntry?.lemma || "") : entry.greek)}
-            >
-              <Icon.Copy/>
-            </button>
-            <button className="tool-btn" title="Share"><Icon.Share/></button>
           </div>
           {!(isPN && !entry.greek && !isHebrew) && (
             <div className="detail-gloss">{stripArticles(((isPN || metavData) ? extractProperName(entry.gloss) : (entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss))?.replace(/[.,;:!?—-]+$/, "").trim())}</div>
