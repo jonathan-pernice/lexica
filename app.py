@@ -1266,6 +1266,8 @@ def _kjv_strongs_search(conn, sids, out_rows, out_groupings):
     for sid in sids:
         sid = sid.upper()
         base = sid.lstrip("GH")
+        if base in _FUNCTION_STRONGS:
+            continue
         is_hebrew = sid.startswith("H")
         if is_hebrew:
             meta = conn.execute(
@@ -1322,10 +1324,12 @@ def _kjv_word_search(conn, word, out_rows, out_groupings):
         ORDER BY kw.book_id, kw.chapter, kw.verse_num
         LIMIT 500
     """, (word,)).fetchall()
-    found_sids = list({r["strongs_id"] for r in rows})
+    found_sids = list({r["strongs_id"] for r in rows if r["strongs_id"].lstrip("GH") not in _FUNCTION_STRONGS})
     for r in rows:
         sid  = r["strongs_id"]
         base = sid.lstrip("GH")
+        if base in _FUNCTION_STRONGS:
+            continue
         book = _KJV_BOOK_ID_REV.get(r["book_id"], "")
         out_rows.append({
             "ref": f"{book} {r['chapter']}:{r['verse_num']}",
