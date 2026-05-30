@@ -1,5 +1,21 @@
 # TODO
 
+## Advanced Workspace Layout (major feature)
+
+Desktop-only multi-panel workspace mode, alongside the existing single-focus layout. Three modes total:
+- **Mobile** — current Lexica (reader + tap-to-open sidebar). No changes needed.
+- **Desktop basic** — current Lexica. Default.
+- **Desktop advanced** — resizable multi-panel workspace. Minimum viewport width gate.
+
+Panels for advanced mode (based on eSword reference layout):
+- Book/chapter navigator (persistent left sidebar, currently a dropdown)
+- Bible text panel (center, full interlinear with inline Strong's)
+- Cross-references panel (top right)
+- Dictionary/lexicon panel (bottom right, currently opens as overlay sidebar)
+- Notes panel (personal study notes per verse — new feature, needs DB table)
+
+Draft a written spec of panel combinations and behavior before implementing. Feed spec + styles.css + app.jsx to Claude for design/implementation plan.
+
 ## Quick Wins
 
 ### AI: Prompt Caching
