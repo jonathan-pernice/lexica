@@ -2170,7 +2170,6 @@ function App() {
     setError("");
     setAiMeta(null);
     setMode("search");
-    setSortBy("relevance");
     setViewMode("browse");
     setActiveEntry(null);
     setGroupings({});
@@ -2237,7 +2236,6 @@ function App() {
     setAiNotice("");
     setMode("ai");
     setShowAllAi(false);
-    setSortBy("relevance");
     setViewMode("study");
     setActiveEntry(null);
     setGlossFilter(null);
