@@ -1437,12 +1437,10 @@ input { font-family: inherit; }
   align-items: center;
   gap: 2px;
   padding: 4px 2px 5px;
+  padding-top: 13px;
   border-radius: 5px;
   cursor: default;
   transition: background 0.12s;
-}
-.lib-word:has(.lib-iw-pos) {
-  padding-top: 14px;
 }
 .lib-word:hover { background: var(--bg-sunk); }
 .lib-word.lib-word-clickable { cursor: pointer; }
