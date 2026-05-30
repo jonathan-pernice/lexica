@@ -1383,7 +1383,7 @@ def search():
                        WHERE kw.word = ? COLLATE NOCASE
                          AND ks.strongs_id LIKE 'H%'
                        GROUP BY ks.strongs_id
-                       HAVING match_cnt * 10 >= total_cnt
+                       HAVING match_cnt >= 50 AND match_cnt * 10 >= total_cnt
                        ORDER BY match_cnt DESC
                        LIMIT 4""",
                     (q,),
