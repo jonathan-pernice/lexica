@@ -2080,7 +2080,7 @@ function App() {
     return result;
   }, [groupings, corpusFilteredResults, corpusFilter]);
 
-  // KJV groupings: computed client-side from kjvResults
+  // KJV groupings — built client-side from kjvResults
   const kjvGroupings = useMemo(() => {
     if (!kjvResults.length) return {};
     const map = {};
