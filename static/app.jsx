@@ -2390,14 +2390,16 @@ function App() {
                       <button className={"sort-btn " + (langFilter === "hebrew" ? "on" : "")} onClick={() => setLangFilter("hebrew")}>Hebrew</button>
                     </div>
                   )}
-                  <div className="view-toggle">
-                    <button className={"view-btn " + (viewMode === "browse" ? "on" : "")} onClick={() => setViewMode("browse")} title="Browse mode">
-                      <Icon.Grid/>
-                    </button>
-                    <button className={"view-btn " + (viewMode === "study" ? "on" : "")} onClick={() => setViewMode("study")} title="Study mode">
-                      <Icon.Lines/>
-                    </button>
-                  </div>
+                  {mode !== "ai" && (
+                    <div className="view-toggle">
+                      <button className={"view-btn " + (viewMode === "browse" ? "on" : "")} onClick={() => setViewMode("browse")} title="Browse mode">
+                        <Icon.Grid/>
+                      </button>
+                      <button className={"view-btn " + (viewMode === "study" ? "on" : "")} onClick={() => setViewMode("study")} title="Study mode">
+                        <Icon.Lines/>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
