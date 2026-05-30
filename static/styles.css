@@ -1314,12 +1314,15 @@ input { font-family: inherit; }
   border-radius: 3px;
   letter-spacing: 0.04em;
   flex: 0 0 auto;
+  min-width: 28px;
+  text-align: center;
   white-space: nowrap;
   align-self: flex-start;
   margin-top: 3px;
 }
 
 .lib-vnum-il { margin-top: 22px; }
+.lib-vnum-pos { margin-top: 12px; }
 .lib-vnum-click {
   cursor: pointer;
   transition: background 0.15s, color 0.15s;

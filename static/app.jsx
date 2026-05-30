@@ -1428,7 +1428,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
   const vnumEl = (verse) => (
     <span
-      className={"lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "") + (showInterlinear ? " lib-vnum-il" : "")}
+      className={"lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "") + (showInterlinear ? " lib-vnum-il" : "") + (wordOrder === "greek" && !showInterlinear ? " lib-vnum-pos" : "")}
       onClick={handleVerseNum ? () => handleVerseNum(verse) : undefined}
     >{verse}</span>
   );
