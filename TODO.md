@@ -38,7 +38,14 @@ ABP follows LXX verse numbering (Psalms especially can be off by 1 from KJV). In
 People sidebar (bio, relationships, genealogy), places sidebar (Leaflet map, coordinates), proper noun routing in both ABP and KJV. All live.
 
 ### Topic Index
-Use MetaV `Topics.csv` and `TopicIndex.csv` as a structured alternative to AI search — browse by concept (Atonement, Covenant, Resurrection, Holy Spirit etc.) rather than searching. Each topic → curated verse set with full interlinear. Could be a fourth nav tab or a browse mode within Search. Good entry point for users who don't know what to search for.
+Browse by concept (Atonement, Covenant, Resurrection, Holy Spirit etc.) as a structured alternative to AI search. Good entry point for users who don't know what to search for.
+
+**Approach:** use MetaV topic *names* only as a category scaffold — throw away their verse mappings entirely (MetaV topics reflect evangelical Protestant systematic theology, which conflicts with the Berean approach). Generate all content ourselves:
+- Topic names: MetaV `Topics.csv` as a starting list, curated/renamed to remove theologically loaded framing
+- Verse selection: our own Strong's-driven corpus query per topic
+- Synthesis: Haiku with Berean system prompt, anchored in ABP vocabulary
+
+Could be a fourth nav tab or a browse mode within Search.
 
 ## Library Expansion (texts + morphology)
 
