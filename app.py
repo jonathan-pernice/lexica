@@ -1371,7 +1371,38 @@ def search():
             # Cross-reference: only include content-word strongs in the search results
             result_strongs = {r["strongs"] for r in rows if _is_content(r)}
             unique_strongs = list(corpus_match & result_strongs)
-        if unique_strongs:
+        if unique_strongs and not snum:
+            # For text searches, filter groupings to words where searched term
+            # is >= 10% of total occurrences (avoids incidental matches)
+            placeholders = ",".join("?" * len(unique_strongs))
+            totals = {
+                r["strongs"]: r["total"]
+                for r in conn.execute(
+                    f"""SELECT strongs, COUNT(*) AS total FROM words
+                        WHERE strongs IN ({placeholders})
+                          AND english_head IS NOT NULL AND english_head != ''
+                        GROUP BY strongs""",
+                    unique_strongs,
+                ).fetchall()
+            }
+            for gr in conn.execute(
+                f"""SELECT strongs, english_head, COUNT(*) AS cnt
+                    FROM words
+                    WHERE strongs IN ({placeholders})
+                      AND english_head IS NOT NULL AND english_head != ''
+                    GROUP BY strongs, english_head
+                    ORDER BY strongs, cnt DESC""",
+                unique_strongs,
+            ).fetchall():
+                s = gr["strongs"]
+                total = totals.get(s, 1)
+                # Only include strongs where the searched term is >= 10% of occurrences
+                if gr["english_head"].lower() == q.lower() and gr["cnt"] / total < 0.10:
+                    continue
+                groupings.setdefault(s, []).append({"gloss": gr["english_head"], "count": gr["cnt"]})
+            # Remove strongs that only had filtered glosses
+            groupings = {s: g for s, g in groupings.items() if g}
+        elif unique_strongs:
             placeholders = ",".join("?" * len(unique_strongs))
             for gr in conn.execute(
                 f"""SELECT strongs, english_head, COUNT(*) AS cnt
