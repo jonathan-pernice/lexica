@@ -1494,14 +1494,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     };
 
     // Bracket chip (bracketed word in Greek mode — shows inline position number)
-    const bracketChip = (w, key) => {
+    const bracketChip = (w, key, isFirst = false) => {
       const isPN = w.strongs_base === "*";
       const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english));
       return (
         <span key={key}
           className={"lib-word lib-word-bracketed" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
           onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
-          {w.greek_pos !== null && w.greek_pos !== undefined &&
+          {isFirst && w.greek_pos !== null && w.greek_pos !== undefined &&
             <span className="lib-iw-pos">{w.greek_pos}</span>}
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
           <span className="lib-iw-english">{chipLabel(w)}</span>
@@ -1546,7 +1546,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         return (
           <span key={`bg${gi}`} className="lib-bracket-group">
             {bracketChar("[", "bl")}
-            {g.words.map((w, wi) => bracketChip(w, `bg${gi}w${wi}`))}
+            {g.words.map((w, wi) => bracketChip(w, `bg${gi}w${wi}`, wi === 0))}
             {bracketChar("]", "br")}
           </span>
         );
