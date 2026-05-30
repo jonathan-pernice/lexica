@@ -70,7 +70,7 @@ function extractProperName(gloss) {
   if (!gloss) return "";
   const clean = gloss.replace(/[^a-zA-Z\s'-]/g, "").trim();
   const proper = clean.split(/\s+/).find(w => /^[A-Z]/.test(w) && !_PN_STOP.has(w));
-  return proper || clean;
+  return proper || "";
 }
 
 // ============================================================
@@ -525,7 +525,9 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setMetavData(null);
     setMetavType(null);
     // Skip metaV for words with a real Greek lemma — those belong to LSJ
-    if (!isPN && entry.greek && entry.translit && entry.strongs_raw !== "2316") return;
+    // Exception: KJV words that look like proper nouns (capitalized) still go through metaV
+    const kjvIsPN = entry.isKjv && extractProperName(entry.pnName || entry.gloss || "") !== "";
+    if (!isPN && !kjvIsPN && entry.greek && entry.translit && entry.strongs_raw !== "2316") return;
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
     const _DIVINE_SKIP = new Set(["LORD","Lord","YHWH","Yahweh","Jehovah","Holy"]);
