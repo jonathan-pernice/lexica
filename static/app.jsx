@@ -2028,6 +2028,7 @@ function App() {
   const [libTranslation, setLibTranslation] = useState("abp");
   const [groupings, setGroupings] = useState({});
   const [variants, setVariants] = useState({});
+  const [kjvResults, setKjvResults] = useState([]); // KJV strongs search results (parallel to allResults)
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [glossFilter, setGlossFilter] = useState(null); // { sn, gloss, label } | null
   const searchFnRef = useRef(null);
@@ -2079,8 +2080,12 @@ function App() {
     return result;
   }, [groupings, corpusFilteredResults, corpusFilter]);
 
-  // Sorted display list — gloss filter > function word suppression (corpus already filtered)
+  // Sorted display list — KJV toggle uses kjvResults; ABP uses corpus-filtered ABP results
   const displayed = useMemo(() => {
+    if (browseTranslation === "kjv" && kjvResults.length > 0) {
+      return [...kjvResults].sort((a, b) =>
+        (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
+    }
     let base;
     if (glossFilter) {
       base = corpusFilteredResults.filter(e =>
@@ -2094,7 +2099,7 @@ function App() {
     }
     return [...base].sort((a, b) =>
       (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
-  }, [corpusFilteredResults, countMap, mode, primaryStrongs, glossFilter]);
+  }, [corpusFilteredResults, kjvResults, browseTranslation, countMap, mode, primaryStrongs, glossFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
@@ -2178,6 +2183,14 @@ function App() {
     setVariants({});
     setGlossFilter(null);
     setLangFilter("all");
+    setKjvResults([]);
+    // Kick off KJV parallel fetch for strongs queries
+    const strongsMatch = /^([GH]\d[\d.]*)/i.exec(q.trim());
+    if (strongsMatch) {
+      api.kjvStrongsSearch(strongsMatch[1].toUpperCase())
+        .then(d => setKjvResults((d.results || []).map((r, idx) => ({ ...r, id: `kjv-sr-${idx}`, gloss_head: r.gloss }))))
+        .catch(() => setKjvResults([]));
+    }
     try {
       const data = await api.search(q);
       if (data.error) {
@@ -2206,30 +2219,7 @@ function App() {
     const isH = /^H/i.test(s);
     const num = s.replace(/^[GH]/i, "");
     setBrowseTranslation(fromKjv ? "kjv" : "abp");
-    if (fromKjv) {
-      const sid = isH ? `H${num}` : `G${num}`;
-      setQ1(sid);
-      setBreadcrumbs([]);
-      setMainView("search");
-      setLoading(true);
-      setError("");
-      setMode("search");
-      setViewMode("browse");
-      setActiveEntry(null);
-      setGroupings({});
-      setVariants({});
-      setGlossFilter(null);
-      setLangFilter("all");
-      setCorpusFilter("all");
-      api.kjvStrongsSearch(sid)
-        .then(data => {
-          setAllResults((data.results || []).map((r, idx) => ({ ...r, id: `kjv-sr-${idx}`, gloss_head: r.gloss })));
-          setLoading(false);
-        })
-        .catch(() => { setError("Network error"); setAllResults([]); setLoading(false); });
-    } else {
-      handleSearch(isH ? `H${num}` : `G${num}`);
-    }
+    handleSearch(isH ? `H${num}` : `G${num}`);
   };
 
   const handleGlossDrill = (sn, gloss) => {
