@@ -1480,7 +1480,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english || w.english_head) && (w.english || w.english_head));
       return (
         <span key={key}
-          className={"lib-word" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
+          className={"lib-word" + (w.italic ? " lib-abp-italic" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
           onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
           <span className="lib-iw-english">{chipLabel(w)}</span>
@@ -1499,7 +1499,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english));
       return (
         <span key={key}
-          className={"lib-word lib-word-bracketed" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
+          className={"lib-word lib-word-bracketed" + (w.italic ? " lib-abp-italic" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
           onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
           {w.greek_pos !== null && w.greek_pos !== undefined &&
             <span className="lib-iw-pos">{w.greek_pos}</span>}
