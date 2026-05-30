@@ -1356,9 +1356,8 @@ def search():
         if snum:
             unique_strongs = list({r["strongs"] for r in rows if _is_content(r)})
         else:
-            # For text searches: top strongs where searched term is a primary translation
-            # >= 3 occurrences AND >= 10% of that word's total glosses
-            unique_strongs = [
+            # Greek groupings: top G-strongs where searched term is a primary ABP translation
+            greek_strongs = [
                 r["strongs"] for r in conn.execute(
                     """SELECT strongs,
                               SUM(CASE WHEN english_head = ? COLLATE NOCASE THEN 1 ELSE 0 END) AS m
@@ -1367,11 +1366,29 @@ def search():
                        GROUP BY strongs
                        HAVING m >= 3 AND m * 10 >= COUNT(*)
                        ORDER BY m DESC
-                       LIMIT 5""",
+                       LIMIT 4""",
                     (q,),
                 ).fetchall()
                 if r["strongs"] not in _FUNCTION_STRONGS
             ]
+            # Hebrew groupings: top H-strongs from KJV where the English word matches
+            hebrew_strongs = [
+                r["strongs_id"] for r in conn.execute(
+                    """SELECT ks.strongs_id, COUNT(*) AS cnt
+                       FROM kjv_strongs ks
+                       JOIN kjv_words kw ON kw.word_id = ks.word_id
+                       WHERE kw.word = ? COLLATE NOCASE
+                         AND ks.strongs_id LIKE 'H%'
+                       GROUP BY ks.strongs_id
+                       ORDER BY cnt DESC
+                       LIMIT 3""",
+                    (q,),
+                ).fetchall()
+            ]
+            unique_strongs = greek_strongs
+            # Add Hebrew strongs to groupings via _hebrew_search
+            for h_id in hebrew_strongs:
+                _hebrew_search(conn, h_id, h_rows, h_groupings)
         if unique_strongs:
             placeholders = ",".join("?" * len(unique_strongs))
             for gr in conn.execute(
@@ -1445,15 +1462,6 @@ def search():
         for r in rows
     ]
 
-    # Filter Hebrew groupings: only keep words where searched term is >= 20% of KJV glosses
-    if not snum and h_groupings:
-        filtered_h_groupings = {}
-        for h_id, glosses in h_groupings.items():
-            total = sum(g["count"] for g in glosses)
-            match = sum(g["count"] for g in glosses if g["gloss"].lower() == q.lower())
-            if total > 0 and match / total >= 0.20:
-                filtered_h_groupings[h_id] = glosses
-        h_groupings = filtered_h_groupings
 
     results.extend(h_rows)
     groupings.update(h_groupings)
