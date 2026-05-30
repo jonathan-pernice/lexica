@@ -2082,7 +2082,7 @@ function App() {
     if (glossFilter) {
       base = corpusFilteredResults.filter(e =>
         e.strongs_raw === glossFilter.sn &&
-        e.gloss_head.toLowerCase() === glossFilter.gloss.toLowerCase()
+        e.gloss_head === glossFilter.gloss
       );
     } else if (mode === "search" && !primaryStrongs) {
       base = corpusFilteredResults.filter(e => !e.is_function);
