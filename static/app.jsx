@@ -787,7 +787,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         )}
 
 
-        {!isHebrew && !isPN && !metavData && !entry.isKjv && abpCount !== null && abpCount > 0 && (
+        {!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0 && (
           <section className="detail-section">
             <h4 className="detail-h">ABP Occurrences</h4>
             <button
