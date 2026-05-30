@@ -1307,14 +1307,14 @@ input { font-family: inherit; }
 
 .lib-vnum {
   font-family: var(--f-mono);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--gold);
   background: var(--gold-soft);
-  padding: 2px 5px;
+  padding: 1px 4px;
   border-radius: 3px;
   letter-spacing: 0.04em;
   flex: 0 0 auto;
-  min-width: 28px;
+  min-width: 24px;
   text-align: center;
   white-space: nowrap;
   align-self: flex-start;
