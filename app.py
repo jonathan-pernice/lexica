@@ -1359,10 +1359,12 @@ def search():
             # Dotted strongs values where english_head (or english fallback) = q
             corpus_match = {
                 r["strongs"] for r in conn.execute(
-                    """SELECT DISTINCT strongs FROM words
+                    """SELECT strongs, COUNT(*) as cnt FROM words
                        WHERE (english_head = ? COLLATE NOCASE
                               OR (english_head IS NULL AND english = ? COLLATE NOCASE))
-                         AND strongs IS NOT NULL AND strongs != '*'""",
+                         AND strongs IS NOT NULL AND strongs != '*'
+                       GROUP BY strongs
+                       HAVING COUNT(*) >= 3""",
                     (q, q),
                 ).fetchall()
             }

@@ -1804,14 +1804,7 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
         return { sn, glosses, siblings, entry };
       })
       .filter(({ glosses, siblings, entry }) =>
-        (glosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function))
-      .filter(({ glosses }) => {
-        // Only show grouping if primary gloss has meaningful count (not incidental matches)
-        const top = glosses[0];
-        const total = glosses.reduce((s, g) => s + g.count, 0);
-        return top && (top.count > 2 || glosses.length <= 3) && top.count / Math.max(total, 1) > 0.01;
-      })
-      .slice(0, 6); // cap at 6 groupings
+        (glosses.length > 1 || siblings.length > 0) && !(entry && entry.is_function));
   }, [groupings, results, variants]);
 
   if (rows.length === 0) return null;
