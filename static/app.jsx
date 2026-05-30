@@ -2080,6 +2080,23 @@ function App() {
     return result;
   }, [groupings, corpusFilteredResults, corpusFilter]);
 
+  // KJV groupings computed client-side from kjvResults
+  const kjvGroupings = useMemo(() => {
+    if (!kjvResults.length) return {};
+    const map = {};
+    for (const r of kjvResults) {
+      const sn = r.strongs_raw;
+      if (!map[sn]) map[sn] = {};
+      const g = r.gloss || "";
+      map[sn][g] = (map[sn][g] || 0) + 1;
+    }
+    return Object.fromEntries(
+      Object.entries(map).map(([sn, gc]) => [
+        sn, Object.entries(gc).map(([gloss, count]) => ({ gloss, count }))
+      ])
+    );
+  }, [kjvResults]);
+
   // Sorted display list — KJV toggle uses kjvResults; ABP uses corpus-filtered ABP results
   const displayed = useMemo(() => {
     if (browseTranslation === "kjv" && kjvResults.length > 0) {
@@ -2402,9 +2419,9 @@ function App() {
 
               {!loading && allResults.length > 0 && mode === "search" && !glossFilter && (
                 <GlossGroupings
-                  groupings={filteredGroupings}
-                  results={corpusFilteredResults}
-                  variants={variants}
+                  groupings={browseTranslation === "kjv" ? kjvGroupings : filteredGroupings}
+                  results={browseTranslation === "kjv" ? kjvResults : corpusFilteredResults}
+                  variants={browseTranslation === "kjv" ? {} : variants}
                   onGlossDrill={handleGlossDrill}
                   onStrongsSearch={handleStrongsSearch}
                 />
