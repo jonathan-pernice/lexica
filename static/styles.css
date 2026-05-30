@@ -578,12 +578,13 @@ input { font-family: inherit; }
 }
 
 .detail-hero {
-  margin-bottom: 24px;
-  padding-bottom: 20px;
+  margin-bottom: 16px;
+  padding-bottom: 18px;
   border-bottom: 1px solid var(--rule);
 }
 .detail-hero.no-gloss {
-  padding-bottom: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 .detail-greek {
   font-family: var(--f-greek);
@@ -620,7 +621,7 @@ input { font-family: inherit; }
   text-wrap: pretty;
 }
 
-.detail-section { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.detail-section { padding: 12px 0; border-bottom: 1px solid var(--rule); }
 .detail-section.last { border-bottom: 0; }
 .detail-h {
   font-size: 11px;
