@@ -574,17 +574,16 @@ input { font-family: inherit; }
 .detail-body {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 24px 40px;
+  padding: 16px 24px 40px;
 }
 
 .detail-hero {
-  margin-bottom: 16px;
+  margin-bottom: 0;
   padding-bottom: 18px;
   border-bottom: 1px solid var(--rule);
 }
 .detail-hero.no-gloss {
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  padding-bottom: 12px;
 }
 .detail-greek {
   font-family: var(--f-greek);
