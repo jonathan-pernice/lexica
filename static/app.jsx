@@ -2159,7 +2159,7 @@ function App() {
     setMainView(view);
   };
 
-  const handleSearch = async (overrideQ = null, newBreadcrumbs = null, pushHistory = true) => {
+  const handleSearch = async (overrideQ = null, newBreadcrumbs = null, pushHistory = true, pendingGlossFilter = null) => {
     const q = (overrideQ !== null ? overrideQ : q1).trim();
     if (!q) return;
     if (overrideQ !== null) setQ1(overrideQ);
@@ -2189,6 +2189,7 @@ function App() {
         setAllResults((data.results || []).map((r, idx) => makeEntry(r, idx)));
         setGroupings(data.groupings || {});
         setVariants(data.variants || {});
+        if (pendingGlossFilter) setGlossFilter(pendingGlossFilter);
       }
     } catch (e) {
       setError("Network error: " + e.message);
@@ -2211,7 +2212,7 @@ function App() {
     // Always do a full strongs search to ensure all results are fetched
     // (grouping count is from full corpus, allResults may be truncated)
     const crumbsWithCurrent = [...breadcrumbs, { label: searchLabel, q: q1.trim() }];
-    handleSearch(strongsTag(sn), crumbsWithCurrent, true).then(() => setGlossFilter({ sn, gloss }));
+    handleSearch(strongsTag(sn), crumbsWithCurrent, true, { sn, gloss });
   };
 
   const handleBreadcrumbNav = (crumb, idx) => {
