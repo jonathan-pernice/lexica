@@ -133,23 +133,15 @@ def parse_words(verse_text: str) -> list:
         'also','now','yet','when','as','if','that','which','who','where','how',
     })
 
-    # Common function word strongs to skip when looking for embedded names
-    _FUNC_STRONGS = frozenset({
-        '3588','3789','2532','1161','1473','846','3778','3739','3754','1722',
-        '1519','1537','4314','3326','1909','575','3844','1223','2596','4862',
-        '3756','3361','3780','4771','2249','5210','1438','3364','3762','3777',
-    })
-
     for i, (seq, eng, strongs, gpos, bid) in enumerate(words):
+        # Only process G* proper noun tokens — non-G* fixes cause too many edge cases
         is_pn = (strongs == '*')
-        is_null_content = (eng is None and strongs not in _FUNC_STRONGS and strongs != '*')
 
-        if not is_pn and not is_null_content:
+        if not is_pn:
             continue
 
         if eng is None and i > 0:
-            # Pattern: "Abel becameG1096 G*" or "God madeG4160 G3588 G2316"
-            # Find the nearest preceding word with english (skip over null function words)
+            # Pattern: "Abel becameG1096 G*" — G* has no english, extract name from prev word
             prev_idx = i - 1
             while prev_idx >= 0 and words[prev_idx][1] is None:
                 prev_idx -= 1
