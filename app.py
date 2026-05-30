@@ -2303,6 +2303,51 @@ def kjv_strongs_count(strongs_id):
     return jsonify({"count": row["cnt"] if row else 0})
 
 
+@app.route("/api/kjv/strongs-search/<strongs_id>")
+def kjv_strongs_search(strongs_id):
+    """Return all KJV verses containing a given Strong's ID, one entry per word occurrence."""
+    sid = strongs_id.upper()
+    conn = db_ro()
+    try:
+        rows = conn.execute("""
+            SELECT kw.book_id, kw.chapter, kw.verse_num, kw.word,
+                   MAX(COALESCE(bdb.lemma, lex.lemma))   AS lemma,
+                   MAX(COALESCE(bdb.xlit, lex.translit)) AS xlit,
+                   MAX(COALESCE(lex.strongs_def, bdb.description)) AS definition
+            FROM kjv_strongs ks
+            JOIN kjv_words kw ON kw.word_id = ks.word_id
+            LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
+            LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+            WHERE ks.strongs_id = ?
+            GROUP BY kw.book_id, kw.chapter, kw.verse_num, kw.word
+            ORDER BY kw.book_id, kw.chapter, kw.verse_num
+        """, (sid,)).fetchall()
+    finally:
+        conn.close()
+    results = []
+    base = sid.lstrip("GH")
+    for r in rows:
+        book_abbrev = _KJV_BOOK_ID_REV.get(r["book_id"], "")
+        results.append({
+            "strongs":      sid,
+            "strongs_base": base,
+            "strongs_raw":  base,
+            "greek":        r["lemma"] or "",
+            "translit":     r["xlit"] or "",
+            "gloss":        r["word"] or "",
+            "ref":          f"{book_abbrev} {r['chapter']}:{r['verse_num']}",
+            "book":         book_abbrev,
+            "chapter":      r["chapter"],
+            "verse":        r["verse_num"],
+            "definition":   r["definition"] or "",
+            "derivation":   "",
+            "is_function":  False,
+            "isKjv":        True,
+            "isHebrew":     sid.startswith("H"),
+        })
+    return jsonify({"results": results})
+
+
 @app.route("/api/metav/person/<path:name>")
 def metav_person(name):
     conn = db_ro()

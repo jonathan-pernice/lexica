@@ -50,6 +50,8 @@ const api = {
     fetch('/api/kjv/verse_words_batch', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(refs)}).then(r => r.json()),
   kjvStrongsCount: (strongs_id) =>
     fetch(`/api/kjv/strongs-count/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
+  kjvStrongsSearch: (strongs_id) =>
+    fetch(`/api/kjv/strongs-search/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
   pnCount: (name) =>
     fetch(`/api/pn-count/${encodeURIComponent(name)}`).then(r => r.json()),
   metavPerson: (name) =>
@@ -2026,6 +2028,7 @@ function App() {
   const [libTranslation, setLibTranslation] = useState("abp");
   const [groupings, setGroupings] = useState({});
   const [variants, setVariants] = useState({});
+  const [kjvResults, setKjvResults] = useState([]); // KJV strongs search results (parallel to allResults)
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [glossFilter, setGlossFilter] = useState(null); // { sn, gloss, label } | null
   const searchFnRef = useRef(null);
@@ -2077,8 +2080,12 @@ function App() {
     return result;
   }, [groupings, corpusFilteredResults, corpusFilter]);
 
-  // Sorted display list — gloss filter > function word suppression (corpus already filtered)
+  // Sorted display list — KJV toggle uses kjvResults; ABP uses corpus-filtered ABP results
   const displayed = useMemo(() => {
+    if (browseTranslation === "kjv" && kjvResults.length > 0) {
+      return [...kjvResults].sort((a, b) =>
+        (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
+    }
     let base;
     if (glossFilter) {
       base = corpusFilteredResults.filter(e =>
@@ -2092,7 +2099,7 @@ function App() {
     }
     return [...base].sort((a, b) =>
       (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
-  }, [corpusFilteredResults, countMap, mode, primaryStrongs, glossFilter]);
+  }, [corpusFilteredResults, kjvResults, browseTranslation, countMap, mode, primaryStrongs, glossFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
@@ -2176,6 +2183,14 @@ function App() {
     setVariants({});
     setGlossFilter(null);
     setLangFilter("all");
+    setKjvResults([]);
+    // Kick off KJV parallel fetch for strongs queries
+    const strongsMatch = /^([GH]\d[\d.]*)/i.exec(q.trim());
+    if (strongsMatch) {
+      api.kjvStrongsSearch(strongsMatch[1].toUpperCase())
+        .then(d => setKjvResults((d.results || []).map((r, idx) => ({ ...r, id: `kjv-sr-${idx}`, gloss_head: r.gloss }))))
+        .catch(() => setKjvResults([]));
+    }
     try {
       const data = await api.search(q);
       if (data.error) {
@@ -2413,7 +2428,7 @@ function App() {
                       key={entry.id}
                       entry={entry}
                       active={activeEntry && activeEntry.id === entry.id}
-                      onClick={() => setActiveEntry(browseTranslation === "kjv" ? {...entry, isKjv: true} : entry)}
+                      onClick={() => setActiveEntry(entry)}
                       count={countMap[entry.strongs_raw] || 0}
                     />
                   ))}
