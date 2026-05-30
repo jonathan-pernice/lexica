@@ -1199,9 +1199,7 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
 // ============================================================
 // STUDY MODE — OUTER CONTAINER
 // ============================================================
-function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordClick, onReadInContext, corpusFilter, onCorpusFilter }) {
-  const [studySort, setStudySort] = useState("curated");
-  const [textMode, setTextMode] = useState("abp"); // "abp" | "kjv"
+function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordClick, onReadInContext, studySort, textMode }) {
   const [kjvCache, setKjvCache] = useState({}); // pre-fetched KJV verse words
 
   // Pre-fetch all KJV verse words in one batch when switching to KJV mode
@@ -1280,16 +1278,6 @@ function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordCl
   return (
     <div className="study-groups">
 
-      <div className="study-toolbar">
-        <div className="study-sort-toggle">
-          <button className={"sort-btn " + (studySort === "curated" ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
-          <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
-        </div>
-        <div className="study-text-toggle">
-          <button className={"sort-btn " + (textMode === "abp" ? "on" : "")} onClick={() => setTextMode("abp")}>ABP</button>
-          <button className={"sort-btn " + (textMode === "kjv" ? "on" : "")} onClick={() => setTextMode("kjv")}>KJV</button>
-        </div>
-      </div>
       {primaryGroups.map(g => (
         <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
       ))}
@@ -2021,6 +2009,8 @@ function App() {
   const [browseTranslation, setBrowseTranslation] = useState("abp"); // "abp" | "kjv" | "all"
   const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
   const [langFilter, setLangFilter] = useState("all"); // "all" | "greek" | "hebrew"
+  const [studySort, setStudySort] = useState("curated"); // "curated" | "canonical"
+  const [studyTextMode, setStudyTextMode] = useState("abp"); // "abp" | "kjv"
   const [isMobile, setIsMobile] = useState(false);
   const [mainView, setMainView] = useState("search");
   const [libNav, setLibNav] = useState(null);
@@ -2369,12 +2359,18 @@ function App() {
                   )}
                   {searchLabel && !aiLoading && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
-                <div className="results-controls">
+                <div className="results-controls" style={{marginLeft:"auto"}}>
                   <div className="results-sort">
                     {mode === "ai" && <>
                       <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
                       <button className={"sort-btn " + (corpusFilter === "ot"  ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
                       <button className={"sort-btn " + (corpusFilter === "nt"  ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
+                      <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
+                      <button className={"sort-btn " + (studySort === "curated"   ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
+                      <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
+                      <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
+                      <button className={"sort-btn " + (studyTextMode === "abp" ? "on" : "")} onClick={() => setStudyTextMode("abp")}>ABP</button>
+                      <button className={"sort-btn " + (studyTextMode === "kjv" ? "on" : "")} onClick={() => setStudyTextMode("kjv")}>KJV</button>
                     </>}
                     {mode === "search" && <>
                       <button className={"sort-btn " + (browseTranslation === "abp" ? "on" : "")} onClick={() => setBrowseTranslation("abp")}>ABP</button>
@@ -2405,7 +2401,7 @@ function App() {
                   <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
                 </div>
               ) : viewMode === "study" ? (
-                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} corpusFilter={corpusFilter} onCorpusFilter={setCorpusFilter} />
+                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} studySort={studySort} textMode={studyTextMode} />
               ) : (
                 <div className="results">
                   {displayed.map((entry) => (
