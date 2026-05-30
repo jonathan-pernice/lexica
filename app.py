@@ -1633,7 +1633,7 @@ def lsj_lookup(lemma):
 
 
 @app.route("/api/lsj-summary/<path:lemma>")
-@limiter.limit("60 per hour")
+@limiter.limit("200 per hour")
 def lsj_summary(lemma):
     strongs_param = request.args.get("strongs", "")
     book    = request.args.get("book", "").strip()
@@ -2053,7 +2053,7 @@ def cross_references_route(book, chapter, verse):
 
 
 @app.route("/api/cross-references/synthesis/<book>/<int:chapter>/<int:verse>")
-@limiter.limit("50 per hour")
+@limiter.limit("200 per hour")
 def cross_ref_synthesis(book, chapter, verse):
     if not _anthropic:
         return jsonify({"synthesis": None})
@@ -2119,7 +2119,7 @@ def cross_ref_synthesis(book, chapter, verse):
 
 
 @app.route("/api/cross-references/curated/<book>/<int:chapter>/<int:verse>")
-@limiter.limit("50 per hour")
+@limiter.limit("200 per hour")
 def cross_refs_curated(book, chapter, verse):
     if not _anthropic:
         return jsonify({"refs": [], "synthesis": None})
@@ -2492,7 +2492,7 @@ def strongs_count_route(strongs_base):
 
 
 @app.route("/api/ai-search")
-@limiter.limit("50 per hour")
+@limiter.limit("200 per hour")
 def ai_search():
     try:
         q = request.args.get("q", "").strip()
