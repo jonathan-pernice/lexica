@@ -1426,9 +1426,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse, translation)
     : null;
 
-  const vnumEl = (verse) => (
+  const vnumEl = (verse, hasPos = false) => (
     <span
-      className={"lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "") + (showInterlinear ? " lib-vnum-il" : "")}
+      className={"lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "") + (showInterlinear ? " lib-vnum-il" : "") + (hasPos && !showInterlinear ? " lib-vnum-pos" : "")}
       onClick={handleVerseNum ? () => handleVerseNum(verse) : undefined}
     >{verse}</span>
   );
@@ -1559,10 +1559,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       });
     }
 
+    const hasPos = v.words.some(w => w.greek_pos != null);
     return (
       <div key={v.verse} ref={isHighlight ? highlightRef : null}
         className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
-        {vnumEl(v.verse)}
+        {vnumEl(v.verse, hasPos)}
         <span className="lib-verse-content lib-verse-chips">{content}</span>
       </div>
     );
