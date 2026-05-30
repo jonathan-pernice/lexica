@@ -758,7 +758,7 @@ def _clean_gloss(s: str | None) -> str | None:
     """Strip trailing punctuation that ABP interlinear leaves on phrase-boundary words."""
     if not s:
         return s
-    return s.rstrip(" ,;:.!?—-")
+    return s.strip(" ,;:.!?—-)(")
 
 
 def _normalize_union_sql(sql: str) -> str:
