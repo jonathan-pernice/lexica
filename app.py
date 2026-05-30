@@ -1356,42 +1356,20 @@ def search():
         if snum:
             unique_strongs = list({r["strongs"] for r in rows if _is_content(r)})
         else:
-            # Dotted strongs values where english_head (or english fallback) = q
-            corpus_match = {
+            # For text searches: find strongs that PRIMARILY translate as the searched term
+            # ordered by how often they translate as that term (most direct results first)
+            unique_strongs = [
                 r["strongs"] for r in conn.execute(
                     """SELECT strongs, COUNT(*) as cnt FROM words
-                       WHERE (english_head = ? COLLATE NOCASE
-                              OR (english_head IS NULL AND english = ? COLLATE NOCASE))
+                       WHERE english_head = ? COLLATE NOCASE
                          AND strongs IS NOT NULL AND strongs != '*'
+                         AND strongs_base NOT IN (SELECT strongs_base FROM words
+                                                  WHERE strongs_base IN ({fn}))
                        GROUP BY strongs
-                       HAVING COUNT(*) >= 3""",
-                    (q, q),
+                       ORDER BY cnt DESC
+                       LIMIT 8""".format(fn=",".join(f"'{s}'" for s in list(_FUNCTION_STRONGS)[:20])),
+                    (q,),
                 ).fetchall()
-            }
-            # Cross-reference: only include content-word strongs in the search results
-            result_strongs = {r["strongs"] for r in rows if _is_content(r)}
-            unique_strongs = list(corpus_match & result_strongs)
-        if unique_strongs and not snum:
-            # For text searches, only keep strongs where the searched term
-            # is >= 10% of that word's total occurrences (avoids incidental matches)
-            placeholders = ",".join("?" * len(unique_strongs))
-            match_counts = {
-                r["strongs"]: (r["match_cnt"], r["total_cnt"])
-                for r in conn.execute(
-                    f"""SELECT strongs,
-                               SUM(CASE WHEN english_head = ? COLLATE NOCASE THEN 1 ELSE 0 END) AS match_cnt,
-                               COUNT(*) AS total_cnt
-                        FROM words
-                        WHERE strongs IN ({placeholders})
-                          AND english_head IS NOT NULL AND english_head != ''
-                        GROUP BY strongs""",
-                    [q] + unique_strongs,
-                ).fetchall()
-            }
-            unique_strongs = [
-                s for s in unique_strongs
-                if s in match_counts and match_counts[s][1] > 0
-                and match_counts[s][0] / match_counts[s][1] >= 0.10
             ]
         if unique_strongs:
             placeholders = ",".join("?" * len(unique_strongs))
@@ -1466,13 +1444,13 @@ def search():
         for r in rows
     ]
 
-    # Apply same 10% threshold to Hebrew groupings for text searches
-    if not snum:
+    # Filter Hebrew groupings: only keep words where searched term is >= 20% of KJV glosses
+    if not snum and h_groupings:
         filtered_h_groupings = {}
         for h_id, glosses in h_groupings.items():
             total = sum(g["count"] for g in glosses)
             match = sum(g["count"] for g in glosses if g["gloss"].lower() == q.lower())
-            if total > 0 and match / total >= 0.10:
+            if total > 0 and match / total >= 0.20:
                 filtered_h_groupings[h_id] = glosses
         h_groupings = filtered_h_groupings
 
