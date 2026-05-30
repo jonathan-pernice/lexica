@@ -63,21 +63,50 @@ def _clean_english(text: str) -> str | None:
     return t or None
 
 
-def _head_word(text: str) -> str | None:
-    """Last non-function word of the gloss, lowercased — the primary search token.
+_HEAD_STOP = frozenset({
+    # Copulas / auxiliary verbs
+    'is', 'are', 'was', 'were', 'be', 'been', 'am',
+    # Contextual noise
+    'vain',
+})
 
-    'God made' -> 'made', 'my spirit' -> 'spirit', 'destroyed by the wind' -> 'wind'.
-    In ABP interlinear, context words from the previous entry often appear at the
-    start of the next gloss, so the last content word is the truest translation.
+# Theological terms where capitalization is semantically meaningful
+_PRESERVE_CASE = frozenset({
+    'God', 'LORD', 'Lord', 'Spirit', 'Holy', 'Wisdom',
+    'Angel', 'Heaven', 'Earth', 'Satan', 'Death', 'Life',
+})
+
+
+def _head_word(text: str) -> str | None:
+    """Last non-function word of the gloss — primary search token.
+
+    Preserves capitalization for theological terms (God, Lord, Spirit etc.)
+    so God vs god and LORD vs Lord remain distinct. Lowercases everything else.
+    Filters copulas and noise words (is, are, was, vain etc.).
+
+    'God made' -> 'made', 'my spirit' -> 'spirit', 'the LORD said' -> 'said'.
     """
     if not text:
         return None
-    tokens = [re.sub(r"[^\w]", "", w).lower() for w in text.split()]
-    tokens = [t for t in tokens if t]
-    for tok in reversed(tokens):
-        if tok not in _FUNCTION_WORDS:
-            return tok
-    return None  # gloss is all function words — no searchable head
+    raw_tokens = text.split()
+    for raw_tok in reversed(raw_tokens):
+        clean = re.sub(r"[^\w]", "", raw_tok)
+        if not clean:
+            continue
+        lower = clean.lower()
+        if lower in _FUNCTION_WORDS:
+            continue
+        if lower in _HEAD_STOP:
+            continue
+        # Normalize possessives: Lord's -> Lord, God's -> God
+        if clean.endswith("'s") or clean.endswith("s'"):
+            clean = re.sub(r"'s$|s'$", "", clean)
+            lower = clean.lower()
+        # Preserve case for theological terms, lowercase everything else
+        if clean in _PRESERVE_CASE:
+            return clean
+        return lower
+    return None  # gloss is all function/stop words
 
 
 def parse_words(verse_text: str) -> list:
