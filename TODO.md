@@ -42,3 +42,23 @@ Use MetaV `Places.csv` and `PlaceAliases.csv` to surface geographic context — 
 
 ### Topic Index
 Use MetaV `Topics.csv` and `TopicIndex.csv` as a structured alternative to AI search — browse by topic and see curated verse sets with Greek/Hebrew anchoring.
+
+## Library Expansion (texts + morphology)
+
+### Morphology Data Sources
+- **NT Greek**: [macula-greek](https://github.com/Clear-Bible/macula-greek) — Clear Bible, word-level morphology for NT
+- **OT Hebrew**: [macula-hebrew](https://github.com/Clear-Bible/macula-hebrew) — Clear Bible, word-level morphology for OT
+- **OT Hebrew alt**: [morphhb](https://github.com/openscriptures/morphhb) — Open Scriptures, morphologically tagged Hebrew Bible
+- Evaluate which aligns best with ABP/KJV strongs numbering before importing
+
+### Additional Bible Texts (scrollmapper/bible_databases)
+- Large collection of public domain translations in structured formats
+- Evaluate: ASV, YLT, Darby, Geneva 1599 as scholarly comparison texts
+- ESV: check licensing — likely restricted, confirm before importing
+- Each additional translation needs its own word-level table if interlinear is wanted, or verse-level only for parallel reading
+
+### Deuterocanonical / Pseudepigrapha
+- **1 Enoch** — referenced in NT (Jude 1:14-15); available in public domain English translations
+- **Dead Sea Scrolls** — partial OT texts with textual variants; check what structured digital editions exist
+- These would be a separate "Apocrypha" section, not mixed into canonical OT/NT
+- Research available structured sources before committing to import
