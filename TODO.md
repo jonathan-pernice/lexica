@@ -12,8 +12,8 @@ Direct Hebrew word search from the lexicon search input — by English gloss, tr
 ### Parallel Mode Synchronized Scrolling
 In Parallel mode, the ABP and KJV columns scroll independently. Synchronized scrolling would keep both columns aligned by verse as the user scrolls.
 
-### Italic Word Styling in Reading View
-ABP interlinear words that are translator additions (no source Greek word) should render in a muted/italic style in the Library reading view, similar to how italic KJV words are already handled. Requires identifying which ABP words carry the italic flag.
+### Parallel Mode Versification Alignment
+ABP follows LXX verse numbering (Psalms especially can be off by 1 from KJV). In Parallel mode, mismatched verses currently show blank on one side. Need to: (1) audit how bad the mismatch is in practice, (2) decide whether to offset-map or leave gaps.
 
 ## Future Projects (MetaV Data)
 
