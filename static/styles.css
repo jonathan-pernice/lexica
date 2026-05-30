@@ -1299,7 +1299,7 @@ input { font-family: inherit; }
 /* Each verse: fixed number column + content column */
 .lib-verse-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   margin-bottom: 2px;
   padding-left: 5px;
@@ -1315,8 +1315,8 @@ input { font-family: inherit; }
   letter-spacing: 0.04em;
   flex: 0 0 auto;
   white-space: nowrap;
-  align-self: center;
-  margin-top: 0;
+  align-self: flex-start;
+  margin-top: 3px;
 }
 
 .lib-vnum-il { margin-top: 22px; }
