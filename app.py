@@ -1261,21 +1261,108 @@ def _hebrew_search(conn, h_id, out_rows, out_groupings):
         out_groupings.setdefault(h_id, []).append({"gloss": gr['w'], "count": gr['cnt']})
 
 
+def _kjv_strongs_search(conn, sids, out_rows, out_groupings):
+    """Fetch KJV verse results for a list of strongs IDs (e.g. ['G4151','H7307'])."""
+    for sid in sids:
+        sid = sid.upper()
+        base = sid.lstrip("GH")
+        is_hebrew = sid.startswith("H")
+        if is_hebrew:
+            meta = conn.execute(
+                "SELECT lemma, xlit, description AS def FROM bdb WHERE strongs_id = ?", (sid,)
+            ).fetchone()
+        else:
+            meta = conn.execute(
+                "SELECT lemma, translit AS xlit, strongs_def AS def FROM lexicon WHERE strongs = ?", (base,)
+            ).fetchone()
+        lemma      = meta["lemma"] if meta else ""
+        xlit       = meta["xlit"]  if meta else ""
+        definition = meta["def"]   if meta else ""
+        for r in conn.execute("""
+            SELECT kw.book_id, kw.chapter, kw.verse_num, kw.word
+            FROM kjv_strongs ks
+            JOIN kjv_words kw ON kw.word_id = ks.word_id
+            WHERE ks.strongs_id = ?
+            ORDER BY kw.book_id, kw.chapter, kw.verse_num
+            LIMIT 500
+        """, (sid,)).fetchall():
+            book = _KJV_BOOK_ID_REV.get(r["book_id"], "")
+            out_rows.append({
+                "ref": f"{book} {r['chapter']}:{r['verse_num']}",
+                "book": book, "chapter": r["chapter"], "verse": r["verse_num"],
+                "strongs": sid, "strongs_base": base, "strongs_raw": base,
+                "gloss": r["word"] or "", "gloss_head": r["word"] or "",
+                "lemma": lemma, "translit": xlit,
+                "strongs_def": definition, "kjv_def": "", "derivation": "",
+                "is_function": False, "isKjv": True, "isHebrew": is_hebrew,
+                "source": "kjv",
+            })
+        for gr in conn.execute("""
+            SELECT kw.word AS w, COUNT(*) AS cnt
+            FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
+            WHERE ks.strongs_id = ?
+            GROUP BY kw.word HAVING cnt > 1 ORDER BY cnt DESC
+        """, (sid,)).fetchall():
+            out_groupings.setdefault(sid, []).append({"gloss": gr["w"], "count": gr["cnt"]})
+
+
+def _kjv_word_search(conn, word, out_rows, out_groupings):
+    """Search KJV by English word, returning results for all matching strongs (G+H)."""
+    rows = conn.execute("""
+        SELECT kw.book_id, kw.chapter, kw.verse_num, kw.word, ks.strongs_id,
+               MAX(COALESCE(bdb.lemma, lex.lemma))        AS lemma,
+               MAX(COALESCE(bdb.xlit, lex.translit))      AS xlit,
+               MAX(COALESCE(lex.strongs_def, bdb.description)) AS definition
+        FROM kjv_words kw
+        JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+        LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
+        LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+        WHERE kw.word = ? COLLATE NOCASE
+        GROUP BY kw.book_id, kw.chapter, kw.verse_num, ks.strongs_id
+        ORDER BY kw.book_id, kw.chapter, kw.verse_num
+        LIMIT 500
+    """, (word,)).fetchall()
+    found_sids = list({r["strongs_id"] for r in rows})
+    for r in rows:
+        sid  = r["strongs_id"]
+        base = sid.lstrip("GH")
+        book = _KJV_BOOK_ID_REV.get(r["book_id"], "")
+        out_rows.append({
+            "ref": f"{book} {r['chapter']}:{r['verse_num']}",
+            "book": book, "chapter": r["chapter"], "verse": r["verse_num"],
+            "strongs": sid, "strongs_base": base, "strongs_raw": base,
+            "gloss": r["word"] or "", "gloss_head": r["word"] or "",
+            "lemma": r["lemma"] or "", "translit": r["xlit"] or "",
+            "strongs_def": r["definition"] or "", "kjv_def": "", "derivation": "",
+            "is_function": False, "isKjv": True, "isHebrew": sid.startswith("H"),
+            "source": "kjv",
+        })
+    for sid in found_sids:
+        for gr in conn.execute("""
+            SELECT kw.word AS w, COUNT(*) AS cnt
+            FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
+            WHERE ks.strongs_id = ? GROUP BY kw.word HAVING cnt > 1 ORDER BY cnt DESC
+        """, (sid,)).fetchall():
+            out_groupings.setdefault(sid, []).append({"gloss": gr["w"], "count": gr["cnt"]})
+
+
 @app.route("/api/search")
 def search():
     q = request.args.get("q", "").strip()
     phrase_mode = request.args.get("phrase", "0") == "1"
 
     if not q:
-        return jsonify({"results": [], "total": 0})
+        return jsonify({"abp_results": [], "kjv_results": [], "abp_groupings": {}, "kjv_groupings": {}, "variants": {}})
 
-    cache_key = f"{q}|{phrase_mode}"
+    cache_key = f"v2|{q}|{phrase_mode}"
     if cache_key in _search_cache:
         return jsonify(_search_cache[cache_key])
 
     conn = db()
     groupings: dict = {}
     variants: dict = {}
+    kjv_rows: list = []
+    kjv_groupings: dict = {}
     try:
         snum = _strongs_num(q)
         q_plain = _strip_accents(q)
@@ -1296,6 +1383,11 @@ def search():
                 """,
                 (snum, f"G{snum}", f"H{snum}"),
             ).fetchall()
+            # KJV: search by base strongs (strip dot if dotted)
+            base_snum = snum.split(".")[0]
+            _is_h_snum = q.strip().upper().startswith("H") or (base_snum.isdigit() and int(base_snum) > 5624)
+            kjv_sid = f"H{base_snum}" if _is_h_snum else f"G{base_snum}"
+            _kjv_strongs_search(conn, [kjv_sid], kjv_rows, kjv_groupings)
         else:
             if phrase_mode:
                 # Phrase mode: word-boundary match within the full multi-word gloss.
@@ -1433,9 +1525,7 @@ def search():
             all_v = [v["strongs"] for v in var_rows]
             if len(all_v) > 1:
                 variants[base] = all_v
-        # ── Hebrew parallel search ────────────────────────────────────────
-        h_rows = []
-        h_groupings = {}
+        # ── KJV parallel search ───────────────────────────────────────────
         _is_h = False
         if snum:
             try:
@@ -1443,13 +1533,14 @@ def search():
             except ValueError:
                 pass
         if _is_h:
-            _hebrew_search(conn, f"H{snum}", h_rows, h_groupings)
+            # H-strongs search: KJV results only
+            _kjv_strongs_search(conn, [f"H{snum}"], kjv_rows, kjv_groupings)
         elif not snum:
-            # Add Hebrew groupings from KJV direct matches
-            for h_id in hebrew_strongs:
-                _hebrew_search(conn, h_id, h_rows, h_groupings)
-            # Also search BDB by transliteration only (not description)
+            # English word search: KJV results (G+H) via word match
+            _kjv_word_search(conn, q, kjv_rows, kjv_groupings)
+            # Also search BDB by transliteration for additional H coverage
             q_no_w = q_plain.replace('w', '').replace('W', '')
+            extra_h = set()
             for hit in conn.execute(
                 """SELECT strongs_id FROM bdb
                    WHERE strip_accents(xlit) LIKE ? COLLATE NOCASE
@@ -1457,12 +1548,15 @@ def search():
                    LIMIT 5""",
                 (f"{q_plain}%", f"{q_no_w}%")
             ).fetchall():
-                if hit['strongs_id'] not in set(hebrew_strongs):
-                    _hebrew_search(conn, hit['strongs_id'], h_rows, h_groupings)
+                h_id = hit['strongs_id']
+                if h_id not in {r["strongs"] for r in kjv_rows}:
+                    extra_h.add(h_id)
+            if extra_h:
+                _kjv_strongs_search(conn, list(extra_h), kjv_rows, kjv_groupings)
     finally:
         conn.close()
 
-    results = [
+    abp_results = [
         {
             "ref":        f"{r['book']} {r['chapter']}:{r['verse']}",
             "book":       r["book"],
@@ -1478,24 +1572,19 @@ def search():
             "kjv_def":    r["kjv_def"],
             "derivation": (r["derivation"] or "").strip(),
             "is_function": r["strongs_base"] in _FUNCTION_STRONGS,
+            "source":     "abp",
         }
         for r in rows
     ]
 
-
-    # Only keep Hebrew groupings where the searched term actually appears as a KJV gloss
-    if not snum and q:
-        h_groupings = {
-            h_id: [g for g in glosses if g["count"] > 1]
-            for h_id, glosses in h_groupings.items()
-            if any(g["gloss"].lower() == q.lower() for g in glosses)
-        }
-        h_groupings = {h_id: g for h_id, g in h_groupings.items() if g}
-
-    results.extend(h_rows)
-    groupings.update(h_groupings)
-    payload = {"results": results, "total": len(results), "groupings": groupings, "variants": variants}
-    if len(_search_cache) < 200:  # cap cache size
+    payload = {
+        "abp_results":   abp_results,
+        "kjv_results":   kjv_rows,
+        "abp_groupings": groupings,
+        "kjv_groupings": kjv_groupings,
+        "variants":      variants,
+    }
+    if len(_search_cache) < 200:
         _search_cache[cache_key] = payload
     return jsonify(payload)
 

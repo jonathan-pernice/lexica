@@ -2018,7 +2018,7 @@ function App() {
   const [aiNotice, setAiNotice] = useState("");
   const [activeEntry, setActiveEntry] = useState(null);
   const [viewMode, setViewMode] = useState("browse");
-  const [browseTranslation, setBrowseTranslation] = useState("abp"); // "abp" | "kjv"
+  const [browseTranslation, setBrowseTranslation] = useState("abp"); // "abp" | "kjv" | "all"
   const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
   const [langFilter, setLangFilter] = useState("all"); // "all" | "greek" | "hebrew"
   const [isMobile, setIsMobile] = useState(false);
@@ -2026,9 +2026,9 @@ function App() {
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
   const [libTranslation, setLibTranslation] = useState("abp");
-  const [groupings, setGroupings] = useState({});
+  const [abpGroupings, setAbpGroupings] = useState({});
+  const [kjvGroupings, setKjvGroupings] = useState({});
   const [variants, setVariants] = useState({});
-  const [kjvResults, setKjvResults] = useState([]); // KJV strongs search results (parallel to allResults)
   const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [glossFilter, setGlossFilter] = useState(null); // { sn, gloss, label } | null
   const searchFnRef = useRef(null);
@@ -2047,66 +2047,45 @@ function App() {
     setLibNav(prev => ({ ...(prev || {}), book, chapter, highlight: verse }));
   };
 
-  // Corpus-filtered results (OT/NT filter applied before everything else)
+  // Source-filtered results based on browseTranslation mode
   const corpusFilteredResults = useMemo(() => {
     let r = allResults;
+    if (mode === "search") {
+      if (browseTranslation === "abp") r = r.filter(e => e.source === "abp" || !e.source);
+      else if (browseTranslation === "kjv") r = r.filter(e => e.source === "kjv");
+      else if (browseTranslation === "all") r = r.filter(e => e.source === "abp" || !e.source || (e.source === "kjv" && e.isHebrew));
+    }
     if (corpusFilter === "ot") r = r.filter(e => !NT_BOOKS.has(e.book));
     if (corpusFilter === "nt") r = r.filter(e => NT_BOOKS.has(e.book));
     if (langFilter === "greek") r = r.filter(e => e.strongs && !String(e.strongs).startsWith("H"));
     if (langFilter === "hebrew") r = r.filter(e => e.strongs && String(e.strongs).startsWith("H"));
     return r;
-  }, [allResults, corpusFilter, langFilter]);
+  }, [allResults, browseTranslation, mode, corpusFilter, langFilter]);
 
-  // Count occurrences per dotted strongs across corpus-filtered results
+  // Count occurrences per strongs across displayed results
   const countMap = useMemo(() => {
     const map = {};
     for (const e of corpusFilteredResults) {
-      map[e.strongs_raw] = (map[e.strongs_raw] || 0) + 1;
+      const key = e.strongs_raw || e.strongs_base;
+      if (key) map[key] = (map[key] || 0) + 1;
     }
     return map;
   }, [corpusFilteredResults]);
 
-  // Grouping counts recomputed from corpus-filtered results
-  const filteredGroupings = useMemo(() => {
-    if (corpusFilter === "all") return groupings;
-    const presentStrongs = new Set(
-      corpusFilteredResults.map(e => e.strongs_raw).filter(s => s && s !== "*")
-    );
-    const result = {};
-    for (const [sn, glossList] of Object.entries(groupings)) {
-      const base = sn.includes('.') ? sn.split('.')[0] : sn;
-      if (presentStrongs.has(sn) || presentStrongs.has(base)) result[sn] = glossList;
-    }
-    return result;
-  }, [groupings, corpusFilteredResults, corpusFilter]);
+  // Active groupings based on mode
+  const activeGroupings = useMemo(() => {
+    if (mode !== "search") return abpGroupings;
+    if (browseTranslation === "kjv") return kjvGroupings;
+    if (browseTranslation === "all") return { ...abpGroupings, ...kjvGroupings };
+    return abpGroupings;
+  }, [abpGroupings, kjvGroupings, browseTranslation, mode]);
 
-  // KJV groupings — built client-side from kjvResults
-  const kjvGroupings = useMemo(() => {
-    if (!kjvResults.length) return {};
-    const map = {};
-    for (const r of kjvResults) {
-      const sn = r.strongs_raw;
-      if (!map[sn]) map[sn] = {};
-      const g = r.gloss || "";
-      map[sn][g] = (map[sn][g] || 0) + 1;
-    }
-    return Object.fromEntries(
-      Object.entries(map).map(([sn, gc]) => [
-        sn, Object.entries(gc).map(([gloss, count]) => ({ gloss, count }))
-      ])
-    );
-  }, [kjvResults]);
-
-  // Sorted display list — KJV toggle uses kjvResults; ABP uses corpus-filtered ABP results
+  // Sorted display list
   const displayed = useMemo(() => {
-    if (browseTranslation === "kjv" && kjvResults.length > 0) {
-      return [...kjvResults].sort((a, b) =>
-        (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
-    }
     let base;
     if (glossFilter) {
       base = corpusFilteredResults.filter(e =>
-        e.strongs_raw === glossFilter.sn &&
+        (e.strongs_raw === glossFilter.sn || e.strongs_base === glossFilter.sn) &&
         e.gloss_head === glossFilter.gloss
       );
     } else if (mode === "search" && !primaryStrongs) {
@@ -2116,7 +2095,7 @@ function App() {
     }
     return [...base].sort((a, b) =>
       (BOOK_ORDER[a.book] ?? 99) - (BOOK_ORDER[b.book] ?? 99) || a.chapter - b.chapter || a.verse - b.verse);
-  }, [corpusFilteredResults, kjvResults, browseTranslation, countMap, mode, primaryStrongs, glossFilter]);
+  }, [corpusFilteredResults, countMap, mode, primaryStrongs, glossFilter]);
 
   // Strongs number being searched directly (null in AI/text modes)
   const primaryStrongs = useMemo(() => {
@@ -2196,28 +2175,30 @@ function App() {
     setMode("search");
     setViewMode("browse");
     setActiveEntry(null);
-    setGroupings({});
+    setAbpGroupings({});
+    setKjvGroupings({});
     setVariants({});
     setGlossFilter(null);
     setLangFilter("all");
-    setKjvResults([]);
-    // Kick off KJV parallel fetch for strongs queries
-    const strongsMatch = /^([GH]\d[\d.]*)/i.exec(q.trim());
-    if (strongsMatch) {
-      api.kjvStrongsSearch(strongsMatch[1].toUpperCase())
-        .then(d => setKjvResults((d.results || []).map((r, idx) => ({ ...r, id: `kjv-sr-${idx}`, gloss_head: r.gloss }))))
-        .catch(() => setKjvResults([]));
-    }
     try {
       const data = await api.search(q);
       if (data.error) {
         setError(data.error);
         setAllResults([]);
-        setGroupings({});
+        setAbpGroupings({});
+        setKjvGroupings({});
         setVariants({});
       } else {
-        setAllResults((data.results || []).map((r, idx) => makeEntry(r, idx)));
-        setGroupings(data.groupings || {});
+        const abp = (data.abp_results || []).map((r, i) => ({ ...makeEntry(r, i), source: "abp" }));
+        const kjv = (data.kjv_results || []).map((r, i) => ({
+          ...r, id: `kjv-sr-${i}`, gloss_head: r.gloss || "",
+          strongs: r.strongs || "", strongs_raw: r.strongs_base || "",
+          greek: r.lemma || "", translit: r.translit || "",
+          source: "kjv",
+        }));
+        setAllResults([...abp, ...kjv]);
+        setAbpGroupings(data.abp_groupings || {});
+        setKjvGroupings(data.kjv_groupings || {});
         setVariants(data.variants || {});
         if (pendingGlossFilter) setGlossFilter(pendingGlossFilter);
       }
@@ -2389,11 +2370,12 @@ function App() {
                   {searchLabel && !aiLoading && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
                 <div className="results-controls">
-                  {viewMode === "browse" && (
+                  {viewMode === "browse" && mode === "search" && (
                     <div className="results-sort">
                       <span className="sort-label">Text</span>
                       <button className={"sort-btn " + (browseTranslation === "abp" ? "on" : "")} onClick={() => setBrowseTranslation("abp")}>ABP</button>
                       <button className={"sort-btn " + (browseTranslation === "kjv" ? "on" : "")} onClick={() => setBrowseTranslation("kjv")}>KJV</button>
+                      <button className={"sort-btn " + (browseTranslation === "all" ? "on" : "")} onClick={() => setBrowseTranslation("all")}>All</button>
                     </div>
                   )}
                   {mode !== "search" && (
@@ -2421,8 +2403,8 @@ function App() {
 
               {!loading && allResults.length > 0 && mode === "search" && !glossFilter && (
                 <GlossGroupings
-                  groupings={browseTranslation === "kjv" ? kjvGroupings : filteredGroupings}
-                  results={browseTranslation === "kjv" ? kjvResults : corpusFilteredResults}
+                  groupings={activeGroupings}
+                  results={corpusFilteredResults}
                   variants={browseTranslation === "kjv" ? {} : variants}
                   onGlossDrill={handleGlossDrill}
                   onStrongsSearch={handleStrongsSearch}
