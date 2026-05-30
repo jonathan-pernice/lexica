@@ -50,6 +50,8 @@ const api = {
     fetch('/api/kjv/verse_words_batch', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(refs)}).then(r => r.json()),
   kjvStrongsCount: (strongs_id) =>
     fetch(`/api/kjv/strongs-count/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
+  kjvStrongsSearch: (strongs_id) =>
+    fetch(`/api/kjv/strongs-search/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
   pnCount: (name) =>
     fetch(`/api/pn-count/${encodeURIComponent(name)}`).then(r => r.json()),
   metavPerson: (name) =>
@@ -2204,7 +2206,28 @@ function App() {
     const isH = /^H/i.test(s);
     const num = s.replace(/^[GH]/i, "");
     setBrowseTranslation(fromKjv ? "kjv" : "abp");
-    handleSearch(isH ? `H${num}` : `G${num}`);
+    if (fromKjv) {
+      const sid = isH ? `H${num}` : `G${num}`;
+      setQ1(sid);
+      setBreadcrumbs([]);
+      setMainView("search");
+      setLoading(true);
+      setError("");
+      setMode("search");
+      setViewMode("browse");
+      setActiveEntry(null);
+      setGroupings({});
+      setVariants({});
+      setGlossFilter(null);
+      api.kjvStrongsSearch(sid)
+        .then(data => {
+          setAllResults((data.results || []).map((r, idx) => ({ ...r, id: `kjv-sr-${idx}`, gloss_head: r.gloss })));
+          setLoading(false);
+        })
+        .catch(() => { setError("Network error"); setAllResults([]); setLoading(false); });
+    } else {
+      handleSearch(isH ? `H${num}` : `G${num}`);
+    }
   };
 
   const handleGlossDrill = (sn, gloss) => {
@@ -2413,7 +2436,7 @@ function App() {
                       key={entry.id}
                       entry={entry}
                       active={activeEntry && activeEntry.id === entry.id}
-                      onClick={() => setActiveEntry(browseTranslation === "kjv" ? {...entry, isKjv: true} : entry)}
+                      onClick={() => setActiveEntry(entry)}
                       count={countMap[entry.strongs_raw] || 0}
                     />
                   ))}
