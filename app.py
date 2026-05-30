@@ -1358,7 +1358,7 @@ def search():
     if not q:
         return jsonify({"abp_results": [], "kjv_results": [], "abp_groupings": {}, "kjv_groupings": {}, "variants": {}})
 
-    cache_key = f"v2|{q}|{phrase_mode}"
+    cache_key = f"v3|{q}|{phrase_mode}"
     if cache_key in _search_cache:
         return jsonify(_search_cache[cache_key])
 
