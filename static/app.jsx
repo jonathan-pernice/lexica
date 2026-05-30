@@ -2370,22 +2370,19 @@ function App() {
                   {searchLabel && !aiLoading && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
                 <div className="results-controls">
-                  {viewMode === "browse" && mode === "search" && (
-                    <div className="results-sort">
-                      <span className="sort-label">Text</span>
-                      <button className={"sort-btn " + (browseTranslation === "abp" ? "on" : "")} onClick={() => setBrowseTranslation("abp")}>ABP</button>
-                      <button className={"sort-btn " + (browseTranslation === "kjv" ? "on" : "")} onClick={() => setBrowseTranslation("kjv")}>KJV</button>
-                      <button className={"sort-btn " + (browseTranslation === "all" ? "on" : "")} onClick={() => setBrowseTranslation("all")}>All</button>
-                    </div>
-                  )}
-                  {mode === "ai" && (
-                    <div className="results-sort">
-                      <span className="sort-label">Corpus</span>
+                  <div className="results-sort">
+                    {mode === "ai" && <>
                       <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
                       <button className={"sort-btn " + (corpusFilter === "ot" ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
                       <button className={"sort-btn " + (corpusFilter === "nt" ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
-                    </div>
-                  )}
+                      <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
+                    </>}
+                    {mode === "search" && <>
+                      <button className={"sort-btn " + (browseTranslation === "abp" ? "on" : "")} onClick={() => setBrowseTranslation("abp")}>ABP</button>
+                      <button className={"sort-btn " + (browseTranslation === "kjv" ? "on" : "")} onClick={() => setBrowseTranslation("kjv")}>KJV</button>
+                      <button className={"sort-btn " + (browseTranslation === "all" ? "on" : "")} onClick={() => setBrowseTranslation("all")}>All</button>
+                    </>}
+                  </div>
                 </div>
               </div>
 
