@@ -2396,16 +2396,18 @@ function App() {
                       <button className={"sort-btn " + (browseTranslation === "kjv" ? "on" : "")} onClick={() => setBrowseTranslation("kjv")}>KJV</button>
                     </div>
                   )}
-                  <div className="results-sort">
-                    <span className="sort-label">Corpus</span>
-                    <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
-                    <button className={"sort-btn " + (corpusFilter === "ot" ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
-                    <button className={"sort-btn " + (corpusFilter === "nt" ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
-                    <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
-                    <button className={"sort-btn " + (langFilter === "all" ? "on" : "")} onClick={() => setLangFilter("all")}>All</button>
-                    <button className={"sort-btn " + (langFilter === "greek" ? "on" : "")} onClick={() => setLangFilter("greek")}>Greek</button>
-                    <button className={"sort-btn " + (langFilter === "hebrew" ? "on" : "")} onClick={() => setLangFilter("hebrew")}>Hebrew</button>
-                  </div>
+                  {mode !== "search" && (
+                    <div className="results-sort">
+                      <span className="sort-label">Corpus</span>
+                      <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
+                      <button className={"sort-btn " + (corpusFilter === "ot" ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
+                      <button className={"sort-btn " + (corpusFilter === "nt" ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
+                      <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
+                      <button className={"sort-btn " + (langFilter === "all" ? "on" : "")} onClick={() => setLangFilter("all")}>All</button>
+                      <button className={"sort-btn " + (langFilter === "greek" ? "on" : "")} onClick={() => setLangFilter("greek")}>Greek</button>
+                      <button className={"sort-btn " + (langFilter === "hebrew" ? "on" : "")} onClick={() => setLangFilter("hebrew")}>Hebrew</button>
+                    </div>
+                  )}
                   <div className="view-toggle">
                     <button className={"view-btn " + (viewMode === "browse" ? "on" : "")} onClick={() => setViewMode("browse")} title="Browse mode">
                       <Icon.Grid/>
