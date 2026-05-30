@@ -1398,6 +1398,7 @@ def search():
                     WHERE strongs IN ({placeholders})
                       AND english_head IS NOT NULL AND english_head != ''
                     GROUP BY strongs, english_head
+                    HAVING cnt > 1
                     ORDER BY strongs, cnt DESC""",
                 unique_strongs,
             ).fetchall():
