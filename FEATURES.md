@@ -19,7 +19,7 @@ Lexica is a Greek and Hebrew Bible word study web app built on the Apostolic Bib
 
 ### Word Interaction
 - Click any word to open the **LSJ sidebar** (Greek G-numbers) or **BDB sidebar** (Hebrew H-numbers)
-- Italic KJV words (translator additions with no source word) rendered in muted style
+- Italic words rendered muted/italic: **KJV** (italic=1, translator additions with no source word) and **ABP** (words.italic=1, identified by last-word heuristic on BibleHub markup)
 - Full English gloss always shown — not truncated to head word
 - Bracketed words in Greek order display a small position number indicating their original Greek sequence
 
