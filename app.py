@@ -1356,20 +1356,23 @@ def search():
         if snum:
             unique_strongs = list({r["strongs"] for r in rows if _is_content(r)})
         else:
-            # For text searches: find strongs that PRIMARILY translate as the searched term
-            # ordered by how often they translate as that term (most direct results first)
+            # For text searches: find strongs where the searched term is a PRIMARY translation
+            # Must appear >= 3 times AND be >= 10% of that word's total occurrences
             unique_strongs = [
                 r["strongs"] for r in conn.execute(
-                    """SELECT strongs, COUNT(*) as cnt FROM words
-                       WHERE english_head = ? COLLATE NOCASE
-                         AND strongs IS NOT NULL AND strongs != '*'
-                         AND strongs_base NOT IN (SELECT strongs_base FROM words
-                                                  WHERE strongs_base IN ({fn}))
+                    """SELECT strongs,
+                              SUM(CASE WHEN english_head = ? COLLATE NOCASE THEN 1 ELSE 0 END) AS match_cnt,
+                              COUNT(*) AS total_cnt
+                       FROM words
+                       WHERE strongs IS NOT NULL AND strongs != '*'
                        GROUP BY strongs
-                       ORDER BY cnt DESC
-                       LIMIT 8""".format(fn=",".join(f"'{s}'" for s in list(_FUNCTION_STRONGS)[:20])),
+                       HAVING match_cnt >= 3
+                          AND match_cnt * 10 >= total_cnt
+                       ORDER BY match_cnt DESC
+                       LIMIT 8""",
                     (q,),
                 ).fetchall()
+                if r["strongs"] not in _FUNCTION_STRONGS
             ]
         if unique_strongs:
             placeholders = ",".join("?" * len(unique_strongs))
