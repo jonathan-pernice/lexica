@@ -1421,7 +1421,7 @@ input { font-family: inherit; }
 .lib-verse-chips {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: 4px 0;
 }
 
@@ -1476,7 +1476,7 @@ input { font-family: inherit; }
 /* Bracket group wrapper — inline-flex so [ words ] stay on one visual unit */
 .lib-bracket-group {
   display: inline-flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 0;
   flex-wrap: nowrap;
 }
@@ -1484,7 +1484,6 @@ input { font-family: inherit; }
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
   flex-shrink: 0;
   user-select: none;
 }
@@ -1495,8 +1494,6 @@ input { font-family: inherit; }
   font-size: 20px;
   color: var(--accent);
   line-height: 1;
-  position: relative;
-  top: -3px;
 }
 /* Bracketed word chip — slightly tighter than the normal chip */
 .lib-word-bracketed {
