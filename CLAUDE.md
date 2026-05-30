@@ -1,7 +1,7 @@
 # Lexica — CLAUDE.md
 
 ## Overview
-Lexica is a Flask-based Greek and Hebrew Bible word study app. It is ABP (Apostolic Bible Polyglot) interlinear focused, with KJV as a comparison translation. The design is scholarly but accessible — no prior Greek training required.
+Lexica is a Flask-based Greek and Hebrew Bible word study app. ABP (Apostolic Bible Polyglot) interlinear is the primary text; KJV is a fully searchable parallel corpus. The design is scholarly but accessible — no prior Greek training required.
 
 ## Instructions for Claude Code
 - Read only the specific function or section relevant to the task
@@ -23,11 +23,10 @@ Lexica is a Flask-based Greek and Hebrew Bible word study app. It is ABP (Aposto
 - Never query or test against a local database
 - All db changes must be made on PythonAnywhere
 
-## cross_references table
-- Columns: id, verse_id, verse_ref_id
-- Both IDs map to kjv_verses.verse_id
-- 386,518 rows loaded from Torrey's TSK
-- Join pattern: cross_references cr JOIN kjv_verses kv ON cr.verse_ref_id = kv.verse_id
+## Deployment
+- Deploy command: `cd ~/bible-db && git pull && touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
+- PythonAnywhere git is configured: `pull.rebase false`, `merge.autoedit no` (no prompts)
+- Database is NOT in git (too large) — managed directly on PythonAnywhere
 
 ## Stack
 - Backend: Flask (Python), SQLite
@@ -50,7 +49,7 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 
 ## Database Tables
 - `verses` — ABP verse text
-- `words` — ABP word-level interlinear, Strong's tagged
+- `words` — ABP word-level interlinear, Strong's tagged. Planned: add `italic` column (BibleHub scrape) and `morph` column (MorphGNT/CATSS)
 - `lexicon` — Greek Strong's definitions
 - `lsj` — Liddell-Scott-Jones Greek lexicon
 - `abp_ext` — extended ABP data
@@ -62,13 +61,12 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - `bdb` — Brown-Driver-Briggs Hebrew lexicon (H-numbers)
 
 ## Key Design Decisions
-- ABP is the primary text — all word study is anchored in ABP
-- KJV is comparison only — never the primary display
+- ABP is the primary text — all word study anchored in ABP interlinear
+- KJV is a full parallel corpus — searchable, with its own strongs, word clicks, and sidebar
 - Italic words in KJV (italic=1) are translator additions with no source word
 - Strong's G-numbers → lexicon/lsj tables; H-numbers → bdb table
 - No systematic theology imported — text speaks first (Berean approach)
 - Function words (171-word set) are filtered from search results
-- is_function flag on search results controls this
 
 ## strongs_base inconsistency
 - Some rows store bare numbers ('4151'), others store prefixed ('G4151')
@@ -82,14 +80,14 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - _KJV_BOOK_ID in app.py matches the same set
 
 ## Library Tab
-- Translation toggle: ABP | KJV | Parallel
-- View toggles: English/Greek word order, Strong's badges, Interlinear
-- Clicking a word opens LSJ sidebar (G-numbers) or BDB sidebar (H-numbers)
-- Italic KJV words render in muted style
-- Verse layout: `lib-verse-row` (flex) → `lib-vnum` (fixed) + `lib-verse-content` (flex:1)
-- Clicking a verse number opens the TSK Cross-Reference Panel for that verse
-- Highlighted verse: gold background + left bar; clears when panel closes
-- Cross-ref panel verse text tracks the live translation toggle (ABP/Parallel → ABP, KJV → KJV)
+- All controls in a unified right-side bar: [ABP] [KJV] [Parallel] | [Strong's] [Interlinear] | [English] [Greek]
+- English/Greek toggles word order; KJV mode locks to English (Greek dimmed/disabled)
+- All words are always clickable (chip mode by default)
+- Word clicks → LSJ sidebar (G-numbers), BDB sidebar (H-numbers), or metaV (proper nouns)
+- KJV word clicks correctly route: common words → LSJ, proper nouns → metaV, Hebrew → BDB
+- Italic KJV words render muted/italic; ABP bracket words `[word]` are translator additions
+- Verse layout: `lib-verse-row` (flex-start) → `lib-vnum` (fixed, min-width) + `lib-verse-content`
+- Clicking a verse number opens the TSK Cross-Reference Panel
 
 ## TSK Cross-Reference Panel
 - Endpoint: GET /api/cross-references/curated/<book>/<chapter>/<verse>
@@ -99,32 +97,39 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - TSK cache is preserved when _CACHE_CODE_VER bumps (NOT LIKE 'xref%' exclusion)
 
 ## Search Tab
-- Left input: lexicon/Strong's search (now has submit button for mobile)
-- Right input: AI natural language query
-- Search matches: English head/gloss, Greek lemma (with/without accents), transliteration LIKE, Strong's number
-- Strong's search matches bare number AND G/H prefixed form (triple-match)
-- OT/NT corpus filter: All | OT | NT buttons filter results and recompute grouping counts
-- Results: word cards with Strong's badge, Greek, transliteration, gloss
-- Detail sidebar: LSJ Definition + Full LSJ tabs
-- LSJ lookup chain: exact key → accent+hyphen-stripped plain → xref resolution (stubs discarded) → strongs_def fallback (source: "strongs")
+- Left input: lexicon/Strong's search; Right input: AI natural language query
+- **Lexicon mode**: browse-only, ABP | KJV | All corpus toggle
+  - ABP: ABP words table (Greek, dotted strongs e.g. G2321.1)
+  - KJV: kjv_strongs/kjv_words (standard strongs, both G and H numbers)
+  - All: ABP Greek + KJV Hebrew OT (best cross-testament view)
+  - Word groupings and chips reflect the active corpus
+- **AI mode**: study mode only, corpus filter All | OT | NT in toolbar alongside Curated | Canonical | ABP | KJV
+- Search endpoint (`/api/search`) returns `{abp_results, kjv_results, abp_groupings, kjv_groupings, variants}`
+- Search cache key prefix: `v3|`
 
 ## AI Search
 - Uses Claude Haiku
 - Berean system prompt — no imported theology
-- key_strongs: up to 10 chips (6 Greek + 4 Hebrew max); AI instructed to provide both
+- key_strongs: up to 10 chips (6 Greek + 4 Hebrew max)
 - Empty-result retry: Haiku broadens SQL automatically if first query returns 0 rows
 - Hebrew word bridge: BDB → kjv_strongs → ABP verses
-- TSK cross-references available to AI at its own judgment
 - Cached in ai_search_cache; _CACHE_CODE_VER invalidates AI cache but preserves xref cache
-- Study mode: verse cards lazy-load with IntersectionObserver (300px rootMargin)
 
-## Deployment
-- Git push to GitHub → git pull on PythonAnywhere
-- Deploy command: `cd ~/bible-db && git pull && touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
-- Database is NOT in git (too large) — managed directly on PythonAnywhere
+## Planned: BibleHub ABP Scrape
+- Scrape `https://biblehub.com/interlinear/apostolic/{book}/{chapter}.htm` for all 66 books
+- Goals: fix strongs assignment per word (current data has compound-strongs issues), add `italic` column to `words` table (`<span class="ital">` markup)
+- Do NOT add conjugated manuscript forms — audience are non-Greek readers
+- After scrape: integrate MorphGNT (NT) + CATSS/CCAT (LXX OT) for morphological data (`morph` column)
+- Morphology displayed in plain English in sidebar: "Verb · Aorist · Active · Indicative · 3rd Person · Singular"
+
+## cross_references table
+- Columns: id, verse_id, verse_ref_id
+- Both IDs map to kjv_verses.verse_id
+- 386,518 rows loaded from Torrey's TSK
+- Join pattern: cross_references cr JOIN kjv_verses kv ON cr.verse_ref_id = kv.verse_id
 
 ## Do Not
-- Do not add KJV as a primary study text
-- Do not touch existing ABP tables when adding features
+- Do not add KJV as the sole primary study text — ABP remains the anchor
+- Do not touch existing ABP tables when adding unrelated features
 - Do not commit bible.db to git
-- NEVER run `DELETE FROM words` or `DELETE FROM verses` — NT words (abp_nt_texts/) and OT words (abp_ot_texts/) are both in the words table; clearing it destroys NT data that is hard to recover. If re-parsing is needed, run parse_abp.py directly against bible.db without clearing first (it uses INSERT OR IGNORE and is safe to re-run).
+- NEVER run `DELETE FROM words` or `DELETE FROM verses` — OT and NT words are both in the words table; clearing destroys hard-to-recover data. If re-importing, use INSERT OR IGNORE (safe to re-run).
