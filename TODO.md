@@ -46,10 +46,25 @@ Use MetaV `Topics.csv` and `TopicIndex.csv` as a structured alternative to AI se
 ## Library Expansion (texts + morphology)
 
 ### Morphology Data Sources
-- **NT Greek**: [macula-greek](https://github.com/Clear-Bible/macula-greek) — Clear Bible, word-level morphology for NT
-- **OT Hebrew**: [macula-hebrew](https://github.com/Clear-Bible/macula-hebrew) — Clear Bible, word-level morphology for OT
-- **OT Hebrew alt**: [morphhb](https://github.com/openscriptures/morphhb) — Open Scriptures, morphologically tagged Hebrew Bible
-- Evaluate which aligns best with ABP/KJV strongs numbering before importing
+
+One dataset per language, accessed via two paths (ABP direct / KJV via kjv_strongs):
+
+| Source | Language | Covers |
+|---|---|---|
+| [CATSS](http://ccat.sas.upenn.edu/gopher/text/religion/biblical/lxxmorph/) | OT Greek (LXX) | ABP OT words directly |
+| [macula-greek](https://github.com/Clear-Bible/macula-greek) | NT Greek | ABP NT words directly; KJV NT via kjv_strongs |
+| [macula-hebrew](https://github.com/Clear-Bible/macula-hebrew) or [morphhb](https://github.com/openscriptures/morphhb) | Hebrew (MT) | KJV OT via kjv_strongs |
+
+**Access paths:**
+- ABP OT word click → CATSS morphology
+- ABP NT word click → macula-greek morphology
+- KJV OT word click → macula-hebrew/morphhb via kjv_strongs
+- KJV NT word click → macula-greek via kjv_strongs (same dataset, different path)
+
+**Notes:**
+- CATSS is tagged against Rahlfs LXX, not ABP directly — expect versification mismatches similar to the BH alignment problem; position-based alignment should work
+- morphhb is more mature/battle-tested than macula-hebrew for basic morphology display; macula-hebrew is richer if deeper linguistic analysis is ever wanted
+- All stored in a `morph` column on `words` table (ABP path) or looked up by Strong's number (KJV path)
 
 ### Textus Receptus (TR) NT Integration
 Public domain Greek NT, same Strong's numbering as ABP so word study infrastructure works without changes. Implementation: add as a NT text toggle alongside ABP (ABP | TR). Use case: textual criticism — ABP and TR diverge in a few hundred NT places, showing differences side by side is uniquely valuable. No free tool does this well. Needs a tagged TR source — Robinson-Pierpont Byzantine text has community Strong's tagging.
