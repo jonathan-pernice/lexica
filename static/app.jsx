@@ -2192,7 +2192,7 @@ function App() {
         const abp = (data.abp_results || []).map((r, i) => ({ ...makeEntry(r, i), source: "abp" }));
         const kjv = (data.kjv_results || []).map((r, i) => ({
           ...r, id: `kjv-sr-${i}`, gloss_head: r.gloss || "",
-          strongs: r.strongs || "", strongs_raw: r.strongs_base || "",
+          strongs: r.strongs || "", strongs_raw: r.strongs || r.strongs_base || "",
           greek: r.lemma || "", translit: r.translit || "",
           source: "kjv",
         }));
