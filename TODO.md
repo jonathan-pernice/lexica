@@ -51,6 +51,9 @@ Use MetaV `Topics.csv` and `TopicIndex.csv` as a structured alternative to AI se
 - **OT Hebrew alt**: [morphhb](https://github.com/openscriptures/morphhb) — Open Scriptures, morphologically tagged Hebrew Bible
 - Evaluate which aligns best with ABP/KJV strongs numbering before importing
 
+### Textus Receptus (TR) NT Integration
+Public domain Greek NT, same Strong's numbering as ABP so word study infrastructure works without changes. Implementation: add as a NT text toggle alongside ABP (ABP | TR). Use case: textual criticism — ABP and TR diverge in a few hundred NT places, showing differences side by side is uniquely valuable. No free tool does this well. Needs a tagged TR source — Robinson-Pierpont Byzantine text has community Strong's tagging.
+
 ### Additional Bible Texts (scrollmapper/bible_databases)
 - Large collection of public domain translations in structured formats
 - Evaluate: ASV, YLT, Darby, Geneva 1599 as scholarly comparison texts
