@@ -2217,7 +2217,7 @@ function App() {
     }
     // Gloss not in current results — search the full strongs entry, then apply filter
     const crumbsWithCurrent = [...breadcrumbs, { label: searchLabel, q: q1.trim() }];
-    handleSearch(`G${sn}`, crumbsWithCurrent, true).then(() => setGlossFilter({ sn, gloss }));
+    handleSearch(strongsTag(sn), crumbsWithCurrent, true).then(() => setGlossFilter({ sn, gloss }));
   };
 
   const handleBreadcrumbNav = (crumb, idx) => {
@@ -2334,7 +2334,7 @@ function App() {
               {mode === "search" && (breadcrumbs.length > 0 || glossFilter) && (
                 <SearchBreadcrumb
                   breadcrumbs={glossFilter
-                    ? [...breadcrumbs, { label: searchLabel, q: q1.trim() }, ...(searchLabel !== `G${glossFilter.sn}` ? [{ label: `G${glossFilter.sn}` }] : [])]
+                    ? [...breadcrumbs, { label: searchLabel, q: q1.trim() }, ...(searchLabel !== strongsTag(glossFilter.sn) ? [{ label: strongsTag(glossFilter.sn) }] : [])]
                     : breadcrumbs}
                   currentLabel={glossFilter ? glossFilter.gloss : searchLabel}
                   onNav={(crumb, idx) => {

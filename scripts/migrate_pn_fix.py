@@ -58,7 +58,7 @@ def migrate(db_path: str, text_dirs: list[Path]) -> None:
                 existing = {
                     r["position"]: r
                     for r in conn.execute(
-                        "SELECT id, position, english, english_head, strongs, strongs_base FROM words WHERE verse_id=? ORDER BY position",
+                        "SELECT id, position, english, english_head, strongs, strongs_base FROM words WHERE verse_id=? ORDER BY position",  # noqa
                         (verse_id,),
                     ).fetchall()
                 }
@@ -71,6 +71,7 @@ def migrate(db_path: str, text_dirs: list[Path]) -> None:
                     old_row = existing[pos]
                     old_eng = old_row["english"]
                     old_strongs = old_row["strongs"]
+                    old_head = old_row["english_head"]
                     new_head = _head_word(new_eng) if new_eng else None
                     new_strongs_base = new_strongs.split(".")[0] if new_strongs else None
 
@@ -78,6 +79,8 @@ def migrate(db_path: str, text_dirs: list[Path]) -> None:
                     if old_eng != new_eng:
                         changed = True
                     if old_strongs != new_strongs:
+                        changed = True
+                    if old_head != new_head:  # also update when english_head casing changes
                         changed = True
 
                     if changed:
