@@ -1674,7 +1674,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             className={"lib-order-btn" + (wordOrder === "english" || translation === "kjv" ? " on" : "")}
             onClick={() => translation !== "kjv" && setLibOptions(prev => ({
               ...prev,
-              [translation]: { ...prev[translation], wordOrder: "english", showStrongs: false, showInterlinear: false }
+              [translation]: { ...prev[translation], wordOrder: "english" }
             }))}
           >English</button>
           <button
