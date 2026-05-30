@@ -525,8 +525,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setMetavData(null);
     setMetavType(null);
     // Skip metaV for words with a real Greek lemma — those belong to LSJ
-    // Exception: KJV entries may be proper nouns even with Greek lemmas
-    if (!isPN && !entry.isKjv && entry.greek && entry.translit && entry.strongs_raw !== "2316") return;
+    if (!isPN && entry.greek && entry.translit && entry.strongs_raw !== "2316") return;
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
     const _DIVINE_SKIP = new Set(["LORD","Lord","YHWH","Yahweh","Jehovah","Holy"]);
@@ -560,7 +559,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (metavData && metavType === "person") return; // person bio replaces AI
     if (metavData && metavType === "place" && metavData.strongs_g?.length > 0) return; // place has LSJ via strongs_g
     if (isHebrew) return; // BDB covers Hebrew words
-    if (!isPN && !entry.isKjv) return; // only for proper nouns
+    if (!isPN) return; // only for proper nouns
     const name = extractProperName(entry.pnName || entry.gloss || "");
     if (!name || name.length < 2) return;
     let cancelled = false;
