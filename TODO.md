@@ -47,6 +47,8 @@ Browse by concept (Atonement, Covenant, Resurrection, Holy Spirit etc.) as a str
 
 Could be a fourth nav tab or a browse mode within Search.
 
+**Implementation order:** use MetaV topic-to-verse mappings as-is for POC — validate the UX and feature usage first. Once proven, swap in our own Strong's-driven verse selection and Haiku synthesis. No point building the full pipeline before the feature is validated.
+
 ## Library Expansion (texts + morphology)
 
 ### Morphology Data Sources
