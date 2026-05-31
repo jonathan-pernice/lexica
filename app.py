@@ -1893,7 +1893,8 @@ def chapter_text(book, chapter):
     try:
         rows = conn.execute(
             """SELECT v.verse, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
-                      l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic
+                      l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic,
+                      COALESCE(w.italic_words, '') AS italic_words
                FROM verses v
                JOIN words w ON w.verse_id = v.id
                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
@@ -1922,6 +1923,7 @@ def chapter_text(book, chapter):
             "greek_pos":    r["greek_pos"],
             "bracket_id":   r["bracket_id"],
             "italic":       r["italic"],
+            "italic_words": r["italic_words"],
         })
     return jsonify([
         {

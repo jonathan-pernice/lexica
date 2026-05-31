@@ -177,11 +177,13 @@ def build_verse_words(bh_rows, lex: dict | None = None):
              matching rather than all gloss text landing on the first component.
 
     Returns list of (position, english, english_head, strongs, strongs_base,
-                     greek_pos, bracket_id, italic).
+                     greek_pos, bracket_id, italic, italic_words).
 
     italic is set to 1 only when the display word (english_head, or english if
     single-word) is itself in the italic_words set — avoids marking "beginning"
     italic just because "the" in "the beginning" is a translator addition.
+    italic_words carries the raw comma-joined set for all component rows so the
+    frontend can split multi-word glosses and mute only the italic sub-words.
 
     bracket_id logic:
       - Contiguous first-component words with non-null greek_pos share a bracket_id.
@@ -233,7 +235,7 @@ def build_verse_words(bh_rows, lex: dict | None = None):
                 strongs_base = _base(comp)
 
             words.append((pos, english, english_head, strongs, strongs_base,
-                          greek_pos, bracket_id, italic))
+                          greek_pos, bracket_id, italic, bh_italic_words))
             pos += 1
 
     return words
@@ -285,6 +287,12 @@ def run(bible_db: str, scrape_db: str) -> None:
         "SELECT DISTINCT book, chapter, verse FROM bh_words ORDER BY book, chapter, verse"
     ).fetchall()
 
+    main_cols = {row[1] for row in main.execute("PRAGMA table_info(words)")}
+    if "italic_words" not in main_cols:
+        main.execute("ALTER TABLE words ADD COLUMN italic_words TEXT NOT NULL DEFAULT ''")
+        main.commit()
+        print("Added italic_words column to words table.")
+
     print("\nClearing words table …")
     main.execute("DELETE FROM words")
     main.commit()
@@ -318,8 +326,8 @@ def run(bible_db: str, scrape_db: str) -> None:
         main.executemany(
             "INSERT INTO words"
             " (verse_id, position, english, english_head, strongs, strongs_base,"
-            "  greek_pos, bracket_id, italic)"
-            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "  greek_pos, bracket_id, italic, italic_words)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [(verse_id, *w) for w in word_rows],
         )
         inserted += len(word_rows)
@@ -371,13 +379,8 @@ def run_test(bible_db: str, scrape_db: str, book: str = "genesis", chapter: int 
 
         word_rows = build_verse_words(bh_rows, lex)
         print(f"{abbrev} {chapter}:{verse}")
-        for (wpos, eng, head, strongs, sbase, gpos, bid, italic) in word_rows:
-            iw = next(
-                (r[2] for r in bh_rows
-                 if r[0] and strongs and r[0].split("-")[0].split(".")[0] == sbase),
-                ""
-            )
-            flag = f"  italic_src={iw!r}" if iw else ""
+        for (wpos, eng, head, strongs, sbase, gpos, bid, italic, iw) in word_rows:
+            flag = f"  italic_words={iw!r}" if iw else ""
             print(
                 f"  [{wpos:2}] {strongs or '*':12}  "
                 f"eng={str(eng):15}  head={str(head):12}  italic={italic}{flag}"

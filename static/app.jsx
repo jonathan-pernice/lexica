@@ -1478,6 +1478,36 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     const chip = (w, key) => {
       const isPN = w.strongs_base === "*";
       const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english || w.english_head) && (w.english || w.english_head));
+
+      // Split multi-word gloss: mute italic sub-words, make non-italic sub-words clickable chips
+      if (w.italic_words && w.english && w.english.includes(' ')) {
+        const italicSet = new Set(w.italic_words.split(','));
+        const parts = w.english.split(' ');
+        return (
+          <React.Fragment key={key}>
+            {parts.map((word, pi) => {
+              const bare = word.replace(/[^\w]/g, '').toLowerCase();
+              if (italicSet.has(bare)) {
+                return <span key={`${key}-p${pi}`} className="lib-word lib-abp-italic">{word}</span>;
+              }
+              return (
+                <span key={`${key}-p${pi}`}
+                  className={"lib-word" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
+                  onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
+                  {showInterlinear && w.lemma && pi === 0 && <span className="lib-iw-greek">{w.lemma}</span>}
+                  <span className="lib-iw-english">{word}</span>
+                  {showStrongs && pi === 0 && (
+                    w.strongs_base && w.strongs_base !== "*"
+                      ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+                      : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
+                  )}
+                </span>
+              );
+            })}
+          </React.Fragment>
+        );
+      }
+
       return (
         <span key={key}
           className={"lib-word" + (w.italic ? " lib-abp-italic" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
@@ -1497,6 +1527,42 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     const bracketChip = (w, key) => {
       const isPN = w.strongs_base === "*";
       const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english));
+
+      // Split multi-word gloss within a bracket word
+      if (w.italic_words && w.english && w.english.includes(' ')) {
+        const italicSet = new Set(w.italic_words.split(','));
+        const parts = w.english.split(' ');
+        return (
+          <React.Fragment key={key}>
+            {parts.map((word, pi) => {
+              const bare = word.replace(/[^\w]/g, '').toLowerCase();
+              if (italicSet.has(bare)) {
+                return <span key={`${key}-p${pi}`} className="lib-word lib-word-bracketed lib-abp-italic">
+                  {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
+                    <span className="lib-iw-pos">{w.greek_pos}</span>}
+                  {word}
+                </span>;
+              }
+              return (
+                <span key={`${key}-p${pi}`}
+                  className={"lib-word lib-word-bracketed" + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
+                  onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
+                  {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
+                    <span className="lib-iw-pos">{w.greek_pos}</span>}
+                  {showInterlinear && w.lemma && pi === 0 && <span className="lib-iw-greek">{w.lemma}</span>}
+                  <span className="lib-iw-english">{word}</span>
+                  {showStrongs && pi === 0 && (
+                    w.strongs_base && w.strongs_base !== "*"
+                      ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+                      : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
+                  )}
+                </span>
+              );
+            })}
+          </React.Fragment>
+        );
+      }
+
       return (
         <span key={key}
           className={"lib-word lib-word-bracketed" + (w.italic ? " lib-abp-italic" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
