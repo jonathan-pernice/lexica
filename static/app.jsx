@@ -1343,6 +1343,103 @@ function groupForGreekMode(words) {
 }
 
 // ============================================================
+// LIB NAV PANEL — desktop left sidebar (≥1024px)
+// ============================================================
+
+const _BOOK_DIV = {
+  Gen:"Law",Exo:"Law",Lev:"Law",Num:"Law",Deu:"Law",
+  Jos:"History",Jdg:"History",Rth:"History","1Sa":"History","2Sa":"History",
+  "1Ki":"History","2Ki":"History","1Ch":"History","2Ch":"History",Ezr:"History",Neh:"History",Est:"History",
+  Job:"Wisdom",Psa:"Wisdom",Pro:"Wisdom",Ecc:"Wisdom",Son:"Wisdom",
+  Isa:"Major Prophets",Jer:"Major Prophets",Lam:"Major Prophets",Eze:"Major Prophets",Dan:"Major Prophets",
+  Hos:"Minor Prophets",Joe:"Minor Prophets",Amo:"Minor Prophets",Oba:"Minor Prophets",
+  Jon:"Minor Prophets",Mic:"Minor Prophets",Nah:"Minor Prophets",Hab:"Minor Prophets",
+  Zep:"Minor Prophets",Hag:"Minor Prophets",Zec:"Minor Prophets",Mal:"Minor Prophets",
+  Mat:"Gospels",Mar:"Gospels",Luk:"Gospels",Joh:"Gospels",
+  Act:"History",
+  Rom:"Pauline Epistles","1Co":"Pauline Epistles","2Co":"Pauline Epistles",
+  Gal:"Pauline Epistles",Eph:"Pauline Epistles",Php:"Pauline Epistles",
+  Col:"Pauline Epistles","1Th":"Pauline Epistles","2Th":"Pauline Epistles",
+  "1Ti":"Pauline Epistles","2Ti":"Pauline Epistles",Tit:"Pauline Epistles",Phm:"Pauline Epistles",
+  Heb:"General Epistles",Jas:"General Epistles",
+  "1Pe":"General Epistles","2Pe":"General Epistles",
+  "1Jn":"General Epistles","2Jn":"General Epistles","3Jn":"General Epistles",
+  Jud:"General Epistles",Rev:"Apocalyptic",
+};
+
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter }) {
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return books;
+    return books.filter(b => b.name.toLowerCase().includes(q) || b.abbrev.toLowerCase().includes(q));
+  }, [books, query]);
+
+  const groups = useMemo(() => {
+    const out = [];
+    let cur = null;
+    for (const b of filtered) {
+      const t = NT_BOOKS.has(b.abbrev) ? "NT" : "OT";
+      const div = _BOOK_DIV[b.abbrev] || "";
+      const key = t + " · " + div;
+      if (!cur || cur.key !== key) { cur = { key, t, div, books: [] }; out.push(cur); }
+      cur.books.push(b);
+    }
+    return out;
+  }, [filtered]);
+
+  return (
+    <nav className="nav" aria-label="Books">
+      <div className="nav-top">
+        <span className="nav-title">Canon</span>
+      </div>
+      <div className="nav-search">
+        <svg className="nav-search-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+        </svg>
+        <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a book" />
+      </div>
+      <div className="nav-scroll">
+        {groups.map(g => (
+          <div className="nav-group" key={g.key}>
+            <div className="nav-div">
+              <span className="nav-div-t">{g.t}</span>
+              <span className="nav-div-n">{g.div}</span>
+            </div>
+            {g.books.map(b => {
+              const active = selBook && b.abbrev === selBook.abbrev;
+              return (
+                <div key={b.abbrev}>
+                  <button
+                    className={"nav-book" + (active ? " on" : "")}
+                    onClick={() => { setSelBook(b); setSelChapter(1); }}
+                  >
+                    <span className="nav-book-name">{b.name}</span>
+                    <span className="nav-book-ch">{b.chapters}</span>
+                  </button>
+                  {active && (
+                    <div className="nav-chips">
+                      {Array.from({ length: b.chapters }, (_, i) => i + 1).map(n => (
+                        <button
+                          key={n}
+                          className={"ch-chip" + (n === selChapter ? " on" : "")}
+                          onClick={() => setSelChapter(n)}
+                        >{n}</button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+// ============================================================
 // LIBRARY VIEW
 // ============================================================
 function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTranslationChange }) {
@@ -1360,6 +1457,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
+  const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const _onResize = () => setNavVisible(window.innerWidth >= 1024);
+    window.addEventListener("resize", _onResize);
+    return () => window.removeEventListener("resize", _onResize);
+  }, []);
 
   useEffect(() => {
     api.books().then(data => {
@@ -1708,6 +1812,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
   return (
     <div className="library">
+      {navVisible && (
+        <LibNavPanel
+          books={books}
+          selBook={selBook}
+          setSelBook={setSelBook}
+          selChapter={selChapter}
+          setSelChapter={setSelChapter}
+        />
+      )}
       <div className="lib-toolbar">
         <select
           className="lib-select"
