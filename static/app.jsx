@@ -1542,9 +1542,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               const bare = word.replace(/[^\w]/g, '').toLowerCase();
               if (italicSet.has(bare)) {
                 return <span key={`${key}-p${pi}`} className={"lib-word lib-word-bracketed lib-abp-italic" + (smcapSet.has(bare) ? " lib-smcap" : "")}>
-                  {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
-                    <span className="lib-iw-pos">{w.greek_pos}</span>}
-                  <span className="lib-iw-english">{word}</span>
+                  <span className="lib-iw-pos-english">
+                    {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
+                      <span className="lib-iw-pos">{w.greek_pos}</span>}
+                    <span className="lib-iw-english">{word}</span>
+                  </span>
                 </span>;
               }
               const isSmcap = smcapSet.has(bare);
@@ -1552,10 +1554,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 <span key={`${key}-p${pi}`}
                   className={"lib-word lib-word-bracketed" + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
                   onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
-                  {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
-                    <span className="lib-iw-pos">{w.greek_pos}</span>}
                   {showInterlinear && w.lemma && pi === 0 && <span className="lib-iw-greek">{w.lemma}</span>}
-                  <span className="lib-iw-english">{word}</span>
+                  <span className="lib-iw-pos-english">
+                    {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
+                      <span className="lib-iw-pos">{w.greek_pos}</span>}
+                    <span className="lib-iw-english">{word}</span>
+                  </span>
                   {showStrongs && pi === 0 && (
                     w.strongs_base && w.strongs_base !== "*"
                       ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
@@ -1576,10 +1580,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         <span key={key}
           className={"lib-word lib-word-bracketed" + (w.italic ? " lib-abp-italic" : "") + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
           onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: label, gloss: label } : makeEntry(w)) : undefined}>
-          {w.greek_pos !== null && w.greek_pos !== undefined &&
-            <span className="lib-iw-pos">{w.greek_pos}</span>}
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
-          <span className="lib-iw-english">{label}</span>
+          <span className="lib-iw-pos-english">
+            {w.greek_pos !== null && w.greek_pos !== undefined &&
+              <span className="lib-iw-pos">{w.greek_pos}</span>}
+            <span className="lib-iw-english">{label}</span>
+          </span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
               ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>

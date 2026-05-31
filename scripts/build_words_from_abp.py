@@ -253,16 +253,19 @@ def _split_compounds(rows: list, lex: dict) -> None:
         if not taken:
             continue
 
-        # Assign english + inherit bracket_id and abp_pos from source
+        # Assign english + inherit bracket_id, abp_pos, and gpos from source.
+        # gpos (the position number superscript) moves to the first chip of the
+        # compound so it displays before the first visible word.
+        src_gpos    = rows[i][5]
         src_bid     = rows[i][6]
         src_abp_pos = rows[i][10]
         for j, word in taken.items():
             r = rows[j]
-            rows[j] = (r[0], word, word, r[3], r[4], r[5], src_bid, r[7], r[8], r[9], src_abp_pos)
+            rows[j] = (r[0], word, word, r[3], r[4], src_gpos, src_bid, r[7], r[8], r[9], src_abp_pos)
 
         new_eng = " ".join(own) if own else None
         rows[i] = (pos_i, new_eng, _head_word(new_eng) if new_eng else None,
-                   strongs, sbase, gpos, bid, italic, iw, sw, abp_pos_i)
+                   strongs, sbase, None, bid, italic, iw, sw, abp_pos_i)
 
         for j in sorted(taken.keys()):
             p_i, p_j = rows[i][0], rows[j][0]

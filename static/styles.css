@@ -1447,14 +1447,18 @@ input { font-family: inherit; }
 .lib-word:hover { background: var(--bg-sunk); }
 .lib-word.lib-word-clickable { cursor: pointer; }
 .lib-word.lib-word-clickable:hover { background: var(--accent-soft); }
+.lib-iw-pos-english {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 1px;
+}
 .lib-iw-pos {
-  position: absolute;
-  top: 0px;
   font-family: var(--f-mono);
   font-size: 8.5px;
   color: var(--ink-3);
   letter-spacing: 0.02em;
-  line-height: 1;
+  line-height: 1.3;
 }
 .lib-iw-greek {
   font-family: var(--f-greek);
