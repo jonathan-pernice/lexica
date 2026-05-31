@@ -1825,6 +1825,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       {navVisible ? (
         <div className="lib-bar">
           <div className="lib-bar-l">
+            {selBook && <span className="lib-bar-book">{selBook.name}</span>}
             <div className="bar-ch">
               <button
                 className="ch-nav"
