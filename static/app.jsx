@@ -1546,11 +1546,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               const bare = word.replace(/[^\w]/g, '').toLowerCase();
               if (italicSet.has(bare)) {
                 return <span key={`${key}-p${pi}`} className={"lib-word lib-word-bracketed lib-abp-italic" + (smcapSet.has(bare) ? " lib-smcap" : "")}>
+                  {showInterlinear && <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>}
                   <span className="lib-iw-pos-english">
                     {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
                       <span className="lib-iw-pos">{w.greek_pos}</span>}
                     <span className="lib-iw-english">{word}</span>
                   </span>
+                  {showStrongs && <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>}
                 </span>;
               }
               const isSmcap = smcapSet.has(bare);
@@ -1558,17 +1560,17 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 <span key={`${key}-p${pi}`}
                   className={"lib-word lib-word-bracketed" + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
                   onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
-                  {showInterlinear && w.lemma && pi === 0 && <span className="lib-iw-greek">{w.lemma}</span>}
+                  {showInterlinear && (pi === 0 && w.lemma
+                    ? <span className="lib-iw-greek">{w.lemma}</span>
+                    : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>)}
                   <span className="lib-iw-pos-english">
                     {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
                       <span className="lib-iw-pos">{w.greek_pos}</span>}
                     <span className="lib-iw-english">{word}</span>
                   </span>
-                  {showStrongs && pi === 0 && (
-                    w.strongs_base && w.strongs_base !== "*"
-                      ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
-                      : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
-                  )}
+                  {showStrongs && (pi === 0 && w.strongs_base && w.strongs_base !== "*"
+                    ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+                    : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>)}
                 </span>
               );
             })}
@@ -1584,7 +1586,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         <span key={key}
           className={"lib-word lib-word-bracketed" + (w.italic ? " lib-abp-italic" : "") + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
           onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: label, gloss: label } : makeEntry(w)) : undefined}>
-          {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
+          {showInterlinear && (w.lemma
+            ? <span className="lib-iw-greek">{w.lemma}</span>
+            : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>)}
           <span className="lib-iw-pos-english">
             {w.greek_pos !== null && w.greek_pos !== undefined &&
               <span className="lib-iw-pos">{w.greek_pos}</span>}
@@ -1682,11 +1686,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <span key={i}
                 className={"lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
                 onClick={clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined}>
-                {showInterlinear && w.lemma && (
-                  <span className="lib-iw-greek" dir={isHebrew ? "rtl" : undefined}
-                    style={isHebrew ? {fontFamily: "var(--f-serif)"} : undefined}>
-                    {w.lemma}
-                  </span>
+                {showInterlinear && (w.lemma
+                  ? <span className="lib-iw-greek" dir={isHebrew ? "rtl" : undefined}
+                      style={isHebrew ? {fontFamily: "var(--f-serif)"} : undefined}>
+                      {w.lemma}
+                    </span>
+                  : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>
                 )}
                 <span className="lib-iw-english">{w.word}{w.punc || ""}</span>
                 {showStrongs && (sid
