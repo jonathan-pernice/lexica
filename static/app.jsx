@@ -665,10 +665,13 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                style={isHebrew ? {fontFamily: "var(--f-serif)", textAlign: "left"} : undefined}>
             {isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || ((isPN || metavData) ? extractProperName(entry.gloss) : entry.gloss))}
           </div>
-          <div className="detail-translit-row">
+          <div className={"detail-translit-row" + (isHebrew ? " detail-translit-row-he" : "")}>
             <span className="detail-translit">{isHebrew ? bdbEntry?.xlit : entry.translit}</span>
+            {isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss && (
+              <><span className="detail-sep">·</span><span className="detail-gloss">{stripArticles(((isPN || metavData) ? extractProperName(entry.gloss) : entry.gloss)?.replace(/[.,;:!?—-]+$/, "").trim())}</span></>
+            )}
           </div>
-          {!(isPN && !entry.greek && !isHebrew) && (
+          {!(isPN && !entry.greek && !isHebrew) && !(isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss) && (
             <div className="detail-gloss">{stripArticles(((isPN || metavData) ? extractProperName(entry.gloss) : (entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss))?.replace(/[.,;:!?—-]+$/, "").trim())}</div>
           )}
         </div>

@@ -584,6 +584,8 @@ input { font-family: inherit; }
   color: var(--ink-2);
   margin-right: auto;
 }
+.detail-translit-row-he .detail-translit { margin-right: 0; }
+.detail-sep { color: var(--ink-4); user-select: none; }
 .detail-gloss {
   font-family: var(--f-serif);
   font-size: 17px;
