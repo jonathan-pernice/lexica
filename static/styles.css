@@ -789,7 +789,7 @@ input { font-family: inherit; }
 .morph { font-family: var(--f-mono); font-size: 11px; font-weight: 500; color: var(--accent); background: var(--accent-soft); padding: 3px 8px; border-radius: 5px; letter-spacing: 0.02em; }
 
 .sec { padding: 18px 0; border-top: 1px solid var(--rule); }
-.sec:first-of-type { border-top: 0; padding-top: 0; }
+.sec:first-of-type { border-top: 0; }
 .sec-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .sec-t { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; color: var(--ink-3); display: inline-flex; align-items: center; gap: 7px; }
 .sec-meta { font-size: 11px; color: var(--ink-4); }
@@ -802,7 +802,7 @@ input { font-family: inherit; }
 .fact-v { color: var(--ink); text-align: right; }
 .fact-v.mono { font-family: var(--f-mono); font-size: 12px; }
 
-.dverse { margin: 4px 0 12px; padding: 16px 18px; background: var(--bg); border-left: 2px solid var(--gold); border-radius: 0 8px 8px 0; font-family: var(--f-serif); font-size: 16px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
+.dverse { margin: 0 0 12px; padding: 16px 18px; background: var(--bg); border-left: 2px solid var(--gold); border-radius: 0 8px 8px 0; font-family: var(--f-serif); font-size: 16px; line-height: 1.55; color: var(--ink); text-wrap: pretty; }
 .dverse-n { font-family: var(--f-mono); font-size: 10px; color: var(--gold); background: var(--gold-soft); padding: 2px 6px; border-radius: 4px; vertical-align: super; margin-right: 8px; }
 .dverse-tools { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
 
@@ -1209,7 +1209,7 @@ input { font-family: inherit; }
   margin-left: 6px;
   vertical-align: middle;
 }
-.bdb-body { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+.bdb-body { display: flex; flex-direction: column; gap: 4px; }
 .bdb-lemma {
   font-size: 26px;
   font-family: var(--f-serif);
@@ -1903,7 +1903,7 @@ input { font-family: inherit; }
 
 /* ── metaV sidebar ───────────────────────────────────────────── */
 .lib-word-pn { color: var(--ink); }
-.metav-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.metav-meta { display: flex; flex-wrap: wrap; gap: 6px; }
 .metav-tag {
   font-size: 11px;
   padding: 3px 8px;
