@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from collections import Counter
 import hashlib
 import json
 import logging
@@ -1324,7 +1325,8 @@ def _kjv_word_search(conn, word, out_rows, out_groupings):
         ORDER BY kw.book_id, kw.chapter, kw.verse_num
         LIMIT 500
     """, (word,)).fetchall()
-    found_sids = list({r["strongs_id"] for r in rows if r["strongs_id"].lstrip("GH") not in _FUNCTION_STRONGS})
+    sid_counts = Counter(r["strongs_id"] for r in rows if r["strongs_id"].lstrip("GH") not in _FUNCTION_STRONGS)
+    found_sids = [sid for sid, cnt in sid_counts.items() if cnt >= 3]
     for r in rows:
         sid  = r["strongs_id"]
         base = sid.lstrip("GH")
@@ -1526,16 +1528,7 @@ def search():
             if len(all_v) > 1:
                 variants[base] = all_v
         # ── KJV parallel search ───────────────────────────────────────────
-        _is_h = False
-        if snum:
-            try:
-                _is_h = q.strip().upper().startswith('H') or int(snum.split('.')[0]) > 5624
-            except ValueError:
-                pass
-        if _is_h:
-            # H-strongs search: KJV results only
-            _kjv_strongs_search(conn, [f"H{snum}"], kjv_rows, kjv_groupings)
-        elif not snum:
+        if not snum:
             # English word search: KJV results (G+H) via word match
             _kjv_word_search(conn, q, kjv_rows, kjv_groupings)
             # Also search BDB by transliteration for additional H coverage

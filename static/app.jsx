@@ -2320,7 +2320,11 @@ function App() {
               {mode === "search" && (breadcrumbs.length > 0 || glossFilter) && (
                 <SearchBreadcrumb
                   breadcrumbs={glossFilter
-                    ? [...breadcrumbs, { label: searchLabel, q: q1.trim() }, ...(searchLabel !== strongsTag(glossFilter.sn) ? [{ label: strongsTag(glossFilter.sn) }] : [])]
+                    ? [
+                        ...breadcrumbs,
+                        ...(breadcrumbs[breadcrumbs.length - 1]?.q !== q1.trim() ? [{ label: searchLabel, q: q1.trim() }] : []),
+                        ...(searchLabel !== strongsTag(glossFilter.sn) ? [{ label: strongsTag(glossFilter.sn) }] : [])
+                      ]
                     : breadcrumbs}
                   currentLabel={glossFilter ? glossFilter.gloss : searchLabel}
                   onNav={(crumb, idx) => {
