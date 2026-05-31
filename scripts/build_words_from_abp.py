@@ -337,9 +337,6 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
         ))
         pos += 1
 
-    if lex:
-        _split_compounds(rows, lex)
-
     return rows
 
 
@@ -385,10 +382,6 @@ def run(bible_db: str, scrape_db: str) -> None:
     )}
     print(f"ABP verse map: {len(verse_map):,}")
 
-    print("Loading lexicon …")
-    lex = load_lexicon(main)
-    print(f"Lexicon entries: {len(lex):,}")
-
     print("Loading BH index …")
     bh_index = load_bh_verse_index(scrape)
     print(f"BH verse keys: {len(bh_index):,}\n")
@@ -407,7 +400,7 @@ def run(bible_db: str, scrape_db: str) -> None:
 
         slug     = ABBREV_TO_SLUG.get(abbrev)
         bh_rows  = bh_index.get((slug, chapter, verse), []) if slug else []
-        word_rows = build_verse_words(abp_words, bh_rows, lex)
+        word_rows = build_verse_words(abp_words, bh_rows)
 
         main.executemany(
             "INSERT INTO words"
