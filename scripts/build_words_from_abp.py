@@ -70,12 +70,25 @@ ABBREV_TO_SLUG = {
 _STRONGS_RE  = re.compile(r"(G\*|G\d+(?:\.\d+)*)")
 _VERSE_RE    = re.compile(r"^\((\w+)\s+(\d+):(\d+)\)\s+(.*)")
 _STRIP_PUNCT = re.compile(r"[^\w\s]")
+_LEAD_NUM    = re.compile(r"^\d+")
 
 
 # ── Parsing ───────────────────────────────────────────────────────────────────
 
 def normalize(text: str) -> str:
     return _STRIP_PUNCT.sub("", text or "").lower().strip()
+
+
+def clean_english(text: str) -> str:
+    """Strip ABP bracket chars and position numbers from a gloss token.
+
+    '[6come together' → 'come together'
+    '1the'            → 'the'
+    '5heaven]'        → 'heaven'
+    'God said,'       → 'God said,'   (unchanged)
+    """
+    t = text.strip().lstrip("[").rstrip("]").strip()
+    return _LEAD_NUM.sub("", t).strip()
 
 
 def parse_abp_line(line: str):
@@ -103,11 +116,11 @@ def parse_abp_line(line: str):
     words = []
     i = 0
     while i < len(parts) - 1:
-        words.append((parts[i].strip(), parts[i + 1]))
+        words.append((clean_english(parts[i]), parts[i + 1]))
         i += 2
     # trailing text after last strongs marker (no strongs attached)
     if parts and parts[-1].strip():
-        words.append((parts[-1].strip(), None))
+        words.append((clean_english(parts[-1]), None))
 
     return book, chapter, verse, words
 
