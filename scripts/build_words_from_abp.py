@@ -308,12 +308,19 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
             norm    = normalize(english)
             gpos, iw, sw = bh_lookup(bh_rows, used, sbase, norm)
 
-        # bracket_id: advance counter at start of each contiguous greek_pos run
+        # bracket_id: advance counter at start of each contiguous greek_pos run.
+        # Don't reset for empty-english function words with no BH match — these are
+        # ghost slots from compound strongs (e.g. G1510 in "3756-1510.7.3") and
+        # should not break an in-progress bracket group.
+        _FUNC = frozenset({'1510', '2258', '3588', '3739', '846', '1161',
+                           '2532', '3767', '1063', '3303'})
         if gpos is not None:
             if not in_bracket:
                 bid += 1
                 in_bracket = True
             bracket_id = bid
+        elif not english and sbase in _FUNC:
+            bracket_id = None   # ghost slot — keep in_bracket unchanged
         else:
             bracket_id = None
             in_bracket = False
