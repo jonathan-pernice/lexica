@@ -234,8 +234,8 @@ def build_verse_words(abp_words: list, bh_rows: list) -> list:
             gpos,
             bracket_id,
             italic,
-            iw or None,
-            sw or None,
+            iw if iw else "",
+            sw if sw else "",
         ))
         pos += 1
 
