@@ -811,6 +811,15 @@ input { font-family: inherit; }
 .occ-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-serif); font-size: 17px; color: var(--accent); font-weight: 500; }
 .occ-link:hover { text-decoration: underline; }
 
+/* ---- Extracted from inline styles ---- */
+.detail-greek--he { font-family: var(--f-serif); text-align: left; }
+.lsj-badge--gold { background: var(--gold); color: #fff; }
+.lsj-badge--accent { background: var(--accent); color: #fff; }
+.lsj-def--loading { color: var(--ink-4); font-style: italic; padding: 8px 0; }
+.detail-p--meta { margin-top: 8px; }
+.link-btn--strong { font-weight: 600; }
+.lsj-head .sec-head { margin: 0; }
+
 /* ============================================================
    VIEW TOGGLE (browse / study)
 ============================================================ */
