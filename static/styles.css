@@ -1456,7 +1456,7 @@ input { font-family: inherit; }
 .lib-iw-pos {
   font-family: var(--f-mono);
   font-size: 8.5px;
-  color: var(--ink-3);
+  color: #c0392b;
   letter-spacing: 0.02em;
   line-height: 1.3;
 }
