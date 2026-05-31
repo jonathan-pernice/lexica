@@ -2070,3 +2070,15 @@ input { font-family: inherit; }
 @media (min-width: 1024px) {
   .lib-select { display: none; }
 }
+
+@media (max-width: 1023px) {
+  .lib-bar {
+    padding: 16px 0 20px;
+    margin-bottom: 32px;
+    justify-content: flex-start;
+    background: var(--bg);
+    backdrop-filter: none;
+    gap: 14px;
+    box-shadow: 0 4px 12px -4px rgba(20, 20, 30, 0.06);
+  }
+}
