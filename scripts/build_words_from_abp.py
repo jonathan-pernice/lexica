@@ -197,8 +197,8 @@ def build_verse_words(abp_words: list, bh_rows: list) -> list:
 
     for english, raw_strongs in abp_words:
         if raw_strongs is None:
-            strongs = None
-            sbase   = None
+            strongs = ""
+            sbase   = ""
             gpos, iw, sw = None, "", ""
         elif raw_strongs == "G*":
             strongs = "*"
