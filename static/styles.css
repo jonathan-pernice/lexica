@@ -1450,7 +1450,7 @@ input { font-family: inherit; }
 .lib-iw-pos-english {
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 1px;
 }
 .lib-iw-pos {
@@ -1460,7 +1460,6 @@ input { font-family: inherit; }
   color: #c0392b;
   letter-spacing: 0.02em;
   line-height: 1;
-  align-self: flex-start;
 }
 .lib-iw-greek {
   font-family: var(--f-greek);
