@@ -1465,7 +1465,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     };
 
     const chipLabel = (w) => {
-      const e = w.english || w.english_head || "";
+      const e = (w.english_head && w.english?.includes(' ')) ? w.english_head : (w.english || w.english_head || "");
       if (e) return e;
       // Null english: word absorbed into adjacent phrase — derive gloss from lexicon
       const kd = w.kjv_def || "";
