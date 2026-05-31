@@ -1369,7 +1369,7 @@ const _BOOK_DIV = {
   Jud:"General Epistles",Rev:"Apocalyptic",
 };
 
-function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter }) {
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose }) {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -1392,9 +1392,10 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter }) 
   }, [filtered]);
 
   return (
-    <nav className="nav" aria-label="Books">
+    <nav className={"nav" + (isOverlay ? " nav-overlay" : "")} aria-label="Books">
       <div className="nav-top">
         <span className="nav-title">Canon</span>
+        {isOverlay && <button className="nav-x" onClick={onClose} aria-label="Close">✕</button>}
       </div>
       <div className="nav-search">
         <svg className="nav-search-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -1415,7 +1416,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter }) 
                 <div key={b.abbrev}>
                   <button
                     className={"nav-book" + (active ? " on" : "")}
-                    onClick={() => { setSelBook(b); setSelChapter(1); }}
+                    onClick={() => { setSelBook(b); setSelChapter(1); if (isOverlay) onClose(); }}
                   >
                     <span className="nav-book-name">{b.name}</span>
                   </button>
@@ -1459,6 +1460,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
   const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1024);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     const _onResize = () => setNavVisible(window.innerWidth >= 1024);
@@ -1822,6 +1824,20 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           setSelChapter={setSelChapter}
         />
       )}
+      {!navVisible && mobileNavOpen && (
+        <>
+          <div className="nav-scrim" onClick={() => setMobileNavOpen(false)} />
+          <LibNavPanel
+            books={books}
+            selBook={selBook}
+            setSelBook={setSelBook}
+            selChapter={selChapter}
+            setSelChapter={setSelChapter}
+            isOverlay={true}
+            onClose={() => setMobileNavOpen(false)}
+          />
+        </>
+      )}
       <div>
       {navVisible ? (
         <div className="lib-bar">
@@ -1884,16 +1900,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </div>
       ) : (
         <div className="lib-toolbar">
-          <select
-            className="lib-select"
-            value={selBook ? selBook.abbrev : ""}
-            onChange={e => {
-              const b = books.find(b => b.abbrev === e.target.value);
-              if (b) { setSelBook(b); setSelChapter(1); }
-            }}
-          >
-            {books.map(b => <option key={b.abbrev} value={b.abbrev}>{b.name}</option>)}
-          </select>
+          <button className="lib-book-btn" onClick={() => setMobileNavOpen(true)}>
+            {selBook ? selBook.name : "Select book"} ›
+          </button>
           <div className="lib-chap-nav">
             <button
               className="lib-nav-btn"
