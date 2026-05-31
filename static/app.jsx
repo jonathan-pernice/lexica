@@ -1765,7 +1765,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 // ============================================================
 // GLOSS GROUPINGS
 // ============================================================
-function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsSearch }) {
+function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsSearch, isKjv }) {
   const rows = useMemo(() => {
     const seen = new Set();
     const order = [];
@@ -1796,7 +1796,7 @@ function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsS
       {rows.map(({ sn, glosses, siblings, entry }) => (
         <div key={sn} className="gloss-group">
           <span className="gloss-group-head">
-            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(strongsTag(sn))}>{strongsTag(sn)}</button>
+            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(strongsTag(sn), isKjv)}>{strongsTag(sn)}</button>
             {entry && entry.translit && <span className="gloss-translit">{entry.translit}</span>}
             {glosses.length > 1 && <span className="gloss-also">appears as</span>}
           </span>
@@ -2382,6 +2382,7 @@ function App() {
                   variants={browseTranslation === "kjv" ? {} : variants}
                   onGlossDrill={handleGlossDrill}
                   onStrongsSearch={handleStrongsSearch}
+                  isKjv={browseTranslation === "kjv"}
                 />
               )}
 
