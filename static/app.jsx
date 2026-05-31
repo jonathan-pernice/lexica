@@ -1510,13 +1510,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         );
       }
 
-      const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(chipLabel(w).replace(/[^\w]/g, '').toLowerCase()) : false;
+      const label = w.english || chipLabel(w);
+      const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(label.replace(/[^\w]/g, '').toLowerCase()) : false;
       return (
         <span key={key}
           className={"lib-word" + (w.italic ? " lib-abp-italic" : "") + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
           onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
-          <span className="lib-iw-english">{chipLabel(w)}</span>
+          <span className="lib-iw-english">{label}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
               ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
@@ -1568,7 +1569,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         );
       }
 
-      const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(chipLabel(w).replace(/[^\w]/g, '').toLowerCase()) : false;
+      const label = w.english || chipLabel(w);
+      const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(label.replace(/[^\w]/g, '').toLowerCase()) : false;
       return (
         <span key={key}
           className={"lib-word lib-word-bracketed" + (w.italic ? " lib-abp-italic" : "") + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
@@ -1576,7 +1578,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           {w.greek_pos !== null && w.greek_pos !== undefined &&
             <span className="lib-iw-pos">{w.greek_pos}</span>}
           {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
-          <span className="lib-iw-english">{chipLabel(w)}</span>
+          <span className="lib-iw-english">{label}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
               ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
