@@ -1625,7 +1625,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       });
     } else {
       // English reading order — words with a gloss or lexicon fallback
-      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.english_head);
+      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.english_head || w.kjv_def);
       content = englishWords.map((w, i) => {
         return chip(w, `e${i}`);
       });
