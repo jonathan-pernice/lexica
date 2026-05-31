@@ -1509,11 +1509,7 @@ def search():
                     ORDER BY strongs, cnt DESC""",
                 unique_strongs,
             ).fetchall():
-                s = gr["strongs"]
-                # Skip copula/function words that leak into english_head
-                if gr["english_head"].lower() in {'is','are','was','were','be','been','am','the','a','an','in','of','to','and','or','but','not','no','vain'}:
-                    continue
-                groupings.setdefault(s, []).append({"gloss": gr["english_head"], "count": gr["cnt"]})
+                groupings.setdefault(gr["strongs"], []).append({"gloss": gr["english_head"], "count": gr["cnt"]})
         # Sibling variants: for each strongs_base that has dotted results,
         # fetch all corpus variants so the frontend can show related numbers.
         dotted_bases = {
