@@ -1519,7 +1519,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         <span key={key}
           className={"lib-word" + (w.italic ? " lib-abp-italic" : "") + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
           onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: label, gloss: label } : makeEntry(w)) : undefined}>
-          {showInterlinear && w.lemma && <span className="lib-iw-greek">{w.lemma}</span>}
+          {showInterlinear && (w.lemma ? <span className="lib-iw-greek">{w.lemma}</span> : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>)}
           <span className="lib-iw-english">{label}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
