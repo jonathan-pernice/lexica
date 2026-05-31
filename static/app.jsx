@@ -1418,7 +1418,6 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter }) 
                     onClick={() => { setSelBook(b); setSelChapter(1); }}
                   >
                     <span className="nav-book-name">{b.name}</span>
-                    <span className="nav-book-ch">{b.chapters}</span>
                   </button>
                   {active && (
                     <div className="nav-chips">
