@@ -1097,18 +1097,21 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             if (!label) return null;
             const clickable = w.strongs_base && w.strongs_base !== "*";
             const wnum = w.strongs || w.strongs_base;
-            const entry = clickable && (entryMap.get(wnum) || {
-              id: `study-${book}-${chapter}-${verse}-${key}`,
-              strongs: `G${wnum}`,
-              strongs_base: w.strongs_base,
-              strongs_raw: wnum,
-              greek: w.lemma || "",
-              translit: w.translit || "",
-              gloss: w.english || "",
-              ref: `${book} ${chapter}:${verse}`,
-              book, chapter, verse,
-              definition: "", derivation: "", is_function: false,
-            });
+            const foundEntry = clickable && entryMap.get(wnum);
+            const entry = clickable && (foundEntry
+              ? { ...foundEntry, gloss: w.english || foundEntry.gloss }
+              : {
+                id: `study-${book}-${chapter}-${verse}-${key}`,
+                strongs: strongsTag(wnum),
+                strongs_base: w.strongs_base,
+                strongs_raw: wnum,
+                greek: w.lemma || "",
+                translit: w.translit || "",
+                gloss: w.english || "",
+                ref: `${book} ${chapter}:${verse}`,
+                book, chapter, verse,
+                definition: "", derivation: "", is_function: false,
+              });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
             const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
             const isCited = clickable && citedStrongs != null && citedStrongs.size > 0 &&
@@ -1116,10 +1119,12 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             return (
               <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
-                {hasPos && <span className="study-pos">{w.greek_pos}</span>}
-                <span className="study-word">{label}</span>
+                <span className="study-pos-english">
+                  {hasPos && <span className="study-pos">{w.greek_pos}</span>}
+                  <span className="study-word">{label}</span>
+                </span>
                 {clickable
-                  ? <span className="study-strongs">G{wnum}</span>
+                  ? <span className="study-strongs">{strongsTag(wnum)}</span>
                   : <span className="study-strongs" style={{visibility:"hidden"}}>G0</span>}
               </span>
             );
