@@ -201,20 +201,19 @@ def load_lexicon(conn: sqlite3.Connection) -> dict:
 def _split_compounds(rows: list, lex: dict) -> None:
     """
     Redistribute words from compound ABP glosses to subsequent empty-english slots
-    using lexicon evidence. Modifies rows in-place.
+    using lexicon evidence, then swap position numbers so the redistributed words
+    display before the verb/head word. Modifies rows in-place.
 
-    Example: 'God made' on G4160 + empty G3588, G2316
-      → G4160 = 'made'  (in G4160 lex: make/do)
-      → G3588 = ''      (no match for either word)
-      → G2316 = 'God'   (in G2316 lex: God/deity)
-
-    Only redistributes a word when the target slot's lex def contains it AND the
-    current slot's lex def does not — avoids moving words that genuinely belong.
+    Example: 'God made' on G4160 (pos 2) + empty G3588 (pos 3), G2316 (pos 4)
+      → G4160 = 'made', pos 4   (in G4160 lex: make/do)
+      → G3588 = '',    pos 3    (hidden, unchanged)
+      → G2316 = 'God', pos 2   (in G2316 lex: God/deity — swapped to pos 2)
+    After sort: God(2) … made(4) → "God made" in correct English order.
     """
     _NORM = re.compile(r"[^\w]")
 
     for i in range(len(rows)):
-        pos, eng, head, strongs, sbase, gpos, bid, italic, iw, sw = rows[i]
+        pos_i, eng, head, strongs, sbase, gpos, bid, italic, iw, sw = rows[i]
         if not eng or " " not in eng:
             continue
         if not sbase or sbase in ("*", ""):
@@ -223,11 +222,10 @@ def _split_compounds(rows: list, lex: dict) -> None:
         own_def = lex.get(sbase, set())
         gloss_words = eng.split()
 
-        # Collect subsequent empty-english slots (stop at first non-empty)
+        # Collect subsequent contiguous empty-english slots
         ahead = []
         for j in range(i + 1, len(rows)):
-            slot_eng = rows[j][1]
-            if slot_eng:          # non-empty english — stop looking
+            if rows[j][1]:          # non-empty english — stop
                 break
             slot_base = rows[j][4]
             if slot_base and slot_base not in ("*", ""):
@@ -236,38 +234,47 @@ def _split_compounds(rows: list, lex: dict) -> None:
         if not ahead:
             continue
 
-        # Assign each gloss word: foreign words move to first matching ahead slot
-        slot_taken: set = set()
-        assignments: dict = {}   # word_index → ahead_slot_index j
+        taken: dict = {}   # j → word
+        own = []
 
-        for wi, word in enumerate(gloss_words):
+        for word in gloss_words:
             norm = _NORM.sub("", word).lower()
             if not norm:
+                own.append(word)
                 continue
-            if norm in own_def:  # belongs here — don't move
+            if norm in own_def:
+                own.append(word)
                 continue
             for j, slot_base, slot_def in ahead:
-                if j in slot_taken:
+                if j in taken:
                     continue
                 if slot_def and norm in slot_def:
-                    assignments[wi] = j
-                    slot_taken.add(j)
+                    taken[j] = word
                     break
+            else:
+                own.append(word)  # no matching slot — keep on current strongs
 
-        if not assignments:
+        if not taken:
             continue
 
-        # Apply: move foreign words to their target slots
-        for wi, j in assignments.items():
-            word = gloss_words[wi]
-            slot = rows[j]
-            rows[j] = (slot[0], word, _head_word(word) or word,
-                       slot[3], slot[4], slot[5], slot[6], slot[7], slot[8], slot[9])
+        # Assign english to target slots
+        for j, word in taken.items():
+            r = rows[j]
+            rows[j] = (r[0], word, word, r[3], r[4], r[5], r[6], r[7], r[8], r[9])
 
-        remaining = [w for wi, w in enumerate(gloss_words) if wi not in assignments]
-        new_eng  = " ".join(remaining) if remaining else None
-        new_head = _head_word(new_eng) if new_eng else None
-        rows[i]  = (pos, new_eng, new_head, strongs, sbase, gpos, bid, italic, iw, sw)
+        # Update source row with remaining words
+        new_eng = " ".join(own) if own else None
+        rows[i] = (pos_i, new_eng, _head_word(new_eng) if new_eng else None,
+                   strongs, sbase, gpos, bid, italic, iw, sw)
+
+        # Swap position numbers: each target slot takes source position so it
+        # displays before the (now later) source word
+        for j in sorted(taken.keys()):
+            p_i, p_j = rows[i][0], rows[j][0]
+            rows[i] = (p_j,) + rows[i][1:]
+            rows[j] = (p_i,) + rows[j][1:]
+
+    rows.sort(key=lambda r: r[0])
 
 
 # ── Verse builder ─────────────────────────────────────────────────────────────
@@ -330,6 +337,9 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
         ))
         pos += 1
 
+    if lex:
+        _split_compounds(rows, lex)
+
     return rows
 
 
@@ -375,6 +385,10 @@ def run(bible_db: str, scrape_db: str) -> None:
     )}
     print(f"ABP verse map: {len(verse_map):,}")
 
+    print("Loading lexicon …")
+    lex = load_lexicon(main)
+    print(f"Lexicon entries: {len(lex):,}")
+
     print("Loading BH index …")
     bh_index = load_bh_verse_index(scrape)
     print(f"BH verse keys: {len(bh_index):,}\n")
@@ -393,7 +407,7 @@ def run(bible_db: str, scrape_db: str) -> None:
 
         slug     = ABBREV_TO_SLUG.get(abbrev)
         bh_rows  = bh_index.get((slug, chapter, verse), []) if slug else []
-        word_rows = build_verse_words(abp_words, bh_rows)
+        word_rows = build_verse_words(abp_words, bh_rows, lex)
 
         main.executemany(
             "INSERT INTO words"
