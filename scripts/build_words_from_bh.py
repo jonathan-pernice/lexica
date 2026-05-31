@@ -171,19 +171,19 @@ def build_verse_words(bh_rows, lex: dict | None = None):
     """
     Convert one verse's bh_words rows into INSERT-ready tuples.
 
-    bh_rows: list of (strongs, english, italic_words, greek_pos) ordered by position.
+    bh_rows: list of (strongs, english, italic_words, smcap_words, greek_pos) ordered by position.
     lex:     optional {strongs_base: def_word_set} from _load_lexicon(); when
              provided, compound strongs get per-component English via lexicon
              matching rather than all gloss text landing on the first component.
 
     Returns list of (position, english, english_head, strongs, strongs_base,
-                     greek_pos, bracket_id, italic, italic_words).
+                     greek_pos, bracket_id, italic, italic_words, smcap_words).
 
     italic is set to 1 only when the display word (english_head, or english if
     single-word) is itself in the italic_words set — avoids marking "beginning"
     italic just because "the" in "the beginning" is a translator addition.
-    italic_words carries the raw comma-joined set for all component rows so the
-    frontend can split multi-word glosses and mute only the italic sub-words.
+    italic_words and smcap_words carry the raw comma-joined sets for all component
+    rows so the frontend can split multi-word glosses appropriately.
 
     bracket_id logic:
       - Contiguous first-component words with non-null greek_pos share a bracket_id.
@@ -196,7 +196,7 @@ def build_verse_words(bh_rows, lex: dict | None = None):
     bid = 0
     in_bracket = False
 
-    for bh_strongs, bh_english, bh_italic_words, bh_greek_pos in bh_rows:
+    for bh_strongs, bh_english, bh_italic_words, bh_smcap_words, bh_greek_pos in bh_rows:
         components = expand_strongs(bh_strongs)
         italic_set = set(bh_italic_words.split(",")) if bh_italic_words else set()
 
@@ -235,7 +235,7 @@ def build_verse_words(bh_rows, lex: dict | None = None):
                 strongs_base = _base(comp)
 
             words.append((pos, english, english_head, strongs, strongs_base,
-                          greek_pos, bracket_id, italic, bh_italic_words))
+                          greek_pos, bracket_id, italic, bh_italic_words, bh_smcap_words))
             pos += 1
 
     return words
@@ -292,6 +292,10 @@ def run(bible_db: str, scrape_db: str) -> None:
         main.execute("ALTER TABLE words ADD COLUMN italic_words TEXT NOT NULL DEFAULT ''")
         main.commit()
         print("Added italic_words column to words table.")
+    if "smcap_words" not in main_cols:
+        main.execute("ALTER TABLE words ADD COLUMN smcap_words TEXT NOT NULL DEFAULT ''")
+        main.commit()
+        print("Added smcap_words column to words table.")
 
     print("\nClearing words table …")
     main.execute("DELETE FROM words")
@@ -312,7 +316,7 @@ def run(bible_db: str, scrape_db: str) -> None:
             continue
 
         bh_rows = scrape.execute(
-            "SELECT strongs, english, italic_words, greek_pos FROM bh_words"
+            "SELECT strongs, english, italic_words, smcap_words, greek_pos FROM bh_words"
             " WHERE book=? AND chapter=? AND verse=? ORDER BY position",
             (bh_book, bh_chapter, bh_verse),
         ).fetchall()
@@ -326,8 +330,8 @@ def run(bible_db: str, scrape_db: str) -> None:
         main.executemany(
             "INSERT INTO words"
             " (verse_id, position, english, english_head, strongs, strongs_base,"
-            "  greek_pos, bracket_id, italic, italic_words)"
-            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "  greek_pos, bracket_id, italic, italic_words, smcap_words)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [(verse_id, *w) for w in word_rows],
         )
         inserted += len(word_rows)
@@ -372,18 +376,20 @@ def run_test(bible_db: str, scrape_db: str, book: str = "genesis", chapter: int 
     abbrev = SLUG_TO_ABBREV.get(book, book)
     for (verse,) in verses:
         bh_rows = scrape.execute(
-            "SELECT strongs, english, italic_words, greek_pos FROM bh_words"
+            "SELECT strongs, english, italic_words, smcap_words, greek_pos FROM bh_words"
             " WHERE book=? AND chapter=? AND verse=? ORDER BY position",
             (book, chapter, verse),
         ).fetchall()
 
         word_rows = build_verse_words(bh_rows, lex)
         print(f"{abbrev} {chapter}:{verse}")
-        for (wpos, eng, head, strongs, sbase, gpos, bid, italic, iw) in word_rows:
-            flag = f"  italic_words={iw!r}" if iw else ""
+        for (wpos, eng, head, strongs, sbase, gpos, bid, italic, iw, sw) in word_rows:
+            flags = ""
+            if iw: flags += f"  italic_words={iw!r}"
+            if sw: flags += f"  smcap_words={sw!r}"
             print(
                 f"  [{wpos:2}] {strongs or '*':12}  "
-                f"eng={str(eng):15}  head={str(head):12}  italic={italic}{flag}"
+                f"eng={str(eng):15}  head={str(head):12}  italic={italic}{flags}"
             )
         print()
 
