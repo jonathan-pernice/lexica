@@ -674,12 +674,12 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         </div>
 
         {(metavData || metavLoading) && (
-          <section className="detail-section">
+          <section className="sec">
             {metavLoading ? (
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Looking up…</div>
             ) : metavType === "person" && metavData ? (
               <div className="metav-person">
-                <h4 className="detail-h">Biblical Person<span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
+                <h4 className="sec-head"><span className="sec-t">Biblical Person</span><span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
                 <div className="metav-meta">
                   {metavData.gender && <span className="metav-tag">{metavData.gender === "M" ? "Male" : "Female"}</span>}
                   {metavData.groups.filter(g => g.startsWith("Tribe")).map(g => (
@@ -716,7 +716,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               </div>
             ) : metavType === "place" && metavData ? (
               <div className="metav-place">
-                <h4 className="detail-h">Biblical Place<span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
+                <h4 className="sec-head"><span className="sec-t">Biblical Place</span><span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
                 {metavData.comment && <p className="detail-p" style={{marginTop:"8px"}}>{metavData.comment}</p>}
                 {metavData.lat && metavData.lon
                   ? <LeafletMap lat={metavData.lat} lon={metavData.lon} name={metavData.name} />
@@ -728,8 +728,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         )}
 
         {(aiDescription || aiDescLoading) && (
-          <section className="detail-section">
-            <h4 className="detail-h">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}<span className="lsj-badge" style={{background:"var(--accent)", color:"#fff"}}>AI</span></h4>
+          <section className="sec">
+            <h4 className="sec-head"><span className="sec-t">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}</span><span className="lsj-badge" style={{background:"var(--accent)", color:"#fff"}}>AI</span></h4>
             {aiDescLoading
               ? <div className="lsj-def" style={{color:"var(--ink-4)", fontStyle:"italic", padding:"8px 0"}}>Looking up…</div>
               : <p className="detail-p" style={{marginTop:"8px"}}>{aiDescription}</p>
@@ -738,8 +738,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         )}
 
         {isHebrew ? (
-          <section className="detail-section">
-            <h4 className="detail-h">Brown-Driver-Briggs<span className="bdb-badge">BDB</span></h4>
+          <section className="sec">
+            <h4 className="sec-head"><span className="sec-t">Brown-Driver-Briggs</span><span className="bdb-badge">BDB</span></h4>
             {bdbLoading ? (
               <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
             ) : bdbEntry ? (
@@ -753,12 +753,14 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             )}
           </section>
         ) : (!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0) && (
-          <section className="detail-section">
+          <section className="sec">
             <div className="lsj-head">
-              <h4 className="detail-h" style={{ margin: 0 }}>
-                {lsjEntry && lsjEntry.source === "abp_ext"
-                  ? <span>ABP Extended<span className="abp-badge">ABP EXT</span></span>
-                  : <span>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></span>}
+              <h4 className="sec-head" style={{ margin: 0 }}>
+                <span className="sec-t">
+                  {lsjEntry && lsjEntry.source === "abp_ext"
+                    ? <>ABP Extended<span className="abp-badge">ABP EXT</span></>
+                    : <>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></>}
+                </span>
               </h4>
               {lsjEntry && (
                 <div className="lsj-tabs">
@@ -785,51 +787,44 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
 
         {!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0 && (
-          <section className="detail-section">
-            <h4 className="detail-h">ABP Occurrences</h4>
-            <button
-              className="link-btn"
-              style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onStrongsSearch(entry.strongs_raw)}
-            >
+          <section className="sec">
+            <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
+            <button className="occ-link" onClick={() => onStrongsSearch(entry.strongs_raw)}>
               <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
             </button>
           </section>
         )}
 
         {entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0 && (
-          <section className="detail-section">
-            <h4 className="detail-h">KJV Occurrences</h4>
-            <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onStrongsSearch(entry.strongs, true)}>
+          <section className="sec">
+            <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
+            <button className="occ-link" onClick={() => onStrongsSearch(entry.strongs, true)}>
               <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
             </button>
           </section>
         )}
 
         {!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch && (
-          <section className="detail-section">
-            <h4 className="detail-h">ABP Occurrences</h4>
-            <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onNameSearch(extractProperName(entry.gloss))}>
+          <section className="sec">
+            <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
+            <button className="occ-link" onClick={() => onNameSearch(extractProperName(entry.gloss))}>
               <b>{pnCount}</b>× in LXX <Icon.ArrowRight/>
             </button>
           </section>
         )}
 
         {isHebrew && kjvCount !== null && kjvCount > 0 && (
-          <section className="detail-section">
-            <h4 className="detail-h">KJV Occurrences</h4>
-            <button className="link-btn" style={{ fontSize: "15px", fontWeight: "600" }}
-              onClick={() => onStrongsSearch && onStrongsSearch(entry.strongs)}>
+          <section className="sec">
+            <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
+            <button className="occ-link" onClick={() => onStrongsSearch && onStrongsSearch(entry.strongs)}>
               <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
             </button>
           </section>
         )}
 
         {entry.derivation && (
-          <section className="detail-section">
-            <h4 className="detail-h">Derivation</h4>
+          <section className="sec">
+            <h4 className="sec-head"><span className="sec-t">Derivation</span></h4>
             <p className="detail-p">
               {entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) =>
                 /^G\d[\d.]*/i.test(part)
@@ -841,13 +836,13 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         )}
 
         {entry.book && (
-        <section className="detail-section">
-          <h4 className="detail-h">
-            Verse — {entry.ref}
-            <span className="detail-h-sub">{(entry.isKjv || isHebrew || (metavType === "place" && !isPN)) ? "KJV" : "LXX (ABP English)"}</span>
+        <section className="sec">
+          <h4 className="sec-head">
+            <span className="sec-t">Verse — {entry.ref}</span>
+            <span className="sec-meta">{(entry.isKjv || isHebrew || (metavType === "place" && !isPN)) ? "KJV" : "LXX (ABP English)"}</span>
           </h4>
-          <blockquote className="verse">
-            <span className="verse-num">{entry.verse}</span>
+          <blockquote className="dverse">
+            <span className="dverse-n">{entry.verse}</span>
             {(entry.isKjv || isHebrew || (metavType === "place" && !isPN)) ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
           </blockquote>
           {showInterlinear && (
@@ -866,7 +861,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               ))}
             </div>
           )}
-          <div className="verse-tools">
+          <div className="dverse-tools">
             <button className="link-btn" onClick={() => onReadInContext && onReadInContext(entry.book, entry.chapter, entry.verse)}>
               Read in context <Icon.ArrowRight/>
             </button>
@@ -880,8 +875,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         )}
 
         {(occurrences > 0 || totalResults > 0) && (
-        <section className="detail-section last">
-          <h4 className="detail-h">Frequency</h4>
+        <section className="sec">
+          <h4 className="sec-head"><span className="sec-t">Frequency</span></h4>
           <div className="freq">
             <div className="freq-bar">
               <div className="freq-fill" style={{ width: barWidth + "%" }}></div>
