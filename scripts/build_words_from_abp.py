@@ -363,8 +363,6 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
     if lex:
         _split_compounds(rows, lex)
 
-    _sort_brackets(rows)
-
     # Strip temporary abp_pos field before returning
     return [r[:10] for r in rows]
 
