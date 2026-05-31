@@ -1822,71 +1822,71 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         />
       )}
       <div>
-      <div className="lib-toolbar">
-        <select
-          className="lib-select"
-          value={selBook ? selBook.abbrev : ""}
-          onChange={e => {
-            const b = books.find(b => b.abbrev === e.target.value);
-            if (b) { setSelBook(b); setSelChapter(1); }
-          }}
-        >
-          {books.map(b => <option key={b.abbrev} value={b.abbrev}>{b.name}</option>)}
-        </select>
-        <div className="lib-chap-nav">
-          <button
-            className="lib-nav-btn"
-            disabled={selChapter <= 1}
-            onClick={() => setSelChapter(c => Math.max(1, c - 1))}
-            aria-label="Previous chapter"
-          >‹</button>
-          <span className="lib-chap-label">
-            Ch <input
-              className="lib-chap-input"
-              type="number"
-              min={1}
-              max={maxChap}
-              value={selChapter}
-              onChange={e => {
-                const v = parseInt(e.target.value);
-                if (v >= 1 && v <= maxChap) setSelChapter(v);
-              }}
-            /> / {maxChap}
-          </span>
-          <button
-            className="lib-nav-btn"
-            disabled={selChapter >= maxChap}
-            onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))}
-            aria-label="Next chapter"
-          >›</button>
+      <div className="lib-bar">
+        <div className="lib-bar-l">
+          <select
+            className="lib-select"
+            value={selBook ? selBook.abbrev : ""}
+            onChange={e => {
+              const b = books.find(b => b.abbrev === e.target.value);
+              if (b) { setSelBook(b); setSelChapter(1); }
+            }}
+          >
+            {books.map(b => <option key={b.abbrev} value={b.abbrev}>{b.name}</option>)}
+          </select>
+          <div className="bar-ch">
+            <button
+              className="ch-nav"
+              disabled={selChapter <= 1}
+              onClick={() => setSelChapter(c => Math.max(1, c - 1))}
+              aria-label="Previous chapter"
+            >‹</button>
+            <span className="ch-lbl">
+              Ch <input
+                className="lib-chap-input"
+                type="number"
+                min={1}
+                max={maxChap}
+                value={selChapter}
+                onChange={e => {
+                  const v = parseInt(e.target.value);
+                  if (v >= 1 && v <= maxChap) setSelChapter(v);
+                }}
+              /> <span className="ch-of">/ {maxChap}</span>
+            </span>
+            <button
+              className="ch-nav"
+              disabled={selChapter >= maxChap}
+              onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))}
+              aria-label="Next chapter"
+            >›</button>
+          </div>
         </div>
-        <div className="lib-toggles">
-          <button className={"lib-trans-btn" + (translation === "abp" ? " on" : "")} onClick={() => { setTranslation("abp"); onTranslationChange?.("abp"); }}>ABP</button>
-          <button className={"lib-trans-btn" + (translation === "kjv" ? " on" : "")} onClick={() => { setTranslation("kjv"); onTranslationChange?.("kjv"); }}>KJV</button>
-          <button className={"lib-trans-btn" + (translation === "parallel" ? " on" : "")} onClick={() => { setTranslation("parallel"); onTranslationChange?.("parallel"); }}>Parallel</button>
-          <span className="lib-toggle-sep">|</span>
-          <button
-            className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
-            onClick={() => setOpt("showStrongs", !showStrongs)}
-          >Strong's</button>
-          <button
-            className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
-            onClick={() => setOpt("showInterlinear", !showInterlinear)}
-          >Interlinear</button>
-          <span className="lib-toggle-sep">|</span>
-          <button
-            className={"lib-order-btn" + (wordOrder === "english" || translation === "kjv" ? " on" : "")}
-            onClick={() => translation !== "kjv" && setLibOptions(prev => ({
-              ...prev,
-              [translation]: { ...prev[translation], wordOrder: "english" }
-            }))}
-          >English</button>
-          <button
-            className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
-            disabled={translation === "kjv"}
-            style={translation === "kjv" ? { opacity: 0.35, cursor: "default" } : undefined}
-            onClick={() => translation !== "kjv" && setOpt("wordOrder", "greek")}
-          >Greek</button>
+        <div className="lib-bar-r">
+          <div className="seg">
+            <button className={"seg-b" + (translation === "abp" ? " on" : "")} onClick={() => { setTranslation("abp"); onTranslationChange?.("abp"); }}>ABP</button>
+            <button className={"seg-b" + (translation === "kjv" ? " on" : "")} onClick={() => { setTranslation("kjv"); onTranslationChange?.("kjv"); }}>KJV</button>
+            <button className={"seg-b" + (translation === "parallel" ? " on" : "")} onClick={() => { setTranslation("parallel"); onTranslationChange?.("parallel"); }}>Parallel</button>
+          </div>
+          <span className="lib-bar-sep" aria-hidden="true"/>
+          <button className={"lib-toggle" + (showStrongs ? " on" : "")} onClick={() => setOpt("showStrongs", !showStrongs)}>Strong's</button>
+          <button className={"lib-toggle" + (showInterlinear ? " on" : "")} onClick={() => setOpt("showInterlinear", !showInterlinear)}>Interlinear</button>
+          <span className="lib-bar-sep" aria-hidden="true"/>
+          <div className="seg">
+            <button
+              className={"seg-b" + (wordOrder === "english" || translation === "kjv" ? " on" : "")}
+              onClick={() => translation !== "kjv" && setLibOptions(prev => ({
+                ...prev,
+                [translation]: { ...prev[translation], wordOrder: "english" }
+              }))}
+            >English</button>
+            <button
+              className={"seg-b" + (wordOrder === "greek" ? " on" : "")}
+              disabled={translation === "kjv"}
+              style={translation === "kjv" ? { opacity: 0.35, cursor: "default" } : undefined}
+              onClick={() => translation !== "kjv" && setOpt("wordOrder", "greek")}
+            >Greek</button>
+          </div>
         </div>
       </div>
 
