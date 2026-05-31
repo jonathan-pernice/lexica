@@ -91,10 +91,14 @@ def build_verse_words(bh_rows):
     """
     Convert one verse's bh_words rows into INSERT-ready tuples.
 
-    bh_rows: list of (strongs, english, italic, greek_pos) ordered by position.
+    bh_rows: list of (strongs, english, italic_words, greek_pos) ordered by position.
 
     Returns list of (position, english, english_head, strongs, strongs_base,
                      greek_pos, bracket_id, italic).
+
+    italic is set to 1 only when the display word (english_head, or english if
+    single-word) is itself in the italic_words set — avoids marking "beginning"
+    italic just because "the" in "the beginning" is a translator addition.
 
     bracket_id logic:
       - Contiguous first-component words with non-null greek_pos share a bracket_id.
@@ -107,8 +111,9 @@ def build_verse_words(bh_rows):
     bid = 0
     in_bracket = False
 
-    for bh_strongs, bh_english, bh_italic, bh_greek_pos in bh_rows:
+    for bh_strongs, bh_english, bh_italic_words, bh_greek_pos in bh_rows:
         components = expand_strongs(bh_strongs)
+        italic_set = set(bh_italic_words.split(",")) if bh_italic_words else set()
 
         for i, comp in enumerate(components):
             if i == 0:
@@ -123,7 +128,8 @@ def build_verse_words(bh_rows):
                 english      = bh_english
                 english_head = _head_word(bh_english) if bh_english else None
                 greek_pos    = bh_greek_pos
-                italic       = bh_italic
+                display_word = english_head or (english if english and " " not in english else None)
+                italic       = 1 if display_word and display_word.lower() in italic_set else 0
             else:
                 # compound extension: no bracket, no gloss, no greek_pos
                 bracket_id   = None
@@ -203,7 +209,7 @@ def run(bible_db: str, scrape_db: str) -> None:
             continue
 
         bh_rows = scrape.execute(
-            "SELECT strongs, english, italic, greek_pos FROM bh_words"
+            "SELECT strongs, english, italic_words, greek_pos FROM bh_words"
             " WHERE book=? AND chapter=? AND verse=? ORDER BY position",
             (bh_book, bh_chapter, bh_verse),
         ).fetchall()

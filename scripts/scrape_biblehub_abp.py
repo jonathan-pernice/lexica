@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS bh_words (
     strongs   TEXT,               -- bare Strong's number (e.g. "1722"), NULL if G*
     greek     TEXT,               -- Greek word form from page
     english   TEXT,               -- English gloss with bracket markers stripped
-    italic    INTEGER NOT NULL DEFAULT 0,  -- 1 = last content word is <span class="ital">
+    italic_words TEXT NOT NULL DEFAULT '',  -- comma-joined lowercase italic word strings (e.g. "land" or "the,risen")
     greek_pos INTEGER               -- ABP bracket reorder number, NULL if not in a bracket group
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_bh_pos  ON bh_words(book, chapter, verse, position);
@@ -207,7 +207,11 @@ def open_db(path: str) -> sqlite3.Connection:
         print("  [migration] ALTER TABLE bh_words ADD COLUMN greek_pos INTEGER")
         conn.execute("ALTER TABLE bh_words ADD COLUMN greek_pos INTEGER")
         conn.commit()
-    print(f"  [db] bh_words columns: {sorted(cols | {'greek_pos'})}")
+    if "italic_words" not in cols:
+        print("  [migration] ALTER TABLE bh_words ADD COLUMN italic_words TEXT NOT NULL DEFAULT ''")
+        conn.execute("ALTER TABLE bh_words ADD COLUMN italic_words TEXT NOT NULL DEFAULT ''")
+        conn.commit()
+    print(f"  [db] bh_words columns: {sorted(cols | {'greek_pos', 'italic_words'})}")
     return conn
 
 
@@ -225,12 +229,12 @@ def insert_chapter(conn, book_slug, chapter, verse_words, headings):
     """
     rows = []
     for verse, words in verse_words:
-        for pos, (strongs, greek, english, italic, greek_pos) in enumerate(words):
-            rows.append((book_slug, chapter, verse, pos, strongs, greek, english, int(italic), greek_pos))
+        for pos, (strongs, greek, english, italic_words, greek_pos) in enumerate(words):
+            rows.append((book_slug, chapter, verse, pos, strongs, greek, english, italic_words, greek_pos))
 
     conn.executemany(
         "INSERT OR IGNORE INTO bh_words"
-        " (book, chapter, verse, position, strongs, greek, english, italic, greek_pos)"
+        " (book, chapter, verse, position, strongs, greek, english, italic_words, greek_pos)"
         " VALUES (?,?,?,?,?,?,?,?,?)",
         rows,
     )
@@ -270,21 +274,24 @@ def _extract_greek_pos(eng_span) -> int | None:
     return None
 
 
-def _is_italic(eng_span) -> int:
+def _italic_words(eng_span) -> str:
     """
-    Return 1 if ANY content word in the English span is a translator addition.
+    Return comma-joined lowercase set of translator-addition words in this English span.
 
-    Scans all children; fires if any <span class="ital"> contains word characters.
-    Skips num spans (position markers) and punctuation-only text nodes.
+    Each <span class="ital"> child contributes its text to the set.
+    Skips num spans (position markers). Returns "" if none found.
+    Used by build_words_from_bh.py to set italic=1 only when the head word is italic.
     """
+    words: set[str] = set()
     for child in eng_span.children:
         if child.name:
             if child.name == "span" and "num" in (child.get("class") or []):
-                continue  # skip position-marker spacers
+                continue
             if child.name == "span" and "ital" in (child.get("class") or []):
-                if re.sub(r"\W", "", child.get_text(strip=True)):
-                    return 1
-    return 0
+                text = child.get_text(strip=True).lower()
+                if re.sub(r"\W", "", text):
+                    words.add(text)
+    return ",".join(sorted(words))
 
 
 def _parse_word_cell(td) -> tuple | None:
@@ -292,12 +299,12 @@ def _parse_word_cell(td) -> tuple | None:
     Parse one word cell (<td height="95">) into
     (strongs, greek, english, italic, greek_pos).
 
-    strongs:   ABP-style number string (e.g. "1722", "1510.7.3", "2222-1510.7.3")
-               None for proper nouns (asterisk marker, no Strong's assigned)
-    greek:     Greek word form (may be multiple words for compound strongs)
-    english:   English gloss with bracket markers [ ] and num spans stripped
-    italic:    1 if the last content word is inside <span class="ital">
-    greek_pos: ABP bracket reorder number from <span class="num">, or None
+    strongs:      ABP-style number string (e.g. "1722", "1510.7.3", "2222-1510.7.3")
+                  None for proper nouns (asterisk marker, no Strong's assigned)
+    greek:        Greek word form (may be multiple words for compound strongs)
+    english:      English gloss with bracket markers [ ] and num spans stripped
+    italic_words: comma-joined lowercase italic word strings (e.g. "land" or "the,risen"), "" if none
+    greek_pos:    ABP bracket reorder number from <span class="num">, or None
     """
     # ── Strong's ──────────────────────────────────────────────────────────────
     strongs_span = td.find("span", class_="strongs")
@@ -316,9 +323,10 @@ def _parse_word_cell(td) -> tuple | None:
     english   = None
     italic    = 0
     greek_pos = None
+    italic_words = ""
     if eng_span:
-        greek_pos = _extract_greek_pos(eng_span)   # before decompose
-        italic    = _is_italic(eng_span)            # before decompose
+        greek_pos    = _extract_greek_pos(eng_span)   # before decompose
+        italic_words = _italic_words(eng_span)         # before decompose
         for num in eng_span.find_all("span", class_="num"):
             num.decompose()
         english = re.sub(r"\s+", " ", eng_span.get_text(separator=" ", strip=True)) or None
@@ -326,7 +334,7 @@ def _parse_word_cell(td) -> tuple | None:
             # Strip ABP bracket display markers [ ] — they are positional UI, not gloss content
             english = re.sub(r"\[\s*|\]", "", english).strip() or None
 
-    return strongs, greek, english, italic, greek_pos
+    return strongs, greek, english, italic_words, greek_pos
 
 
 def parse_page(html: str, book_slug: str, chapter: int) -> tuple[list, list]:
