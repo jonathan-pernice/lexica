@@ -1506,7 +1506,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
       const rawLabel = w.english || chipLabel(w);
       if (!rawLabel) return null;
-      const label = (isPN && rawLabel) ? rawLabel[0].toUpperCase() + rawLabel.slice(1) : rawLabel;
+      const label = (isPN && rawLabel && !rawLabel.includes(' ')) ? rawLabel[0].toUpperCase() + rawLabel.slice(1) : rawLabel;
       const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(label.replace(/[^\w]/g, '').toLowerCase()) : false;
       return (
         <span key={key}
@@ -1567,7 +1567,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
       const rawLabel = w.english || chipLabel(w);
       if (!rawLabel) return null;
-      const label = (isPN && rawLabel) ? rawLabel[0].toUpperCase() + rawLabel.slice(1) : rawLabel;
+      const label = (isPN && rawLabel && !rawLabel.includes(' ')) ? rawLabel[0].toUpperCase() + rawLabel.slice(1) : rawLabel;
       const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(label.replace(/[^\w]/g, '').toLowerCase()) : false;
       return (
         <span key={key}
