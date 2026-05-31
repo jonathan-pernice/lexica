@@ -2196,7 +2196,7 @@ function App() {
     const s = String(strongs_base);
     const isH = /^H/i.test(s);
     const num = s.replace(/^[GH]/i, "");
-    setBrowseTranslation(fromKjv ? "kjv" : "abp");
+    if (fromKjv) setBrowseTranslation("kjv");
     const newQ = isH ? `H${num}` : `G${num}`;
     const currentQ = q1.trim();
     const last = breadcrumbs[breadcrumbs.length - 1];
