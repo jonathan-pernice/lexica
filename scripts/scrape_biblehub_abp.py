@@ -272,23 +272,18 @@ def _extract_greek_pos(eng_span) -> int | None:
 
 def _is_italic(eng_span) -> int:
     """
-    Return 1 if the last content word in the English span is a translator addition.
+    Return 1 if ANY content word in the English span is a translator addition.
 
-    Walks children in reverse, skipping num spans and punctuation-only text.
-    Only fires when the LAST content word is inside <span class="ital">, so a
-    leading italic article ('the beginning') does not flag the whole word italic.
+    Scans all children; fires if any <span class="ital"> contains word characters.
+    Skips num spans (position markers) and punctuation-only text nodes.
     """
-    for child in reversed(list(eng_span.children)):
+    for child in eng_span.children:
         if child.name:
             if child.name == "span" and "num" in (child.get("class") or []):
                 continue  # skip position-marker spacers
-            text = child.get_text(strip=True)
-            if re.sub(r"\W", "", text):  # has word characters
-                return 1 if "ital" in (child.get("class") or []) else 0
-        else:
-            word_chars = re.sub(r"\W", "", str(child).replace("\xa0", ""))
-            if word_chars:  # plain text with word characters → not italic
-                return 0
+            if child.name == "span" and "ital" in (child.get("class") or []):
+                if re.sub(r"\W", "", child.get_text(strip=True)):
+                    return 1
     return 0
 
 
