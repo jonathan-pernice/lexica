@@ -1489,7 +1489,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             {parts.map((word, pi) => {
               const bare = word.replace(/[^\w]/g, '').toLowerCase();
               if (italicSet.has(bare)) {
-                return <span key={`${key}-p${pi}`} className={"lib-word lib-abp-italic" + (smcapSet.has(bare) ? " lib-smcap" : "")}>{word}</span>;
+                return <span key={`${key}-p${pi}`} className={"lib-word lib-abp-italic" + (smcapSet.has(bare) ? " lib-smcap" : "")}><span className="lib-iw-english">{word}</span></span>;
               }
               const isSmcap = smcapSet.has(bare);
               return (
@@ -1544,7 +1544,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 return <span key={`${key}-p${pi}`} className={"lib-word lib-word-bracketed lib-abp-italic" + (smcapSet.has(bare) ? " lib-smcap" : "")}>
                   {pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined &&
                     <span className="lib-iw-pos">{w.greek_pos}</span>}
-                  {word}
+                  <span className="lib-iw-english">{word}</span>
                 </span>;
               }
               const isSmcap = smcapSet.has(bare);
