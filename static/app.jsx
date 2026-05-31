@@ -660,9 +660,8 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
       <div className="detail-body">
         <div className={"detail-hero" + (isPN && !entry.greek && !isHebrew ? " no-gloss" : "")}>
-          <div className="detail-greek"
-               dir={isHebrew ? "rtl" : undefined}
-               style={isHebrew ? {fontFamily: "var(--f-serif)", textAlign: "left"} : undefined}>
+          <div className={"detail-greek" + (isHebrew ? " detail-greek--he" : "")}
+               dir={isHebrew ? "rtl" : undefined}>
             {isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || ((isPN || metavData) ? extractProperName(entry.gloss) : entry.gloss))}
           </div>
           <div className={"detail-translit-row" + (isHebrew ? " detail-translit-row-he" : "")}>
@@ -679,10 +678,10 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         {(metavData || metavLoading) && (
           <section className="sec">
             {metavLoading ? (
-              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Looking up…</div>
+              <div className="lsj-def lsj-def--loading">Looking up…</div>
             ) : metavType === "person" && metavData ? (
               <div className="metav-person">
-                <h4 className="sec-head"><span className="sec-t">Biblical Person</span><span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
+                <h4 className="sec-head"><span className="sec-t">Biblical Person</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
                 <div className="metav-meta">
                   {metavData.gender && <span className="metav-tag">{metavData.gender === "M" ? "Male" : "Female"}</span>}
                   {metavData.groups.filter(g => g.startsWith("Tribe")).map(g => (
@@ -691,7 +690,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                   {metavData.groups.includes("Genealogy of Jesus") && <span className="metav-tag metav-tag-gold">Genealogy of Jesus</span>}
                 </div>
                 {(metavData.birth_year || metavData.death_year) && (
-                  <p className="detail-p" style={{marginTop:"8px", fontSize:"13px"}}>
+                  <p className="detail-p detail-p--meta" style={{fontSize:"13px"}}>
                     {metavData.birth_year && <span>Born: {metavData.birth_year}{metavData.birth_place ? `, ${metavData.birth_place}` : ""}</span>}
                     {metavData.birth_year && metavData.death_year && " · "}
                     {metavData.death_year && <span>Died: {metavData.death_year}{metavData.death_place ? `, ${metavData.death_place}` : ""}</span>}
@@ -719,11 +718,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               </div>
             ) : metavType === "place" && metavData ? (
               <div className="metav-place">
-                <h4 className="sec-head"><span className="sec-t">Biblical Place</span><span className="lsj-badge" style={{background:"var(--gold)", color:"#fff"}}>metaV</span></h4>
-                {metavData.comment && <p className="detail-p" style={{marginTop:"8px"}}>{metavData.comment}</p>}
+                <h4 className="sec-head"><span className="sec-t">Biblical Place</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
+                {metavData.comment && <p className="detail-p detail-p--meta">{metavData.comment}</p>}
                 {metavData.lat && metavData.lon
                   ? <LeafletMap lat={metavData.lat} lon={metavData.lon} name={metavData.name} />
-                  : <p className="detail-p" style={{marginTop:"8px", color:"var(--ink-4)", fontStyle:"italic"}}>Location unknown</p>
+                  : <p className="detail-p detail-p--meta" style={{color:"var(--ink-4)", fontStyle:"italic"}}>Location unknown</p>
                 }
               </div>
             ) : null}
@@ -732,10 +731,10 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
         {(aiDescription || aiDescLoading) && (
           <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}</span><span className="lsj-badge" style={{background:"var(--accent)", color:"#fff"}}>AI</span></h4>
+            <h4 className="sec-head"><span className="sec-t">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}</span><span className="lsj-badge lsj-badge--accent">AI</span></h4>
             {aiDescLoading
-              ? <div className="lsj-def" style={{color:"var(--ink-4)", fontStyle:"italic", padding:"8px 0"}}>Looking up…</div>
-              : <p className="detail-p" style={{marginTop:"8px"}}>{aiDescription}</p>
+              ? <div className="lsj-def lsj-def--loading">Looking up…</div>
+              : <p className="detail-p detail-p--meta">{aiDescription}</p>
             }
           </section>
         )}
@@ -744,21 +743,21 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <section className="sec">
             <h4 className="sec-head"><span className="sec-t">Brown-Driver-Briggs</span><span className="bdb-badge">BDB</span></h4>
             {bdbLoading ? (
-              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
+              <div className="lsj-def lsj-def--loading">Loading…</div>
             ) : bdbEntry ? (
               <div className="bdb-body">
                 {bdbEntry.pronounce && <div className="bdb-xlit"><span className="bdb-pronounce">{bdbEntry.pronounce}</span></div>}
                 {bdbEntry.part_of_speech && <span className="bdb-pos-badge">{bdbEntry.part_of_speech}</span>}
-                {bdbEntry.description && <p className="detail-p" style={{ marginTop: "10px" }}>{bdbEntry.description}</p>}
+                {bdbEntry.description && <p className="detail-p detail-p--meta">{bdbEntry.description}</p>}
               </div>
             ) : (
-              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found in BDB.</div>
+              <div className="lsj-def lsj-def--loading">Not found in BDB.</div>
             )}
           </section>
         ) : (!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0) && (
           <section className="sec">
             <div className="lsj-head">
-              <h4 className="sec-head" style={{ margin: 0 }}>
+              <h4 className="sec-head">
                 <span className="sec-t">
                   {lsjEntry && lsjEntry.source === "abp_ext"
                     ? <>ABP Extended<span className="abp-badge">ABP EXT</span></>
@@ -775,7 +774,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               )}
             </div>
             {lsjLoading ? (
-              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Loading…</div>
+              <div className="lsj-def lsj-def--loading">Loading…</div>
             ) : lsjEntry ? (
               lsjTab === "def"
                 ? lsjEntry.source === "strongs"
@@ -783,7 +782,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                   : <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
                 : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
             ) : (
-              <div className="lsj-def" style={{ color: "var(--ink-4)", fontStyle: "italic", padding: "8px 0" }}>Not found.</div>
+              <div className="lsj-def lsj-def--loading">Not found.</div>
             )}
           </section>
         )}
@@ -831,7 +830,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             <p className="detail-p">
               {entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) =>
                 /^G\d[\d.]*/i.test(part)
-                  ? <button key={i} className="link-btn" style={{ fontWeight: "600" }} onClick={() => onStrongsSearch(part)}>{part}</button>
+                  ? <button key={i} className="link-btn link-btn--strong" onClick={() => onStrongsSearch(part)}>{part}</button>
                   : part
               )}
             </p>
