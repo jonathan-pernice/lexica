@@ -336,6 +336,11 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
             sbase   = strongs.split(".")[0]
             gpos, iw, sw = bh_lookup(bh_rows, used, sbase, normalize(english))
 
+        # For bracketed words with no BH gpos (e.g. proper nouns), fall back to
+        # the ABP position number so the number still displays on the chip.
+        if gpos is None and abp_pos is not None:
+            gpos = abp_pos
+
         # Bracket state machine driven by ABP [/] markers
         if opens_bracket and not in_bracket:
             bid += 1
