@@ -1996,7 +1996,7 @@ function App() {
   const [aiNotice, setAiNotice] = useState("");
   const [activeEntry, setActiveEntry] = useState(null);
   const [viewMode, setViewMode] = useState("browse");
-  const [browseTranslation, setBrowseTranslation] = useState("abp"); // "abp" | "kjv" | "all"
+  const [browseTranslation, setBrowseTranslation] = useState("all"); // "abp" | "kjv" | "all"
   const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
   const [langFilter, setLangFilter] = useState("all"); // "all" | "greek" | "hebrew"
   const [studySort, setStudySort] = useState("curated"); // "curated" | "canonical"
