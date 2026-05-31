@@ -1496,13 +1496,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                   <span key={`${key}-p${pi}`}
                     className={"lib-word" + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
                     onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
-                    {showInterlinear && w.lemma && pi === firstNonItalic && <span className="lib-iw-greek">{w.lemma}</span>}
+                    {showInterlinear && (pi === firstNonItalic && w.lemma
+                      ? <span className="lib-iw-greek">{w.lemma}</span>
+                      : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>)}
                     <span className="lib-iw-english">{word}</span>
-                    {showStrongs && pi === firstNonItalic && (
-                      w.strongs_base && w.strongs_base !== "*"
-                        ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
-                        : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
-                    )}
+                    {showStrongs && (pi === firstNonItalic && w.strongs_base && w.strongs_base !== "*"
+                      ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+                      : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>)}
                   </span>
                 );
               });
