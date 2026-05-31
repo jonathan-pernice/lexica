@@ -1821,6 +1821,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           setSelChapter={setSelChapter}
         />
       )}
+      <div>
       <div className="lib-toolbar">
         <select
           className="lib-select"
@@ -1960,6 +1961,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             {verses.map(v => renderVerse(v))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );
