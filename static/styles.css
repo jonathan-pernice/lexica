@@ -1423,7 +1423,7 @@ input { font-family: inherit; }
 .lib-verse-chips {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: flex-end;
   gap: 4px 0;
 }
 
