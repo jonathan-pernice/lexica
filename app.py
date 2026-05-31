@@ -1276,7 +1276,7 @@ def _kjv_strongs_search(conn, sids, out_rows, out_groupings):
             ).fetchone()
         else:
             meta = conn.execute(
-                "SELECT lemma, translit AS xlit, strongs_def AS def FROM lexicon WHERE strongs = ?", (base,)
+                "SELECT lemma, translit AS xlit, strongs_def AS def, derivation FROM lexicon WHERE strongs = ?", (base,)
             ).fetchone()
         lemma      = meta["lemma"] if meta else ""
         xlit       = meta["xlit"]  if meta else ""
@@ -1296,7 +1296,8 @@ def _kjv_strongs_search(conn, sids, out_rows, out_groupings):
                 "strongs": sid, "strongs_base": base, "strongs_raw": base,
                 "gloss": r["word"] or "", "gloss_head": r["word"] or "",
                 "lemma": lemma, "translit": xlit,
-                "strongs_def": definition, "kjv_def": "", "derivation": "",
+                "strongs_def": definition, "kjv_def": "",
+                "derivation": (meta["derivation"] or "") if (meta and not is_hebrew) else "",
                 "is_function": False, "isKjv": True, "isHebrew": is_hebrew,
                 "source": "kjv",
             })
@@ -1315,7 +1316,8 @@ def _kjv_word_search(conn, word, out_rows, out_groupings):
         SELECT kw.book_id, kw.chapter, kw.verse_num, kw.word, ks.strongs_id,
                MAX(COALESCE(bdb.lemma, lex.lemma))        AS lemma,
                MAX(COALESCE(bdb.xlit, lex.translit))      AS xlit,
-               MAX(COALESCE(lex.strongs_def, bdb.description)) AS definition
+               MAX(COALESCE(lex.strongs_def, bdb.description)) AS definition,
+               MAX(lex.derivation)                         AS derivation
         FROM kjv_words kw
         JOIN kjv_strongs ks ON ks.word_id = kw.word_id
         LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
@@ -1339,7 +1341,8 @@ def _kjv_word_search(conn, word, out_rows, out_groupings):
             "strongs": sid, "strongs_base": base, "strongs_raw": base,
             "gloss": r["word"] or "", "gloss_head": r["word"] or "",
             "lemma": r["lemma"] or "", "translit": r["xlit"] or "",
-            "strongs_def": r["definition"] or "", "kjv_def": "", "derivation": "",
+            "strongs_def": r["definition"] or "", "kjv_def": "",
+            "derivation": (r["derivation"] or "") if not sid.startswith("H") else "",
             "is_function": False, "isKjv": True, "isHebrew": sid.startswith("H"),
             "source": "kjv",
         })
