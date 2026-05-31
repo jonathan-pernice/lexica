@@ -257,10 +257,11 @@ def _split_compounds(rows: list, lex: dict) -> None:
         if not taken:
             continue
 
-        # Assign english to target slots
+        # Assign english to target slots, inheriting bracket_id from source
+        src_bid = rows[i][6]
         for j, word in taken.items():
             r = rows[j]
-            rows[j] = (r[0], word, word, r[3], r[4], r[5], r[6], r[7], r[8], r[9])
+            rows[j] = (r[0], word, word, r[3], r[4], r[5], src_bid, r[7], r[8], r[9])
 
         # Update source row with remaining words
         new_eng = " ".join(own) if own else None
