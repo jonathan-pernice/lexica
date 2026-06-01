@@ -1446,6 +1446,9 @@ input { font-family: inherit; }
   cursor: default;
   transition: background 0.12s;
 }
+.lib-prose-word { display: inline; }
+.lib-prose-word.lib-word-clickable { cursor: pointer; border-radius: 3px; }
+.lib-prose-word.lib-word-clickable:hover { background: var(--accent-soft); }
 .lib-word:hover { background: var(--bg-sunk); }
 .lib-word.lib-word-clickable { cursor: pointer; }
 .lib-word.lib-word-clickable:hover { background: var(--accent-soft); }

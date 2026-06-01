@@ -1501,9 +1501,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [loading, setLoading] = useState(false);
   const [kjvLoading, setKjvLoading] = useState(false);
   const [libOptions, setLibOptions] = useState({
-    abp:      { wordOrder: "english", showStrongs: false, showInterlinear: false },
-    kjv:      { wordOrder: "english", showStrongs: false, showInterlinear: false },
-    parallel: { wordOrder: "english", showStrongs: false, showInterlinear: false },
+    abp:      { viewMode: "chip", showStrongs: false, showInterlinear: false },
+    kjv:      { viewMode: "chip", showStrongs: false, showInterlinear: false },
+    parallel: { viewMode: "chip", showStrongs: false, showInterlinear: false },
   });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
@@ -1566,17 +1566,18 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   }, [nav?.scroll, verses]);
 
   const maxChap = selBook ? selBook.chapters : 1;
-  const opts          = libOptions[translation] || {};
-  const showStrongs   = opts.showStrongs    || false;
+  const opts            = libOptions[translation] || {};
+  const showStrongs     = opts.showStrongs     || false;
   const showInterlinear = opts.showInterlinear || false;
-  const wordOrder     = opts.wordOrder      || "english";
+  const viewMode        = opts.viewMode        || "chip";
   const setOpt = (key, val) => setLibOptions(prev => ({
     ...prev,
     [translation]: { ...prev[translation], [key]: val },
   }));
 
-  const wordMode    = true; // always chip mode — words are always individually clickable
-  const kjvWordMode = showStrongs || showInterlinear || (translation === "parallel" && wordOrder === "greek") || translation === "kjv";
+  const chipMode    = viewMode === "chip" || showStrongs || showInterlinear;
+  const wordMode    = chipMode;
+  const kjvWordMode = chipMode;
 
   const handleVerseNum = onVerseNumberClick && selBook
     ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse, translation)
@@ -1761,20 +1762,31 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
     if (!wordMode) {
       const englishWords = getEnglishOrderWords(v.words);
-      const text = joinProse(englishWords);
       return (
         <div key={v.verse} ref={isHighlight ? highlightRef : null}
           className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
           {vnumEl(v.verse)}
-          <span className="lib-verse-content">{text}</span>
+          <span className="lib-verse-content">
+            {englishWords.map((w, i) => {
+              const text = w.english || "";
+              if (!text) return null;
+              const isPunct = /^[.,;:?!—)]/.test(text);
+              const clickable = !isPunct && !!(onWordClick && w.strongs_base && w.strongs_base !== "*");
+              return (
+                <span key={i}
+                  className={"lib-prose-word" + (clickable ? " lib-word-clickable" : "") + (w.italic ? " lib-abp-italic" : "")}
+                  onClick={clickable ? () => onWordClick(makeEntry(w)) : undefined}
+                >{isPunct ? text : text + " "}</span>
+              );
+            })}
+          </span>
         </div>
       );
     }
 
-    // Chip mode
+    // Chip mode — always Greek syntactic order with bracket notation
     let content;
-    if (wordOrder === "greek") {
-      // Greek syntactic order with bracket notation — only words with a gloss or lexicon entry
+    {
       const sortedWords = [...v.words].filter(w => w.english || w.kjv_def || w.strongs_base === "*").sort((a, b) => a.position - b.position);
       const groups = groupForGreekMode(sortedWords);
       content = groups.map((g, gi) => {
@@ -1809,12 +1821,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             </>)}
           </span>
         );
-      });
-    } else {
-      // English reading order — words with a gloss or lexicon fallback
-      const englishWords = getEnglishOrderWords(v.words).filter(w => w.english || w.english_head || w.kjv_def);
-      content = englishWords.map((w, i) => {
-        return chip(w, `e${i}`);
       });
     }
 
@@ -1869,6 +1875,35 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                   : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
                 )}
               </span>
+            );
+          })}
+        </span>
+      </div>
+    );
+  };
+
+  const renderKjvProse = (v, showVerseNum = true) => {
+    return (
+      <div key={v.verse} className="lib-verse-row">
+        {showVerseNum && vnumEl(v.verse)}
+        <span className="lib-verse-content">
+          {v.words.map((w, i) => {
+            const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
+            const clickable = !!(onWordClick && sid);
+            return (
+              <span key={i}
+                className={"lib-prose-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
+                onClick={clickable ? () => onWordClick({
+                  id: `kjv-${selBook.abbrev}-${selChapter}-${v.verse}-${w.word_id}`,
+                  strongs: sid || "", strongs_base: sid ? sid.slice(1) : "",
+                  strongs_raw: sid ? sid.slice(1) : "", greek: w.lemma || "",
+                  translit: w.xlit || "", gloss: w.word,
+                  ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
+                  book: selBook.abbrev, chapter: selChapter, verse: v.verse,
+                  definition: "", derivation: "", is_function: false,
+                  isKjv: true, isHebrew: sid ? sid.startsWith("H") : false,
+                }) : undefined}
+              >{w.word}{w.punc || ""}{" "}</span>
             );
           })}
         </span>
@@ -1933,10 +1968,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               </div>
             </div>
             <div className="mode-sec">
-              <div className="mode-lbl">Script</div>
+              <div className="mode-lbl">Layout</div>
               <div className="mseg">
-                <button className={"mseg-b"+(wordOrder==="english"||translation==="kjv"?" on":"")} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","english")}>English</button>
-                <button className={"mseg-b"+(wordOrder==="greek"?" on":"")} disabled={translation==="kjv"} style={translation==="kjv"?{opacity:0.35}:undefined} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","greek")}>Greek</button>
+                <button className={"mseg-b"+(chipMode?" on":"")} onClick={()=>setOpt("viewMode","chip")}>Chip</button>
+                <button className={"mseg-b"+(!chipMode?" on":"")} disabled={showStrongs||showInterlinear} style={showStrongs||showInterlinear?{opacity:0.35}:undefined} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}>Prose</button>
               </div>
             </div>
           </div>
@@ -1984,18 +2019,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg">
               <button
-                className={"seg-b" + (wordOrder === "english" || translation === "kjv" ? " on" : "")}
-                onClick={() => translation !== "kjv" && setLibOptions(prev => ({
-                  ...prev,
-                  [translation]: { ...prev[translation], wordOrder: "english" }
-                }))}
-              >English</button>
+                className={"seg-b" + (chipMode ? " on" : "")}
+                onClick={() => setOpt("viewMode", "chip")}
+              >Chip</button>
               <button
-                className={"seg-b" + (wordOrder === "greek" ? " on" : "")}
-                disabled={translation === "kjv"}
-                style={translation === "kjv" ? { opacity: 0.35, cursor: "default" } : undefined}
-                onClick={() => translation !== "kjv" && setOpt("wordOrder", "greek")}
-              >Greek</button>
+                className={"seg-b" + (!chipMode ? " on" : "")}
+                disabled={showStrongs || showInterlinear}
+                style={showStrongs || showInterlinear ? { opacity: 0.35, cursor: "default" } : undefined}
+                onClick={() => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")}
+              >Prose</button>
             </div>
           </div>
         </div>
@@ -2032,23 +2064,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 return (
                   <div key={abpV.verse} className="lib-parallel-verse">
                     <div className="lib-parallel-col">
-                      {wordMode
-                        ? renderVerse(abpV)
-                        : <div className="lib-verse-row">
-                            {vnumEl(abpV.verse)}
-                            <span className="lib-verse-content">{joinProse(getEnglishOrderWords(abpV.words))}</span>
-                          </div>
-                      }
+                      {renderVerse(abpV)}
                     </div>
                     <div className="lib-parallel-col">
                       {kjvV
                         ? kjvWordMode
                           ? renderKjvVerse(kjvV)
-                          : <div className="lib-verse-row">
-                              {vnumEl(kjvV.verse)}
-                              <span className="lib-verse-content">{kjvV.verse_text}</span>
-                            </div>
-                        : vnumEl(abpV.verse)
+                          : renderKjvProse(kjvV)
+                        : null
                       }
                     </div>
                   </div>
@@ -2065,12 +2088,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             </div>
           ) : (
             <div className="lib-text-words">
-              {kjvVerses.map(v => (
-                <div key={v.verse} className="lib-verse-row">
-                  {vnumEl(v.verse)}
-                  <span className="lib-verse-content">{v.verse_text}</span>
-                </div>
-              ))}
+              {kjvVerses.map(v => renderKjvProse(v))}
             </div>
           )
         ) : loading ? (
