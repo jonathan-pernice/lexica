@@ -62,6 +62,20 @@
 - State persists in localStorage
 - Only shown above minimum viewport width
 
+## Text Structure Session (plan together)
+
+### Pericopes / Section Headings
+Data already scraped into `bh_headings` in `bh_scrape.db`. SQL to create `pericopes` table in `bible.db` ready. Needs:
+- Backend: surface headings alongside verse fetch (fold into existing endpoint or lightweight separate call)
+- Frontend: render `<div class="pericope-heading">` above the right verse in the render loop
+- Works in single-column, parallel, and prose modes — parallel mode needs care (two-column loop)
+
+### Prose Mode — Continuous Flow
+Verses should wrap as flowing text rather than one line per verse. Poetry books (Psalms, Proverbs, Song of Solomon, Lamentations, Job) keep line-per-verse since structure is part of the meaning. Auto-detect by book genre using the `books` table — no user toggle needed, just works correctly per text type.
+
+### Font Size Preference
+`+/−` control in the lib-bar, writes to localStorage, applies a CSS custom property to `.lib-reading`. Defaults to current sizes. Persistent across sessions.
+
 ## Planned Features
 
 ### Prose Reading Mode
