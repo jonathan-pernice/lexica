@@ -350,13 +350,15 @@ function ResultCard({ entry, active, onClick, count }) {
         <span className="card-ref">{entry.ref}</span>
         <span className="card-badge">{entry.strongs}</span>
       </div>
-      {entry.greek ? (
-        <div className="card-greek">{entry.greek}</div>
-      ) : (
-        <div className="card-greek" style={{ fontSize: "22px" }}>{stripArticles(entry.gloss)}</div>
-      )}
+      <div className="card-main">
+        {entry.greek ? (
+          <div className="card-greek">{entry.greek}</div>
+        ) : (
+          <div className="card-greek" style={{ fontSize: "22px" }}>{stripArticles(entry.gloss)}</div>
+        )}
+        {entry.greek && <div className="card-gloss">{stripArticles(entry.gloss)}</div>}
+      </div>
       <div className="card-translit">{entry.translit}</div>
-      <div className="card-gloss">{stripArticles(entry.gloss)}</div>
       <div className="card-foot">
         <span className="card-pos">{BOOK_LABELS[entry.book] || entry.book}</span>
         <span className="card-occ">{count}×</span>
