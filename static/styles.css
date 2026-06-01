@@ -422,13 +422,20 @@ input { font-family: inherit; }
   background: var(--accent);
   color: #fff;
 }
+.card-main {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-bottom: 3px;
+  min-width: 0;
+}
 .card-greek {
   font-family: var(--f-greek);
   font-size: 22px;
   line-height: 1.2;
   color: var(--ink);
   letter-spacing: -0.005em;
-  margin-bottom: 2px;
+  flex-shrink: 0;
 }
 .card-translit {
   font-family: var(--f-serif);
@@ -438,11 +445,13 @@ input { font-family: inherit; }
   margin-bottom: 6px;
 }
 .card-gloss {
-  font-size: 12.5px;
-  color: var(--ink-2);
-  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--ink-3);
   flex: 1;
-  text-wrap: pretty;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .card-foot {
   display: flex; justify-content: space-between; align-items: center;
