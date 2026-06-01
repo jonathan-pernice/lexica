@@ -2470,7 +2470,7 @@ function App() {
     if (glossFilter) {
       base = corpusFilteredResults.filter(e =>
         (e.strongs_raw === glossFilter.sn || e.strongs_base === glossFilter.sn) &&
-        e.gloss_head === glossFilter.gloss
+        (glossFilter.gloss === null || e.gloss_head === glossFilter.gloss)
       );
     } else if (mode === "search" && !primaryStrongs) {
       base = corpusFilteredResults.filter(e => !e.is_function);
@@ -2570,7 +2570,7 @@ function App() {
     setError("");
     setAiMeta(null);
     setMode("search");
-    setViewMode(/^[GgHh]\d/i.test(q) || /^\d+$/.test(q) ? "study" : "browse");
+    setViewMode("browse");
     setActiveEntry(null);
     setAbpGroupings({});
     setKjvGroupings({});
@@ -2827,7 +2827,7 @@ function App() {
                       entry={entry}
                       active={!summaryEntries && activeEntry && activeEntry.id === entry.id}
                       onClick={summaryEntries
-                        ? () => handleStrongsSearch(entry.strongs_base)
+                        ? () => setGlossFilter({ sn: entry.strongs_base, gloss: null, label: entry.greek || entry.gloss_head })
                         : () => setActiveEntry(entry)}
                       count={countMap[entry.strongs_raw] || 0}
                     />
