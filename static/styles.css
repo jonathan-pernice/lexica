@@ -1639,6 +1639,7 @@ input { font-family: inherit; }
   .lib-reading { overflow-x: hidden; max-width: 100%; padding: 10px 12px; }
   .lib-text-words { line-height: 1.65; }
   .lib-verse-row { margin-bottom: 3px; }
+  .pericope-heading { text-align: center; }
   /* Chip: smaller word size to fit more per line */
   .lib-iw-english { font-size: 1em; }
   .lib-iw-strongs { font-size: 9px; }
