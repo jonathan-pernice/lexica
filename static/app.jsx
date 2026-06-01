@@ -1515,6 +1515,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const highlightRef = useRef(null);
   const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1024);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [modesOpen, setModesOpen] = useState(false);
 
   useEffect(() => {
     const _onResize = () => setNavVisible(window.innerWidth >= 1024);
@@ -1885,6 +1886,42 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           onClose={() => setMobileNavOpen(false)}
         />
       )}
+      {!navVisible && modesOpen && (
+        <>
+          <div className="sheet-scrim" onClick={() => setModesOpen(false)} />
+          <div className="modes-sheet">
+            <div className="modes-head">
+              <span className="modes-title">Reading options</span>
+              <button className="nav-x" onClick={() => setModesOpen(false)}>✕</button>
+            </div>
+            <div className="modes-body">
+              <div className="modes-row">
+                <span className="modes-lbl">Text</span>
+                <div className="seg">
+                  <button className={"seg-b"+(translation==="abp"?" on":"")} onClick={()=>{setTranslation("abp");onTranslationChange?.("abp");}}>ABP</button>
+                  <button className={"seg-b"+(translation==="kjv"?" on":"")} onClick={()=>{setTranslation("kjv");onTranslationChange?.("kjv");}}>KJV</button>
+                  <button className={"seg-b"+(translation==="parallel"?" on":"")} onClick={()=>{setTranslation("parallel");onTranslationChange?.("parallel");}}>Parallel</button>
+                </div>
+              </div>
+              <div className="modes-row">
+                <span className="modes-lbl">Word order</span>
+                <div className="seg">
+                  <button className={"seg-b"+(wordOrder==="english"||translation==="kjv"?" on":"")} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","english")}>English</button>
+                  <button className={"seg-b"+(wordOrder==="greek"?" on":"")} disabled={translation==="kjv"} style={translation==="kjv"?{opacity:0.35}:undefined} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","greek")}>Greek</button>
+                </div>
+              </div>
+              <div className="modes-row">
+                <span className="modes-lbl">Strong's</span>
+                <button className={"modes-toggle"+(showStrongs?" on":"")} onClick={()=>setOpt("showStrongs",!showStrongs)}>{showStrongs?"On":"Off"}</button>
+              </div>
+              <div className="modes-row">
+                <span className="modes-lbl">Interlinear</span>
+                <button className={"modes-toggle"+(showInterlinear?" on":"")} onClick={()=>setOpt("showInterlinear",!showInterlinear)}>{showInterlinear?"On":"Off"}</button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
       <div>
       {navVisible ? (
         <div className="lib-bar">
@@ -1950,61 +1987,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           <button className="lib-book-btn" onClick={() => setMobileNavOpen(true)}>
             {selBook ? selBook.name : "Select book"} ›
           </button>
-          <div className="lib-chap-nav">
-            <button
-              className="lib-nav-btn"
-              disabled={selChapter <= 1}
-              onClick={() => setSelChapter(c => Math.max(1, c - 1))}
-              aria-label="Previous chapter"
-            >‹</button>
-            <span className="lib-chap-label">
-              Ch <input
-                className="lib-chap-input"
-                type="number"
-                min={1}
-                max={maxChap}
-                value={selChapter}
-                onChange={e => {
-                  const v = parseInt(e.target.value);
-                  if (v >= 1 && v <= maxChap) setSelChapter(v);
-                }}
-              /> / {maxChap}
-            </span>
-            <button
-              className="lib-nav-btn"
-              disabled={selChapter >= maxChap}
-              onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))}
-              aria-label="Next chapter"
-            >›</button>
-          </div>
-          <div className="lib-toggles">
-            <button className={"lib-trans-btn" + (translation === "abp" ? " on" : "")} onClick={() => { setTranslation("abp"); onTranslationChange?.("abp"); }}>ABP</button>
-            <button className={"lib-trans-btn" + (translation === "kjv" ? " on" : "")} onClick={() => { setTranslation("kjv"); onTranslationChange?.("kjv"); }}>KJV</button>
-            <button className={"lib-trans-btn" + (translation === "parallel" ? " on" : "")} onClick={() => { setTranslation("parallel"); onTranslationChange?.("parallel"); }}>Parallel</button>
-            <span className="lib-toggle-sep">|</span>
-            <button
-              className={"lib-toggle-btn" + (showStrongs ? " on" : "")}
-              onClick={() => setOpt("showStrongs", !showStrongs)}
-            >Strong's</button>
-            <button
-              className={"lib-toggle-btn" + (showInterlinear ? " on" : "")}
-              onClick={() => setOpt("showInterlinear", !showInterlinear)}
-            >Interlinear</button>
-            <span className="lib-toggle-sep">|</span>
-            <button
-              className={"lib-order-btn" + (wordOrder === "english" || translation === "kjv" ? " on" : "")}
-              onClick={() => translation !== "kjv" && setLibOptions(prev => ({
-                ...prev,
-                [translation]: { ...prev[translation], wordOrder: "english" }
-              }))}
-            >English</button>
-            <button
-              className={"lib-order-btn" + (wordOrder === "greek" ? " on" : "")}
-              disabled={translation === "kjv"}
-              style={translation === "kjv" ? { opacity: 0.35, cursor: "default" } : undefined}
-              onClick={() => translation !== "kjv" && setOpt("wordOrder", "greek")}
-            >Greek</button>
-          </div>
+          <button className="lib-modes-btn" onClick={() => setModesOpen(true)} aria-label="Reading options">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6"/><circle cx="8" cy="6" r="2.5" fill="var(--bg)" stroke="currentColor"/>
+              <line x1="3" y1="12" x2="21" y2="12"/><circle cx="16" cy="12" r="2.5" fill="var(--bg)" stroke="currentColor"/>
+              <line x1="3" y1="18" x2="21" y2="18"/><circle cx="10" cy="18" r="2.5" fill="var(--bg)" stroke="currentColor"/>
+            </svg>
+          </button>
         </div>
       )}
 
