@@ -1195,13 +1195,14 @@ input { font-family: inherit; }
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   padding: 8px 0;
-  border-bottom: 1px solid var(--rule);
   margin-bottom: 8px;
 }
 .lib-parallel-label {
   display: block;
   width: fit-content;
   margin: 0 auto;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--rule-2);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -1216,7 +1217,6 @@ input { font-family: inherit; }
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   padding: 3px 0;
-  border-bottom: 1px solid var(--rule);
   line-height: 1.7;
   font-size: 18px;
 }
@@ -1313,8 +1313,7 @@ input { font-family: inherit; }
 .lib-vnum {
   font-family: var(--f-mono);
   font-size: 9px;
-  color: var(--gold);
-  background: var(--gold-soft);
+  color: var(--ink-4);
   padding: 1px 4px;
   border-radius: 3px;
   letter-spacing: 0.04em;
