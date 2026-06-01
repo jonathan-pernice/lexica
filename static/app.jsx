@@ -1492,7 +1492,7 @@ function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
 // ============================================================
 // LIBRARY VIEW
 // ============================================================
-function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTranslationChange }) {
+function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTranslationChange, isMobile }) {
   const [books, setBooks] = useState([]);
   const [selBook, setSelBook] = useState(null);
   const [selChapter, setSelChapter] = useState(1);
@@ -1506,19 +1506,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [libFontSize, setLibFontSize] = useState(() => {
     const stored = localStorage.getItem("libFontSize");
     if (stored) return parseInt(stored, 10);
-    return window.innerWidth < 1100 ? 15 : 18;
+    return isMobile ? 15 : 18;
   });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
-  const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1100);
+  const [navVisible, setNavVisible] = useState(!isMobile);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
 
-  useEffect(() => {
-    const _onResize = () => setNavVisible(window.innerWidth >= 1100);
-    window.addEventListener("resize", _onResize);
-    return () => window.removeEventListener("resize", _onResize);
-  }, []);
+  useEffect(() => { setNavVisible(!isMobile); }, [isMobile]);
 
   useEffect(() => {
     api.books().then(data => {
@@ -2675,7 +2671,7 @@ function App() {
       <main className="main">
         {libEverVisited && (
           <div style={{ display: mainView === "library" ? undefined : "none" }}>
-            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onTranslationChange={setLibTranslation} />
+            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onTranslationChange={setLibTranslation} isMobile={isMobile} />
           </div>
         )}
         {mainView === "about" && <AboutView />}
