@@ -1194,16 +1194,17 @@ input { font-family: inherit; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  padding: 0 0 12px;
+  padding: 8px 0 16px;
   border-bottom: 1px solid var(--rule);
   margin-bottom: 20px;
 }
 .lib-parallel-label {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink-3);
+  text-align: center;
 }
 .lib-parallel-verse {
   display: grid;
@@ -1262,7 +1263,7 @@ input { font-family: inherit; }
 .lib-order-btn:hover { color: var(--ink); }
 .lib-order-btn.on { color: var(--ink); background: #fff; box-shadow: var(--shadow-sm); }
 
-.lib-reading { max-width: 980px; }
+.lib-reading { max-width: 980px; width: 100%; }
 
 .lib-heading {
   font-family: var(--f-serif);
