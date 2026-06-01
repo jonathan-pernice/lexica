@@ -1616,9 +1616,19 @@ input { font-family: inherit; }
   /* Chip: smaller word size to fit more per line */
   .lib-iw-english { font-size: 15px; }
   .lib-iw-strongs { font-size: 9px; }
-  /* Parallel: narrow the gap, shrink text */
-  .lib-parallel-verse { gap: 12px; font-size: 14px; }
-  .lib-parallel-header { gap: 12px; padding: 4px 0 8px; }
+  /* Parallel: stack columns vertically */
+  .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 16px; }
+  .lib-parallel-header { display: none; }
+  .lib-parallel-col { display: flex; flex-direction: column; }
+  .lib-parallel-col::before {
+    content: "ABP";
+    font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); background: var(--gold-soft); padding: 2px 8px; border-radius: 20px;
+    align-self: flex-start; margin-bottom: 4px;
+  }
+  .lib-parallel-col:last-child::before { content: "KJV"; }
+  .lib-parallel-col:last-child { border-top: 1px solid var(--rule); padding-top: 8px; margin-top: 4px; }
+  .lib-parallel-col:last-child .lib-vnum { display: none; }
 }
 .mbar-btn { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); flex: 0 0 auto; }
 .mbar-btn:active { background: rgba(15,27,45,0.06); }
