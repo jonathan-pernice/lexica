@@ -1262,7 +1262,7 @@ input { font-family: inherit; }
 .lib-order-btn:hover { color: var(--ink); }
 .lib-order-btn.on { color: var(--ink); background: #fff; box-shadow: var(--shadow-sm); }
 
-.lib-reading { max-width: 720px; }
+.lib-reading { max-width: 980px; }
 
 .lib-heading {
   font-family: var(--f-serif);

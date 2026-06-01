@@ -1394,14 +1394,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
   return (
     <nav className={"nav" + (isOverlay ? " nav-overlay" : "")} aria-label="Books">
       <div className="nav-top">
-        <span className="nav-title">Canon</span>
         {isOverlay && <button className="nav-x" onClick={onClose} aria-label="Close">✕</button>}
-      </div>
-      <div className="nav-search">
-        <svg className="nav-search-i" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
-        </svg>
-        <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a book" />
       </div>
       <div className="nav-scroll">
         {groups.map(g => (
@@ -1953,7 +1946,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       {navVisible ? (
         <div className="lib-bar">
           <div className="lib-bar-l">
-            {selBook && <span className="lib-bar-book">{selBook.name}</span>}
             <div className="bar-ch">
               <button
                 className="ch-nav"
