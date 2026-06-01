@@ -1892,34 +1892,44 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       {!navVisible && modesOpen && (
         <>
           <div className="sheet-scrim" onClick={() => setModesOpen(false)} />
-          <div className="modes-sheet">
-            <div className="modes-head">
-              <span className="modes-title">Reading options</span>
-              <button className="nav-x" onClick={() => setModesOpen(false)}>✕</button>
+          <div className="msheet">
+            <div className="msheet-handle" aria-hidden="true" />
+            <div className="msheet-head">
+              <span className="msheet-title">Reading</span>
+              <button className="msheet-x" onClick={() => setModesOpen(false)} aria-label="Close">✕</button>
             </div>
-            <div className="modes-body">
-              <div className="modes-row">
-                <span className="modes-lbl">Text</span>
-                <div className="seg">
-                  <button className={"seg-b"+(translation==="abp"?" on":"")} onClick={()=>{setTranslation("abp");onTranslationChange?.("abp");}}>ABP</button>
-                  <button className={"seg-b"+(translation==="kjv"?" on":"")} onClick={()=>{setTranslation("kjv");onTranslationChange?.("kjv");}}>KJV</button>
-                  <button className={"seg-b"+(translation==="parallel"?" on":"")} onClick={()=>{setTranslation("parallel");onTranslationChange?.("parallel");}}>Parallel</button>
+            <div className="mode-sec">
+              <div className="mode-lbl">Edition</div>
+              <div className="mseg">
+                <button className={"mseg-b"+(translation==="abp"?" on":"")} onClick={()=>{setTranslation("abp");onTranslationChange?.("abp");}}>ABP</button>
+                <button className={"mseg-b"+(translation==="kjv"?" on":"")} onClick={()=>{setTranslation("kjv");onTranslationChange?.("kjv");}}>KJV</button>
+                <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={()=>{setTranslation("parallel");onTranslationChange?.("parallel");}}>Parallel</button>
+              </div>
+            </div>
+            <div className="mode-sec">
+              <div className="mode-lbl">Study layer</div>
+              <div className="mtog">
+                <div className="mtog-row">
+                  <div className="mtog-txt">
+                    <div className="mtog-name">Strong's numbers</div>
+                    <div className="mtog-sub">Tap a word for its lexicon entry</div>
+                  </div>
+                  <button className={"switch"+(showStrongs?" on":"")} onClick={()=>setOpt("showStrongs",!showStrongs)} aria-label="Toggle Strong's" aria-pressed={showStrongs} />
+                </div>
+                <div className="mtog-row">
+                  <div className="mtog-txt">
+                    <div className="mtog-name">Interlinear</div>
+                    <div className="mtog-sub">Stack Greek, transliteration &amp; gloss</div>
+                  </div>
+                  <button className={"switch"+(showInterlinear?" on":"")} onClick={()=>setOpt("showInterlinear",!showInterlinear)} aria-label="Toggle Interlinear" aria-pressed={showInterlinear} />
                 </div>
               </div>
-              <div className="modes-row">
-                <span className="modes-lbl">Word order</span>
-                <div className="seg">
-                  <button className={"seg-b"+(wordOrder==="english"||translation==="kjv"?" on":"")} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","english")}>English</button>
-                  <button className={"seg-b"+(wordOrder==="greek"?" on":"")} disabled={translation==="kjv"} style={translation==="kjv"?{opacity:0.35}:undefined} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","greek")}>Greek</button>
-                </div>
-              </div>
-              <div className="modes-row">
-                <span className="modes-lbl">Strong's</span>
-                <button className={"modes-toggle"+(showStrongs?" on":"")} onClick={()=>setOpt("showStrongs",!showStrongs)}>{showStrongs?"On":"Off"}</button>
-              </div>
-              <div className="modes-row">
-                <span className="modes-lbl">Interlinear</span>
-                <button className={"modes-toggle"+(showInterlinear?" on":"")} onClick={()=>setOpt("showInterlinear",!showInterlinear)}>{showInterlinear?"On":"Off"}</button>
+            </div>
+            <div className="mode-sec">
+              <div className="mode-lbl">Script</div>
+              <div className="mseg">
+                <button className={"mseg-b"+(wordOrder==="english"||translation==="kjv"?" on":"")} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","english")}>English</button>
+                <button className={"mseg-b"+(wordOrder==="greek"?" on":"")} disabled={translation==="kjv"} style={translation==="kjv"?{opacity:0.35}:undefined} onClick={()=>translation!=="kjv"&&setOpt("wordOrder","greek")}>Greek</button>
               </div>
             </div>
           </div>
