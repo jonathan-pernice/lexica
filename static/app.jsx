@@ -2366,7 +2366,7 @@ function App() {
   const searchFnRef = useRef(null);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 860);
+    const check = () => setIsMobile(window.innerWidth < 1100);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
