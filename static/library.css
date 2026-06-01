@@ -2,7 +2,7 @@
    LIBRARY — three-column reading view
    Inherits tokens from styles.css (:root vars)
 ============================================================ */
-html, body { height: 100%; overflow: hidden; }
+html, body { height: 100%; overflow: hidden; margin: 0; }
 .app { height: 100vh; display: flex; flex-direction: column; }
 
 /* header sizing override for tighter reading chrome */
@@ -41,7 +41,7 @@ html, body { height: 100%; overflow: hidden; }
 }
 .nav-top {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 10px 6px;
+  padding: 0 10px 6px 0;
 }
 .nav-title {
   font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
