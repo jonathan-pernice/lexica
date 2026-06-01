@@ -1501,9 +1501,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [loading, setLoading] = useState(false);
   const [kjvLoading, setKjvLoading] = useState(false);
   const [libOptions, setLibOptions] = useState({
-    abp:      { viewMode: "chip", showStrongs: false, showInterlinear: false },
-    kjv:      { viewMode: "chip", showStrongs: false, showInterlinear: false },
-    parallel: { viewMode: "chip", showStrongs: false, showInterlinear: false },
+    viewMode: "chip", showStrongs: false, showInterlinear: false,
   });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
@@ -1566,14 +1564,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   }, [nav?.scroll, verses]);
 
   const maxChap = selBook ? selBook.chapters : 1;
-  const opts            = libOptions[translation] || {};
-  const showStrongs     = opts.showStrongs     || false;
-  const showInterlinear = opts.showInterlinear || false;
-  const viewMode        = opts.viewMode        || "chip";
-  const setOpt = (key, val) => setLibOptions(prev => ({
-    ...prev,
-    [translation]: { ...prev[translation], [key]: val },
-  }));
+  const showStrongs     = libOptions.showStrongs     || false;
+  const showInterlinear = libOptions.showInterlinear || false;
+  const viewMode        = libOptions.viewMode        || "chip";
+  const setOpt = (key, val) => setLibOptions(prev => ({ ...prev, [key]: val }));
 
   const chipMode    = viewMode === "chip" || showStrongs || showInterlinear;
   const wordMode    = chipMode;
