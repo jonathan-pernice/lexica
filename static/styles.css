@@ -2073,13 +2073,13 @@ input { font-family: inherit; }
 .mpick-btn {
   padding: 8px 4px;
   font-family: var(--f-mono);
-  font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+  font-size: 14px; font-weight: 600; letter-spacing: 0.02em;
   color: var(--ink-2);
   text-align: center;
 }
 .mpick-btn:hover { color: var(--ink); }
 .mpick-btn:active { color: var(--accent); }
-.mpick-btn.on { color: var(--accent); font-weight: 700; }
+.mpick-btn.on { color: var(--navy); font-weight: 800; font-size: 15px; }
 
 .nav {
   border-right: 1px solid var(--rule);
