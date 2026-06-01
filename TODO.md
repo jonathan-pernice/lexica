@@ -62,6 +62,11 @@
 - State persists in localStorage
 - Only shown above minimum viewport width
 
+## Search Layout Revamp (plan together)
+- Overall search layout needs optimizing — spacing, hierarchy, result cards
+- Audit whether library display improvements (verse numbers neutral, interlinear hierarchy, gold overuse) carried over to search result verses — likely they did not since search uses different component classes
+- Align search verse rendering with library standards where appropriate
+
 ## Text Structure Session (plan together)
 
 ### Pericopes / Section Headings
