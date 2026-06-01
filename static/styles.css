@@ -248,7 +248,7 @@ input { font-family: inherit; }
   border-color: transparent;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1099px) {
   .search-grid {
     grid-template-columns: 1fr;
     gap: 22px;
@@ -1566,7 +1566,7 @@ input { font-family: inherit; }
 .mobile-tabs {
   display: none;
 }
-@media (max-width: 860px) {
+@media (max-width: 1099px) {
   .hdr-inner { padding: 12px 16px; gap: 16px; }
   .brand-sub { display: none; }
   .hdr-nav { display: none; }
