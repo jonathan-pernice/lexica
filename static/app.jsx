@@ -1766,21 +1766,19 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               if (!text) return null;
               const isPunct = /^[.,;:?!—)]/.test(text);
               if (isPunct) return <span key={i}>{text}</span>;
-              const isBracket = w.bracket_id !== null && w.bracket_id !== undefined;
               if (w.italic_words && text.includes(' ')) {
                 const iset = new Set(w.italic_words.split(','));
                 return (
                   <React.Fragment key={i}>
                     {text.split(' ').filter(Boolean).map((word, pi) => {
                       const bare = word.replace(/[^\w]/g, '').toLowerCase();
-                      const isItalic = iset.has(bare) || !!w.italic || isBracket;
+                      const isItalic = iset.has(bare) || !!w.italic;
                       return <span key={pi} className={isItalic ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
                     })}
                   </React.Fragment>
                 );
               }
-              const isItalic = !!w.italic || isBracket;
-              return <span key={i} className={isItalic ? "lib-prose-italic" : undefined}>{text + " "}</span>;
+              return <span key={i} className={!!w.italic ? "lib-prose-italic" : undefined}>{text + " "}</span>;
             })}
           </span>
         </div>
