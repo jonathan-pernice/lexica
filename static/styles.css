@@ -1590,6 +1590,9 @@ input { font-family: inherit; }
 @media (max-width: 520px) {
   .results { grid-template-columns: 1fr; }
 }
+@media (max-width: 1023px) {
+  .hdr { display: none; }
+}
 
 /* ── Search breadcrumb trail ──────────────────────────── */
 .breadcrumb {
