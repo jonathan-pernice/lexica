@@ -2015,7 +2015,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </div>
       )}
 
-      <div className="lib-reading">
+      <div className={"lib-reading" + (translation === "parallel" ? " lib-reading--parallel" : "")}>
 
         {translation === "parallel" ? (
           <div className="lib-parallel">
