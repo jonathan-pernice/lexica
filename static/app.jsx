@@ -2607,14 +2607,13 @@ function App() {
     <div className={"app " + (activeEntry ? "has-detail" : "")}>
       <Header activeView={mainView} onNavChange={handleNavChange}/>
       <main className="main">
-        <div className="main-inner">
-          {mainView === "about" && <AboutView />}
-          {libEverVisited && (
-            <div style={{ display: mainView === "library" ? undefined : "none" }}>
-              <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onTranslationChange={setLibTranslation} />
-            </div>
-          )}
-          <div style={{ display: (mainView === "library" || mainView === "about") ? "none" : undefined }}>
+        {libEverVisited && (
+          <div style={{ display: mainView === "library" ? undefined : "none" }}>
+            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onTranslationChange={setLibTranslation} />
+          </div>
+        )}
+        {mainView === "about" && <AboutView />}
+        <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about") ? "none" : undefined }}>
           <><SearchBar
             q1={q1} setQ1={setQ1}
             q2={q2} setQ2={setQ2}
@@ -2763,7 +2762,6 @@ function App() {
             <span>Lexica · Greek Septuagint (LXX) · Apostolic Bible Polyglot Interlinear · Strong's Greek</span>
           </footer>
           </>
-          </div>
         </div>
       </main>
 
