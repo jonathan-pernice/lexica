@@ -1444,7 +1444,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
 // ============================================================
 // MOBILE BOOK PICKER — full-screen, two-screen (book grid → chapter grid)
 // ============================================================
-function MobileBookPicker({ books, selBook, onDone, onClose }) {
+function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
   const [screen, setScreen] = useState("book");
   const [pickedBook, setPickedBook] = useState(null);
 
@@ -1461,9 +1461,10 @@ function MobileBookPicker({ books, selBook, onDone, onClose }) {
         </div>
         <div className="mpick-scroll">
           <div className="mpick-grid">
-            {Array.from({ length: pickedBook.chapters }, (_, i) => i + 1).map(n => (
-              <button key={n} className="mpick-btn" onClick={() => onDone(pickedBook, n)}>{n}</button>
-            ))}
+            {Array.from({ length: pickedBook.chapters }, (_, i) => i + 1).map(n => {
+              const active = selBook && pickedBook.abbrev === selBook.abbrev && n === selChapter;
+              return <button key={n} className={"mpick-btn" + (active ? " on" : "")} onClick={() => onDone(pickedBook, n)}>{n}</button>;
+            })}
           </div>
         </div>
       </div>
@@ -1883,6 +1884,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         <MobileBookPicker
           books={books}
           selBook={selBook}
+          selChapter={selChapter}
           onDone={(b, n) => { setSelBook(b); setSelChapter(n); setMobileNavOpen(false); }}
           onClose={() => setMobileNavOpen(false)}
         />
