@@ -1623,7 +1623,7 @@ input { font-family: inherit; }
     display: flex;
     justify-content: center;
     padding: 6px 0 4px;
-    border-top: 1px solid var(--rule);
+    border-top: 2px solid var(--rule-2);
     margin-top: 2px;
   }
   .lib-parallel-vnum .lib-vnum { font-size: 9px; }
