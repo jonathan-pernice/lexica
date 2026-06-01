@@ -41,7 +41,7 @@ html, body { height: 100%; overflow: hidden; }
 }
 .nav-top {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 18px 10px;
+  padding: 10px 10px 6px;
 }
 .nav-title {
   font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
@@ -50,7 +50,7 @@ html, body { height: 100%; overflow: hidden; }
 .nav-x { width: 30px; height: 30px; border-radius: 6px; display: grid; place-items: center; color: var(--ink-3); }
 .nav-x:hover { background: rgba(0,0,0,0.05); color: var(--ink); }
 .nav-search {
-  margin: 0 14px 8px;
+  margin: 0 10px 8px;
   display: flex; align-items: center; gap: 8px;
   background: #fff;
   border: 1px solid var(--rule);
@@ -105,12 +105,12 @@ html, body { height: 100%; overflow: hidden; }
   border-radius: 5px;
   font-family: var(--f-mono);
   font-size: 11.5px;
-  color: var(--ink-2);
-  background: #fff;
-  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  background: none;
+  border: none;
 }
-.ch-chip:hover { border-color: var(--ink-3); color: var(--ink); }
-.ch-chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ch-chip:hover { color: var(--ink); }
+.ch-chip.on { color: var(--accent); font-weight: 600; }
 
 /* nav drawer (overlay) */
 .nav-overlay {
