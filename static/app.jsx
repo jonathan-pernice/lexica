@@ -1756,12 +1756,22 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
     if (!wordMode) {
       const englishWords = getEnglishOrderWords(v.words);
-      const text = joinProse(englishWords);
       return (
         <div key={v.verse} ref={isHighlight ? highlightRef : null}
           className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
           {vnumEl(v.verse)}
-          <span className="lib-verse-content">{text}</span>
+          <span className="lib-verse-content">
+            {englishWords.map((w, i) => {
+              const text = w.english || "";
+              if (!text) return null;
+              const isPunct = /^[.,;:?!—)]/.test(text);
+              return (
+                <span key={i} className={!isPunct && w.italic ? "lib-prose-italic" : undefined}>
+                  {isPunct ? text : text + " "}
+                </span>
+              );
+            })}
+          </span>
         </div>
       );
     }
@@ -1868,7 +1878,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     return (
       <div key={v.verse} className="lib-verse-row">
         {showVerseNum && vnumEl(v.verse)}
-        <span className="lib-verse-content">{v.verse_text}</span>
+        <span className="lib-verse-content">
+          {v.words.map((w, i) => (
+            <span key={i} className={w.italic ? "lib-prose-italic" : undefined}>
+              {w.word}{w.punc || ""}{" "}
+            </span>
+          ))}
+        </span>
       </div>
     );
   };
