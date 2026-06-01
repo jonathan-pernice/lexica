@@ -1481,7 +1481,7 @@ input { font-family: inherit; }
 }
 .lib-iw-strongs {
   font-family: var(--f-mono);
-  font-size: 9.5px;
+  font-size: 8.5px;
   color: var(--ink-4);
   letter-spacing: 0.02em;
 }
