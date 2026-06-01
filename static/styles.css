@@ -1213,9 +1213,9 @@ input { font-family: inherit; }
   padding: 10px 0;
   border-bottom: 1px solid var(--rule);
   line-height: 1.75;
-  font-size: 15px;
+  font-size: 16px;
 }
-.lib-parallel-col { color: var(--ink); }
+.lib-parallel-col { color: var(--ink); font-family: var(--f-serif); font-size: 16px; }
 
 /* BDB (Hebrew) sidebar */
 .bdb-badge {
@@ -1414,6 +1414,8 @@ input { font-family: inherit; }
 .lib-verse-content {
   flex: 1;
   text-align: left;
+  font-family: var(--f-serif);
+  font-size: 16px;
 }
 .lib-verse-chips {
   display: flex;
