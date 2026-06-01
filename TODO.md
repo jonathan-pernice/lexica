@@ -67,19 +67,16 @@
 - Audit whether library display improvements (verse numbers neutral, interlinear hierarchy, gold overuse) carried over to search result verses — likely they did not since search uses different component classes
 - Align search verse rendering with library standards where appropriate
 
-## Text Structure Session (plan together)
+## ✓ Text Structure Session — DONE
 
-### Pericopes / Section Headings
-Data already scraped into `bh_headings` in `bh_scrape.db`. SQL to create `pericopes` table in `bible.db` ready. Needs:
-- Backend: surface headings alongside verse fetch (fold into existing endpoint or lightweight separate call)
-- Frontend: render `<div class="pericope-heading">` above the right verse in the render loop
-- Works in single-column, parallel, and prose modes — parallel mode needs care (two-column loop)
+### ✓ Pericopes / Section Headings
+`pericopes` table created and populated (2431 headings, full canon). Backend: `chapter_text()` LEFT JOINs pericopes, folds `heading` into verse object. Frontend: `renderVerse()` injects `.pericope-heading` div before verse when heading is present. Works in chip, prose, and parallel (ABP column only).
 
-### Prose Mode — Continuous Flow
-Verses should wrap as flowing text rather than one line per verse. Poetry books (Psalms, Proverbs, Song of Solomon, Lamentations, Job) keep line-per-verse since structure is part of the meaning. Auto-detect by book genre using the `books` table — no user toggle needed, just works correctly per text type.
+### ✓ Prose Mode — Continuous Flow
+Non-poetry books wrap as a single flowing paragraph in prose mode with inline verse-number superscripts. Poetry books (Psa/Pro/Job/Son/Lam) keep line-per-verse. `renderProseWords()` helper shared by both paths.
 
-### Font Size Preference
-`+/−` control in the lib-bar, writes to localStorage, applies a CSS custom property to `.lib-reading`. Defaults to current sizes. Persistent across sessions.
+### ✓ Font Size Preference
+A−/A+ in desktop lib-bar and mobile modes sheet. `--lib-font-size` CSS custom property on `.lib-reading`. Persisted in localStorage. Defaults: 15px mobile / 18px desktop. Range 13–24px.
 
 ## Planned Features
 
