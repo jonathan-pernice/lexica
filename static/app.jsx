@@ -1981,8 +1981,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 aria-label="Next chapter"
               >›</button>
             </div>
-          </div>
-          <div className="lib-bar-r">
             <div className="seg">
               <button className={"seg-b" + (translation === "abp" ? " on" : "")} onClick={() => { setTranslation("abp"); onTranslationChange?.("abp"); }}>ABP</button>
               <button className={"seg-b" + (translation === "kjv" ? " on" : "")} onClick={() => { setTranslation("kjv"); onTranslationChange?.("kjv"); }}>KJV</button>
