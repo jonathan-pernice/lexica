@@ -1694,11 +1694,15 @@ def lsj_lookup(lemma):
                 ).fetchone()
     finally:
         conn.close()
+    def _trim_br(html):
+        import re as _re
+        return _re.sub(r'(\s*<br\s*/?>\s*)+$', '', html or '', flags=_re.IGNORECASE)
+
     if abp_row:
         return jsonify({
             "key":      snum,
             "translit": "",
-            "def_html": abp_row["def_html"],
+            "def_html": _trim_br(abp_row["def_html"]),
             "source":   "abp_ext",
         })
     if lex_row and lex_row["strongs_def"]:
@@ -1713,7 +1717,7 @@ def lsj_lookup(lemma):
     return jsonify({
         "key":      row["key"],
         "translit": row["translit"],
-        "def_html": row["def_html"],
+        "def_html": _trim_br(row["def_html"]),
     })
 
 
