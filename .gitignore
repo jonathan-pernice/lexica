@@ -5,3 +5,5 @@ __pycache__/
 .env
 abp_ot_texts/
 abp_nt_texts/
+assets/figma-design/
+assets/
