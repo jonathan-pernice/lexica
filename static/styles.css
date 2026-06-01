@@ -2120,14 +2120,14 @@ input { font-family: inherit; }
 }
 .nav-top {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 18px 10px;
+  padding: 0 10px 6px 0;
 }
 .nav-title {
   font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em;
   font-weight: 600; color: var(--ink-3);
 }
 .nav-search {
-  margin: 0 14px 8px;
+  margin: 0 10px 8px;
   display: flex; align-items: center; gap: 8px;
   background: #fff;
   border: 1px solid var(--rule);
