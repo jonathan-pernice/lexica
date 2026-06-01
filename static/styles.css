@@ -34,6 +34,10 @@
   --r-lg: 14px;
 
   --sidebar-w: 460px;
+
+  --lib-vnum-w: 24px;    /* lib-vnum min-width */
+  --lib-row-pl: 5px;     /* lib-verse-row padding-left */
+  --lib-row-gap: 8px;    /* lib-verse-row gap */
 }
 
 * { box-sizing: border-box; }
@@ -1329,7 +1333,7 @@ input { font-family: inherit; }
 }
 .pericope-heading:first-child { margin-top: 0.5rem; }
 @media (min-width: 1100px) {
-  .lib-text-words:not(.lib-prose-flow) .pericope-heading { margin-left: 37px; }
+  .lib-text-words:not(.lib-prose-flow) .pericope-heading { margin-left: calc(var(--lib-row-pl) + var(--lib-vnum-w) + var(--lib-row-gap)); }
 }
 
 /* Prose continuous flow (non-poetry) */
@@ -1349,9 +1353,9 @@ input { font-family: inherit; }
 .lib-verse-row {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--lib-row-gap);
   margin-bottom: 4px;
-  padding-left: 5px;
+  padding-left: var(--lib-row-pl);
 }
 
 .lib-vnum {
@@ -1362,7 +1366,7 @@ input { font-family: inherit; }
   border-radius: 3px;
   letter-spacing: 0.04em;
   flex: 0 0 auto;
-  min-width: 24px;
+  min-width: var(--lib-vnum-w);
   text-align: center;
   white-space: nowrap;
   align-self: flex-start;
