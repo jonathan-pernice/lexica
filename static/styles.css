@@ -1194,9 +1194,9 @@ input { font-family: inherit; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  padding: 6px 0 10px;
+  padding: 4px 0 6px;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 .lib-parallel-label {
   display: block;
