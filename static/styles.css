@@ -1574,7 +1574,6 @@ input { font-family: inherit; }
     display: flex;
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    min-height: 56px;
     background: var(--paper);
     border-top: 1px solid var(--rule);
     z-index: 200;
