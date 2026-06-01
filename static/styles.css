@@ -147,7 +147,7 @@ input { font-family: inherit; }
 }
 .search-grid {
   display: grid;
-  grid-template-columns: 1fr 1px 1fr;
+  grid-template-columns: minmax(180px, 320px) 1px 1fr;
   gap: 28px;
   align-items: stretch;
 }
