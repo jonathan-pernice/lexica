@@ -1448,6 +1448,7 @@ input { font-family: inherit; }
   cursor: default;
   transition: background 0.12s;
 }
+.lib-prose-italic { color: var(--ink-2); font-style: italic; }
 .lib-word:hover { background: var(--bg-sunk); }
 .lib-word.lib-word-clickable { cursor: pointer; }
 .lib-word.lib-word-clickable:hover { background: var(--accent-soft); }
@@ -1619,7 +1620,7 @@ input { font-family: inherit; }
   .lib-iw-english { font-size: 15px; }
   .lib-iw-strongs { font-size: 9px; }
   /* Parallel: stack columns vertically */
-  .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 15px; border-bottom: none; }
+  .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 15px; line-height: 1.65; border-bottom: none; }
   .lib-parallel-header { border-bottom: none; }
   .lib-parallel-vnum {
     display: flex;
