@@ -70,10 +70,10 @@
 ## ✓ Text Structure Session — DONE
 
 ### ✓ Pericopes / Section Headings
-`pericopes` table created and populated (2431 headings, full canon). Backend: `chapter_text()` LEFT JOINs pericopes, folds `heading` into verse object. Frontend: `renderVerse()` injects `.pericope-heading` div before verse when heading is present. Works in chip, prose, and parallel (ABP column only).
+`pericopes` table created and populated (2431 headings, full canon). Backend: `chapter_text()` LEFT JOINs pericopes, folds `heading` into verse object. Frontend: `renderVerse()` injects `.pericope-heading` div before verse when heading is present. Works in chip, prose, and parallel (ABP column only). Note: Song of Solomon has 0 headings — BibleHub doesn't carry them; not a bug.
 
 ### ✓ Prose Mode — Continuous Flow
-Non-poetry books wrap as a single flowing paragraph in prose mode with inline verse-number superscripts. Poetry books (Psa/Pro/Job/Son/Lam) keep line-per-verse. `renderProseWords()` helper shared by both paths.
+Non-poetry books wrap as a single flowing paragraph in prose mode with inline verse-number superscripts. Poetry books (Psa/Pro/Job/Son/Lam/Ecc) keep line-per-verse. `renderProseWords()` helper shared by both paths.
 
 ### ✓ Font Size Preference
 A−/A+ in desktop lib-bar and mobile modes sheet. `--lib-font-size` CSS custom property on `.lib-reading`. Persisted in localStorage. Defaults: 15px mobile / 18px desktop. Range 13–24px.
