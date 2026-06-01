@@ -1479,7 +1479,7 @@ input { font-family: inherit; }
   display: inline-flex;
   align-items: baseline;
   gap: 0;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   max-width: 100%;
 }
 .lib-bracket-unit {
@@ -1605,7 +1605,6 @@ input { font-family: inherit; }
   .lib-heading { display: none; }
   .lib-reading { overflow-x: hidden; max-width: 100%; }
   .library { overflow-x: hidden; }
-  .lib-bracket-group { flex-wrap: wrap; }
 }
 .mbar-btn { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); flex: 0 0 auto; }
 .mbar-btn:active { background: rgba(15,27,45,0.06); }
