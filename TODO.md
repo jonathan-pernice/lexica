@@ -83,8 +83,8 @@ Verses should wrap as flowing text rather than one line per verse. Poetry books 
 
 ## Planned Features
 
-### Prose Reading Mode
-Flowing text view for the Library — no chip borders or padding, Strong's numbers as small superscripts, words still clickable but no visual widget feel. Complements chip mode (focused word study) with a clean reading experience. Implement after the advanced workspace layout, as part of the center panel reading modes.
+### ✓ Prose Reading Mode — DONE
+Chip/Prose toggle live. Prose renders clickable inline word spans, no chip borders. Further work (continuous flow, poetry detection) tracked in Text Structure Session above.
 
 ### Morphology Display
 Show grammatical parsing (case, tense, number, etc.) in the word click sidebar in plain English: "Verb · Aorist · Active · Indicative · 3rd Person · Singular". Morphological data source: MorphGNT (NT) + CATSS/CCAT (LXX OT) — needs import into a `morph` column on the `words` table.

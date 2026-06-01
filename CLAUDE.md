@@ -59,6 +59,7 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - `kjv_words` — KJV word-level tokens with position and italic flag
 - `kjv_strongs` — KJV word → Strong's number mapping
 - `bdb` — Brown-Driver-Briggs Hebrew lexicon (H-numbers)
+- `pericopes` — section headings (book, chapter, verse, heading); populated from bh_scrape.db.bh_headings; display wiring pending
 
 ## Key Design Decisions
 - ABP is the primary text — all word study anchored in ABP interlinear
@@ -79,15 +80,24 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - NT_BOOKS, BOOK_ORDER, BOOK_LABELS in app.jsx all use these abbreviations
 - _KJV_BOOK_ID in app.py matches the same set
 
+## Responsive Breakpoints
+- **Desktop ≥1100px**: navy header, left nav panel (224px), lib-bar toolbar, detail panel as right sidebar
+- **Mobile <1100px**: no header, sticky mobile toolbar (lib-toolbar), bottom tab nav, panels as bottom sheets
+- JS thresholds: `navVisible >= 1100`, `isMobile < 1100`, `desktopBar` removed (two states only)
+- CSS: `@media (max-width: 1099px)` / `@media (min-width: 1100px)` — no other breakpoints except 520px for very small phones
+
 ## Library Tab
-- All controls in a unified right-side bar: [ABP] [KJV] [Parallel] | [Strong's] [Interlinear] | [English] [Greek]
-- English/Greek toggles word order; KJV mode locks to English (Greek dimmed/disabled)
-- All words are always clickable (chip mode by default)
+- Desktop toolbar (lib-bar): [‹ Ch input ›] | [ABP] [KJV] [Parallel] | [Strong's] [Interlinear] | [Chip] [Prose]
+- Mobile toolbar (lib-toolbar): [☰] [‹] [Book Ch ▾] [›] [ABP/KJV/Par] — sticky, fixed height 56px
+- Chip mode: all words individually clickable with interlinear stack (Greek → English → Strong's)
+- Prose mode: clickable inline word spans, no chip borders — reading-first view
+- KJV mode locks Prose to English only (no Greek available)
 - Word clicks → LSJ sidebar (G-numbers), BDB sidebar (H-numbers), or metaV (proper nouns)
 - KJV word clicks correctly route: common words → LSJ, proper nouns → metaV, Hebrew → BDB
-- Italic words render muted/italic: KJV (italic=1) and ABP (words.italic=1, last-word heuristic); ABP bracket words `[word]` are also translator additions
+- Italic words render muted/italic: KJV (italic=1) and ABP (words.italic=1); ABP bracket words `[word]` are also translator additions
 - Verse layout: `lib-verse-row` (flex-start) → `lib-vnum` (fixed, min-width) + `lib-verse-content`
 - Clicking a verse number opens the TSK Cross-Reference Panel
+- Both word detail panel and xref panel trigger `has-detail` on `.app` → compacts `lib-reading` on desktop (desktop only, scoped to `min-width: 1100px`)
 
 ## TSK Cross-Reference Panel
 - Endpoint: GET /api/cross-references/curated/<book>/<chapter>/<verse>
