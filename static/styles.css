@@ -1495,13 +1495,13 @@ input { font-family: inherit; }
 }
 .lib-iw-greek {
   font-family: var(--f-greek);
-  font-size: 15px;
+  font-size: 0.83em;
   color: var(--ink);
   line-height: 1.2;
 }
 .lib-iw-english {
   font-family: var(--f-serif);
-  font-size: 14px;
+  font-size: 0.78em;
   color: var(--ink-2);
   line-height: 1.3;
 }
@@ -1638,7 +1638,7 @@ input { font-family: inherit; }
   .lib-text-words { line-height: 1.65; }
   .lib-verse-row { margin-bottom: 3px; }
   /* Chip: smaller word size to fit more per line */
-  .lib-iw-english { font-size: 15px; }
+  .lib-iw-english { font-size: 1em; }
   .lib-iw-strongs { font-size: 9px; }
   /* Parallel: stack columns vertically */
   .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 15px; line-height: 1.65; border-bottom: none; }
