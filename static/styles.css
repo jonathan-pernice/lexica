@@ -1633,9 +1633,6 @@ input { font-family: inherit; }
   .results-controls { width: 100%; margin-left: 0 !important; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .results-controls::-webkit-scrollbar { display: none; }
   .results-sort { flex-wrap: nowrap; }
-  .results { grid-template-columns: 1fr 1fr; gap: 6px; }
-  .card { padding: 10px 12px 8px; }
-  .card-greek { font-size: 20px; }
   .detail-greek { font-size: 44px; }
   .detail-body { padding: 16px 18px 32px; }
 }
