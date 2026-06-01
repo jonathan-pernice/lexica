@@ -2034,7 +2034,7 @@ input { font-family: inherit; }
    MOBILE BOOK PICKER (SWORD-style full-screen grid)
 ============================================================ */
 .mpick {
-  position: fixed; inset: 0; z-index: 70;
+  position: fixed; inset: 0; z-index: 210;
   background: var(--bg-sunk);
   display: flex; flex-direction: column;
   animation: mpick-in 0.18s ease;
