@@ -74,7 +74,7 @@ input { font-family: inherit; }
   padding: 14px 28px;
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: 8px;
 }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-mark {
@@ -100,7 +100,7 @@ input { font-family: inherit; }
   text-transform: uppercase;
   margin-top: 3px;
 }
-.hdr-nav { display: flex; gap: 4px; flex: 1; }
+.hdr-nav { display: flex; gap: 4px; }
 .hdr-link {
   font-size: 13.5px;
   color: #a8b0c0;
