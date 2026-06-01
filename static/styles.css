@@ -1612,7 +1612,7 @@ input { font-family: inherit; }
   .lib-reading { overflow-x: hidden; max-width: 100%; padding: 10px 12px; }
   .library { overflow-x: hidden; }
   /* Prose: slightly tighter for mobile reading */
-  .lib-text-words { font-size: 17px; line-height: 1.65; }
+  .lib-text-words { font-size: 15px; line-height: 1.65; }
   .lib-verse-row { margin-bottom: 3px; }
   /* Chip: smaller word size to fit more per line */
   .lib-iw-english { font-size: 15px; }
