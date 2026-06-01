@@ -1765,11 +1765,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               const text = w.english || "";
               if (!text) return null;
               const isPunct = /^[.,;:?!—)]/.test(text);
-              const allSubItalic = w.italic_words && text.includes(' ') && (() => {
+              const allSubItalic = w.italic_words && (() => {
                 const iset = new Set(w.italic_words.split(','));
-                return text.split(' ').every(p => iset.has(p.replace(/[^\w]/g,'').toLowerCase()));
+                return text.split(' ').filter(Boolean).every(p => iset.has(p.replace(/[^\w]/g,'').toLowerCase()));
               })();
-              const isItalic = !isPunct && (!!w.italic || !!allSubItalic);
+              const isBracket = w.bracket_id !== null && w.bracket_id !== undefined;
+              const isItalic = !isPunct && (!!w.italic || !!allSubItalic || isBracket);
               return (
                 <span key={i} className={isItalic ? "lib-prose-italic" : undefined}>
                   {isPunct ? text : text + " "}
