@@ -1333,7 +1333,16 @@ input { font-family: inherit; }
 }
 .pericope-heading:first-child { margin-top: 0.5rem; }
 @media (min-width: 1100px) {
-  .lib-text-words:not(.lib-prose-flow) .pericope-heading { margin-left: calc(var(--lib-row-pl) + var(--lib-vnum-w) + var(--lib-row-gap)); }
+  .lib-text-words:not(.lib-prose-flow) .pericope-heading {
+    display: flex;
+    padding-left: var(--lib-row-pl);
+    gap: var(--lib-row-gap);
+    margin-left: 0;
+  }
+  .lib-text-words:not(.lib-prose-flow) .pericope-heading::before {
+    content: "";
+    flex: 0 0 var(--lib-vnum-w);
+  }
 }
 
 /* Prose continuous flow (non-poetry) */
