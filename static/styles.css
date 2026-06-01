@@ -2241,7 +2241,7 @@ input { font-family: inherit; }
     z-index: 20;
   }
   .lib-bar-l { display: flex; align-items: center; gap: 12px; }
-  .lib-bar-l .bar-ch { display: none; }
+  .lib-bar-l .bar-ch { display: inline-flex; }
   .lib-bar-r { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .lib-bar-sep { width: 1px; height: 20px; background: var(--rule-2); }
   .lib-bar-books {
