@@ -1578,7 +1578,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const wordMode    = chipMode;
   const kjvWordMode = chipMode;
 
-  const POETRY_BOOKS = new Set(["Psa", "Pro", "Job", "Son", "Lam"]);
+  const POETRY_BOOKS = new Set(["Psa", "Pro", "Job", "Son", "Lam", "Ecc"]);
   const isPoetry = POETRY_BOOKS.has(selBook?.abbrev);
 
   const changeFontSize = (delta) => {
