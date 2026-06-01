@@ -1444,7 +1444,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
 // ============================================================
 // MOBILE BOOK PICKER — full-screen, two-screen (book grid → chapter grid)
 // ============================================================
-function MobileBookPicker({ books, onDone, onClose }) {
+function MobileBookPicker({ books, selBook, onDone, onClose }) {
   const [screen, setScreen] = useState("book");
   const [pickedBook, setPickedBook] = useState(null);
 
@@ -1483,7 +1483,7 @@ function MobileBookPicker({ books, onDone, onClose }) {
             <div className="mpick-sec-label">{label}</div>
             <div className="mpick-grid">
               {bks.map(b => (
-                <button key={b.abbrev} className="mpick-btn" onClick={() => { setPickedBook(b); setScreen("chapter"); }}>
+                <button key={b.abbrev} className={"mpick-btn" + (selBook && b.abbrev === selBook.abbrev ? " on" : "")} onClick={() => { setPickedBook(b); setScreen("chapter"); }}>
                   {b.abbrev.toUpperCase()}
                 </button>
               ))}
@@ -1882,6 +1882,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       {!navVisible && mobileNavOpen && (
         <MobileBookPicker
           books={books}
+          selBook={selBook}
           onDone={(b, n) => { setSelBook(b); setSelChapter(n); setMobileNavOpen(false); }}
           onClose={() => setMobileNavOpen(false)}
         />
