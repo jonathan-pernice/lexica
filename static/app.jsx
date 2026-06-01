@@ -1765,17 +1765,22 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               const text = w.english || "";
               if (!text) return null;
               const isPunct = /^[.,;:?!—)]/.test(text);
-              const allSubItalic = w.italic_words && (() => {
-                const iset = new Set(w.italic_words.split(','));
-                return text.split(' ').filter(Boolean).every(p => iset.has(p.replace(/[^\w]/g,'').toLowerCase()));
-              })();
+              if (isPunct) return <span key={i}>{text}</span>;
               const isBracket = w.bracket_id !== null && w.bracket_id !== undefined;
-              const isItalic = !isPunct && (!!w.italic || !!allSubItalic || isBracket);
-              return (
-                <span key={i} className={isItalic ? "lib-prose-italic" : undefined}>
-                  {isPunct ? text : text + " "}
-                </span>
-              );
+              if (w.italic_words && text.includes(' ')) {
+                const iset = new Set(w.italic_words.split(','));
+                return (
+                  <React.Fragment key={i}>
+                    {text.split(' ').filter(Boolean).map((word, pi) => {
+                      const bare = word.replace(/[^\w]/g, '').toLowerCase();
+                      const isItalic = iset.has(bare) || !!w.italic || isBracket;
+                      return <span key={pi} className={isItalic ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
+                    })}
+                  </React.Fragment>
+                );
+              }
+              const isItalic = !!w.italic || isBracket;
+              return <span key={i} className={isItalic ? "lib-prose-italic" : undefined}>{text + " "}</span>;
             })}
           </span>
         </div>
