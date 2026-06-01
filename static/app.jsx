@@ -2031,7 +2031,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </div>
       )}
 
-      <div className="lib-reading">
+      <div className="lib-reading" style={translation === "parallel" ? {paddingTop: 0} : undefined}>
 
         {translation === "parallel" ? (
           <div className="lib-parallel">
