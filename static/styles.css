@@ -1221,6 +1221,7 @@ input { font-family: inherit; }
   font-size: 16px;
 }
 .lib-parallel-col { color: var(--ink); }
+.lib-parallel-vnum { display: none; }
 
 /* BDB (Hebrew) sidebar */
 .bdb-badge {
@@ -1618,17 +1619,20 @@ input { font-family: inherit; }
   .lib-iw-strongs { font-size: 9px; }
   /* Parallel: stack columns vertically */
   .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 16px; }
-  .lib-parallel-header { display: none; }
-  .lib-parallel-col { display: flex; flex-direction: column; }
-  .lib-parallel-col::before {
-    content: "ABP";
-    font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--gold); background: var(--gold-soft); padding: 2px 8px; border-radius: 20px;
-    align-self: flex-start; margin-bottom: 4px;
+  .lib-parallel-vnum {
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-4);
+    letter-spacing: 0.06em;
+    padding: 6px 0 4px;
+    border-top: 1px solid var(--rule);
+    margin-top: 2px;
   }
-  .lib-parallel-col:last-child::before { content: "KJV"; }
-  .lib-parallel-col:last-child { border-top: 1px solid var(--rule); padding-top: 8px; margin-top: 4px; }
-  .lib-parallel-col:last-child .lib-vnum { display: none; }
+  .lib-parallel-verse:first-child .lib-parallel-vnum { border-top: none; margin-top: 0; }
+  .lib-parallel-col:last-child { padding-top: 4px; margin-top: 2px; }
+  .lib-parallel-col .lib-vnum { display: none; }
 }
 .mbar-btn { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); flex: 0 0 auto; }
 .mbar-btn:active { background: rgba(15,27,45,0.06); }
