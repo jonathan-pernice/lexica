@@ -1485,12 +1485,7 @@ input { font-family: inherit; }
 
 /* Bracket group wrapper — inline-flex so [ words ] stay on one visual unit */
 .lib-bracket-group {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0;
-  flex-wrap: wrap;
-  max-width: 100%;
-  min-width: 0;
+  display: contents;
 }
 .lib-bracket-unit {
   display: inline-flex;
