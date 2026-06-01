@@ -1608,10 +1608,9 @@ input { font-family: inherit; }
 }
 @media (max-width: 1023px) {
   .hdr { display: none; }
-  .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 48px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); border-bottom: 1px solid var(--rule); gap: 4px; }
+  .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 48px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); gap: 4px; }
   .lib-heading { display: none; }
   .lib-reading { overflow-x: hidden; max-width: 100%; padding: 10px 12px; }
-  .library { overflow-x: hidden; }
   /* Prose: slightly tighter for mobile reading */
   .lib-text-words { font-size: 15px; line-height: 1.65; }
   .lib-verse-row { margin-bottom: 3px; }
@@ -1635,7 +1634,8 @@ input { font-family: inherit; }
 }
 .mbar-btn { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); flex: 0 0 auto; }
 .mbar-btn:active { background: rgba(15,27,45,0.06); }
-.mbar-loc { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 42px; border-radius: 10px; padding: 0 12px; }
+.mbar-center { flex: 1; display: flex; align-items: center; justify-content: center; gap: 2px; }
+.mbar-loc { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 42px; border-radius: 10px; padding: 0 12px; }
 .mbar-loc:active { background: rgba(15,27,45,0.05); }
 .mbar-loc-name { font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
 .mbar-loc-ch { font-family: var(--f-mono); font-size: 15px; color: var(--accent); font-weight: 500; }

@@ -2037,13 +2037,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           <button className="mbar-btn" onClick={() => setMobileNavOpen(true)} aria-label="Books">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
           </button>
-          <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => setSelChapter(c => Math.max(1, c - 1))} aria-label="Previous chapter">‹</button>
-          <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
-            <span className="mbar-loc-name">{selBook ? selBook.name : "Select book"}</span>
-            <span className="mbar-loc-ch">{selChapter}</span>
-            <svg className="mbar-loc-cv" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))} aria-label="Next chapter">›</button>
+          <div className="mbar-center">
+            <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => setSelChapter(c => Math.max(1, c - 1))} aria-label="Previous chapter">‹</button>
+            <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
+              <span className="mbar-loc-name">{selBook ? selBook.name : "Select book"}</span>
+              <span className="mbar-loc-ch">{selChapter}</span>
+              <svg className="mbar-loc-cv" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))} aria-label="Next chapter">›</button>
+          </div>
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
             {translation === "parallel" ? "Parallel" : translation.toUpperCase()}
           </button>
