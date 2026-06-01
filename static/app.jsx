@@ -2005,6 +2005,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <div className="mode-lbl">Font Size</div>
               <div className="mseg">
                 <button className="mseg-b" onClick={() => changeFontSize(-1)}>A−</button>
+                <span className="font-size-lbl">{libFontSize}</span>
                 <button className="mseg-b" onClick={() => changeFontSize(+1)}>A+</button>
               </div>
             </div>
@@ -2066,6 +2067,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg">
               <button className="seg-b" onClick={() => changeFontSize(-1)}>A−</button>
+              <span className="font-size-lbl">{libFontSize}</span>
               <button className="seg-b" onClick={() => changeFontSize(+1)}>A+</button>
             </div>
           </div>

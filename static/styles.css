@@ -1692,9 +1692,10 @@ input { font-family: inherit; }
 .mode-sec { padding: 16px 18px; border-top: 1px solid var(--rule); }
 .mode-lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 11px; }
 .mseg { display: flex; background: var(--bg-sunk); border: 1px solid var(--rule); border-radius: 11px; padding: 3px; gap: 2px; }
-.mseg-b { flex: 1; text-align: center; font-size: 14.5px; color: var(--ink-3); padding: 10px 0; border-radius: 8px; }
+.mseg-b { flex: 1; text-align: center; font-size: 14.5px; color: var(--ink-3); padding: 10px 0; border-radius: 8px; transition: background 0.1s, color 0.1s; }
 .mseg-b.on { background: #fff; color: var(--ink); font-weight: 600; box-shadow: var(--shadow-sm); }
-.mseg-b:active:not(.on) { color: var(--ink); }
+.mseg-b:active:not(.on) { background: rgba(0,0,0,0.08); color: var(--ink); }
+.font-size-lbl { font-size: 12px; color: var(--ink-3); min-width: 22px; text-align: center; align-self: center; user-select: none; pointer-events: none; }
 .mtog { display: flex; flex-direction: column; }
 .mtog-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 0; }
 .mtog-row + .mtog-row { border-top: 1px solid var(--rule); }
@@ -2292,9 +2293,10 @@ input { font-family: inherit; }
   .ch-of { color: var(--ink-4); }
 
   .seg { display: inline-flex; background: var(--bg-sunk); border: 1px solid var(--rule); border-radius: 8px; padding: 2px; }
-  .seg-b { font-size: 12.5px; color: var(--ink-3); padding: 5px 11px; border-radius: 6px; }
+  .seg-b { font-size: 12.5px; color: var(--ink-3); padding: 5px 11px; border-radius: 6px; transition: background 0.1s, color 0.1s; }
   .seg-b:hover { color: var(--ink); }
   .seg-b.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 500; }
+  .seg-b:active:not(.on) { background: var(--bg-sunk); color: var(--ink); }
   .seg-sm .seg-b { font-size: 11.5px; padding: 4px 9px; }
 
   .lib-toggle {
