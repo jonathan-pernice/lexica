@@ -1618,7 +1618,7 @@ input { font-family: inherit; }
   .lib-iw-english { font-size: 15px; }
   .lib-iw-strongs { font-size: 9px; }
   /* Parallel: stack columns vertically */
-  .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 16px; }
+  .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 16px; border-bottom: none; }
   .lib-parallel-vnum {
     display: flex;
     justify-content: center;
