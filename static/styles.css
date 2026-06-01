@@ -1270,7 +1270,7 @@ input { font-family: inherit; }
 .lib-order-btn.on { color: var(--ink); background: #fff; box-shadow: var(--shadow-sm); }
 
 .lib-reading { width: 100%; padding: 16px; font-family: var(--f-serif); }
-@media (min-width: 861px) {
+@media (min-width: 1100px) {
   .has-detail .lib-reading { padding-right: calc(460px + 16px); }
 }
 
@@ -1608,7 +1608,7 @@ input { font-family: inherit; }
 @media (max-width: 520px) {
   .results { grid-template-columns: 1fr; }
 }
-@media (max-width: 860px) {
+@media (max-width: 1099px) {
   .hdr { display: none; }
   .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 56px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); gap: 4px; }
   .lib-heading { display: none; }
@@ -2224,7 +2224,7 @@ input { font-family: inherit; }
 /* ============================================================
    READING TOOLBAR (new bar — desktop library, ≥1024px only)
 ============================================================ */
-@media (min-width: 861px) {
+@media (min-width: 1100px) {
   .lib-select { display: none; }
 
   .lib-bar {
