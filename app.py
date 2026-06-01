@@ -1225,10 +1225,6 @@ _load_ai_cache_from_db()
 def index():
     return render_template("index.html")
 
-@app.route("/library")
-def library():
-    return render_template("library.html")
-
 
 def _hebrew_search(conn, h_id, out_rows, out_groupings):
     h_id = h_id.upper()
