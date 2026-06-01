@@ -2015,7 +2015,7 @@ input { font-family: inherit; }
 .mpick-back { flex: 0 0 auto; font-size: 14px; color: var(--accent); min-width: 60px; text-align: left; }
 .mpick-x { flex: 0 0 auto; font-size: 16px; color: var(--ink-3); min-width: 60px; text-align: right; padding: 0 2px; }
 .mpick-x:active, .mpick-back:active { opacity: 0.6; }
-.mpick-scroll { flex: 1; overflow-y: auto; padding: 16px 14px 40px; }
+.mpick-scroll { flex: 1; overflow-y: auto; padding: 16px 14px calc(70px + env(safe-area-inset-bottom, 0px)); }
 .mpick-section { margin-bottom: 24px; }
 .mpick-sec-label {
   font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
@@ -2028,17 +2028,14 @@ input { font-family: inherit; }
   gap: 7px;
 }
 .mpick-btn {
-  padding: 11px 4px;
-  border-radius: 7px;
+  padding: 8px 4px;
   font-family: var(--f-mono);
-  font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
   color: var(--ink-2);
-  background: var(--paper);
-  border: 1px solid var(--rule);
   text-align: center;
 }
-.mpick-btn:hover { border-color: var(--ink-3); color: var(--ink); }
-.mpick-btn:active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.mpick-btn:hover { color: var(--ink); }
+.mpick-btn:active { color: var(--accent); }
 
 .nav {
   border-right: 1px solid var(--rule);
