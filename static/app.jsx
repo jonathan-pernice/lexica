@@ -1506,11 +1506,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
   const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1100);
+  const [desktopBar, setDesktopBar] = useState(typeof window !== "undefined" && window.innerWidth >= 861);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
 
   useEffect(() => {
-    const _onResize = () => setNavVisible(window.innerWidth >= 1100);
+    const _onResize = () => { setNavVisible(window.innerWidth >= 1100); setDesktopBar(window.innerWidth >= 861); };
     window.addEventListener("resize", _onResize);
     return () => window.removeEventListener("resize", _onResize);
   }, []);
@@ -1923,7 +1924,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           setSelChapter={setSelChapter}
         />
       )}
-      {!navVisible && mobileNavOpen && (
+      {!desktopBar && mobileNavOpen && (
         <MobileBookPicker
           books={books}
           selBook={selBook}
@@ -1932,7 +1933,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           onClose={() => setMobileNavOpen(false)}
         />
       )}
-      {!navVisible && modesOpen && (
+      {!desktopBar && modesOpen && (
         <>
           <div className="sheet-scrim" onClick={() => setModesOpen(false)} />
           <div className="msheet">
@@ -1979,7 +1980,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </>
       )}
       <div>
-      {navVisible ? (
+      {desktopBar ? (
         <div className="lib-bar">
           <div className="lib-bar-l">
             <div className="bar-ch">
