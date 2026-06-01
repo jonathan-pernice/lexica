@@ -2025,7 +2025,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 const kjvV = kjvMap[abpV.verse];
                 return (
                   <div key={abpV.verse} className="lib-parallel-verse">
-                    <div className="lib-parallel-vnum">{abpV.verse}</div>
+                    <div className="lib-parallel-vnum">{vnumEl(abpV.verse)}</div>
                     <div className="lib-parallel-col">
                       {renderVerse(abpV)}
                     </div>

@@ -1620,16 +1620,13 @@ input { font-family: inherit; }
   /* Parallel: stack columns vertically */
   .lib-parallel-verse { grid-template-columns: 1fr; gap: 0; font-size: 16px; }
   .lib-parallel-vnum {
-    text-align: center;
-    font-family: var(--f-mono);
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--ink-4);
-    letter-spacing: 0.06em;
+    display: flex;
+    justify-content: center;
     padding: 6px 0 4px;
     border-top: 1px solid var(--rule);
     margin-top: 2px;
   }
+  .lib-parallel-vnum .lib-vnum { font-size: 9px; }
   .lib-parallel-verse:first-child .lib-parallel-vnum { border-top: none; margin-top: 0; }
   .lib-parallel-col:last-child { padding-top: 4px; margin-top: 2px; }
   .lib-parallel-col .lib-vnum { display: none; }
