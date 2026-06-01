@@ -1309,10 +1309,12 @@ input { font-family: inherit; }
   margin: 1.5rem 0 0.5rem;
   padding-bottom: 0.25rem;
   border-bottom: 1px solid var(--border);
-  width: 100%;
   display: block;
 }
 .pericope-heading:first-child { margin-top: 0.5rem; }
+@media (min-width: 1100px) {
+  .lib-text-words:not(.lib-prose-flow) .pericope-heading { margin-left: 45px; }
+}
 
 /* Prose continuous flow (non-poetry) */
 .lib-prose-flow { line-height: 1.85; }
