@@ -2067,7 +2067,7 @@ input { font-family: inherit; }
 }
 .mpick-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 7px;
 }
 .mpick-btn {
@@ -2079,6 +2079,7 @@ input { font-family: inherit; }
 }
 .mpick-btn:hover { color: var(--ink); }
 .mpick-btn:active { color: var(--accent); }
+.mpick-btn.on { color: var(--accent); font-weight: 700; }
 
 .nav {
   border-right: 1px solid var(--rule);
