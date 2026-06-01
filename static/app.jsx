@@ -1766,17 +1766,31 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               if (!text) return null;
               const isPunct = /^[.,;:?!—)]/.test(text);
               if (isPunct) return <span key={i}>{text}</span>;
-              if (w.italic_words && text.includes(' ')) {
-                const iset = new Set(w.italic_words.split(','));
-                return (
-                  <React.Fragment key={i}>
-                    {text.split(' ').filter(Boolean).map((word, pi) => {
-                      const bare = word.replace(/[^\w]/g, '').toLowerCase();
-                      const isItalic = iset.has(bare) || !!w.italic;
-                      return <span key={pi} className={isItalic ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
-                    })}
-                  </React.Fragment>
-                );
+              if (text.includes(' ')) {
+                if (w.italic_words) {
+                  const iset = new Set(w.italic_words.split(','));
+                  return (
+                    <React.Fragment key={i}>
+                      {text.split(' ').filter(Boolean).map((word, pi) => {
+                        const bare = word.replace(/[^\w]/g,'').toLowerCase();
+                        return <span key={pi} className={iset.has(bare) ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
+                      })}
+                    </React.Fragment>
+                  );
+                }
+                if (w.italic) {
+                  const headBare = w.english_head ? w.english_head.replace(/[^\w]/g,'').toLowerCase() : null;
+                  return (
+                    <React.Fragment key={i}>
+                      {text.split(' ').filter(Boolean).map((word, pi) => {
+                        const bare = word.replace(/[^\w]/g,'').toLowerCase();
+                        const isItalic = !headBare || bare === headBare;
+                        return <span key={pi} className={isItalic ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
+                      })}
+                    </React.Fragment>
+                  );
+                }
+                return <span key={i}>{text + " "}</span>;
               }
               return <span key={i} className={!!w.italic ? "lib-prose-italic" : undefined}>{text + " "}</span>;
             })}
