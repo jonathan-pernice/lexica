@@ -1808,7 +1808,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     if (!wordMode) {
       return (
         <React.Fragment key={v.verse}>
-          {v.heading && <div className="pericope-heading">{v.heading}</div>}
+          {v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
           <div ref={isHighlight ? highlightRef : null}
             className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
             {vnumEl(v.verse)}
@@ -1862,7 +1862,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
     return (
       <React.Fragment key={v.verse}>
-        {v.heading && <div className="pericope-heading">{v.heading}</div>}
+        {v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
         <div ref={isHighlight ? highlightRef : null}
           className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
           {vnumEl(v.verse)}
