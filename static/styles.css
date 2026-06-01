@@ -1293,7 +1293,7 @@ input { font-family: inherit; }
 .lib-text-words {
   font-family: var(--f-serif);
   font-size: 18px;
-  line-height: 2;
+  line-height: 1.7;
   color: var(--ink);
   text-align: left;
 }
@@ -1303,7 +1303,7 @@ input { font-family: inherit; }
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   padding-left: 5px;
 }
 
