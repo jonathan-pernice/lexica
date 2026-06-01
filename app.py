@@ -1899,10 +1899,12 @@ def chapter_text(book, chapter):
             """SELECT v.verse, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
                       l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic,
                       COALESCE(w.italic_words, '') AS italic_words,
-                      COALESCE(w.smcap_words,  '') AS smcap_words
+                      COALESCE(w.smcap_words,  '') AS smcap_words,
+                      p.heading
                FROM verses v
                JOIN words w ON w.verse_id = v.id
                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+               LEFT JOIN pericopes p ON p.book = v.book AND p.chapter = v.chapter AND p.verse = v.verse
                WHERE v.book = ? AND v.chapter = ?
                ORDER BY v.verse, w.position""",
             (book, chapter),
@@ -1914,7 +1916,7 @@ def chapter_text(book, chapter):
     for r in rows:
         vn = r["verse"]
         if vn not in verses:
-            verses[vn] = {"words": []}
+            verses[vn] = {"words": [], "heading": r["heading"]}
             order.append(vn)
         verses[vn]["words"].append({
             "position":     r["position"],
@@ -1934,6 +1936,7 @@ def chapter_text(book, chapter):
     return jsonify([
         {
             "verse": v,
+            "heading": verses[v]["heading"],
             "words": verses[v]["words"],
         }
         for v in order

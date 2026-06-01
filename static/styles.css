@@ -1293,11 +1293,39 @@ input { font-family: inherit; }
 /* Verse reading container — all modes */
 .lib-text-words {
   font-family: var(--f-serif);
-  font-size: 18px;
+  font-size: var(--lib-font-size, 18px);
   line-height: 1.7;
   color: var(--ink);
   text-align: left;
 }
+
+/* Pericope / section headings */
+.pericope-heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-2);
+  margin: 1.5rem 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+  display: block;
+}
+.pericope-heading:first-child { margin-top: 0.5rem; }
+
+/* Prose continuous flow (non-poetry) */
+.lib-prose-flow { line-height: 1.85; }
+.lib-flow-verse { display: inline; }
+.lib-flow-vnum {
+  font-size: 0.58em;
+  color: var(--ink-3);
+  vertical-align: super;
+  cursor: pointer;
+  margin-right: 0.15em;
+  user-select: none;
+}
+.lib-flow-vnum:hover { color: var(--accent); }
 
 /* Each verse: fixed number column + content column */
 .lib-verse-row {
@@ -1607,8 +1635,7 @@ input { font-family: inherit; }
   .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 56px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); gap: 4px; }
   .lib-heading { display: none; }
   .lib-reading { overflow-x: hidden; max-width: 100%; padding: 10px 12px; }
-  /* Prose: slightly tighter for mobile reading */
-  .lib-text-words { font-size: 15px; line-height: 1.65; }
+  .lib-text-words { line-height: 1.65; }
   .lib-verse-row { margin-bottom: 3px; }
   /* Chip: smaller word size to fit more per line */
   .lib-iw-english { font-size: 15px; }

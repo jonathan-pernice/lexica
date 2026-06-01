@@ -1503,6 +1503,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [libOptions, setLibOptions] = useState({
     viewMode: "chip", showStrongs: false, showInterlinear: false,
   });
+  const [libFontSize, setLibFontSize] = useState(() => {
+    const stored = localStorage.getItem("libFontSize");
+    if (stored) return parseInt(stored, 10);
+    return window.innerWidth < 1100 ? 15 : 18;
+  });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
   const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1100);
@@ -1573,6 +1578,17 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const wordMode    = chipMode;
   const kjvWordMode = chipMode;
 
+  const POETRY_BOOKS = new Set(["Psa", "Pro", "Job", "Son", "Lam"]);
+  const isPoetry = POETRY_BOOKS.has(selBook?.abbrev);
+
+  const changeFontSize = (delta) => {
+    setLibFontSize(prev => {
+      const next = Math.min(24, Math.max(13, prev + delta));
+      localStorage.setItem("libFontSize", String(next));
+      return next;
+    });
+  };
+
   const handleVerseNum = onVerseNumberClick && selBook
     ? (verse) => onVerseNumberClick(selBook.abbrev, selChapter, verse, translation)
     : null;
@@ -1590,6 +1606,43 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       if (i === 0) return tok;
       return /^[.,;:?!—)]/.test(tok) ? acc + tok : acc + " " + tok;
     }, "");
+  };
+
+  const renderProseWords = (v) => {
+    const englishWords = getEnglishOrderWords(v.words);
+    return englishWords.map((w, i) => {
+      const text = w.english || "";
+      if (!text) return null;
+      const isPunct = /^[.,;:?!—)]/.test(text);
+      if (isPunct) return <span key={i}>{text}</span>;
+      if (text.includes(' ')) {
+        if (w.italic_words) {
+          const iset = new Set(w.italic_words.split(','));
+          return (
+            <React.Fragment key={i}>
+              {text.split(' ').filter(Boolean).map((word, pi) => {
+                const bare = word.replace(/[^\w]/g,'').toLowerCase();
+                return <span key={pi} className={iset.has(bare) ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
+              })}
+            </React.Fragment>
+          );
+        }
+        if (w.italic) {
+          const headBare = w.english_head ? w.english_head.replace(/[^\w]/g,'').toLowerCase() : null;
+          return (
+            <React.Fragment key={i}>
+              {text.split(' ').filter(Boolean).map((word, pi) => {
+                const bare = word.replace(/[^\w]/g,'').toLowerCase();
+                const isItalic = !headBare || bare === headBare;
+                return <span key={pi} className={isItalic ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
+              })}
+            </React.Fragment>
+          );
+        }
+        return <span key={i}>{text + " "}</span>;
+      }
+      return <span key={i} className={!!w.italic ? "lib-prose-italic" : undefined}>{text + " "}</span>;
+    });
   };
 
   const renderVerse = (v) => {
@@ -1755,47 +1808,17 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     };
 
     if (!wordMode) {
-      const englishWords = getEnglishOrderWords(v.words);
       return (
-        <div key={v.verse} ref={isHighlight ? highlightRef : null}
-          className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
-          {vnumEl(v.verse)}
-          <span className="lib-verse-content">
-            {englishWords.map((w, i) => {
-              const text = w.english || "";
-              if (!text) return null;
-              const isPunct = /^[.,;:?!—)]/.test(text);
-              if (isPunct) return <span key={i}>{text}</span>;
-              if (text.includes(' ')) {
-                if (w.italic_words) {
-                  const iset = new Set(w.italic_words.split(','));
-                  return (
-                    <React.Fragment key={i}>
-                      {text.split(' ').filter(Boolean).map((word, pi) => {
-                        const bare = word.replace(/[^\w]/g,'').toLowerCase();
-                        return <span key={pi} className={iset.has(bare) ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
-                      })}
-                    </React.Fragment>
-                  );
-                }
-                if (w.italic) {
-                  const headBare = w.english_head ? w.english_head.replace(/[^\w]/g,'').toLowerCase() : null;
-                  return (
-                    <React.Fragment key={i}>
-                      {text.split(' ').filter(Boolean).map((word, pi) => {
-                        const bare = word.replace(/[^\w]/g,'').toLowerCase();
-                        const isItalic = !headBare || bare === headBare;
-                        return <span key={pi} className={isItalic ? "lib-prose-italic" : undefined}>{word}{" "}</span>;
-                      })}
-                    </React.Fragment>
-                  );
-                }
-                return <span key={i}>{text + " "}</span>;
-              }
-              return <span key={i} className={!!w.italic ? "lib-prose-italic" : undefined}>{text + " "}</span>;
-            })}
-          </span>
-        </div>
+        <React.Fragment key={v.verse}>
+          {v.heading && <div className="pericope-heading">{v.heading}</div>}
+          <div ref={isHighlight ? highlightRef : null}
+            className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
+            {vnumEl(v.verse)}
+            <span className="lib-verse-content">
+              {renderProseWords(v)}
+            </span>
+          </div>
+        </React.Fragment>
       );
     }
 
@@ -1840,11 +1863,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     }
 
     return (
-      <div key={v.verse} ref={isHighlight ? highlightRef : null}
-        className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
-        {vnumEl(v.verse)}
-        <span className="lib-verse-content lib-verse-chips">{content}</span>
-      </div>
+      <React.Fragment key={v.verse}>
+        {v.heading && <div className="pericope-heading">{v.heading}</div>}
+        <div ref={isHighlight ? highlightRef : null}
+          className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
+          {vnumEl(v.verse)}
+          <span className="lib-verse-content lib-verse-chips">{content}</span>
+        </div>
+      </React.Fragment>
     );
   };
 
@@ -1975,6 +2001,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 <button className={"mseg-b"+(!chipMode?" on":"")} disabled={showStrongs||showInterlinear} style={showStrongs||showInterlinear?{opacity:0.35}:undefined} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}>Prose</button>
               </div>
             </div>
+            <div className="mode-sec">
+              <div className="mode-lbl">Font Size</div>
+              <div className="mseg">
+                <button className="mseg-b" onClick={() => changeFontSize(-1)}>A−</button>
+                <button className="mseg-b" onClick={() => changeFontSize(+1)}>A+</button>
+              </div>
+            </div>
           </div>
         </>
       )}
@@ -2030,6 +2063,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 onClick={() => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")}
               >Prose</button>
             </div>
+            <span className="lib-bar-sep" aria-hidden="true"/>
+            <div className="seg">
+              <button className="seg-b" onClick={() => changeFontSize(-1)}>A−</button>
+              <button className="seg-b" onClick={() => changeFontSize(+1)}>A+</button>
+            </div>
           </div>
         </div>
       ) : (
@@ -2052,7 +2090,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </div>
       )}
 
-      <div className="lib-reading" style={translation === "parallel" ? {paddingTop: 0} : undefined}>
+      <div className="lib-reading" style={{...(translation === "parallel" ? {paddingTop: 0} : {}), "--lib-font-size": libFontSize + "px"}}>
 
         {translation === "parallel" ? (
           <div className="lib-parallel">
@@ -2103,9 +2141,24 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           <div className="lib-text-words">
             {verses.map(v => renderVerse(v))}
           </div>
-        ) : (
+        ) : isPoetry ? (
           <div className="lib-text-words">
             {verses.map(v => renderVerse(v))}
+          </div>
+        ) : (
+          <div className="lib-text-words lib-prose-flow">
+            {verses.map(v => (
+              <React.Fragment key={v.verse}>
+                {v.heading && <div className="pericope-heading">{v.heading}</div>}
+                <span className="lib-flow-verse">
+                  <sup className="lib-flow-vnum"
+                       onClick={handleVerseNum ? () => handleVerseNum(v.verse) : undefined}>
+                    {v.verse}
+                  </sup>
+                  {renderProseWords(v)}
+                </span>
+              </React.Fragment>
+            ))}
           </div>
         )}
       </div>
