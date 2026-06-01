@@ -1612,8 +1612,17 @@ input { font-family: inherit; }
   .hdr { display: none; }
   .lib-toolbar { top: 0; height: 48px; padding: 0 6px; margin-bottom: 12px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); border-bottom: 1px solid var(--rule); gap: 4px; }
   .lib-heading { display: none; }
-  .lib-reading { overflow-x: hidden; max-width: 100%; }
+  .lib-reading { overflow-x: hidden; max-width: 100%; padding: 10px 12px; }
   .library { overflow-x: hidden; }
+  /* Prose: slightly tighter for mobile reading */
+  .lib-text-words { font-size: 17px; line-height: 1.65; }
+  .lib-verse-row { margin-bottom: 3px; }
+  /* Chip: smaller word size to fit more per line */
+  .lib-iw-english { font-size: 15px; }
+  .lib-iw-strongs { font-size: 9px; }
+  /* Parallel: narrow the gap, shrink text */
+  .lib-parallel-verse { gap: 12px; font-size: 14px; }
+  .lib-parallel-header { gap: 12px; padding: 4px 0 8px; }
 }
 .mbar-btn { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); flex: 0 0 auto; }
 .mbar-btn:active { background: rgba(15,27,45,0.06); }
