@@ -675,7 +675,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           )}
         </div>
 
-        {(metavData || metavLoading) && (
+        {(metavLoading || (metavData && (metavType === "person" || metavType === "place"))) && (
           <section className="sec">
             {metavLoading ? (
               <div className="lsj-def lsj-def--loading">Looking up…</div>
