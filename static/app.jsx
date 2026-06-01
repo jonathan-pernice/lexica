@@ -2047,7 +2047,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))} aria-label="Next chapter">›</button>
           </div>
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
-            {translation === "parallel" ? "Parallel" : translation.toUpperCase()}
+            {translation === "parallel" ? "Par" : translation.toUpperCase()}
           </button>
         </div>
       )}
