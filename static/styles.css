@@ -1567,7 +1567,7 @@ input { font-family: inherit; }
     display: flex;
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    background: var(--bg);
+    background: var(--paper);
     border-top: 1px solid var(--rule);
     z-index: 200;
     padding-bottom: env(safe-area-inset-bottom, 0px);
