@@ -1567,9 +1567,6 @@ input { font-family: inherit; }
   display: none;
 }
 @media (max-width: 1099px) {
-  .hdr-inner { padding: 12px 16px; gap: 16px; }
-  .brand-sub { display: none; }
-  .hdr-nav { display: none; }
   .main-inner { padding: 0 16px calc(80px + env(safe-area-inset-bottom, 0px)); max-width: 100%; }
   .search { padding-top: 20px; }
   .mobile-tabs {
@@ -2066,7 +2063,7 @@ input { font-family: inherit; }
 }
 
 /* ============================================================
-   LEFT NAV PANEL + THREE-COLUMN GRID (desktop ≥1024px only)
+   LEFT NAV PANEL + THREE-COLUMN GRID (desktop ≥1100px only)
 ============================================================ */
 @media (min-width: 1100px) {
   .library {
@@ -2222,7 +2219,7 @@ input { font-family: inherit; }
 .ch-chip.on { color: var(--accent); font-weight: 600; }
 
 /* ============================================================
-   READING TOOLBAR (new bar — desktop library, ≥1024px only)
+   READING TOOLBAR (new bar — desktop library, ≥1100px only)
 ============================================================ */
 @media (min-width: 1100px) {
   .lib-select { display: none; }

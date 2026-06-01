@@ -1345,7 +1345,7 @@ function groupForGreekMode(words) {
 }
 
 // ============================================================
-// LIB NAV PANEL — desktop left sidebar (≥1024px)
+// LIB NAV PANEL — desktop left sidebar (≥1100px)
 // ============================================================
 
 const _BOOK_DIV = {
