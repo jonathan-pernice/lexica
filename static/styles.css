@@ -2068,7 +2068,7 @@ input { font-family: inherit; }
 /* ============================================================
    LEFT NAV PANEL + THREE-COLUMN GRID (desktop ≥1024px only)
 ============================================================ */
-@media (min-width: 861px) {
+@media (min-width: 1100px) {
   .library {
     display: grid;
     grid-template-columns: 224px minmax(0, 1fr);

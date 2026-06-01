@@ -1505,12 +1505,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
-  const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1024);
+  const [navVisible, setNavVisible] = useState(typeof window !== "undefined" && window.innerWidth >= 1100);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
 
   useEffect(() => {
-    const _onResize = () => setNavVisible(window.innerWidth >= 1024);
+    const _onResize = () => setNavVisible(window.innerWidth >= 1100);
     window.addEventListener("resize", _onResize);
     return () => window.removeEventListener("resize", _onResize);
   }, []);
