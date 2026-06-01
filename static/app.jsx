@@ -1762,24 +1762,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
     if (!wordMode) {
       const englishWords = getEnglishOrderWords(v.words);
+      const text = joinProse(englishWords);
       return (
         <div key={v.verse} ref={isHighlight ? highlightRef : null}
           className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
           {vnumEl(v.verse)}
-          <span className="lib-verse-content">
-            {englishWords.map((w, i) => {
-              const text = w.english || "";
-              if (!text) return null;
-              const isPunct = /^[.,;:?!—)]/.test(text);
-              const clickable = !isPunct && !!(onWordClick && w.strongs_base && w.strongs_base !== "*");
-              return (
-                <span key={i}
-                  className={"lib-prose-word" + (clickable ? " lib-word-clickable" : "") + (w.italic ? " lib-abp-italic" : "")}
-                  onClick={clickable ? () => onWordClick(makeEntry(w)) : undefined}
-                >{isPunct ? text : text + " "}</span>
-              );
-            })}
-          </span>
+          <span className="lib-verse-content">{text}</span>
         </div>
       );
     }
@@ -1886,27 +1874,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     return (
       <div key={v.verse} className="lib-verse-row">
         {showVerseNum && vnumEl(v.verse)}
-        <span className="lib-verse-content">
-          {v.words.map((w, i) => {
-            const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
-            const clickable = !!(onWordClick && sid);
-            return (
-              <span key={i}
-                className={"lib-prose-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : "")}
-                onClick={clickable ? () => onWordClick({
-                  id: `kjv-${selBook.abbrev}-${selChapter}-${v.verse}-${w.word_id}`,
-                  strongs: sid || "", strongs_base: sid ? sid.slice(1) : "",
-                  strongs_raw: sid ? sid.slice(1) : "", greek: w.lemma || "",
-                  translit: w.xlit || "", gloss: w.word,
-                  ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
-                  book: selBook.abbrev, chapter: selChapter, verse: v.verse,
-                  definition: "", derivation: "", is_function: false,
-                  isKjv: true, isHebrew: sid ? sid.startsWith("H") : false,
-                }) : undefined}
-              >{w.word}{w.punc || ""}{" "}</span>
-            );
-          })}
-        </span>
+        <span className="lib-verse-content">{v.verse_text}</span>
       </div>
     );
   };
