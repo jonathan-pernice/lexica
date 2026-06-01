@@ -1194,25 +1194,30 @@ input { font-family: inherit; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  padding: 8px 0 16px;
+  padding: 6px 0 10px;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 .lib-parallel-label {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-3);
-  text-align: center;
+  color: var(--gold);
+  background: var(--gold-soft);
+  padding: 3px 10px;
+  border-radius: 20px;
 }
 .lib-parallel-verse {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  padding: 10px 0;
+  padding: 6px 0;
   border-bottom: 1px solid var(--rule);
-  line-height: 1.75;
+  line-height: 1.65;
   font-size: 16px;
 }
 .lib-parallel-col { color: var(--ink); }
@@ -1421,6 +1426,7 @@ input { font-family: inherit; }
   align-items: baseline;
   gap: 4px 0;
   max-width: 100%;
+  line-height: 1;
 }
 
 .lib-highlight {
