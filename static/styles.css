@@ -1263,8 +1263,8 @@ input { font-family: inherit; }
 .lib-order-btn:hover { color: var(--ink); }
 .lib-order-btn.on { color: var(--ink); background: #fff; box-shadow: var(--shadow-sm); }
 
-.lib-reading { width: 100%; padding: 0 24px; }
-.has-detail .lib-reading { padding-right: calc(460px + 24px); }
+.lib-reading { width: 100%; padding: 16px; }
+.has-detail .lib-reading { padding-right: calc(460px + 16px); }
 
 .lib-heading {
   font-family: var(--f-serif);
