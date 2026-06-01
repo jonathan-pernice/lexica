@@ -2054,7 +2054,7 @@ input { font-family: inherit; }
   flex: 0 0 auto;
 }
 .mpick-head-spacer { flex: 0 0 60px; }
-.mpick-title { flex: 1; font-size: 15px; font-weight: 600; color: var(--ink); text-align: center; }
+.mpick-title { flex: 1; font-size: 15px; font-weight: 800; color: oklch(0.5 0.18 240); text-align: center; }
 .mpick-back { flex: 0 0 auto; font-size: 14px; color: var(--accent); min-width: 60px; text-align: left; }
 .mpick-x { flex: 0 0 auto; font-size: 16px; color: var(--ink-3); min-width: 60px; text-align: right; padding: 0 2px; }
 .mpick-x:active, .mpick-back:active { opacity: 0.6; }
