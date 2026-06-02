@@ -2662,7 +2662,7 @@ function App() {
   const [corpusSort, setCorpusSort] = useState("curated"); // "curated" | "canonical"
   const [corpusTextMode, setCorpusTextMode] = useState("abp"); // "abp" | "kjv"
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1100);
-  const [mainView, setMainView] = useState("lexicon");
+  const [mainView, setMainView] = useState("library");
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
   const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
@@ -2738,7 +2738,7 @@ function App() {
     setShowTour(false);
   };
 
-  const [libEverVisited, setLibEverVisited] = useState(false);
+  const [libEverVisited, setLibEverVisited] = useState(true);
   const searchScrollRef = useRef(0);
 
   const handleReadInContext = (book, chapter, verse) => {
