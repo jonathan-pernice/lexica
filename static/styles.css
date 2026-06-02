@@ -2243,10 +2243,6 @@ input { font-family: inherit; }
   .seg-b:active:not(.on) { background: var(--bg-sunk); color: var(--ink); }
   .seg-sm .seg-b { font-size: 11.5px; padding: 4px 9px; }
 
-  /* Comfortable reading width — centers text in the panel, leaves breathing room */
-  .lib-text-words,
-  .lib-prose-flow { max-width: 70ch; margin: 0 auto; }
-
   .lib-toggle {
     font-size: 12.5px; color: var(--ink-3);
     padding: 6px 12px; border-radius: 8px;
