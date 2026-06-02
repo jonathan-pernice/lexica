@@ -275,15 +275,7 @@ input { font-family: inherit; }
 .lexicon-verse-lib-link { background: none; border: none; color: var(--accent, #6b82c8); font-size: 11px; font-weight: 500; cursor: pointer; padding: 0; white-space: nowrap; opacity: 0.7; }
 .lexicon-verse-lib-link:hover { opacity: 1; text-decoration: underline; }
 .lex-hl { font-weight: 700; color: var(--gold, #b8860b); }
-.search-grid {
-  display: grid;
-  grid-template-columns: minmax(180px, 320px) 1px 1fr;
-  gap: 28px;
-  align-items: stretch;
-}
-.search-divider {
-  background: linear-gradient(180deg, transparent, var(--rule) 20%, var(--rule) 80%, transparent);
-}
+
 .search-cell { display: flex; flex-direction: column; gap: 10px; }
 .search-label { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .search-eyebrow {
@@ -967,25 +959,7 @@ input { font-family: inherit; }
    RESULTS CONTROLS
 ============================================================ */
 .results-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.view-toggle {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 3px;
-  background: var(--bg-sunk);
-  border-radius: 8px;
-}
-.view-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 7px;
-  border-radius: 6px;
-  color: var(--ink-4);
-  transition: color 0.15s, background 0.15s;
-}
-.view-btn:hover { color: var(--ink); background: rgba(255,255,255,0.5); }
-.view-btn.on { color: var(--ink); background: #fff; box-shadow: var(--shadow-sm); }
+
 
 /* ============================================================
    CORPUS SEARCH RESULTS
@@ -1857,128 +1831,7 @@ input { font-family: inherit; }
 }
 .switch.on::after { transform: translateX(20px); }
 
-/* ── Search breadcrumb trail ──────────────────────────── */
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2px 4px;
-  padding: 10px 0 2px;
-  font-size: 13px;
-}
-.breadcrumb-item {
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 13px;
-  color: var(--accent);
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-style: dotted;
-  text-decoration-color: oklch(0.65 0.06 240);
-}
-.breadcrumb-item:hover {
-  text-decoration-style: solid;
-  color: var(--ink);
-}
-.breadcrumb-sep {
-  color: var(--ink-4);
-  font-size: 12px;
-  user-select: none;
-  padding: 0 1px;
-}
-.breadcrumb-current {
-  color: var(--ink-2);
-  font-weight: 500;
-}
 
-/* ── Strong's gloss groupings ─────────────────────────── */
-.gloss-groupings {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin: 10px 0 4px;
-  padding: 11px 14px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: var(--r-md);
-}
-.gloss-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  row-gap: 4px;
-}
-.gloss-group-head {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-}
-.gloss-strongs-btn {
-  font-family: var(--f-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-  background: none;
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  padding: 1px 5px;
-  cursor: pointer;
-  line-height: 1.5;
-}
-.gloss-strongs-btn:hover { background: var(--accent-soft); }
-.gloss-translit {
-  font-size: 12px;
-  font-style: italic;
-  color: var(--ink-3);
-}
-.gloss-also {
-  font-size: 12px;
-  color: var(--ink-4);
-}
-.gloss-chips {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-.gloss-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--bg-sunk);
-  border: 1px solid var(--rule);
-  border-radius: 20px;
-  padding: 2px 9px 2px 10px;
-  font-size: 12px;
-  cursor: pointer;
-  color: var(--ink-2);
-  transition: background 0.1s, border-color 0.1s, color 0.1s;
-}
-.gloss-chip:hover {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.gloss-chip-count {
-  font-size: 10px;
-  color: var(--ink-4);
-  font-variant-numeric: tabular-nums;
-}
-.gloss-siblings {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-.gloss-sibling-btn {
-  opacity: 0.65;
-}
-.gloss-sibling-btn:hover {
-  opacity: 1;
-}
 
 /* ============================================================
    GUIDED TOUR OVERLAY

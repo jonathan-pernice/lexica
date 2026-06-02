@@ -2662,9 +2662,7 @@ function App() {
   const [libCrossRef, setLibCrossRef] = useState(null);
   const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
   const [libTranslation, setLibTranslation] = useState("abp");
-  const [abpGroupings, setAbpGroupings] = useState({});
-  const [kjvGroupings, setKjvGroupings] = useState({});
-  const [variants, setVariants] = useState({});
+
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 1100);
