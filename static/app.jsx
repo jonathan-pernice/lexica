@@ -2435,7 +2435,7 @@ function AboutView() {
 // ============================================================
 const _STRONGS_RE = /^[GgHh]?\d+(\.\d+)?$/;
 
-function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, onPendingStrongsConsumed }) {
+function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pendingStrongs, onPendingStrongsConsumed }) {
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -2598,25 +2598,42 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
         </div>
       )}
 
-      {groupings && (
+      {groupings && !profile && (
         <div className="lexicon-groupings">
-          <div className="lexicon-groupings-label">rendered as "{query.trim()}"</div>
-          <div className="lexicon-group-chips">
-            {groupings.map(g => {
-              const isSelected = profile?.strongs === g.strongs;
-              return (
-                <button key={g.strongs}
-                  className={"lexicon-group-chip" + (isSelected ? " active" : "")}
-                  onClick={() => {
-                    if (isSelected) { setProfile(null); setSelectedBook(null); setVerseList(null); setPendingGloss(null); }
-                    else { setPendingGloss(null); loadProfile(g.strongs); }
-                  }}>
-                  {g.strongs}
+          <div className="lexicon-groupings-label">{groupings.length} lemma{groupings.length !== 1 ? "s" : ""} rendered as "{query.trim()}"</div>
+          {groupings.map(g => (
+            <div key={g.strongs} className="lexicon-group-row">
+              <button className="lexicon-group-sn" onClick={() => {
+                if (!onWordClick) return;
+                onWordClick({
+                  id: `lex-${g.strongs}`,
+                  strongs: g.strongs,
+                  strongs_base: g.strongs,
+                  strongs_raw: g.strongs.replace(/^[GH]/i, ''),
+                  greek: g.lemma || '',
+                  translit: g.translit || '',
+                  gloss: (g.glosses[0] || {}).gloss || '',
+                  ref: '', book: '', chapter: '', verse: '',
+                  definition: '', derivation: '', is_function: false,
+                  isHebrew: g.strongs.startsWith('H'),
+                });
+              }}>{g.strongs}</button>
+              {g.lemma && <span className="lexicon-group-lemma">{g.lemma}</span>}
+              {g.translit && <span className="lexicon-group-translit">{g.translit}</span>}
+              <span className="lexicon-group-appears">appears as</span>
+              {(g.glosses || []).map(({gloss, count}) => (
+                <button key={gloss} className="lexicon-group-chip"
+                  onClick={() => { loadProfile(g.strongs); setPendingGloss(gloss); }}>
+                  {gloss} <span className="lexicon-group-chip-count">{count}</span>
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          ))}
         </div>
+      )}
+
+      {profile && groupings && (
+        <button className="lexicon-back" onClick={() => { setProfile(null); setSelectedBook(null); setVerseList(null); setPendingGloss(null); }}>← rendered as "{query.trim()}"</button>
       )}
 
       {profile && (
@@ -3051,6 +3068,7 @@ function App() {
               setLibEverVisited(true);
               setMainView("library");
             }}
+            onWordClick={(e) => { setActiveEntry(e); }}
             pendingStrongs={lexiconPendingStrongs}
             onPendingStrongsConsumed={() => setLexiconPendingStrongs(null)}
           />
