@@ -2931,7 +2931,12 @@ function App() {
         {mainView === "about" && <AboutView />}
         {mainView === "lexicon" && <LexiconView
           onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }}
-          onNavigateToLibrary={(book, chapter, verse) => { handleNavChange("library"); setLibNav({ book, chapter, highlight: verse, scroll: true }); }}
+          onNavigateToLibrary={(book, chapter, verse) => {
+            searchScrollRef.current = window.scrollY;
+            setLibNav({ book, chapter, highlight: verse, scroll: true });
+            setLibEverVisited(true);
+            setMainView("library");
+          }}
           pendingStrongs={lexiconPendingStrongs}
           onPendingStrongsConsumed={() => setLexiconPendingStrongs(null)}
         />}
