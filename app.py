@@ -2031,6 +2031,7 @@ def lexicon_verses(strongs, book):
         if corpus == "kjv":
             book_id = _KJV_BOOK_ID.get(book)
             if not book_id:
+                conn.close()
                 return jsonify([])
             rows = conn.execute("""
                 SELECT kv.chapter, kv.verse_num AS verse, kv.verse_text AS text
@@ -2054,11 +2055,11 @@ def lexicon_verses(strongs, book):
                 )
                 ORDER BY v.chapter, v.verse
             """, (book, snum, f"G{snum}", f"H{snum}")).fetchall()
-        return jsonify([{"chapter": r["chapter"], "verse": r["verse"], "text": r["text"]} for r in rows])
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
         conn.close()
+        return jsonify({"error": str(e)}), 500
+    conn.close()
+    return jsonify([{"chapter": r["chapter"], "verse": r["verse"], "text": r["text"]} for r in rows])
 
 
 @app.route("/api/chapter/<book>/<int:chapter>")
