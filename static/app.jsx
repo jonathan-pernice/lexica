@@ -293,19 +293,12 @@ function SearchBar({ q2, setQ2, onAiSearch, aiLoading }) {
   return (
     <section className="search">
       <div className="search-cell">
-        <label className="search-label">
-          <span className="search-eyebrow ai">
-            <span className="ai-dot"></span>
-            Ask the corpus
-          </span>
-          <span className="search-hint">Natural language across the lexicon</span>
-        </label>
         <form className="search-field ai-field" onSubmit={(e) => { e.preventDefault(); onAiSearch(); }}>
           <Icon.Sparkle className="search-icon"/>
           <input
             type="text"
             className="search-input"
-            placeholder="Where does the divine council appear?"
+            placeholder="Ask the corpus… Where does the divine council appear?"
             value={q2}
             onChange={(e) => setQ2(e.target.value)}
           />
@@ -318,7 +311,6 @@ function SearchBar({ q2, setQ2, onAiSearch, aiLoading }) {
           <button className="chip suggest" onClick={() => setQ2("Faith in Paul's letters")}>"Faith in Paul's letters"</button>
           <button className="chip suggest" onClick={() => setQ2("divine council passages")}>"divine council passages"</button>
         </div>
-        <p className="search-morph-note">For detailed grammatical analysis including verb forms and pronoun usage, morphological search coming soon.</p>
       </div>
     </section>
   );
