@@ -1011,7 +1011,7 @@ input { font-family: inherit; }
   gap: 6px;
 }
 .study-word-italic {
-  color: var(--ink-3);
+  color: var(--ink-2);
   font-style: italic;
 }
 .additional-refs-section {
