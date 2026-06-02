@@ -2151,33 +2151,42 @@ def lexicon_verses(strongs, book):
                 ORDER BY kw.chapter, kw.verse_num, kw.position
             """, (sid, book_id, sid) + ((gloss,) if gloss else ())).fetchall()
         else:
-            word_rows = conn.execute(f"""
+            word_rows = conn.execute("""
                 SELECT v.chapter, v.verse, w.english AS word,
                        CASE WHEN w.strongs_base = ? THEN 1 ELSE 0 END AS hl
                 FROM verses v
                 JOIN words w ON w.verse_id = v.id
                 WHERE v.book = ? AND v.id IN (
-                    SELECT verse_id FROM words
-                    WHERE strongs_base = ?{" AND english = ?" if gloss else ""}
+                    SELECT verse_id FROM words WHERE strongs_base = ?
                 )
                 ORDER BY v.chapter, v.verse, w.position
-            """, (sid, book, sid) + ((gloss,) if gloss else ())).fetchall()
+            """, (sid, book, sid)).fetchall()
         verses = {}
         verse_order = []
         gloss_counts = {}
         for r in word_rows:
             key = (r["chapter"], r["verse"])
+            word = r["word"] or ""
+            hl = bool(r["hl"])
             if key not in verses:
                 verses[key] = []
                 verse_order.append(key)
-            word = r["word"] or ""
-            hl = bool(r["hl"])
             entry = {"w": word, "h": hl}
             if corpus == "kjv":
                 entry["i"] = bool(r["italic"])
             verses[key].append(entry)
             if hl and word:
-                gloss_counts[word] = gloss_counts.get(word, 0) + 1
+                norm = _normalize_gloss(word)
+                if norm:
+                    gloss_counts[norm] = gloss_counts.get(norm, 0) + 1
+        # Filter verses to those containing the selected gloss
+        if gloss:
+            filtered_order = []
+            for key in verse_order:
+                words_in_verse = verses[key]
+                if any(bool(e["h"]) and _normalize_gloss(e["w"]) == gloss for e in words_in_verse):
+                    filtered_order.append(key)
+            verse_order = filtered_order
         result_verses = [{"chapter": k[0], "verse": k[1], "words": verses[k]} for k in verse_order]
         result_glosses = sorted([{"gloss": g, "count": c} for g, c in gloss_counts.items()], key=lambda x: -x["count"])
         conn.close()
