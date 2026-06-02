@@ -174,7 +174,7 @@ part-of-speech data — include them freely in SQL without concern. Return exact
   v.book, v.chapter, v.verse,
   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
 JOIN: words w JOIN verses v ON w.verse_id = v.id
-      LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+      LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
 End:  ORDER BY v.id, w.position   LIMIT 500
 
 GENITIVE PHRASES ("sons of God", "son of man", "word of God") — the ABP stores
@@ -241,7 +241,7 @@ or meaning), find its H-number via bdb then bridge to ABP verses using the books
          l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
   FROM words w
   JOIN verses v ON w.verse_id = v.id
-  LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+  LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
   JOIN books bk ON bk.abbrev = v.book
   WHERE (bk.id, v.chapter, v.verse) IN (
       SELECT kw.book_id, kw.chapter, kw.verse_num
@@ -290,7 +290,7 @@ TRANSLATION COMPARISON queries:
          l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
   FROM words w
   JOIN verses v ON w.verse_id = v.id
-  LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+  LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
   JOIN kjv_strongs ks ON ks.strongs_id = 'G' || w.strongs_base
   JOIN kjv_words kw
     ON kw.word_id = ks.word_id
@@ -467,7 +467,7 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
                   COALESCE(w.italic_words, '') AS italic_words,
                   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
            FROM words w
-           LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+           LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
            WHERE w.verse_id = ?
              AND w.english IS NOT NULL AND w.english != ''
              AND w.strongs_base != '*'
@@ -1392,7 +1392,7 @@ def search():
                        l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
                 FROM words w
                 JOIN verses v ON w.verse_id = v.id
-                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+                LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
                 WHERE ({col} = ? OR {col} = ? OR {col} = ?)
                   AND w.english IS NOT NULL AND w.english != ''
                   AND w.strongs_base != '*'
@@ -1416,7 +1416,7 @@ def search():
                            l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
                     FROM words w
                     JOIN verses v ON w.verse_id = v.id
-                    LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+                    LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
                     WHERE (word_boundary(w.english, ?)
                            OR word_boundary(strip_accents(l.translit), ?))
                       AND w.english IS NOT NULL AND w.english != ''
@@ -1437,7 +1437,7 @@ def search():
                            l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
                     FROM words w
                     JOIN verses v ON w.verse_id = v.id
-                    LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+                    LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
                     WHERE (w.english_head = ? COLLATE NOCASE
                            OR w.english = ? COLLATE NOCASE
                            OR word_boundary(strip_accents(l.translit), ?)
@@ -1645,7 +1645,7 @@ def verse_words(book, chapter, verse):
                       w.strongs_base, w.strongs,
                       l.lemma, l.translit, l.kjv_def, l.strongs_def, l.derivation
                FROM words w
-               LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
                WHERE w.verse_id = ?
                ORDER BY w.position""",
             (row["id"],),
@@ -2348,7 +2348,7 @@ def chapter_text(book, chapter):
                       p.heading
                FROM verses v
                JOIN words w ON w.verse_id = v.id
-               LEFT JOIN lexicon l ON l.strongs = w.strongs_base
+               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
                LEFT JOIN pericopes p ON p.book = v.book AND p.chapter = v.chapter AND p.verse = v.verse
                WHERE v.book = ? AND v.chapter = ?
                ORDER BY v.verse, w.position""",
