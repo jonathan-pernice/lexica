@@ -1991,9 +1991,9 @@ def lexicon_profile(strongs):
                 SELECT kw.book_id, COUNT(*) AS cnt
                 FROM kjv_strongs ks
                 JOIN kjv_words kw ON kw.word_id = ks.word_id
-                WHERE ks.strongs_id = ? OR ks.strongs_id = ? OR ks.strongs_id = ?
+                WHERE ks.strongs_id = ? OR ks.strongs_id = ?
                 GROUP BY kw.book_id ORDER BY cnt DESC
-            """, (f"G{snum}", f"H{snum}", snum)).fetchall()
+            """, (f"H{snum}", snum) if is_heb else (f"G{snum}", snum)).fetchall()
             abbrev_by_id = {v: k for k, v in _KJV_BOOK_ID.items()}
             books = []
             for r in dist:
@@ -2004,9 +2004,9 @@ def lexicon_profile(strongs):
             dist = conn.execute("""
                 SELECT v.book, COUNT(*) AS cnt
                 FROM words w JOIN verses v ON w.verse_id = v.id
-                WHERE w.strongs_base = ? OR w.strongs_base = ? OR w.strongs_base = ?
+                WHERE w.strongs_base = ? OR w.strongs_base = ?
                 GROUP BY v.book ORDER BY cnt DESC
-            """, (snum, f"G{snum}", f"H{snum}")).fetchall()
+            """, (snum, f"H{snum}") if is_heb else (snum, f"G{snum}")).fetchall()
             books = [{"book": r["book"], "name": book_meta.get(r["book"], {}).get("name", r["book"]),
                       "testament": book_meta.get(r["book"], {}).get("testament", ""), "count": r["cnt"]} for r in dist]
         total = sum(b["count"] for b in books)
@@ -2041,10 +2041,10 @@ def lexicon_verses(strongs, book):
                     JOIN kjv_strongs ks ON ks.word_id = kw.word_id
                     WHERE kw.book_id = kv.book_id AND kw.chapter = kv.chapter
                       AND kw.verse_num = kv.verse_num
-                      AND (ks.strongs_id = ? OR ks.strongs_id = ? OR ks.strongs_id = ?)
+                      AND (ks.strongs_id = ? OR ks.strongs_id = ?)
                 )
                 ORDER BY kv.chapter, kv.verse_num
-            """, (book_id, f"G{snum}", f"H{snum}", snum)).fetchall()
+            """, (book_id, f"H{snum}", snum) if is_heb else (book_id, f"G{snum}", snum)).fetchall()
         else:
             word_rows = conn.execute("""
                 SELECT v.chapter, v.verse, w.english, w.position
@@ -2052,10 +2052,10 @@ def lexicon_verses(strongs, book):
                 JOIN words w ON w.verse_id = v.id
                 WHERE v.book = ? AND v.id IN (
                     SELECT verse_id FROM words
-                    WHERE strongs_base = ? OR strongs_base = ? OR strongs_base = ?
+                    WHERE strongs_base = ? OR strongs_base = ?
                 )
                 ORDER BY v.chapter, v.verse, w.position
-            """, (book, snum, f"G{snum}", f"H{snum}")).fetchall()
+            """, (book, snum, f"H{snum}") if is_heb else (book, snum, f"G{snum}")).fetchall()
             verse_map = {}
             verse_order = []
             for r in word_rows:
