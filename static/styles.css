@@ -974,10 +974,7 @@ input { font-family: inherit; }
   display: flex;
   gap: 6px;
 }
-.corpus-word-italic {
-  color: var(--ink-2);
-  font-style: italic;
-}
+
 .additional-refs-section {
   display: flex;
   flex-direction: column;
@@ -1079,68 +1076,9 @@ input { font-family: inherit; }
   line-height: 1;
   flex: 1;
 }
-.corpus-word-wrap {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  padding: 1px 2px 2px;
-  padding-top: 5px;
-  border-radius: 5px;
-  cursor: default;
-  transition: background 0.12s;
-}
-.corpus-word-wrap.match { cursor: pointer; }
-.corpus-word-wrap.match:hover { background: var(--accent-soft); }
-.corpus-word-wrap.cited { background: var(--gold-soft); border-radius: 5px; }
-.corpus-word-wrap.cited:hover { background: oklch(0.88 0.06 75); }
-.corpus-bracket-group {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0;
-}
-.corpus-bracket {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 3px 0 4px;
-  flex-shrink: 0;
-  user-select: none;
-}
-.corpus-bracket:first-child { margin-right: -3px; }
-.corpus-bracket:last-child  { margin-left:  -3px; }
-.corpus-bracket-glyph {
-  font-family: var(--f-serif);
-  font-size: 1em;
-  color: var(--ink-2);
-  line-height: 1.3;
-}
-.corpus-pos-english {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 1px;
-}
-.corpus-pos {
-  font-family: var(--f-mono);
-  font-size: 9.5px;
-  font-weight: 500;
-  color: #c0392b;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  align-self: center;
-}
-.corpus-word {
-  font-family: var(--f-serif);
-  font-size: 1em;
-  color: var(--ink);
-  line-height: 1.3;
-}
-.corpus-strongs {
-  display: none;
-}
+/* cited highlight — shared by lib-word and corpus results */
+.lib-word.cited { background: var(--gold-soft); border-radius: 5px; }
+.lib-word.cited:hover { background: oklch(0.88 0.06 75); }
 .word-badge {
   position: absolute;
   bottom: calc(100% + 4px);

@@ -1069,12 +1069,10 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
                   isHebrew: sid.startsWith("H"),
                 } : null;
                 return (
-                  <span key={i} className={"corpus-word-wrap" + (sid ? " match" : "") + (isCited ? " cited" : "")}
+                  <span key={i} className={"lib-word" + (sid ? " lib-word-clickable" : "") + (w.italic ? " lib-kjv-italic" : "") + (isCited ? " cited" : "")}
                     onClick={kjvEntry && onWordClick ? () => onWordClick(kjvEntry) : undefined}>
-                    <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{w.word}{w.punc || ""}</span>
-                    {sid
-                      ? <span className="corpus-strongs">{sid}</span>
-                      : <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>}
+                    <span className="lib-iw-english">{w.word}{w.punc || ""}</span>
+                    <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
                   </span>
                 );
               })
@@ -1116,10 +1114,10 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
                     const bare = word.replace(/[^\w]/g, '').toLowerCase();
                     const isItal = iset.has(bare);
                     return (
-                      <span key={pi} className={"corpus-word-wrap" + (!isItal && clickable ? " match" : "") + (!isItal && isCited ? " cited" : "")}
+                      <span key={pi} className={"lib-word" + (!isItal && clickable ? " lib-word-clickable" : "") + (isItal ? " lib-abp-italic" : "") + (!isItal && isCited ? " cited" : "")}
                             onClick={!isItal && clickable ? () => onWordClick(entry) : undefined}>
-                        <span className={"corpus-word" + (isItal ? " corpus-word-italic" : "")}>{word}</span>
-                        <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>
+                        <span className="lib-iw-english">{word}</span>
+                        <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
                       </span>
                     );
                   })}
@@ -1127,15 +1125,13 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
               );
             }
             return (
-              <span key={key} className={"corpus-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
+              <span key={key} className={"lib-word" + (clickable ? " lib-word-clickable" : "") + (w.italic ? " lib-abp-italic" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
-                <span className="corpus-pos-english">
-                  {hasPos && <span className="corpus-pos">{w.greek_pos}</span>}
-                  <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{label}</span>
+                <span className="lib-iw-pos-english">
+                  {hasPos && <span className="lib-iw-pos">{w.greek_pos}</span>}
+                  <span className="lib-iw-english">{label}</span>
                 </span>
-                {clickable
-                  ? <span className="corpus-strongs">{strongsTag(wnum)}</span>
-                  : <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>}
+                <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
               </span>
             );
           }
@@ -1143,13 +1139,13 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
           return groups.map((g, gi) => {
             if (!g.isBracket) return renderCorpusWord(g.word, `g${gi}`);
             const corpusBracketChar = (ch, k) => (
-              <span key={k} className="corpus-bracket">
-                <span className="corpus-bracket-glyph">{ch}</span>
-                <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>
+              <span key={k} className="lib-word">
+                <span className="lib-bracket-glyph">{ch}</span>
+                <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
               </span>
             );
             return (
-              <span key={`bg${gi}`} className="corpus-bracket-group">
+              <span key={`bg${gi}`} className="lib-bracket-group">
                 {corpusBracketChar("[", "bl")}
                 {g.words.map((w, wi) => renderCorpusWord(w, `bg${gi}w${wi}`))}
                 {corpusBracketChar("]", "br")}
