@@ -269,7 +269,7 @@ input { font-family: inherit; }
   cursor: pointer;
   font-size: 13px;
 }
-.lexicon-dist-book:hover { border-color: var(--gold); background: var(--gold-soft); }
+@media (hover: hover) { .lexicon-dist-book:hover { border-color: var(--gold); background: var(--gold-soft); } }
 .lexicon-dist-book.selected { border-color: var(--gold); background: var(--gold-soft); font-weight: 600; }
 .lexicon-dist-name { color: var(--ink); }
 .lexicon-dist-count { color: var(--ink-3); font-size: 11px; }
