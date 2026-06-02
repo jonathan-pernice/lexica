@@ -1524,7 +1524,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   useEffect(() => {
     if (!nav?.book || !navBookRef.current) return;
     requestAnimationFrame(() => {
-      navBookRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      navBookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, [nav?.book]);
   const [navVisible, setNavVisible] = useState(!isMobile);
@@ -2040,7 +2040,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <button
                 className="ch-nav"
                 disabled={selChapter <= 1}
-                onClick={() => setSelChapter(c => Math.max(1, c - 1))}
+                onClick={() => { setSelChapter(c => Math.max(1, c - 1)); onNavChange?.({ ...nav, highlight: null }); }}
                 aria-label="Previous chapter"
               >‹</button>
               <span className="ch-lbl">
@@ -2059,7 +2059,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <button
                 className="ch-nav"
                 disabled={selChapter >= maxChap}
-                onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))}
+                onClick={() => { setSelChapter(c => Math.min(maxChap, c + 1)); onNavChange?.({ ...nav, highlight: null }); }}
                 aria-label="Next chapter"
               >›</button>
             </div>
@@ -2098,13 +2098,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
           </button>
           <div className="mbar-center">
-            <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => setSelChapter(c => Math.max(1, c - 1))} aria-label="Previous chapter">‹</button>
+            <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { setSelChapter(c => Math.max(1, c - 1)); onNavChange?.({ ...nav, highlight: null }); }} aria-label="Previous chapter">‹</button>
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
               <span className="mbar-loc-name">{selBook ? selBook.name : "Select book"}</span>
               <span className="mbar-loc-ch">{selChapter}</span>
               <svg className="mbar-loc-cv" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
             </button>
-            <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => setSelChapter(c => Math.min(maxChap, c + 1))} aria-label="Next chapter">›</button>
+            <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => { setSelChapter(c => Math.min(maxChap, c + 1)); onNavChange?.({ ...nav, highlight: null }); }} aria-label="Next chapter">›</button>
           </div>
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
             {translation === "parallel" ? "Par" : translation.toUpperCase()}
@@ -2930,17 +2930,19 @@ function App() {
           </div>
         )}
         {mainView === "about" && <AboutView />}
-        {mainView === "lexicon" && <LexiconView
-          onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }}
-          onNavigateToLibrary={(book, chapter, verse) => {
-            searchScrollRef.current = window.scrollY;
-            setLibNav({ book, chapter, highlight: verse, scroll: true });
-            setLibEverVisited(true);
-            setMainView("library");
-          }}
-          pendingStrongs={lexiconPendingStrongs}
-          onPendingStrongsConsumed={() => setLexiconPendingStrongs(null)}
-        />}
+        <div style={{ display: mainView === "lexicon" ? undefined : "none" }}>
+          <LexiconView
+            onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }}
+            onNavigateToLibrary={(book, chapter, verse) => {
+              searchScrollRef.current = window.scrollY;
+              setLibNav({ book, chapter, highlight: verse, scroll: true });
+              setLibEverVisited(true);
+              setMainView("library");
+            }}
+            pendingStrongs={lexiconPendingStrongs}
+            onPendingStrongsConsumed={() => setLexiconPendingStrongs(null)}
+          />
+        </div>
         <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about" || mainView === "lexicon") ? "none" : undefined }}>
           <><SearchBar
             q1={q1} setQ1={setQ1}
