@@ -462,7 +462,9 @@ def _word_boundary_match(haystack: str | None, needle: str | None) -> bool:
 def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
     """Return the full word list for a verse, used when fetching cited/primary verses."""
     wrows = conn.execute(
-        """SELECT w.strongs_base, w.strongs, w.english,
+        """SELECT w.strongs_base, w.strongs, w.english, w.english_head, w.greek_pos,
+                  w.bracket_id, w.italic,
+                  COALESCE(w.italic_words, '') AS italic_words,
                   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
            FROM words w
            LEFT JOIN lexicon l ON l.strongs = w.strongs_base
@@ -476,6 +478,12 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
         {
             "strongs":      wr["strongs"],
             "strongs_base": wr["strongs_base"],
+            "english":      wr["english"],
+            "english_head": wr["english_head"],
+            "greek_pos":    wr["greek_pos"],
+            "bracket_id":   wr["bracket_id"],
+            "italic":       bool(wr["italic"]),
+            "italic_words": wr["italic_words"],
             "is_function":  wr["strongs_base"] in _FUNCTION_STRONGS,
             "gloss":        _clean_gloss(wr["english"]),
             "lemma":        wr["lemma"],
@@ -1632,7 +1640,9 @@ def verse_words(book, chapter, verse):
         if not row:
             return jsonify({"error": "verse not found"}), 404
         wrows = conn.execute(
-            """SELECT w.position, w.english, w.english_head, w.greek_pos, w.bracket_id, w.strongs_base, w.strongs,
+            """SELECT w.position, w.english, w.english_head, w.greek_pos, w.bracket_id, w.italic,
+                      COALESCE(w.italic_words, '') AS italic_words,
+                      w.strongs_base, w.strongs,
                       l.lemma, l.translit, l.kjv_def, l.strongs_def, l.derivation
                FROM words w
                LEFT JOIN lexicon l ON l.strongs = w.strongs_base
@@ -1649,7 +1659,9 @@ def verse_words(book, chapter, verse):
                 "english":    w["english"],
                 "english_head": w["english_head"],
                 "greek_pos":  w["greek_pos"],
-                "bracket_id": w["bracket_id"],
+                "bracket_id":   w["bracket_id"],
+                "italic":       bool(w["italic"]),
+                "italic_words": w["italic_words"],
                 "kjv_def":    w["kjv_def"],
                 "strongs_base": w["strongs_base"],
                 "strongs":    w["strongs"],

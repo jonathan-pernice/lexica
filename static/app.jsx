@@ -2176,7 +2176,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                        onClick={handleVerseNum ? () => handleVerseNum(v.verse) : undefined}>
                     {v.verse}
                   </sup>
-                  {v.prose ? v.prose : renderProseWords(v)}
+                  {renderProseWords(v)}
                 </span>
               </React.Fragment>
             ))}
