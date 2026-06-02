@@ -1361,6 +1361,8 @@ input { font-family: inherit; }
 .pericope-row { margin-bottom: 4px; }
 .pericope-row .lib-vnum { visibility: hidden; margin-top: 0; }
 .pericope-row .pericope-heading { flex: 1; }
+.lib-text-words > .pericope-row:first-child .pericope-heading,
+.lib-prose-flow > .pericope-row:first-child .pericope-heading { margin-top: 0; }
 @media (max-width: 1099px) {
   .pericope-row .lib-vnum { display: none; }
   .pericope-heading { text-align: center; }
