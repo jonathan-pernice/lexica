@@ -2137,19 +2137,19 @@ def lexicon_verses(strongs, book):
             if not book_id:
                 conn.close()
                 return jsonify({"verses": [], "glosses": []})
+            # One row per verse: use kjv_verses.verse_text for clean prose,
+            # aggregate matched words for gloss normalization
             word_rows = conn.execute("""
-                SELECT kw.chapter, kw.verse_num AS verse, kw.word, kw.italic,
-                       CASE WHEN ks2.strongs_id IS NOT NULL THEN 1 ELSE 0 END AS hl
-                FROM kjv_words kw
-                LEFT JOIN kjv_strongs ks2 ON ks2.word_id = kw.word_id AND ks2.strongs_id = ?
-                WHERE kw.book_id = ? AND EXISTS (
-                    SELECT 1 FROM kjv_words kw2
-                    JOIN kjv_strongs ks ON ks.word_id = kw2.word_id
-                    WHERE kw2.book_id = kw.book_id AND kw2.chapter = kw.chapter
-                      AND kw2.verse_num = kw.verse_num AND ks.strongs_id = ?
-                )
-                ORDER BY kw.chapter, kw.verse_num, kw.verse_pos
-            """, (sid, book_id, sid)).fetchall()
+                SELECT kv.chapter, kv.verse_num AS verse, kv.verse_text AS prose,
+                       GROUP_CONCAT(kw.word, '|') AS hl_words
+                FROM kjv_verses kv
+                JOIN kjv_words kw ON kw.book_id = kv.book_id
+                    AND kw.chapter = kv.chapter AND kw.verse_num = kv.verse_num
+                JOIN kjv_strongs ks ON ks.word_id = kw.word_id AND ks.strongs_id = ?
+                WHERE kv.book_id = ?
+                GROUP BY kv.verse_id
+                ORDER BY kv.chapter, kv.verse_num
+            """, (sid, book_id)).fetchall()
         else:
             word_rows = conn.execute("""
                 SELECT v.chapter, v.verse, v.text AS prose, w.english AS word,
@@ -2161,35 +2161,45 @@ def lexicon_verses(strongs, book):
                 )
                 ORDER BY v.chapter, v.verse, w.position
             """, (sid, book, sid)).fetchall()
-        verses = {}
         verse_prose = {}
         verse_order = []
+        verse_hl_norms = {}  # key -> set of normalized glosses for filtering
         gloss_counts = {}
-        for r in word_rows:
-            key = (r["chapter"], r["verse"])
-            word = r["word"] or ""
-            hl = bool(r["hl"])
-            if key not in verses:
-                verses[key] = []
-                verse_prose[key] = r["prose"] if corpus != "kjv" else None
+        if corpus == "kjv":
+            for r in word_rows:
+                key = (r["chapter"], r["verse"])
+                verse_prose[key] = r["prose"] or ""
                 verse_order.append(key)
-            entry = {"w": word, "h": hl}
-            if corpus == "kjv":
-                entry["i"] = bool(r["italic"])
-            verses[key].append(entry)
-            if hl and word:
-                norm = _normalize_gloss(word)
-                if norm:
-                    gloss_counts[norm] = gloss_counts.get(norm, 0) + 1
-        # Filter verses to those containing the selected gloss
-        if gloss:
-            filtered_order = []
-            for key in verse_order:
-                words_in_verse = verses[key]
-                if any(bool(e["h"]) and _normalize_gloss(e["w"]) == gloss for e in words_in_verse):
-                    filtered_order.append(key)
-            verse_order = filtered_order
-        result_verses = [{"chapter": k[0], "verse": k[1], "words": verses[k], "text": verse_prose.get(k)} for k in verse_order]
+                norms = set()
+                for w in (r["hl_words"] or "").split("|"):
+                    if w:
+                        norm = _normalize_gloss(w)
+                        if norm:
+                            gloss_counts[norm] = gloss_counts.get(norm, 0) + 1
+                            norms.add(norm)
+                verse_hl_norms[key] = norms
+            if gloss:
+                verse_order = [k for k in verse_order if gloss in verse_hl_norms.get(k, set())]
+            result_verses = [{"chapter": k[0], "verse": k[1], "text": verse_prose[k]} for k in verse_order]
+        else:
+            verses = {}
+            for r in word_rows:
+                key = (r["chapter"], r["verse"])
+                word = r["word"] or ""
+                hl = bool(r["hl"])
+                if key not in verses:
+                    verses[key] = []
+                    verse_prose[key] = r["prose"]
+                    verse_order.append(key)
+                verses[key].append({"w": word, "h": hl})
+                if hl and word:
+                    norm = _normalize_gloss(word)
+                    if norm:
+                        gloss_counts[norm] = gloss_counts.get(norm, 0) + 1
+            if gloss:
+                verse_order = [k for k in verse_order
+                               if any(e["h"] and _normalize_gloss(e["w"]) == gloss for e in verses[k])]
+            result_verses = [{"chapter": k[0], "verse": k[1], "words": verses[k], "text": verse_prose.get(k)} for k in verse_order]
         result_glosses = sorted([{"gloss": g, "count": c} for g, c in gloss_counts.items()], key=lambda x: -x["count"])
         conn.close()
         return jsonify({"verses": result_verses, "glosses": result_glosses})
