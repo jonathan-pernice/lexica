@@ -1970,7 +1970,9 @@ def _normalize_gloss(raw):
         words.pop(0)
     while len(words) > 1 and words[-1] in _GLOSS_FUNC:
         words.pop()
-    return ' '.join(words)
+    if len(words) > 1:
+        words = [words[-1]]
+    return words[0]
 
 
 @app.route("/api/lexicon/profile/<strongs>")
