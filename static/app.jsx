@@ -2584,9 +2584,19 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
             <span className="lexicon-translit">{profile.translit}</span>
             <span className="lexicon-strongs-tag">{profile.strongs}</span>
             <span className="lexicon-total">{profile.total} occurrences</span>
-            <div className="lexicon-corpus-toggle">
-              <button className={"lct-btn" + (corpus === "abp" ? " on" : "")} onClick={() => switchCorpus("abp")}>ABP</button>
-              <button className={"lct-btn" + (corpus === "kjv" ? " on" : "")} onClick={() => switchCorpus("kjv")}>KJV</button>
+            <div className="lexicon-header-controls">
+              <div className="lexicon-corpus-toggle">
+                <button className={"lct-btn" + (corpus === "abp" ? " on" : "")} onClick={() => switchCorpus("abp")}>ABP</button>
+                <button className={"lct-btn" + (corpus === "kjv" ? " on" : "")} onClick={() => switchCorpus("kjv")}>KJV</button>
+              </div>
+              <div className="lexicon-corpus-toggle">
+                {["all","ot","nt"].map(t => (
+                  <button key={t} className={"lct-btn" + (testament === t ? " on" : "")}
+                    onClick={() => { setTestament(t); setSelectedBook(null); setVerseList(null); }}>
+                    {t === "all" ? "All" : t.toUpperCase()}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
           <p className="lexicon-definition">{profile.definition}</p>
@@ -2611,14 +2621,6 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
           <div className="lexicon-distribution">
             <div className="lexicon-dist-header">
               <div className="lexicon-dist-label">Distribution by book</div>
-              <div className="lexicon-testament-toggle">
-                {["all","ot","nt"].map(t => (
-                  <button key={t} className={"lct-btn" + (testament === t ? " on" : "")}
-                    onClick={() => { setTestament(t); setSelectedBook(null); setVerseList(null); }}>
-                    {t === "all" ? "All" : t.toUpperCase()}
-                  </button>
-                ))}
-              </div>
             </div>
             <div className="lexicon-dist-grid">
               {(filteredBooks || profile.books)
