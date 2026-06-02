@@ -970,7 +970,7 @@ function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation, onA
   );
 }
 
-function studyWordLabel(w) {
+function corpusWordLabel(w) {
   const e = w.english || "";
   if (e) return e;
   const kd = w.kjv_def || "";
@@ -983,9 +983,9 @@ function studyWordLabel(w) {
 }
 
 // ============================================================
-// STUDY MODE — VERSE ROW
+// CORPUS SEARCH — VERSE ROW
 // ============================================================
-function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
+function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
   const [words, setWords] = useState(null);
   const [kjvText, setKjvText] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -1043,9 +1043,9 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
   // citedStrongs is now passed directly as a prop from App level — no local computation needed
 
   return (
-    <div className="study-verse" ref={rowRef}>
-      <button className="study-ref" onClick={() => onReadInContext?.(book, chapter, verse)}>{label}</button>
-      <span className="study-text">
+    <div className="corpus-verse" ref={rowRef}>
+      <button className="corpus-ref" onClick={() => onReadInContext?.(book, chapter, verse)}>{label}</button>
+      <span className="corpus-text">
         {textMode === "kjv" ? (
           kjvText === null
             ? <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
@@ -1055,7 +1055,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
                 const isCited = sid && citedStrongs != null && citedStrongs.size > 0 &&
                   (citedStrongs.has(sid) || citedStrongs.has(sidBare));
                 const kjvEntry = sid ? {
-                  id: `kjvstudy-${book}-${chapter}-${verse}-${i}`,
+                  id: `kjvcorpus-${book}-${chapter}-${verse}-${i}`,
                   strongs: sid,
                   strongs_base: sid.slice(1),
                   strongs_raw: sid.slice(1),
@@ -1069,20 +1069,20 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
                   isHebrew: sid.startsWith("H"),
                 } : null;
                 return (
-                  <span key={i} className={"study-word-wrap" + (sid ? " match" : "") + (isCited ? " cited" : "")}
+                  <span key={i} className={"corpus-word-wrap" + (sid ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={kjvEntry && onWordClick ? () => onWordClick(kjvEntry) : undefined}>
-                    <span className={"study-word" + (w.italic ? " study-word-italic" : "")}>{w.word}{w.punc || ""}</span>
+                    <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{w.word}{w.punc || ""}</span>
                     {sid
-                      ? <span className="study-strongs">{sid}</span>
-                      : <span className="study-strongs" style={{visibility:"hidden"}}>G0</span>}
+                      ? <span className="corpus-strongs">{sid}</span>
+                      : <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>}
                   </span>
                 );
               })
         ) : words === null ? (
           <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
         ) : (() => {
-          function renderStudyWord(w, key) {
-            const label = studyWordLabel(w);
+          function renderCorpusWord(w, key) {
+            const label = corpusWordLabel(w);
             if (!label) return null;
             const clickable = w.strongs_base && w.strongs_base !== "*";
             const wnum = w.strongs || w.strongs_base;
@@ -1090,7 +1090,7 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             const entry = clickable && (foundEntry
               ? { ...foundEntry, gloss: w.english || foundEntry.gloss }
               : {
-                id: `study-${book}-${chapter}-${verse}-${key}`,
+                id: `corpus-${book}-${chapter}-${verse}-${key}`,
                 strongs: strongsTag(wnum),
                 strongs_base: w.strongs_base,
                 strongs_raw: wnum,
@@ -1106,32 +1106,32 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
             const isCited = clickable && citedStrongs != null && citedStrongs.size > 0 &&
               (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum));
             return (
-              <span key={key} className={"study-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
+              <span key={key} className={"corpus-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
-                <span className="study-pos-english">
-                  {hasPos && <span className="study-pos">{w.greek_pos}</span>}
-                  <span className={"study-word" + (w.italic ? " study-word-italic" : "")}>{label}</span>
+                <span className="corpus-pos-english">
+                  {hasPos && <span className="corpus-pos">{w.greek_pos}</span>}
+                  <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{label}</span>
                 </span>
                 {clickable
-                  ? <span className="study-strongs">{strongsTag(wnum)}</span>
-                  : <span className="study-strongs" style={{visibility:"hidden"}}>G0</span>}
+                  ? <span className="corpus-strongs">{strongsTag(wnum)}</span>
+                  : <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>}
               </span>
             );
           }
           const groups = groupForGreekMode(words.filter(w => w.english).sort((a, b) => a.position - b.position));
           return groups.map((g, gi) => {
-            if (!g.isBracket) return renderStudyWord(g.word, `g${gi}`);
-            const studyBracketChar = (ch, k) => (
-              <span key={k} className="study-bracket">
-                <span className="study-bracket-glyph">{ch}</span>
-                <span className="study-strongs" style={{visibility:"hidden"}}>G0</span>
+            if (!g.isBracket) return renderCorpusWord(g.word, `g${gi}`);
+            const corpusBracketChar = (ch, k) => (
+              <span key={k} className="corpus-bracket">
+                <span className="corpus-bracket-glyph">{ch}</span>
+                <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>
               </span>
             );
             return (
-              <span key={`bg${gi}`} className="study-bracket-group">
-                {studyBracketChar("[", "bl")}
-                {g.words.map((w, wi) => renderStudyWord(w, `bg${gi}w${wi}`))}
-                {studyBracketChar("]", "br")}
+              <span key={`bg${gi}`} className="corpus-bracket-group">
+                {corpusBracketChar("[", "bl")}
+                {g.words.map((w, wi) => renderCorpusWord(w, `bg${gi}w${wi}`))}
+                {corpusBracketChar("]", "br")}
               </span>
             );
           });
@@ -1142,25 +1142,25 @@ function VerseStudyRow({ book, chapter, verse, label, allResults, onWordClick, o
 }
 
 // ============================================================
-// STUDY MODE — PASSAGE GROUP (collapsible book+chapter section)
+// CORPUS SEARCH — PASSAGE GROUP (collapsible book+chapter section)
 // ============================================================
-function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
+function CorpusGroup({ label, verses, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="study-group">
+    <div className="corpus-group">
       <button
-        className={"study-group-head " + (open ? "open" : "")}
+        className={"corpus-group-head " + (open ? "open" : "")}
         onClick={() => setOpen(o => !o)}
       >
         <Icon.Book style={{ opacity: 0.5, flexShrink: 0 }}/>
-        <span className="study-group-label">{label}</span>
-        <span className="study-group-count">{verses.length} verse{verses.length !== 1 ? "s" : ""}</span>
-        <span className={"study-chevron " + (open ? "open" : "")}/>
+        <span className="corpus-group-label">{label}</span>
+        <span className="corpus-group-count">{verses.length} verse{verses.length !== 1 ? "s" : ""}</span>
+        <span className={"corpus-chevron " + (open ? "open" : "")}/>
       </button>
       {open && (
-        <div className="study-group-body">
+        <div className="corpus-group-body">
           {verses.map(v => (
-            <VerseStudyRow
+            <CorpusVerseRow
               key={`${v.book}-${v.chapter}-${v.verse}`}
               book={v.book}
               chapter={v.chapter}
@@ -1182,9 +1182,9 @@ function PassageGroup({ label, verses, allResults, onWordClick, onReadInContext,
 }
 
 // ============================================================
-// STUDY MODE — OUTER CONTAINER
+// CORPUS SEARCH — OUTER CONTAINER
 // ============================================================
-function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordClick, onReadInContext, studySort, textMode }) {
+function CorpusResults({ allResults, primaryStrongs, citedStrongs, showAll, onWordClick, onReadInContext, corpusSort, textMode }) {
   const [kjvCache, setKjvCache] = useState({}); // pre-fetched KJV verse words
 
   // Pre-fetch all KJV verse words in one batch when switching to KJV mode
@@ -1233,7 +1233,7 @@ function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordCl
         verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk]),
       }))
       .sort((a, b) => {
-        if (studySort === "canonical") {
+        if (corpusSort === "canonical") {
           const bookDiff = (BOOK_ORDER[a.verses[0]?.book] ?? 99) - (BOOK_ORDER[b.verses[0]?.book] ?? 99);
           return bookDiff || (a.verses[0]?.chapter ?? 0) - (b.verses[0]?.chapter ?? 0);
         }
@@ -1241,7 +1241,7 @@ function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordCl
         const bPrimary = b.verses.filter(v => v.is_primary).length;
         return bPrimary - aPrimary || b.verses.length - a.verses.length;
       });
-  }, [allResults, studySort]);
+  }, [allResults, corpusSort]);
 
   const hasPrimary = allResults.some(e => e.is_primary);
   const hasAdditional = allResults.some(e => e.is_additional);
@@ -1261,21 +1261,21 @@ function StudyMode({ allResults, primaryStrongs, citedStrongs, showAll, onWordCl
   const passageGroupProps = { allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache };
 
   return (
-    <div className="study-groups">
+    <div className="corpus-groups">
 
       {primaryGroups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
+        <CorpusGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
       ))}
       {additionalGroups.length > 0 && (
         <div className="additional-refs-section">
           <div className="additional-refs-label">Additional references</div>
           {additionalGroups.map(g => (
-            <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
+            <CorpusGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
           ))}
         </div>
       )}
       {showAll && otherGroups.map(g => (
-        <PassageGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
+        <CorpusGroup key={g.label} label={g.label} verses={g.verses} {...passageGroupProps} />
       ))}
     </div>
   );
@@ -2654,8 +2654,8 @@ function App() {
   const [aiNotice, setAiNotice] = useState("");
   const [activeEntry, setActiveEntry] = useState(null);
   const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
-  const [studySort, setStudySort] = useState("curated"); // "curated" | "canonical"
-  const [studyTextMode, setStudyTextMode] = useState("abp"); // "abp" | "kjv"
+  const [corpusSort, setCorpusSort] = useState("curated"); // "curated" | "canonical"
+  const [corpusTextMode, setCorpusTextMode] = useState("abp"); // "abp" | "kjv"
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1100);
   const [mainView, setMainView] = useState("lexicon");
   const [libNav, setLibNav] = useState(null);
@@ -2886,11 +2886,11 @@ function App() {
                     <button className={"sort-btn " + (corpusFilter === "ot"  ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
                     <button className={"sort-btn " + (corpusFilter === "nt"  ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
                     <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
-                    <button className={"sort-btn " + (studySort === "curated"   ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
-                    <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
+                    <button className={"sort-btn " + (corpusSort === "curated"   ? "on" : "")} onClick={() => setCorpusSort("curated")}>Curated</button>
+                    <button className={"sort-btn " + (corpusSort === "canonical" ? "on" : "")} onClick={() => setCorpusSort("canonical")}>Canonical</button>
                     <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
-                    <button className={"sort-btn " + (studyTextMode === "abp" ? "on" : "")} onClick={() => setStudyTextMode("abp")}>ABP</button>
-                    <button className={"sort-btn " + (studyTextMode === "kjv" ? "on" : "")} onClick={() => setStudyTextMode("kjv")}>KJV</button>
+                    <button className={"sort-btn " + (corpusTextMode === "abp" ? "on" : "")} onClick={() => setCorpusTextMode("abp")}>ABP</button>
+                    <button className={"sort-btn " + (corpusTextMode === "kjv" ? "on" : "")} onClick={() => setCorpusTextMode("kjv")}>KJV</button>
                   </div>
                 </div>
               </div>
@@ -2899,7 +2899,7 @@ function App() {
                   Searching…
                 </div>
               ) : (
-                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} studySort={studySort} textMode={studyTextMode} />
+                <CorpusResults allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} corpusSort={corpusSort} textMode={corpusTextMode} />
               )}
             </>
           )}
