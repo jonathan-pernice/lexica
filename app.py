@@ -1920,11 +1920,11 @@ def lexicon_lookup():
             is_heb = prefix == 'H' or (not prefix and int(snum) > 5624)
             if is_heb:
                 row = conn.execute(
-                    "SELECT strongs_id, word, xlit, lemma FROM bdb WHERE strongs_id = ?",
+                    "SELECT strongs_id, lemma, xlit, description FROM bdb WHERE strongs_id = ?",
                     (f"H{snum}",)
                 ).fetchone()
                 if row:
-                    return jsonify([{"strongs": row["strongs_id"], "lemma": row["word"] or "", "translit": row["xlit"] or "", "gloss": row["lemma"] or ""}])
+                    return jsonify([{"strongs": row["strongs_id"], "lemma": row["lemma"] or "", "translit": row["xlit"] or "", "gloss": row["description"] or ""}])
             else:
                 row = conn.execute(
                     "SELECT strongs, lemma, translit, strongs_def FROM lexicon WHERE strongs = ?",
@@ -1941,11 +1941,11 @@ def lexicon_lookup():
             (f"%{q}%", f"%{q}%", f"%{q}%")
         ).fetchall()
         heb = conn.execute(
-            "SELECT strongs_id, word, xlit, lemma FROM bdb WHERE lemma LIKE ? LIMIT 10",
+            "SELECT strongs_id, lemma, xlit, description FROM bdb WHERE description LIKE ? LIMIT 10",
             (f"%{q}%",)
         ).fetchall()
         results = [{"strongs": f"G{r['strongs']}", "lemma": r["lemma"] or "", "translit": r["translit"] or "", "gloss": r["strongs_def"] or ""} for r in grk]
-        results += [{"strongs": r["strongs_id"], "lemma": r["word"] or "", "translit": r["xlit"] or "", "gloss": r["lemma"] or ""} for r in heb]
+        results += [{"strongs": r["strongs_id"], "lemma": r["lemma"] or "", "translit": r["xlit"] or "", "gloss": r["description"] or ""} for r in heb]
         return jsonify(results[:20])
     finally:
         conn.close()
@@ -1965,11 +1965,11 @@ def lexicon_profile(strongs):
         if is_heb:
             strongs_id = f"H{snum}"
             row = conn.execute(
-                "SELECT word, xlit, lemma FROM bdb WHERE strongs_id = ?", (strongs_id,)
+                "SELECT lemma, xlit, description FROM bdb WHERE strongs_id = ?", (strongs_id,)
             ).fetchone()
             if not row:
                 return jsonify({"error": "not found"}), 404
-            lemma, translit, definition = row["word"] or "", row["xlit"] or "", row["lemma"] or ""
+            lemma, translit, definition = row["lemma"] or "", row["xlit"] or "", row["description"] or ""
         else:
             strongs_id = f"G{snum}"
             row = conn.execute(
