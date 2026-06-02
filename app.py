@@ -2020,9 +2020,9 @@ def lexicon_profile(strongs):
             """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
         else:
             gr = conn.execute("""
-                SELECT english AS gloss, COUNT(*) AS cnt FROM words
+                SELECT TRIM(english, '.,;:!? ') AS gloss, COUNT(*) AS cnt FROM words
                 WHERE strongs_base = ? AND english IS NOT NULL AND english != '' AND english != '*'
-                GROUP BY english ORDER BY cnt DESC LIMIT 30
+                GROUP BY TRIM(english, '.,;:!? ') ORDER BY cnt DESC LIMIT 30
             """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
         glosses = [{"gloss": r["gloss"], "count": r["cnt"]} for r in gr if r["gloss"] and r["gloss"] not in ("*", "")]
         return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus, "glosses": glosses})
