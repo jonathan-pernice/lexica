@@ -215,7 +215,7 @@ input { font-family: inherit; }
 .lexicon-group-lemma { font-family: var(--f-greek); font-size: 20px; color: var(--ink); flex-shrink: 0; }
 .lexicon-group-translit { font-size: 13px; color: var(--ink-2); font-style: italic; flex-shrink: 0; }
 .lexicon-group-strongs { font-size: 11px; color: var(--ink-4); font-family: var(--f-mono); flex-shrink: 0; }
-.lexicon-group-glosses { flex: 1; font-size: 13px; color: var(--ink-3); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lexicon-group-glosses { display: none; }
 .lexicon-group-count { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); margin-left: auto; flex-shrink: 0; }
 
 /* Back link from profile to groupings */
