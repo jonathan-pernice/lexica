@@ -1349,7 +1349,7 @@ input { font-family: inherit; }
 /* Pericope / section headings */
 .pericope-heading {
   font-size: 13.5px;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--ink-2);
@@ -2185,7 +2185,7 @@ input { font-family: inherit; }
   border: none;
 }
 .ch-chip:hover { color: var(--ink); }
-.ch-chip.on { color: var(--accent); font-weight: 600; }
+.ch-chip.on { background: var(--navy); color: #f4f6fa; font-weight: 600; }
 
 /* ============================================================
    READING TOOLBAR (new bar — desktop library, ≥1100px only)
@@ -2239,9 +2239,13 @@ input { font-family: inherit; }
   .seg { display: inline-flex; background: var(--bg-sunk); border: 1px solid var(--rule); border-radius: 8px; padding: 2px; }
   .seg-b { font-size: 12.5px; color: var(--ink-3); padding: 5px 11px; border-radius: 6px; transition: background 0.1s, color 0.1s; }
   .seg-b:hover { color: var(--ink); }
-  .seg-b.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 500; }
+  .seg-b.on { background: var(--navy); color: #f4f6fa; font-weight: 500; }
   .seg-b:active:not(.on) { background: var(--bg-sunk); color: var(--ink); }
   .seg-sm .seg-b { font-size: 11.5px; padding: 4px 9px; }
+
+  /* Comfortable reading width — centers text in the panel, leaves breathing room */
+  .lib-text-words,
+  .lib-prose-flow { max-width: 70ch; margin: 0 auto; }
 
   .lib-toggle {
     font-size: 12.5px; color: var(--ink-3);
