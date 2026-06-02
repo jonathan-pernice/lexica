@@ -2630,9 +2630,9 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       {profile && (
         <div className="lexicon-profile">
           <div className="lexicon-profile-header">
-            <span className="lexicon-lemma">{profile.lemma}</span>
-            <span className="lexicon-translit">{profile.translit}</span>
-            <span className="lexicon-strongs-tag">{profile.strongs}</span>
+            {!groupings && <span className="lexicon-lemma">{profile.lemma}</span>}
+            {!groupings && <span className="lexicon-translit">{profile.translit}</span>}
+            {!groupings && <span className="lexicon-strongs-tag">{profile.strongs}</span>}
             <span className="lexicon-total">{profile.total} occurrences</span>
             <div className="lexicon-header-controls">
               <div className="lexicon-corpus-toggle">
