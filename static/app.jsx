@@ -1587,17 +1587,21 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
   const swipeRef = React.useRef(null);
   const swipeHandlers = isMobile ? {
-    onTouchStart: (e) => { swipeRef.current = e.touches[0].clientX; },
+    onTouchStart: (e) => {
+      swipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    },
     onTouchEnd: (e) => {
-      if (swipeRef.current === null) return;
-      const dx = e.changedTouches[0].clientX - swipeRef.current;
+      if (!swipeRef.current) return;
+      const dx = e.changedTouches[0].clientX - swipeRef.current.x;
+      const dy = e.changedTouches[0].clientY - swipeRef.current.y;
       swipeRef.current = null;
-      if (Math.abs(dx) < 50) return; // ignore short swipes
-      if (dx < 0 && selChapter < maxChap) { // swipe left → next chapter
+      if (Math.abs(dx) < 50) return;           // too short
+      if (Math.abs(dy) > Math.abs(dx) * 0.6) return; // too vertical
+      if (dx < 0 && selChapter < maxChap) {
         const c = selChapter + 1;
         setSelChapter(c);
         onNavChange?.({ ...nav, chapter: c, highlight: null });
-      } else if (dx > 0 && selChapter > 1) { // swipe right → prev chapter
+      } else if (dx > 0 && selChapter > 1) {
         const c = selChapter - 1;
         setSelChapter(c);
         onNavChange?.({ ...nav, chapter: c, highlight: null });
