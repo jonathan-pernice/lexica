@@ -1962,7 +1962,7 @@ _GLOSS_FUNC = {
 
 def _normalize_gloss(raw):
     import re
-    s = re.sub(r'^[^\w]+|[^\w]+$', '', raw.strip()).lower()
+    s = re.sub(r"'s\b", '', re.sub(r'^[^\w]+|[^\w]+$', '', raw.strip()).lower())
     words = s.split()
     if not words:
         return ''
