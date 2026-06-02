@@ -1999,7 +1999,8 @@ def lexicon_profile(strongs):
             for r in dist:
                 abbrev = abbrev_by_id.get(r["book_id"], "")
                 meta = book_meta.get(abbrev, {})
-                books.append({"book": abbrev, "name": meta.get("name", abbrev), "testament": meta.get("testament", ""), "count": r["cnt"]})
+                testament = "NT" if r["book_id"] >= 40 else "OT"
+                books.append({"book": abbrev, "name": meta.get("name", abbrev), "testament": testament, "count": r["cnt"]})
         else:
             dist = conn.execute("""
                 SELECT v.book, COUNT(*) AS cnt
