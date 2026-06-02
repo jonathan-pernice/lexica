@@ -2773,9 +2773,7 @@ function App() {
     setAiNotice("");
     setMode("ai");
     setShowAllAi(false);
-    setViewMode("study");
     setActiveEntry(null);
-    setGlossFilter(null);
     try {
       const data = await api.aiSearch(q);
       if (data.out_of_scope) {
@@ -2813,7 +2811,7 @@ function App() {
         {mainView === "about" && <AboutView />}
         <div style={{ display: mainView === "lexicon" ? undefined : "none" }}>
           <LexiconView
-            onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }}
+            onNavigateToSearch={(q) => { handleNavChange("search"); setQ2(q); }}
             onNavigateToLibrary={(book, chapter, verse) => {
               searchScrollRef.current = window.scrollY;
               setLibNav({ book, chapter, highlight: verse, scroll: true });
