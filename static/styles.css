@@ -1328,7 +1328,7 @@ input { font-family: inherit; }
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--ink-2);
-  margin: 1.5rem 0 0.5rem;
+  margin: 0.75rem 0 0.5rem;
   padding-bottom: 0.25rem;
   border-bottom: 1px solid var(--border);
   display: block;
