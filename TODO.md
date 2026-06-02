@@ -66,7 +66,8 @@
 - Overall search layout needs optimizing — spacing, hierarchy, result cards
 - Audit whether library display improvements (verse numbers neutral, interlinear hierarchy, gold overuse) carried over to search result verses — likely they did not since search uses different component classes
 - Align search verse rendering with library standards where appropriate
-- **AI search verse display** — `_fetch_verse_words` still returns word tokens for cited verse context in AI search results. Should use `verses.text` (now populated) for clean prose display. Same approach as Lexicon verse list.
+- **✓ AI search verse display** — Strong's numbers hidden (`display:none`). Word tokens kept for gold highlights and word clicks.
+- **Search verse rendering direction** — target is "bare chips": word tokens in source order, no Strong's, no interlinear Greek row, brackets preserved, gold highlights intact. Matches Library chip mode visually. Backend: eliminate N+1 `api.verseWords` fetches by including full verse word lists in the AI search response (currently re-fetched even though `_fetch_verse_words` already ran server-side).
 
 ## ✓ Text Structure Session — DONE
 
