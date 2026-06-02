@@ -197,26 +197,49 @@ input { font-family: inherit; }
 .lexicon-match-gloss { font-size: 13px; color: var(--ink-2); }
 
 /* English corpus groupings */
-.lexicon-groupings { margin-top: 20px; display: flex; flex-direction: column; gap: 2px; }
-.lexicon-groupings-label { font-size: 12px; color: var(--ink-3); letter-spacing: 0.02em; margin-bottom: 8px; }
+.lexicon-groupings { margin-top: 20px; display: flex; flex-direction: column; gap: 6px; }
+.lexicon-groupings-label { font-size: 12px; color: var(--ink-3); letter-spacing: 0.02em; margin-bottom: 4px; }
 .lexicon-group-row {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
   background: var(--paper);
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
 }
-.lexicon-group-row:hover { background: var(--gold-soft); border-color: var(--gold); }
-.lexicon-group-row.selected { background: var(--gold-soft); border-color: var(--gold); }
-.lexicon-group-lemma { font-family: var(--f-greek); font-size: 20px; color: var(--ink); flex-shrink: 0; }
-.lexicon-group-translit { font-size: 13px; color: var(--ink-2); font-style: italic; flex-shrink: 0; }
-.lexicon-group-strongs { font-size: 11px; color: var(--ink-4); font-family: var(--f-mono); flex-shrink: 0; }
-.lexicon-group-count { font-size: 12px; color: var(--ink-3); font-family: var(--f-mono); margin-left: auto; flex-shrink: 0; }
+.lexicon-group-row.selected { border-color: var(--gold); background: var(--gold-soft); }
+.lexicon-group-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.lexicon-group-sn {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+  background: color-mix(in oklab, var(--gold) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--gold) 30%, transparent);
+  border-radius: 4px;
+  padding: 1px 5px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.lexicon-group-sn:hover { background: color-mix(in oklab, var(--gold) 22%, transparent); }
+.lexicon-group-lemma { font-family: var(--f-greek); font-size: 17px; color: var(--ink); }
+.lexicon-group-translit { font-size: 12px; color: var(--ink-3); font-style: italic; }
+.lexicon-group-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.lexicon-group-chip {
+  font-size: 12px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.lexicon-group-chip:hover { border-color: var(--rule-2); background: var(--bg); }
+.lexicon-group-chip.active { border-color: var(--gold); background: var(--gold-soft); color: var(--ink); }
+.lexicon-group-chip-count { color: var(--ink-4); font-size: 11px; margin-left: 2px; }
 
 /* Back link from profile to groupings */
 .lexicon-back {

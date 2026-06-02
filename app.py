@@ -1978,8 +1978,8 @@ def lexicon_english():
                 continue
             if sn not in out:
                 out[sn] = []
-            if len(out[sn]) < 5:
-                out[sn].append(g)
+            if len(out[sn]) < 8:
+                out[sn].append({"gloss": g, "count": r["cnt"]})
         return out
 
     def _top_glosses_heb(snums):
@@ -2000,8 +2000,8 @@ def lexicon_english():
             sn = r["strongs_id"]
             if sn not in out:
                 out[sn] = []
-            if len(out[sn]) < 5:
-                out[sn].append(r["word"])
+            if len(out[sn]) < 8:
+                out[sn].append({"gloss": r["word"], "count": r["cnt"]})
         return out
 
     try:

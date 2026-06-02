@@ -2450,6 +2450,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
   const [bookGlosses, setBookGlosses] = useState(null);
   const [filteredBooks, setFilteredBooks] = useState(null);
   const [groupings, setGroupings] = useState(null);
+  const [pendingGloss, setPendingGloss] = useState(null);
 
   useEffect(() => {
     if (!pendingStrongs) return;
@@ -2477,6 +2478,13 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
     } catch (e) { setError("Failed to load word profile: " + e); }
     finally { setLoading(false); }
   };
+
+  useEffect(() => {
+    if (profile && pendingGloss) {
+      selectGloss(pendingGloss);
+      setPendingGloss(null);
+    }
+  }, [profile, pendingGloss]);
 
   const switchCorpus = async (c) => {
     if (!profile || loading) return;
@@ -2596,17 +2604,28 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
           {groupings.map(g => {
             const isSelected = profile?.strongs === g.strongs;
             return (
-              <button key={g.strongs}
-                className={"lexicon-group-row" + (isSelected ? " selected" : "")}
-                onClick={() => {
-                  if (isSelected) { setProfile(null); setSelectedBook(null); setVerseList(null); }
-                  else loadProfile(g.strongs);
-                }}>
-                <span className="lexicon-group-lemma">{g.lemma || g.strongs}</span>
-                {g.translit && <span className="lexicon-group-translit">{g.translit}</span>}
-                <span className="lexicon-group-strongs">{g.strongs}</span>
-                <span className="lexicon-group-count">{g.count}×</span>
-              </button>
+              <div key={g.strongs} className={"lexicon-group-row" + (isSelected ? " selected" : "")}>
+                <div className="lexicon-group-meta">
+                  <button className="lexicon-group-sn" onClick={() => {
+                    if (isSelected) { setProfile(null); setSelectedBook(null); setVerseList(null); setPendingGloss(null); }
+                    else { setPendingGloss(null); loadProfile(g.strongs); }
+                  }}>{g.strongs}</button>
+                  {g.lemma && <span className="lexicon-group-lemma">{g.lemma}</span>}
+                  {g.translit && <span className="lexicon-group-translit">{g.translit}</span>}
+                </div>
+                <div className="lexicon-group-chips">
+                  {(g.glosses || []).map(({gloss, count}) => (
+                    <button key={gloss}
+                      className={"lexicon-group-chip" + (isSelected && selectedGloss === gloss ? " active" : "")}
+                      onClick={() => {
+                        if (isSelected) selectGloss(gloss);
+                        else { loadProfile(g.strongs); setPendingGloss(gloss); }
+                      }}>
+                      {gloss} <span className="lexicon-group-chip-count">{count}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             );
           })}
         </div>
