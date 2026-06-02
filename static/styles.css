@@ -1240,7 +1240,7 @@ input { font-family: inherit; }
 }
 .lib-parallel-col { color: var(--ink); }
 .lib-parallel-vnum { display: none; }
-.lib-parallel-section-heading { padding: 8px 0 4px; text-align: center; }
+.lib-parallel-section-heading { padding: 12px 0 4px; text-align: center; }
 .lib-parallel-section-heading .pericope-heading { margin: 0; }
 
 /* BDB (Hebrew) sidebar */
