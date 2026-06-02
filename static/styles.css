@@ -1240,6 +1240,8 @@ input { font-family: inherit; }
 }
 .lib-parallel-col { color: var(--ink); }
 .lib-parallel-vnum { display: none; }
+.lib-parallel-section-heading { padding: 18px 0 4px; }
+.lib-parallel-section-heading .pericope-heading { margin: 0; }
 
 /* BDB (Hebrew) sidebar */
 .bdb-badge {

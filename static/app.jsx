@@ -1643,7 +1643,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     });
   };
 
-  const renderVerse = (v) => {
+  const renderVerse = (v, skipHeading = false) => {
     const isHighlight = nav && nav.highlight === v.verse;
 
     const makeEntry = (w) => {
@@ -1808,7 +1808,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     if (!wordMode) {
       return (
         <React.Fragment key={v.verse}>
-          {v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
+          {!skipHeading && v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
           <div ref={isHighlight ? highlightRef : null}
             className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
             {vnumEl(v.verse)}
@@ -1872,7 +1872,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     );
   };
 
-  const renderKjvVerse = (v, showVerseNum = true) => {
+  const renderKjvVerse = (v, showVerseNum = true, skipHeading = false) => {
     const makeKjvEntry = (w, sid) => ({
       id: `kjv-${selBook.abbrev}-${selChapter}-${v.verse}-${w.word_id}`,
       strongs: sid || "",
@@ -1890,7 +1890,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       isHebrew: sid ? sid.startsWith("H") : false,
     });
     return (
-      <div key={v.verse} className="lib-verse-row">
+      <React.Fragment key={v.verse}>
+        {!skipHeading && v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
+        <div className="lib-verse-row">
         {showVerseNum && vnumEl(v.verse)}
         <span className="lib-verse-content lib-verse-chips">
           {v.words.map((w, i) => {
@@ -1918,21 +1920,25 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           })}
         </span>
       </div>
+      </React.Fragment>
     );
   };
 
-  const renderKjvProse = (v, showVerseNum = true) => {
+  const renderKjvProse = (v, showVerseNum = true, skipHeading = false) => {
     return (
-      <div key={v.verse} className="lib-verse-row">
-        {showVerseNum && vnumEl(v.verse)}
-        <span className="lib-verse-content">
-          {v.words.map((w, i) => (
-            <span key={i} className={w.italic ? "lib-prose-italic" : undefined}>
-              {w.word}{w.punc || ""}{" "}
-            </span>
-          ))}
-        </span>
-      </div>
+      <React.Fragment key={v.verse}>
+        {!skipHeading && v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
+        <div className="lib-verse-row">
+          {showVerseNum && vnumEl(v.verse)}
+          <span className="lib-verse-content">
+            {v.words.map((w, i) => (
+              <span key={i} className={w.italic ? "lib-prose-italic" : undefined}>
+                {w.word}{w.punc || ""}{" "}
+              </span>
+            ))}
+          </span>
+        </div>
+      </React.Fragment>
     );
   };
 
@@ -2104,21 +2110,25 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               const kjvMap = Object.fromEntries(kjvVerses.map(v => [v.verse, v]));
               return verses.map(abpV => {
                 const kjvV = kjvMap[abpV.verse];
+                const heading = abpV.heading || (kjvV && kjvV.heading);
                 return (
-                  <div key={abpV.verse} className="lib-parallel-verse">
-                    <div className="lib-parallel-vnum">{vnumEl(abpV.verse)}</div>
-                    <div className="lib-parallel-col">
-                      {renderVerse(abpV)}
+                  <React.Fragment key={abpV.verse}>
+                    {heading && <div className="lib-parallel-section-heading"><div className="pericope-heading">{heading}</div></div>}
+                    <div className="lib-parallel-verse">
+                      <div className="lib-parallel-vnum">{vnumEl(abpV.verse)}</div>
+                      <div className="lib-parallel-col">
+                        {renderVerse(abpV, true)}
+                      </div>
+                      <div className="lib-parallel-col">
+                        {kjvV
+                          ? kjvWordMode
+                            ? renderKjvVerse(kjvV, true, true)
+                            : renderKjvProse(kjvV, true, true)
+                          : null
+                        }
+                      </div>
                     </div>
-                    <div className="lib-parallel-col">
-                      {kjvV
-                        ? kjvWordMode
-                          ? renderKjvVerse(kjvV)
-                          : renderKjvProse(kjvV)
-                        : null
-                      }
-                    </div>
-                  </div>
+                  </React.Fragment>
                 );
               });
             })()}

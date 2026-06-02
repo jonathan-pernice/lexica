@@ -1991,17 +1991,19 @@ def kjv_chapter(book, chapter):
                    GROUP_CONCAT(ks.strongs_id) AS strongs_ids,
                    kv.verse_text,
                    MAX(COALESCE(bdb.lemma, lex.lemma)) AS lemma,
-                   MAX(COALESCE(bdb.xlit, lex.translit)) AS xlit
+                   MAX(COALESCE(bdb.xlit, lex.translit)) AS xlit,
+                   p.heading
             FROM kjv_words kw
             LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
             LEFT JOIN kjv_verses kv ON kv.book_id = kw.book_id
                 AND kv.chapter = kw.chapter AND kv.verse_num = kw.verse_num
             LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
             LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+            LEFT JOIN pericopes p ON p.book = ? AND p.chapter = ? AND p.verse = kw.verse_num
             WHERE kw.book_id = ? AND kw.chapter = ?
-            GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic, kw.punc, kv.verse_text
+            GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic, kw.punc, kv.verse_text, p.heading
             ORDER BY kw.verse_num, kw.verse_pos
-        """, (book_id, chapter)).fetchall()
+        """, (book, chapter, book_id, chapter)).fetchall()
     finally:
         conn.close()
     verses: dict[int, dict] = {}
@@ -2009,7 +2011,7 @@ def kjv_chapter(book, chapter):
     for r in rows:
         vn = r["verse_num"]
         if vn not in verses:
-            verses[vn] = {"verse": vn, "words": [], "verse_text": r["verse_text"]}
+            verses[vn] = {"verse": vn, "words": [], "verse_text": r["verse_text"], "heading": r["heading"]}
             order.append(vn)
         sids = [s.strip() for s in (r["strongs_ids"] or "").split(",") if s.strip()]
         verses[vn]["words"].append({
