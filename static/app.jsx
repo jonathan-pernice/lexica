@@ -2086,9 +2086,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           </div>
         </div>
       ) : (
-        <div className="lib-toolbar">
-          <button className="mbar-btn" onClick={() => setMobileNavOpen(true)} aria-label="Books">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <div className="lib-toolbar lib-toolbar-navy">
+          <button className="mbar-logo-btn" onClick={() => setMobileNavOpen(true)} aria-label="Books">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M11 7v6M14 10h-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+            </svg>
+            <span className="mbar-logo-name">Lexica</span>
           </button>
           <div className="mbar-center">
             <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); onNavChange?.({ ...nav, chapter: c, highlight: null }); }} aria-label="Previous chapter">‹</button>
@@ -2801,6 +2805,16 @@ function App() {
   return (
     <div className={"app " + ((activeEntry || libCrossRef) ? "has-detail" : "")}>
       <Header activeView={mainView} onNavChange={handleNavChange}/>
+      {isMobile && mainView !== "library" && (
+        <div className="mobile-brand-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M11 7v6M14 10h-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+          </svg>
+          <span className="mobile-brand-name">Lexica</span>
+          <span className="mobile-brand-sub">Greek &amp; Hebrew Word Study</span>
+        </div>
+      )}
       <main className="main">
         {libEverVisited && (
           <div style={{ display: mainView === "library" ? undefined : "none" }}>
