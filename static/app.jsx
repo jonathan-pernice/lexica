@@ -2603,19 +2603,23 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
           <div className="lexicon-groupings-label">rendered as "{query.trim()}"</div>
           <div className="lexicon-group-chips">
             {groupings.map(g => (
-              <button key={g.strongs} className="lexicon-group-chip"
-                onClick={() => onWordClick?.({
-                  id: `lex-${g.strongs}`,
-                  strongs: g.strongs,
-                  strongs_base: g.strongs,
-                  strongs_raw: g.strongs.replace(/^[GH]/i, ''),
-                  greek: g.lemma || '',
-                  translit: g.translit || '',
-                  gloss: (g.glosses[0] || {}).gloss || '',
-                  ref: '', book: '', chapter: '', verse: '',
-                  definition: '', derivation: '', is_function: false,
-                  isHebrew: g.strongs.startsWith('H'),
-                })}>
+              <button key={g.strongs}
+                className={"lexicon-group-chip" + (profile?.strongs === g.strongs ? " active" : "")}
+                onClick={() => {
+                  loadProfile(g.strongs);
+                  onWordClick?.({
+                    id: `lex-${g.strongs}`,
+                    strongs: g.strongs,
+                    strongs_base: g.strongs,
+                    strongs_raw: g.strongs.replace(/^[GH]/i, ''),
+                    greek: g.lemma || '',
+                    translit: g.translit || '',
+                    gloss: (g.glosses[0] || {}).gloss || '',
+                    ref: '', book: '', chapter: '', verse: '',
+                    definition: '', derivation: '', is_function: false,
+                    isHebrew: g.strongs.startsWith('H'),
+                  });
+                }}>
                 {g.strongs}
               </button>
             ))}
@@ -2645,7 +2649,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
               </div>
             </div>
           </div>
-          <p className="lexicon-definition">{profile.definition}</p>
+          {!groupings && <p className="lexicon-definition">{profile.definition}</p>}
 
           {(bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && (
             <div className="lexicon-glosses">
