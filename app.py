@@ -2004,7 +2004,14 @@ def lexicon_english():
             lemma = r["g_lemma"] or r["h_lemma"] or ""
             translit = r["g_translit"] or r["h_translit"] or ""
             raw = r["glosses"] or ""
-            glosses = [g.strip() for g in raw.split(",") if g.strip()][:5]
+            seen, glosses = set(), []
+            for g in raw.split(","):
+                g = g.strip().strip(".,;:!?")
+                if g and g.lower() not in seen:
+                    seen.add(g.lower())
+                    glosses.append(g)
+                    if len(glosses) == 5:
+                        break
             results.append({
                 "strongs": r["sbase"],
                 "lemma": lemma,

@@ -2551,7 +2551,6 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
       } else {
         const data = await api.lexiconEnglish(q, corpus);
         if (!data.length) setError("No matches found for \"" + q + "\".");
-        else if (data.length === 1) loadProfile(data[0].strongs);
         else setGroupings(data);
       }
     } catch { setError("Search failed."); }
