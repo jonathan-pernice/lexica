@@ -2198,7 +2198,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                        onClick={handleVerseNum ? () => handleVerseNum(v.verse) : undefined}>
                     {v.verse}
                   </sup>
-                  {renderProseWords(v)}
+                  {v.prose ? v.prose : renderProseWords(v)}
                 </span>
               </React.Fragment>
             ))}
@@ -2653,11 +2653,17 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
                   : <div key={i} className="lexicon-verse-row">
                       <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
                       <span className="lexicon-verse-text">
-                        {v.words
-                          ? v.words.map((w, wi) => (
-                              <span key={wi} className={w.h ? "lex-hl" : undefined}>{w.w}{" "}</span>
-                            ))
-                          : v.text}
+                        {v.text
+                          ? v.text.split(new RegExp(`(\\b(?:${(selectedGloss||"").replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})\\b)`, "gi")).map((part, pi) =>
+                              part.toLowerCase() === (selectedGloss||"").toLowerCase()
+                                ? <span key={pi} className="lex-hl">{part}</span>
+                                : <span key={pi}>{part}</span>
+                            )
+                          : v.words
+                            ? v.words.map((w, wi) => (
+                                <span key={wi} className={w.h ? "lex-hl" : undefined}>{w.w}{" "}</span>
+                              ))
+                            : null}
                       </span>
                       {onNavigateToLibrary && (
                         <button className="lexicon-verse-lib-link" onClick={() => onNavigateToLibrary(selectedBook, v.chapter, v.verse)}>

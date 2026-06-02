@@ -2152,7 +2152,7 @@ def lexicon_verses(strongs, book):
             """, (sid, book_id, sid) + ((gloss,) if gloss else ())).fetchall()
         else:
             word_rows = conn.execute("""
-                SELECT v.chapter, v.verse, w.english AS word,
+                SELECT v.chapter, v.verse, v.text AS prose, w.english AS word,
                        CASE WHEN w.strongs_base = ? THEN 1 ELSE 0 END AS hl
                 FROM verses v
                 JOIN words w ON w.verse_id = v.id
@@ -2162,6 +2162,7 @@ def lexicon_verses(strongs, book):
                 ORDER BY v.chapter, v.verse, w.position
             """, (sid, book, sid)).fetchall()
         verses = {}
+        verse_prose = {}
         verse_order = []
         gloss_counts = {}
         for r in word_rows:
@@ -2170,6 +2171,7 @@ def lexicon_verses(strongs, book):
             hl = bool(r["hl"])
             if key not in verses:
                 verses[key] = []
+                verse_prose[key] = r["prose"] if corpus != "kjv" else None
                 verse_order.append(key)
             entry = {"w": word, "h": hl}
             if corpus == "kjv":
@@ -2187,7 +2189,7 @@ def lexicon_verses(strongs, book):
                 if any(bool(e["h"]) and _normalize_gloss(e["w"]) == gloss for e in words_in_verse):
                     filtered_order.append(key)
             verse_order = filtered_order
-        result_verses = [{"chapter": k[0], "verse": k[1], "words": verses[k]} for k in verse_order]
+        result_verses = [{"chapter": k[0], "verse": k[1], "words": verses[k], "text": verse_prose.get(k)} for k in verse_order]
         result_glosses = sorted([{"gloss": g, "count": c} for g, c in gloss_counts.items()], key=lambda x: -x["count"])
         conn.close()
         return jsonify({"verses": result_verses, "glosses": result_glosses})
@@ -2201,7 +2203,7 @@ def chapter_text(book, chapter):
     conn = db()
     try:
         rows = conn.execute(
-            """SELECT v.verse, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
+            """SELECT v.verse, v.text AS prose, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
                       l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic,
                       COALESCE(w.italic_words, '') AS italic_words,
                       COALESCE(w.smcap_words,  '') AS smcap_words,
@@ -2221,7 +2223,7 @@ def chapter_text(book, chapter):
     for r in rows:
         vn = r["verse"]
         if vn not in verses:
-            verses[vn] = {"words": [], "heading": r["heading"]}
+            verses[vn] = {"words": [], "heading": r["heading"], "prose": r["prose"]}
             order.append(vn)
         verses[vn]["words"].append({
             "position":     r["position"],
@@ -2242,6 +2244,7 @@ def chapter_text(book, chapter):
         {
             "verse": v,
             "heading": verses[v]["heading"],
+            "prose": verses[v]["prose"],
             "words": verses[v]["words"],
         }
         for v in order
