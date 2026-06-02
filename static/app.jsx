@@ -1415,7 +1415,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
             {g.books.map(b => {
               const active = selBook && b.abbrev === selBook.abbrev;
               return (
-                <div key={b.abbrev}>
+                <div key={b.abbrev} ref={active ? navBookRef : null}>
                   <button
                     className={"nav-book" + (active ? " on" : "")}
                     onClick={() => { setSelBook(b); setSelChapter(1); if (isOverlay) onClose(); }}
@@ -1519,6 +1519,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   });
   const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
   const highlightRef = useRef(null);
+  const navBookRef = useRef(null);
+
+  useEffect(() => {
+    if (!nav?.book || !navBookRef.current) return;
+    requestAnimationFrame(() => {
+      navBookRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  }, [nav?.book]);
   const [navVisible, setNavVisible] = useState(!isMobile);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
@@ -2595,7 +2603,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
                       <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
                       <span className="lexicon-verse-text">{v.text}</span>
                       {onNavigateToLibrary && (
-                        <button className="lexicon-verse-lib-link" onClick={() => onNavigateToLibrary(selectedBook, v.chapter)}>
+                        <button className="lexicon-verse-lib-link" onClick={() => onNavigateToLibrary(selectedBook, v.chapter, v.verse)}>
                           Read →
                         </button>
                       )}
@@ -2923,7 +2931,7 @@ function App() {
         {mainView === "about" && <AboutView />}
         {mainView === "lexicon" && <LexiconView
           onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }}
-          onNavigateToLibrary={(book, chapter) => { handleNavChange("library"); setLibNav({ book, chapter }); }}
+          onNavigateToLibrary={(book, chapter, verse) => { handleNavChange("library"); setLibNav({ book, chapter, highlight: verse, scroll: true }); }}
           pendingStrongs={lexiconPendingStrongs}
           onPendingStrongsConsumed={() => setLexiconPendingStrongs(null)}
         />}
