@@ -1982,8 +1982,10 @@ def lexicon_profile(strongs):
             definition = row["strongs_def"] or row["kjv_def"] or ""
         # Corpus: default H→kjv, G→abp; override via ?corpus=
         corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
-        book_meta = {r["abbrev"]: {"name": r["name"], "testament": r["testament"]}
-                     for r in conn.execute("SELECT abbrev, name, testament FROM books").fetchall()}
+        _NT = {"Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph","Php","Col",
+               "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
+        book_meta = {r["abbrev"]: {"name": r["name"], "testament": "NT" if r["abbrev"] in _NT else "OT"}
+                     for r in conn.execute("SELECT abbrev, name FROM books").fetchall()}
         if corpus == "kjv":
             dist = conn.execute("""
                 SELECT kw.book_id, COUNT(*) AS cnt
