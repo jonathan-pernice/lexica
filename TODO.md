@@ -66,6 +66,7 @@
 - Overall search layout needs optimizing — spacing, hierarchy, result cards
 - Audit whether library display improvements (verse numbers neutral, interlinear hierarchy, gold overuse) carried over to search result verses — likely they did not since search uses different component classes
 - Align search verse rendering with library standards where appropriate
+- **AI search verse display** — `_fetch_verse_words` still returns word tokens for cited verse context in AI search results. Should use `verses.text` (now populated) for clean prose display. Same approach as Lexicon verse list.
 
 ## ✓ Text Structure Session — DONE
 
