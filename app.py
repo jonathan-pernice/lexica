@@ -2049,7 +2049,7 @@ def lexicon_verses(strongs, book):
             if not book_id:
                 conn.close()
                 return jsonify([])
-            rows = conn.execute("""
+            rows = conn.execute(f"""
                 SELECT kv.chapter, kv.verse_num AS verse, kv.verse_text AS text
                 FROM kjv_verses kv
                 WHERE kv.book_id = ? AND EXISTS (
@@ -2062,7 +2062,7 @@ def lexicon_verses(strongs, book):
                 ORDER BY kv.chapter, kv.verse_num
             """, ((book_id, f"H{snum}") if is_heb else (book_id, f"G{snum}")) + ((gloss,) if gloss else ())).fetchall()
         else:
-            word_rows = conn.execute("""
+            word_rows = conn.execute(f"""
                 SELECT v.chapter, v.verse, w.english, w.position
                 FROM verses v
                 JOIN words w ON w.verse_id = v.id
