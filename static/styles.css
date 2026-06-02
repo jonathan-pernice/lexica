@@ -231,6 +231,7 @@ input { font-family: inherit; }
 }
 .lexicon-total { font-size: 13px; color: var(--ink-3); }
 .lexicon-header-controls { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+.lexicon-controls-row { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
 .lexicon-corpus-toggle { display: flex; gap: 2px; background: var(--rule); border-radius: 6px; padding: 2px; }
 .lct-btn { padding: 3px 10px; font-size: 12px; font-weight: 600; border: none; border-radius: 4px; cursor: pointer; background: transparent; color: var(--ink-2); }
 .lct-btn.on { background: var(--paper); color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
