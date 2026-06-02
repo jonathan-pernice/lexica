@@ -2616,8 +2616,8 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       )}
 
       {groupings && (
-        <div className="lexicon-groupings">
-          <div className="lexicon-groupings-label">rendered as "{query.trim()}"</div>
+        <div style={{marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
+          <div className="lexicon-dist-label">rendered as "{query.trim()}"</div>
           {groupings.map(g => {
             const entry = {
               id: `lex-${g.strongs}`, strongs: g.strongs, strongs_base: g.strongs,
@@ -2628,16 +2628,17 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
               isHebrew: g.strongs.startsWith('H'),
             };
             return (
-              <div key={g.strongs} className="lexicon-group-row">
-                <button className={"lexicon-group-sn" + (profile?.strongs === g.strongs ? " active" : "")}
+              <div key={g.strongs} className="lexicon-dist-grid">
+                <button className={"lexicon-dist-book" + (profile?.strongs === g.strongs ? " selected" : "")}
                   onClick={() => { loadProfile(g.strongs); onWordClick?.(entry); }}>
-                  {g.strongs}{g.translit ? <span className="lexicon-group-sn-translit"> {g.translit}</span> : null}
+                  <span className="lexicon-match-strongs">{g.strongs}</span>
+                  {g.translit && <span className="lexicon-match-translit"> {g.translit}</span>}
                 </button>
-                <span className="lexicon-group-appears">appears as</span>
                 {(g.glosses || []).map(({gloss, count}) => (
-                  <button key={gloss} className="lexicon-group-chip"
+                  <button key={gloss} className="lexicon-dist-book"
                     onClick={() => { loadProfile(g.strongs); setPendingGloss(gloss); onWordClick?.(entry); }}>
-                    {gloss} <span className="lexicon-group-chip-count">{count}</span>
+                    <span className="lexicon-dist-name">{gloss}</span>
+                    <span className="lexicon-dist-count">{count}</span>
                   </button>
                 ))}
               </div>

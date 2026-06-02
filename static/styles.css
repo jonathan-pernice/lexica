@@ -196,37 +196,6 @@ input { font-family: inherit; }
 .lexicon-match-translit { font-size: 13px; color: var(--ink-2); font-style: italic; }
 .lexicon-match-gloss { font-size: 13px; color: var(--ink-2); }
 
-/* English corpus groupings */
-.lexicon-groupings { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
-.lexicon-groupings-label { font-size: 12px; color: var(--ink-3); letter-spacing: 0.02em; margin-bottom: 2px; }
-.lexicon-group-row { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
-.lexicon-group-sn {
-  font-family: var(--f-mono);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--gold);
-  border: 1.5px solid var(--gold);
-  border-radius: 5px;
-  padding: 1px 6px;
-  background: transparent;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-@media (hover: hover) { .lexicon-group-sn:hover { background: var(--gold-soft); } }
-.lexicon-group-sn.active { background: var(--gold-soft); }
-.lexicon-group-sn-translit { font-style: italic; font-weight: 400; color: var(--ink-3); font-family: var(--f-serif); margin-left: 2px; }
-.lexicon-group-appears { font-size: 11px; color: var(--ink-4); }
-.lexicon-group-chip {
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  border: 1px solid var(--rule);
-  background: var(--bg);
-  color: var(--ink-2);
-  cursor: pointer;
-}
-@media (hover: hover) { .lexicon-group-chip:hover { border-color: var(--rule-2); color: var(--ink); } }
-.lexicon-group-chip-count { color: var(--ink-4); font-size: 11px; margin-left: 2px; }
 
 /* Back link from profile to groupings */
 .lexicon-back {
@@ -300,13 +269,6 @@ input { font-family: inherit; }
 .lexicon-verse-text { color: var(--ink-2); }
 .lexicon-verse-lib-link { background: none; border: none; color: var(--accent, #6b82c8); font-size: 11px; font-weight: 500; cursor: pointer; padding: 0; white-space: nowrap; opacity: 0.7; }
 .lexicon-verse-lib-link:hover { opacity: 1; text-decoration: underline; }
-.lexicon-glosses { margin: 10px 0 4px; }
-.lexicon-gloss-label { font-size: 11px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.lexicon-gloss-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.lexicon-gloss-chip { background: var(--bg-2, #f2f2f2); border: 1px solid var(--rule); border-radius: 20px; padding: 3px 10px; font-size: 13px; color: var(--ink-2); cursor: pointer; transition: background 0.15s; }
-.lexicon-gloss-chip:hover { background: var(--bg-3, #e8e8e8); }
-.lexicon-gloss-chip.selected { background: var(--navy); color: #fff; border-color: var(--navy); }
-.lexicon-gloss-count { font-size: 11px; opacity: 0.65; margin-left: 3px; }
 .lex-hl { font-weight: 700; color: var(--gold, #b8860b); }
 .search-grid {
   display: grid;
