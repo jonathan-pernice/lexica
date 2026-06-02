@@ -68,8 +68,8 @@ const api = {
     fetch(`/api/lexicon/lookup?q=${encodeURIComponent(q)}`).then(r => r.json()),
   lexiconProfile: (strongs, corpus) =>
     fetch(`/api/lexicon/profile/${encodeURIComponent(strongs)}${corpus ? `?corpus=${corpus}` : ""}`).then(r => r.json()),
-  lexiconVerses: (strongs, book, corpus) =>
-    fetch(`/api/lexicon/verses/${encodeURIComponent(strongs)}/${encodeURIComponent(book)}?corpus=${corpus}`).then(r => r.json()),
+  lexiconVerses: (strongs, book, corpus, gloss) =>
+    fetch(`/api/lexicon/verses/${encodeURIComponent(strongs)}/${encodeURIComponent(book)}?corpus=${corpus}${gloss ? `&gloss=${encodeURIComponent(gloss)}` : ""}`).then(r => r.json()),
 };
 
 // Extract proper noun name from a multi-word gloss, skipping function words
@@ -2442,6 +2442,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
   const [verseLoading, setVerseLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedGloss, setSelectedGloss] = useState(null);
 
   useEffect(() => {
     if (!pendingStrongs) return;
@@ -2454,6 +2455,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
     setError(null);
     setMatches(null);
     setSelectedBook(null);
+    setSelectedGloss(null);
     const isHeb = /^H/i.test(strongs) || (!(/^[GgHh]/.test(strongs)) && parseInt(strongs) > 5624);
     const c = corpusOverride ?? (isHeb ? "kjv" : "abp");
     setCorpus(c);
@@ -2472,6 +2474,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
     setSelectedBook(null);
     setVerseList(null);
     setTestament("all");
+    setSelectedGloss(null);
     try {
       const data = await api.lexiconProfile(profile.strongs, c);
       if (!data.error) setProfile(data);
@@ -2479,17 +2482,27 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
     finally { setLoading(false); }
   };
 
-  const selectBook = async (book) => {
-    if (selectedBook === book) { setSelectedBook(null); setVerseList(null); return; }
-    setSelectedBook(book);
+  const fetchVerses = async (book, gloss) => {
     setVerseList(null);
     setVerseLoading(true);
     try {
-      const data = await api.lexiconVerses(profile.strongs, book, corpus);
+      const data = await api.lexiconVerses(profile.strongs, book, corpus, gloss);
       if (data.error) setVerseList([{ error: data.error }]);
       else setVerseList(data);
     } catch (e) { setVerseList([{ error: String(e) }]); }
     finally { setVerseLoading(false); }
+  };
+
+  const selectBook = async (book) => {
+    if (selectedBook === book) { setSelectedBook(null); setVerseList(null); return; }
+    setSelectedBook(book);
+    await fetchVerses(book, selectedGloss);
+  };
+
+  const selectGloss = async (gloss) => {
+    const next = selectedGloss === gloss ? null : gloss;
+    setSelectedGloss(next);
+    if (selectedBook) await fetchVerses(selectedBook, next);
   };
 
   const handleSubmit = async (e) => {
@@ -2559,6 +2572,23 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
             </div>
           </div>
           <p className="lexicon-definition">{profile.definition}</p>
+
+          {profile.glosses && profile.glosses.length > 0 && (
+            <div className="lexicon-glosses">
+              <div className="lexicon-gloss-label">Rendered as</div>
+              <div className="lexicon-gloss-chips">
+                {profile.glosses.map(g => (
+                  <button
+                    key={g.gloss}
+                    className={"lexicon-gloss-chip" + (selectedGloss === g.gloss ? " selected" : "")}
+                    onClick={() => selectGloss(g.gloss)}
+                  >
+                    {g.gloss} <span className="lexicon-gloss-count">{g.count}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="lexicon-distribution">
             <div className="lexicon-dist-header">

@@ -252,6 +252,13 @@ input { font-family: inherit; }
 .lexicon-verse-text { color: var(--ink-2); }
 .lexicon-verse-lib-link { background: none; border: none; color: var(--accent, #6b82c8); font-size: 11px; font-weight: 500; cursor: pointer; padding: 0; white-space: nowrap; opacity: 0.7; }
 .lexicon-verse-lib-link:hover { opacity: 1; text-decoration: underline; }
+.lexicon-glosses { margin: 10px 0 4px; }
+.lexicon-gloss-label { font-size: 11px; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.lexicon-gloss-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lexicon-gloss-chip { background: var(--bg-2, #f2f2f2); border: 1px solid var(--rule); border-radius: 20px; padding: 3px 10px; font-size: 13px; color: var(--ink-2); cursor: pointer; transition: background 0.15s; }
+.lexicon-gloss-chip:hover { background: var(--bg-3, #e8e8e8); }
+.lexicon-gloss-chip.selected { background: var(--navy); color: #fff; border-color: var(--navy); }
+.lexicon-gloss-count { font-size: 11px; opacity: 0.65; margin-left: 3px; }
 .search-grid {
   display: grid;
   grid-template-columns: minmax(180px, 320px) 1px 1fr;

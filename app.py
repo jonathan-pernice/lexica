@@ -2011,7 +2011,21 @@ def lexicon_profile(strongs):
             books = [{"book": r["book"], "name": book_meta.get(r["book"], {}).get("name", r["book"]),
                       "testament": book_meta.get(r["book"], {}).get("testament", ""), "count": r["cnt"]} for r in dist]
         total = sum(b["count"] for b in books)
-        return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus})
+        if corpus == "kjv":
+            gr = conn.execute("""
+                SELECT kw.word AS gloss, COUNT(*) AS cnt
+                FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
+                WHERE ks.strongs_id = ?
+                GROUP BY kw.word ORDER BY cnt DESC LIMIT 30
+            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
+        else:
+            gr = conn.execute("""
+                SELECT english AS gloss, COUNT(*) AS cnt FROM words
+                WHERE strongs_base = ? AND english IS NOT NULL AND english != '' AND english != '*'
+                GROUP BY english ORDER BY cnt DESC LIMIT 30
+            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
+        glosses = [{"gloss": r["gloss"], "count": r["cnt"]} for r in gr if r["gloss"] and r["gloss"] not in ("*", "")]
+        return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus, "glosses": glosses})
     except Exception:
         return jsonify({"error": "Server error"}), 500
     finally:
@@ -2027,6 +2041,7 @@ def lexicon_verses(strongs, book):
     snum = m.group(2).split('.')[0]
     is_heb = prefix == 'H' or (not prefix and int(snum) > 5624)
     corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
+    gloss = request.args.get("gloss", "").strip()
     conn = db_ro()
     try:
         if corpus == "kjv":
@@ -2042,10 +2057,10 @@ def lexicon_verses(strongs, book):
                     JOIN kjv_strongs ks ON ks.word_id = kw.word_id
                     WHERE kw.book_id = kv.book_id AND kw.chapter = kv.chapter
                       AND kw.verse_num = kv.verse_num
-                      AND ks.strongs_id = ?
+                      AND ks.strongs_id = ?{" AND kw.word = ?" if gloss else ""}
                 )
                 ORDER BY kv.chapter, kv.verse_num
-            """, (book_id, f"H{snum}") if is_heb else (book_id, f"G{snum}")).fetchall()
+            """, ((book_id, f"H{snum}") if is_heb else (book_id, f"G{snum}")) + ((gloss,) if gloss else ())).fetchall()
         else:
             word_rows = conn.execute("""
                 SELECT v.chapter, v.verse, w.english, w.position
@@ -2053,10 +2068,10 @@ def lexicon_verses(strongs, book):
                 JOIN words w ON w.verse_id = v.id
                 WHERE v.book = ? AND v.id IN (
                     SELECT verse_id FROM words
-                    WHERE strongs_base = ?
+                    WHERE strongs_base = ?{" AND english = ?" if gloss else ""}
                 )
                 ORDER BY v.chapter, v.verse, w.position
-            """, (book, f"H{snum}") if is_heb else (book, f"G{snum}")).fetchall()
+            """, ((book, f"H{snum}") if is_heb else (book, f"G{snum}")) + ((gloss,) if gloss else ())).fetchall()
             verse_map = {}
             verse_order = []
             for r in word_rows:
