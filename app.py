@@ -1982,7 +1982,8 @@ def lexicon_profile(strongs):
             definition = row["strongs_def"] or row["kjv_def"] or ""
         # Corpus: default H→kjv, G→abp; override via ?corpus=
         corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
-        book_names = {r["abbrev"]: r["name"] for r in conn.execute("SELECT abbrev, name FROM books").fetchall()}
+        book_meta = {r["abbrev"]: {"name": r["name"], "testament": r["testament"]}
+                     for r in conn.execute("SELECT abbrev, name, testament FROM books").fetchall()}
         if corpus == "kjv":
             dist = conn.execute("""
                 SELECT kw.book_id, COUNT(*) AS cnt
@@ -1995,7 +1996,8 @@ def lexicon_profile(strongs):
             books = []
             for r in dist:
                 abbrev = abbrev_by_id.get(r["book_id"], "")
-                books.append({"book": abbrev, "name": book_names.get(abbrev, abbrev), "count": r["cnt"]})
+                meta = book_meta.get(abbrev, {})
+                books.append({"book": abbrev, "name": meta.get("name", abbrev), "testament": meta.get("testament", ""), "count": r["cnt"]})
         else:
             dist = conn.execute("""
                 SELECT v.book, COUNT(*) AS cnt
@@ -2003,9 +2005,46 @@ def lexicon_profile(strongs):
                 WHERE w.strongs_base = ? OR w.strongs_base = ? OR w.strongs_base = ?
                 GROUP BY v.book ORDER BY cnt DESC
             """, (snum, f"G{snum}", f"H{snum}")).fetchall()
-            books = [{"book": r["book"], "name": book_names.get(r["book"], r["book"]), "count": r["cnt"]} for r in dist]
+            books = [{"book": r["book"], "name": book_meta.get(r["book"], {}).get("name", r["book"]),
+                      "testament": book_meta.get(r["book"], {}).get("testament", ""), "count": r["cnt"]} for r in dist]
         total = sum(b["count"] for b in books)
         return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus})
+    finally:
+        conn.close()
+
+
+@app.route("/api/lexicon/verses/<strongs>/<book>")
+def lexicon_verses(strongs, book):
+    m = re.match(r'^([GgHh]?)(\d+(?:\.\d+)?)$', strongs.strip())
+    if not m:
+        return jsonify([])
+    prefix = m.group(1).upper()
+    snum = m.group(2).split('.')[0]
+    is_heb = prefix == 'H' or (not prefix and int(snum) > 5624)
+    corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
+    conn = db_ro()
+    try:
+        if corpus == "kjv":
+            book_id = _KJV_BOOK_ID.get(book)
+            if not book_id:
+                return jsonify([])
+            rows = conn.execute("""
+                SELECT DISTINCT kv.chapter, kv.verse_num AS verse, kv.verse_text AS text
+                FROM kjv_strongs ks
+                JOIN kjv_words kw ON kw.word_id = ks.word_id
+                JOIN kjv_verses kv ON kv.book_id = kw.book_id
+                    AND kv.chapter = kw.chapter AND kv.verse_num = kw.verse_num
+                WHERE kw.book_id = ? AND (ks.strongs_id = ? OR ks.strongs_id = ? OR ks.strongs_id = ?)
+                ORDER BY kv.chapter, kv.verse_num
+            """, (book_id, f"G{snum}", f"H{snum}", snum)).fetchall()
+        else:
+            rows = conn.execute("""
+                SELECT DISTINCT v.chapter, v.verse, v.text
+                FROM words w JOIN verses v ON w.verse_id = v.id
+                WHERE v.book = ? AND (w.strongs_base = ? OR w.strongs_base = ? OR w.strongs_base = ?)
+                ORDER BY v.chapter, v.verse
+            """, (book, snum, f"G{snum}", f"H{snum}")).fetchall()
+        return jsonify([{"chapter": r["chapter"], "verse": r["verse"], "text": r["text"]} for r in rows])
     finally:
         conn.close()
 

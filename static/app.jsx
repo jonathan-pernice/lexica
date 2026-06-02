@@ -68,6 +68,8 @@ const api = {
     fetch(`/api/lexicon/lookup?q=${encodeURIComponent(q)}`).then(r => r.json()),
   lexiconProfile: (strongs, corpus) =>
     fetch(`/api/lexicon/profile/${encodeURIComponent(strongs)}${corpus ? `?corpus=${corpus}` : ""}`).then(r => r.json()),
+  lexiconVerses: (strongs, book, corpus) =>
+    fetch(`/api/lexicon/verses/${encodeURIComponent(strongs)}/${encodeURIComponent(book)}?corpus=${corpus}`).then(r => r.json()),
 };
 
 // Extract proper noun name from a multi-word gloss, skipping function words
@@ -2425,7 +2427,10 @@ function LexiconView({ onNavigateToSearch }) {
   const [matches, setMatches] = useState(null);
   const [profile, setProfile] = useState(null);
   const [corpus, setCorpus] = useState("abp");
+  const [testament, setTestament] = useState("all");
   const [selectedBook, setSelectedBook] = useState(null);
+  const [verseList, setVerseList] = useState(null);
+  const [verseLoading, setVerseLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -2450,11 +2455,25 @@ function LexiconView({ onNavigateToSearch }) {
     setCorpus(c);
     setLoading(true);
     setSelectedBook(null);
+    setVerseList(null);
+    setTestament("all");
     try {
       const data = await api.lexiconProfile(profile.strongs, c);
       if (!data.error) setProfile(data);
     } catch {}
     finally { setLoading(false); }
+  };
+
+  const selectBook = async (book) => {
+    if (selectedBook === book) { setSelectedBook(null); setVerseList(null); return; }
+    setSelectedBook(book);
+    setVerseList(null);
+    setVerseLoading(true);
+    try {
+      const data = await api.lexiconVerses(profile.strongs, book, corpus);
+      setVerseList(data);
+    } catch {}
+    finally { setVerseLoading(false); }
   };
 
   const handleSubmit = async (e) => {
@@ -2526,26 +2545,48 @@ function LexiconView({ onNavigateToSearch }) {
           <p className="lexicon-definition">{profile.definition}</p>
 
           <div className="lexicon-distribution">
-            <div className="lexicon-dist-label">Distribution by book</div>
+            <div className="lexicon-dist-header">
+              <div className="lexicon-dist-label">Distribution by book</div>
+              <div className="lexicon-testament-toggle">
+                {["all","ot","nt"].map(t => (
+                  <button key={t} className={"lct-btn" + (testament === t ? " on" : "")}
+                    onClick={() => { setTestament(t); setSelectedBook(null); setVerseList(null); }}>
+                    {t === "all" ? "All" : t.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="lexicon-dist-grid">
-              {profile.books.map(b => (
-                <button
-                  key={b.book}
-                  className={"lexicon-dist-book" + (selectedBook === b.book ? " selected" : "")}
-                  onClick={() => setSelectedBook(selectedBook === b.book ? null : b.book)}
-                >
-                  <span className="lexicon-dist-name">{b.name}</span>
-                  <span className="lexicon-dist-count">{b.count}</span>
-                </button>
-              ))}
+              {profile.books
+                .filter(b => testament === "all" || (b.testament || "").toLowerCase() === testament)
+                .map(b => (
+                  <button
+                    key={b.book}
+                    className={"lexicon-dist-book" + (selectedBook === b.book ? " selected" : "")}
+                    onClick={() => selectBook(b.book)}
+                  >
+                    <span className="lexicon-dist-name">{b.name}</span>
+                    <span className="lexicon-dist-count">{b.count}</span>
+                  </button>
+                ))}
             </div>
           </div>
 
           {selectedBook && (
             <div className="lexicon-verse-list">
-              <div className="lexicon-verse-list-label">
-                {profile.books.find(b => b.book === selectedBook)?.name} — coming soon
+              <div className="lexicon-verse-list-header">
+                <span className="lexicon-verse-list-title">
+                  {profile.books.find(b => b.book === selectedBook)?.name}
+                </span>
+                <button className="lexicon-verse-close" onClick={() => { setSelectedBook(null); setVerseList(null); }}>✕</button>
               </div>
+              {verseLoading && <div className="lexicon-verse-loading">Loading…</div>}
+              {verseList && verseList.map((v, i) => (
+                <div key={i} className="lexicon-verse-row">
+                  <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
+                  <span className="lexicon-verse-text">{v.text}</span>
+                </div>
+              ))}
             </div>
           )}
         </div>
