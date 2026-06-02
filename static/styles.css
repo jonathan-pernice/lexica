@@ -197,39 +197,22 @@ input { font-family: inherit; }
 .lexicon-match-gloss { font-size: 13px; color: var(--ink-2); }
 
 /* English corpus groupings */
-.lexicon-groupings { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-.lexicon-groupings-label { font-size: 12px; color: var(--ink-3); letter-spacing: 0.02em; margin-bottom: 4px; }
-.lexicon-group-row { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
-.lexicon-group-row.selected .lexicon-group-sn { background: var(--gold-soft); border-color: var(--gold); }
-.lexicon-group-meta { display: contents; }
-.lexicon-group-sn {
-  font-family: var(--f-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--gold);
-  background: color-mix(in oklab, var(--gold) 10%, transparent);
-  border: 1px solid color-mix(in oklab, var(--gold) 28%, transparent);
-  border-radius: 4px;
-  padding: 2px 6px;
-  cursor: pointer;
-}
-.lexicon-group-sn:hover { background: color-mix(in oklab, var(--gold) 20%, transparent); }
-.lexicon-group-lemma { font-family: var(--f-greek); font-size: 16px; color: var(--ink); }
-.lexicon-group-translit { font-size: 12px; color: var(--ink-3); font-style: italic; }
-.lexicon-group-appears { font-size: 12px; color: var(--ink-4); }
-.lexicon-group-chips { display: contents; }
+.lexicon-groupings { margin-top: 20px; }
+.lexicon-groupings-label { font-size: 12px; color: var(--ink-3); letter-spacing: 0.02em; margin-bottom: 8px; }
+.lexicon-group-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .lexicon-group-chip {
+  font-family: var(--f-mono);
   font-size: 12px;
-  padding: 2px 7px;
+  font-weight: 600;
+  padding: 3px 9px;
   border-radius: 20px;
   border: 1px solid var(--rule);
   background: var(--bg);
   color: var(--ink-2);
   cursor: pointer;
 }
-.lexicon-group-chip:hover { border-color: var(--rule-2); }
+.lexicon-group-chip:hover { border-color: var(--rule-2); color: var(--ink); }
 .lexicon-group-chip.active { border-color: var(--gold); background: var(--gold-soft); color: var(--ink); }
-.lexicon-group-chip-count { color: var(--ink-4); font-size: 11px; margin-left: 2px; }
 
 /* Back link from profile to groupings */
 .lexicon-back {

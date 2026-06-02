@@ -2600,35 +2600,22 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
 
       {groupings && (
         <div className="lexicon-groupings">
-          <div className="lexicon-groupings-label">{groupings.length} lemma{groupings.length !== 1 ? "s" : ""} rendered as "{query.trim()}"</div>
-          {groupings.map(g => {
-            const isSelected = profile?.strongs === g.strongs;
-            return (
-              <div key={g.strongs} className={"lexicon-group-row" + (isSelected ? " selected" : "")}>
-                <div className="lexicon-group-meta">
-                  <button className="lexicon-group-sn" onClick={() => {
+          <div className="lexicon-groupings-label">rendered as "{query.trim()}"</div>
+          <div className="lexicon-group-chips">
+            {groupings.map(g => {
+              const isSelected = profile?.strongs === g.strongs;
+              return (
+                <button key={g.strongs}
+                  className={"lexicon-group-chip" + (isSelected ? " active" : "")}
+                  onClick={() => {
                     if (isSelected) { setProfile(null); setSelectedBook(null); setVerseList(null); setPendingGloss(null); }
                     else { setPendingGloss(null); loadProfile(g.strongs); }
-                  }}>{g.strongs}</button>
-                  {g.lemma && <span className="lexicon-group-lemma">{g.lemma}</span>}
-                  {g.translit && <span className="lexicon-group-translit">{g.translit}</span>}
-                  <span className="lexicon-group-appears">appears as</span>
-                </div>
-                <div className="lexicon-group-chips">
-                  {(g.glosses || []).map(({gloss, count}) => (
-                    <button key={gloss}
-                      className={"lexicon-group-chip" + (isSelected && selectedGloss === gloss ? " active" : "")}
-                      onClick={() => {
-                        if (isSelected) selectGloss(gloss);
-                        else { loadProfile(g.strongs); setPendingGloss(gloss); }
-                      }}>
-                      {gloss} <span className="lexicon-group-chip-count">{count}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+                  }}>
+                  {g.strongs}
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
