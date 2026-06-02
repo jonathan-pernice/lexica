@@ -2444,9 +2444,9 @@ function LexiconView({ onNavigateToSearch }) {
     setCorpus(c);
     try {
       const data = await api.lexiconProfile(strongs, c);
-      if (data.error) setError("Word not found.");
+      if (data.error) setError(data.error);
       else setProfile(data);
-    } catch { setError("Failed to load word profile."); }
+    } catch (e) { setError("Failed to load word profile: " + e); }
     finally { setLoading(false); }
   };
 
