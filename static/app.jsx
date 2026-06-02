@@ -1585,6 +1585,26 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const POETRY_BOOKS = new Set(["Psa", "Pro", "Job", "Son", "Lam", "Ecc"]);
   const isPoetry = POETRY_BOOKS.has(selBook?.abbrev);
 
+  const swipeRef = React.useRef(null);
+  const swipeHandlers = isMobile ? {
+    onTouchStart: (e) => { swipeRef.current = e.touches[0].clientX; },
+    onTouchEnd: (e) => {
+      if (swipeRef.current === null) return;
+      const dx = e.changedTouches[0].clientX - swipeRef.current;
+      swipeRef.current = null;
+      if (Math.abs(dx) < 50) return; // ignore short swipes
+      if (dx < 0 && selChapter < maxChap) { // swipe left → next chapter
+        const c = selChapter + 1;
+        setSelChapter(c);
+        onNavChange?.({ ...nav, chapter: c, highlight: null });
+      } else if (dx > 0 && selChapter > 1) { // swipe right → prev chapter
+        const c = selChapter - 1;
+        setSelChapter(c);
+        onNavChange?.({ ...nav, chapter: c, highlight: null });
+      }
+    },
+  } : {};
+
   const changeFontSize = (delta) => {
     setLibFontSize(prev => {
       const next = Math.min(24, Math.max(13, prev + delta));
@@ -2085,12 +2105,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </div>
       ) : (
         <div className="lib-toolbar lib-toolbar-navy">
-          <button className="mbar-logo-btn" onClick={() => setMobileNavOpen(true)} aria-label="Books">
+          <span className="mbar-logo-btn" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
               <path d="M11 7v6M14 10h-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
             </svg>
-          </button>
+          </span>
           <div className="mbar-center">
             <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); onNavChange?.({ ...nav, chapter: c, highlight: null }); }} aria-label="Previous chapter">‹</button>
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
@@ -2106,7 +2126,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </div>
       )}
 
-      <div className={"lib-reading" + (showInterlinear ? " lib-interlinear-on" : "")} style={{...(translation === "parallel" ? {paddingTop: 0} : {}), "--lib-font-size": libFontSize + "px"}}>
+      <div className={"lib-reading" + (showInterlinear ? " lib-interlinear-on" : "")} style={{...(translation === "parallel" ? {paddingTop: 0} : {}), "--lib-font-size": libFontSize + "px"}} {...swipeHandlers}>
 
         {translation === "parallel" ? (
           <div className="lib-parallel">
