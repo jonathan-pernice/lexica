@@ -1721,8 +1721,6 @@ input { font-family: inherit; }
   .lib-parallel-col:last-child { padding-top: 4px; margin-top: 2px; }
   .lib-parallel-col .lib-vnum { display: none; }
 }
-.mbar-btn { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); flex: 0 0 auto; }
-.mbar-btn:active { background: rgba(15,27,45,0.06); }
 .mbar-center { flex: 1; display: flex; align-items: center; justify-content: center; gap: 18px; }
 .mbar-loc { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 42px; border-radius: 10px; padding: 0 12px; }
 .mbar-loc:active { background: rgba(15,27,45,0.05); }
