@@ -2072,7 +2072,7 @@ def lexicon_books(strongs):
     is_heb = prefix == "H"
     corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
     gloss = request.args.get("gloss", "").strip().lower()
-    conn = get_db()
+    conn = db()
     try:
         _NT = {"Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph","Php","Col",
                "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
