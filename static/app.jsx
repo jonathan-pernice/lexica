@@ -2471,8 +2471,9 @@ function LexiconView({ onNavigateToSearch }) {
     setVerseLoading(true);
     try {
       const data = await api.lexiconVerses(profile.strongs, book, corpus);
-      setVerseList(data);
-    } catch {}
+      if (data.error) setVerseList([{ error: data.error }]);
+      else setVerseList(data);
+    } catch (e) { setVerseList([{ error: String(e) }]); }
     finally { setVerseLoading(false); }
   };
 
@@ -2582,10 +2583,12 @@ function LexiconView({ onNavigateToSearch }) {
               </div>
               {verseLoading && <div className="lexicon-verse-loading">Loading…</div>}
               {verseList && verseList.map((v, i) => (
-                <div key={i} className="lexicon-verse-row">
-                  <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
-                  <span className="lexicon-verse-text">{v.text}</span>
-                </div>
+                v.error
+                  ? <div key={i} className="lexicon-verse-loading" style={{color:"red"}}>{v.error}</div>
+                  : <div key={i} className="lexicon-verse-row">
+                      <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
+                      <span className="lexicon-verse-text">{v.text}</span>
+                    </div>
               ))}
             </div>
           )}

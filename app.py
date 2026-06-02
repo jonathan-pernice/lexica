@@ -2033,22 +2033,30 @@ def lexicon_verses(strongs, book):
             if not book_id:
                 return jsonify([])
             rows = conn.execute("""
-                SELECT DISTINCT kv.chapter, kv.verse_num AS verse, kv.verse_text AS text
-                FROM kjv_strongs ks
-                JOIN kjv_words kw ON kw.word_id = ks.word_id
-                JOIN kjv_verses kv ON kv.book_id = kw.book_id
-                    AND kv.chapter = kw.chapter AND kv.verse_num = kw.verse_num
-                WHERE kw.book_id = ? AND (ks.strongs_id = ? OR ks.strongs_id = ? OR ks.strongs_id = ?)
+                SELECT kv.chapter, kv.verse_num AS verse, kv.verse_text AS text
+                FROM kjv_verses kv
+                WHERE kv.book_id = ? AND EXISTS (
+                    SELECT 1 FROM kjv_words kw
+                    JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+                    WHERE kw.book_id = kv.book_id AND kw.chapter = kv.chapter
+                      AND kw.verse_num = kv.verse_num
+                      AND (ks.strongs_id = ? OR ks.strongs_id = ? OR ks.strongs_id = ?)
+                )
                 ORDER BY kv.chapter, kv.verse_num
             """, (book_id, f"G{snum}", f"H{snum}", snum)).fetchall()
         else:
             rows = conn.execute("""
-                SELECT DISTINCT v.chapter, v.verse, v.text
-                FROM words w JOIN verses v ON w.verse_id = v.id
-                WHERE v.book = ? AND (w.strongs_base = ? OR w.strongs_base = ? OR w.strongs_base = ?)
+                SELECT v.chapter, v.verse, v.text
+                FROM verses v
+                WHERE v.book = ? AND v.id IN (
+                    SELECT w.verse_id FROM words w
+                    WHERE w.strongs_base = ? OR w.strongs_base = ? OR w.strongs_base = ?
+                )
                 ORDER BY v.chapter, v.verse
             """, (book, snum, f"G{snum}", f"H{snum}")).fetchall()
         return jsonify([{"chapter": r["chapter"], "verse": r["verse"], "text": r["text"]} for r in rows])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
 
