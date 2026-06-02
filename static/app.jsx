@@ -1084,9 +1084,10 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
           function renderCorpusWord(w, key) {
             const label = corpusWordLabel(w);
             if (!label) return null;
-            const clickable = w.strongs_base && w.strongs_base !== "*";
+            const isPN = w.strongs_base === "*";
+            const clickable = !!(w.strongs_base && (w.strongs_base !== "*" || w.english));
             const wnum = w.strongs || w.strongs_base;
-            const foundEntry = clickable && entryMap.get(wnum);
+            const foundEntry = !isPN && clickable && entryMap.get(wnum);
             const entry = clickable && (foundEntry
               ? { ...foundEntry, gloss: w.english || foundEntry.gloss }
               : {
@@ -1096,10 +1097,11 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
                 strongs_raw: wnum,
                 greek: w.lemma || "",
                 translit: w.translit || "",
-                gloss: w.english || "",
+                gloss: label,
                 ref: `${book} ${chapter}:${verse}`,
                 book, chapter, verse,
                 definition: "", derivation: "", is_function: false,
+                ...(isPN ? { isPN: true, pnName: label } : {}),
               });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
             const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
