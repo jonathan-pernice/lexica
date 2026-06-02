@@ -2801,7 +2801,7 @@ function App() {
     }
   };
 
-  const searchLabel = mode === "ai" ? q2.trim() : q1.trim();
+  const searchLabel = q2.trim();
 
   return (
     <div className={"app " + ((activeEntry || libCrossRef) ? "has-detail" : "")}>
