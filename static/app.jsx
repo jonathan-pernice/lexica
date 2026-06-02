@@ -821,7 +821,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
             <p className="detail-p">
               {entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) =>
                 /^G\d[\d.]*/i.test(part)
-                  ? <button key={i} className="link-btn link-btn--strong" onClick={() => onStrongsSearch(part)}>{part}</button>
+                  ? <button key={i} className="link-btn link-btn--strong" onClick={() => onNavigateToLexicon?.(part)}>{part}</button>
                   : part
               )}
             </p>
@@ -2193,89 +2193,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 // ============================================================
 // GLOSS GROUPINGS
 // ============================================================
-function GlossGroupings({ groupings, results, variants, onGlossDrill, onStrongsSearch, isKjv }) {
-  const rows = useMemo(() => {
-    const seen = new Set();
-    const order = [];
-    for (const e of results) {
-      if (e.strongs_raw && e.strongs_raw !== "*" && !seen.has(e.strongs_raw)) {
-        seen.add(e.strongs_raw);
-        order.push(e.strongs_raw);
-      }
-    }
-    return order
-      .filter(sn => groupings[sn]?.length > 0) // only strongs with actual groupings
-      .map(sn => {
-        const glosses = groupings[sn] || [];
-        const base = sn.includes('.') ? sn.split('.')[0] : sn;
-        const allVariants = (variants && variants[base]) || [];
-        const siblings = sn.includes('.') ? allVariants.filter(v => v !== sn) : [];
-        const entry = results.find(e => e.strongs_raw === sn);
-        return { sn, glosses, siblings, entry };
-      })
-      .filter(({ glosses, siblings, entry }) =>
-        glosses.length > 1 && !(entry && entry.is_function));
-  }, [groupings, results, variants]);
-
-  if (rows.length === 0) return null;
-
-  return (
-    <div className="gloss-groupings">
-      {rows.map(({ sn, glosses, siblings, entry }) => (
-        <div key={sn} className="gloss-group">
-          <span className="gloss-group-head">
-            <button className="gloss-strongs-btn" onClick={() => onStrongsSearch(strongsTag(sn), isKjv)}>{strongsTag(sn)}</button>
-            {entry && entry.translit && <span className="gloss-translit">{entry.translit}</span>}
-            {glosses.length > 1 && <span className="gloss-also">appears as</span>}
-          </span>
-          {glosses.length > 0 && (
-            <span className="gloss-chips">
-              {glosses.map(g => (
-                <button key={g.gloss} className="gloss-chip"
-                  onClick={() => onGlossDrill(sn, g.gloss)}>
-                  {stripArticles(g.gloss)}
-                  <span className="gloss-chip-count">{g.count}</span>
-                </button>
-              ))}
-            </span>
-          )}
-          {siblings.length > 0 && (
-            <span className="gloss-siblings">
-              <span className="gloss-also">{glosses.length > 1 ? "·" : "see also"}</span>
-              {siblings.map(v => (
-                <button key={v} className="gloss-strongs-btn gloss-sibling-btn"
-                  onClick={() => onStrongsSearch(`G${v}`)}>
-                  G{v}
-                </button>
-              ))}
-            </span>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ============================================================
-// SEARCH BREADCRUMB
-// ============================================================
-function SearchBreadcrumb({ breadcrumbs, currentLabel, onNav }) {
-  if (!breadcrumbs.length) return null;
-  return (
-    <nav className="breadcrumb" aria-label="Search navigation">
-      {breadcrumbs.map((crumb, idx) => (
-        <React.Fragment key={idx}>
-          <button className="breadcrumb-item" onClick={() => onNav(crumb, idx)}>
-            {crumb.label}
-          </button>
-          <span className="breadcrumb-sep" aria-hidden="true">›</span>
-        </React.Fragment>
-      ))}
-      <span className="breadcrumb-current">{currentLabel}</span>
-    </nav>
-  );
-}
-
 // ============================================================
 // AI ANSWER STRIP
 // ============================================================
@@ -2842,95 +2759,11 @@ function App() {
     setMainView(view);
   };
 
-  const handleSearch = async (overrideQ = null, newBreadcrumbs = null, pushHistory = true, pendingGlossFilter = null) => {
-    const q = (overrideQ !== null ? overrideQ : q1).trim();
-    if (!q) return;
-    if (overrideQ !== null) setQ1(overrideQ);
-    const crumbs = newBreadcrumbs ?? [];
-    setBreadcrumbs(crumbs);
-    if (pushHistory) window.history.pushState({ q, breadcrumbs: crumbs }, "");
-    setMainView("search");
-    setLoading(true);
-    setError("");
-    setAiMeta(null);
-    setMode("search");
-    setViewMode("browse");
-    setActiveEntry(null);
-    setAbpGroupings({});
-    setKjvGroupings({});
-    setVariants({});
-    setGlossFilter(null);
-    setLangFilter("all");
-    try {
-      const data = await api.search(q);
-      if (data.error) {
-        setError(data.error);
-        setAllResults([]);
-        setAbpGroupings({});
-        setKjvGroupings({});
-        setVariants({});
-      } else {
-        const abp = (data.abp_results || []).map((r, i) => ({ ...makeEntry(r, i), source: "abp" }));
-        const kjv = (data.kjv_results || []).map((r, i) => ({
-          ...r, id: `kjv-sr-${i}`, gloss_head: r.gloss || "",
-          strongs: r.strongs || "", strongs_raw: r.strongs || r.strongs_base || "",
-          greek: r.lemma || "", translit: r.translit || "",
-          source: "kjv",
-        }));
-        setAllResults([...abp, ...kjv]);
-        setAbpGroupings(data.abp_groupings || {});
-        setKjvGroupings(data.kjv_groupings || {});
-        setVariants(data.variants || {});
-        if (pendingGlossFilter) setGlossFilter(pendingGlossFilter);
-      }
-    } catch (e) {
-      setError("Network error: " + e.message);
-      setAllResults([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-  searchFnRef.current = handleSearch;
-
   const handleNavigateToLexicon = (strongs) => {
     if (!strongs) return;
     setLexiconPendingStrongs(strongs);
     handleNavChange("lexicon");
   };
-
-  const handleStrongsSearch = (strongs_base, fromKjv = false) => {
-    if (!strongs_base || strongs_base === "*") return;
-    const s = String(strongs_base);
-    const isH = /^H/i.test(s);
-    const num = s.replace(/^[GH]/i, "");
-    if (fromKjv) setBrowseTranslation("kjv");
-    const newQ = isH ? `H${num}` : `G${num}`;
-    const currentQ = q1.trim();
-    const last = breadcrumbs[breadcrumbs.length - 1];
-    const crumbs = currentQ && last?.q !== currentQ
-      ? [...breadcrumbs, { label: searchLabel, q: currentQ }]
-      : breadcrumbs;
-    handleSearch(newQ, crumbs);
-  };
-
-  const handleGlossDrill = (sn, gloss) => {
-    // Always do a full strongs search to ensure all results are fetched
-    // (grouping count is from full corpus, allResults may be truncated)
-    const crumbsWithCurrent = [...breadcrumbs, { label: searchLabel, q: q1.trim() }];
-    handleSearch(strongsTag(sn), crumbsWithCurrent, true, { sn, gloss });
-  };
-
-  const handleBreadcrumbNav = (crumb, idx) => {
-    handleSearch(crumb.q, breadcrumbs.slice(0, idx), true);
-  };
-
-  useEffect(() => {
-    const onPop = (e) => {
-      if (e.state?.q) searchFnRef.current(e.state.q, e.state.breadcrumbs ?? [], false);
-    };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, []);
 
   const handleAiSearch = async (overrideQ) => {
     const q = (overrideQ !== undefined ? overrideQ : q2).trim();
@@ -3089,10 +2922,8 @@ function App() {
           onClose={() => setActiveEntry(null)}
           occurrences={countMap[activeEntry.strongs_raw] || 0}
           totalResults={allResults.length}
-          onStrongsSearch={handleStrongsSearch}
-          onNavigateToLexicon={handleNavigateToLexicon}
+                    onNavigateToLexicon={handleNavigateToLexicon}
           onReadInContext={handleReadInContext}
-          onNameSearch={(name) => handleSearch(name)}
         />
       )}
 
@@ -3105,8 +2936,7 @@ function App() {
             onClose={() => setActiveEntry(null)}
             occurrences={countMap[activeEntry.strongs_raw] || 0}
             totalResults={allResults.length}
-            onStrongsSearch={handleStrongsSearch}
-            onNavigateToLexicon={handleNavigateToLexicon}
+                        onNavigateToLexicon={handleNavigateToLexicon}
             onReadInContext={handleReadInContext}
           />
         </>
