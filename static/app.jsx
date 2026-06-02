@@ -1107,19 +1107,31 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
             const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
             const isCited = clickable && citedStrongs != null && citedStrongs.size > 0 &&
               (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum));
+            // Multi-word gloss with italic_words: split into separate chips (mirrors library)
+            if (label.includes(' ') && w.italic_words) {
+              const iset = new Set(w.italic_words.split(','));
+              return (
+                <React.Fragment key={key}>
+                  {label.split(' ').filter(Boolean).map((word, pi) => {
+                    const bare = word.replace(/[^\w]/g, '').toLowerCase();
+                    const isItal = iset.has(bare);
+                    return (
+                      <span key={pi} className={"corpus-word-wrap" + (!isItal && clickable ? " match" : "") + (!isItal && isCited ? " cited" : "")}
+                            onClick={!isItal && clickable ? () => onWordClick(entry) : undefined}>
+                        <span className={"corpus-word" + (isItal ? " corpus-word-italic" : "")}>{word}</span>
+                        <span className="corpus-strongs" style={{visibility:"hidden"}}>G0</span>
+                      </span>
+                    );
+                  })}
+                </React.Fragment>
+              );
+            }
             return (
               <span key={key} className={"corpus-word-wrap" + (clickable ? " match" : "") + (isCited ? " cited" : "")}
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
                 <span className="corpus-pos-english">
                   {hasPos && <span className="corpus-pos">{w.greek_pos}</span>}
-                  {label.includes(' ') ? (() => {
-                    const iset = w.italic_words ? new Set(w.italic_words.split(',')) : null;
-                    return label.split(' ').filter(Boolean).map((word, pi) => {
-                      const bare = word.replace(/[^\w]/g, '').toLowerCase();
-                      const isItal = iset ? iset.has(bare) : !!w.italic;
-                      return <span key={pi} className={"corpus-word" + (isItal ? " corpus-word-italic" : "")}>{word}{" "}</span>;
-                    });
-                  })() : <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{label}</span>}
+                  <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{label}</span>
                 </span>
                 {clickable
                   ? <span className="corpus-strongs">{strongsTag(wnum)}</span>
