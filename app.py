@@ -1991,9 +1991,9 @@ def lexicon_profile(strongs):
                 SELECT kw.book_id, COUNT(*) AS cnt
                 FROM kjv_strongs ks
                 JOIN kjv_words kw ON kw.word_id = ks.word_id
-                WHERE ks.strongs_id = ? OR ks.strongs_id = ?
+                WHERE ks.strongs_id = ?
                 GROUP BY kw.book_id ORDER BY cnt DESC
-            """, (f"H{snum}", snum) if is_heb else (f"G{snum}", snum)).fetchall()
+            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
             abbrev_by_id = {v: k for k, v in _KJV_BOOK_ID.items()}
             books = []
             for r in dist:
@@ -2041,10 +2041,10 @@ def lexicon_verses(strongs, book):
                     JOIN kjv_strongs ks ON ks.word_id = kw.word_id
                     WHERE kw.book_id = kv.book_id AND kw.chapter = kv.chapter
                       AND kw.verse_num = kv.verse_num
-                      AND (ks.strongs_id = ? OR ks.strongs_id = ?)
+                      AND ks.strongs_id = ?
                 )
                 ORDER BY kv.chapter, kv.verse_num
-            """, (book_id, f"H{snum}", snum) if is_heb else (book_id, f"G{snum}", snum)).fetchall()
+            """, (book_id, f"H{snum}") if is_heb else (book_id, f"G{snum}")).fetchall()
         else:
             word_rows = conn.execute("""
                 SELECT v.chapter, v.verse, w.english, w.position
