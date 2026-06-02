@@ -1114,7 +1114,7 @@ input { font-family: inherit; }
 .corpus-bracket-glyph {
   font-family: var(--f-serif);
   font-size: 1em;
-  color: var(--ink);
+  color: var(--ink-3);
   line-height: 1.3;
 }
 .corpus-pos-english {
@@ -1652,7 +1652,7 @@ input { font-family: inherit; }
   font-family: var(--f-serif);
   font-size: 16px;
   line-height: 1.3;
-  color: var(--ink);
+  color: var(--ink-3);
 }
 
 /* Interlinear in detail panel */
