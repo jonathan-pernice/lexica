@@ -151,6 +151,30 @@ input { font-family: inherit; }
   box-shadow: var(--shadow-sm);
   padding: 22px 24px;
 }
+.lexicon-view { max-width: 640px; margin: 48px auto; padding: 0 24px; }
+.lexicon-search-form { display: flex; gap: 8px; }
+.lexicon-search-input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  color: var(--ink);
+  outline: none;
+}
+.lexicon-search-input:focus { border-color: var(--gold); }
+.lexicon-search-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  cursor: pointer;
+}
+.lexicon-hint { margin-top: 16px; font-size: 13px; color: var(--ink-3); }
 .search-grid {
   display: grid;
   grid-template-columns: minmax(180px, 320px) 1px 1fr;

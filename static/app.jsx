@@ -266,8 +266,9 @@ function Header({ activeView, onNavChange }) {
           </div>
         </div>
         <nav className="hdr-nav">
-          <button className={"hdr-link " + (activeView === "search" ? "active" : "")} onClick={() => onNavChange("search")}>Search</button>
+          <button className={"hdr-link " + (activeView === "lexicon" ? "active" : "")} onClick={() => onNavChange("lexicon")}>Lexicon</button>
           <button className={"hdr-link " + (activeView === "library" ? "active" : "")} onClick={() => onNavChange("library")}>Library</button>
+          <button className={"hdr-link " + (activeView === "search" ? "active" : "")} onClick={() => onNavChange("search")}>Search</button>
           <button className={"hdr-link " + (activeView === "about" ? "active" : "")} onClick={() => onNavChange("about")}>About</button>
         </nav>
       </div>
@@ -2411,6 +2412,35 @@ function AboutView() {
 }
 
 // ============================================================
+// LEXICON VIEW
+// ============================================================
+function LexiconView({ onNavigateToSearch }) {
+  const [query, setQuery] = React.useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (query.trim()) onNavigateToSearch(query.trim());
+  };
+
+  return (
+    <div className="lexicon-view">
+      <form className="lexicon-search-form" onSubmit={handleSubmit}>
+        <input
+          className="lexicon-search-input"
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Greek, Hebrew, English, or Strong's (G4151, H7307)…"
+          autoFocus
+        />
+        <button type="submit" className="lexicon-search-btn">Search</button>
+      </form>
+      <p className="lexicon-hint">Word study flow — select a word to see its profile, canonical distribution, and verse contexts.</p>
+    </div>
+  );
+}
+
+// ============================================================
 // APP
 // ============================================================
 function App() {
@@ -2432,7 +2462,7 @@ function App() {
   const [studySort, setStudySort] = useState("curated"); // "curated" | "canonical"
   const [studyTextMode, setStudyTextMode] = useState("abp"); // "abp" | "kjv"
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1100);
-  const [mainView, setMainView] = useState("search");
+  const [mainView, setMainView] = useState("lexicon");
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
   const [libTranslation, setLibTranslation] = useState("abp");
@@ -2715,7 +2745,8 @@ function App() {
           </div>
         )}
         {mainView === "about" && <AboutView />}
-        <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about") ? "none" : undefined }}>
+        {mainView === "lexicon" && <LexiconView onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }} />}
+        <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about" || mainView === "lexicon") ? "none" : undefined }}>
           <><SearchBar
             q1={q1} setQ1={setQ1}
             q2={q2} setQ2={setQ2}
@@ -2931,13 +2962,17 @@ function App() {
 
       {isMobile && (
         <nav className="mobile-tabs">
-          <button className={"mobile-tab" + (mainView === "search" ? " active" : "")} onClick={() => handleNavChange("search")}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-            Search
+          <button className={"mobile-tab" + (mainView === "lexicon" ? " active" : "")} onClick={() => handleNavChange("lexicon")}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 19V6a2 2 0 0 1 2-2h13"/><path d="M4 19a2 2 0 0 0 2 2h13V8H6a2 2 0 0 0-2 2"/></svg>
+            Lexicon
           </button>
           <button className={"mobile-tab" + (mainView === "library" ? " active" : "")} onClick={() => handleNavChange("library")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3"/></svg>
             Library
+          </button>
+          <button className={"mobile-tab" + (mainView === "search" ? " active" : "")} onClick={() => handleNavChange("search")}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+            Search
           </button>
           <button className={"mobile-tab" + (mainView === "about" ? " active" : "")} onClick={() => handleNavChange("about")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
