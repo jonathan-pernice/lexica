@@ -1171,7 +1171,7 @@ input { font-family: inherit; }
 .study-word {
   font-family: var(--f-serif);
   font-size: 1em;
-  color: var(--ink-2);
+  color: var(--ink);
   line-height: 1.3;
 }
 .study-strongs {
@@ -1653,7 +1653,7 @@ input { font-family: inherit; }
 .lib-iw-english {
   font-family: var(--f-serif);
   font-size: 1em;
-  color: var(--ink-2);
+  color: var(--ink);
   line-height: 1.3;
 }
 .lib-iw-strongs {
