@@ -2044,26 +2044,29 @@ def lexicon_verses(strongs, book):
     gloss = request.args.get("gloss", "").strip()
     conn = db_ro()
     try:
+        sid = f"H{snum}" if is_heb else f"G{snum}"
         if corpus == "kjv":
             book_id = _KJV_BOOK_ID.get(book)
             if not book_id:
                 conn.close()
-                return jsonify([])
-            rows = conn.execute(f"""
-                SELECT kv.chapter, kv.verse_num AS verse, kv.verse_text AS text
-                FROM kjv_verses kv
-                WHERE kv.book_id = ? AND EXISTS (
-                    SELECT 1 FROM kjv_words kw
-                    JOIN kjv_strongs ks ON ks.word_id = kw.word_id
-                    WHERE kw.book_id = kv.book_id AND kw.chapter = kv.chapter
-                      AND kw.verse_num = kv.verse_num
-                      AND ks.strongs_id = ?{" AND kw.word = ?" if gloss else ""}
+                return jsonify({"verses": [], "glosses": []})
+            word_rows = conn.execute(f"""
+                SELECT kw.chapter, kw.verse_num AS verse, kw.word, kw.italic,
+                       CASE WHEN ks2.strongs_id IS NOT NULL THEN 1 ELSE 0 END AS hl
+                FROM kjv_words kw
+                LEFT JOIN kjv_strongs ks2 ON ks2.word_id = kw.word_id AND ks2.strongs_id = ?
+                WHERE kw.book_id = ? AND EXISTS (
+                    SELECT 1 FROM kjv_words kw2
+                    JOIN kjv_strongs ks ON ks.word_id = kw2.word_id
+                    WHERE kw2.book_id = kw.book_id AND kw2.chapter = kw.chapter
+                      AND kw2.verse_num = kw.verse_num AND ks.strongs_id = ?{" AND kw2.word = ?" if gloss else ""}
                 )
-                ORDER BY kv.chapter, kv.verse_num
-            """, ((book_id, f"H{snum}") if is_heb else (book_id, f"G{snum}")) + ((gloss,) if gloss else ())).fetchall()
+                ORDER BY kw.chapter, kw.verse_num, kw.position
+            """, (sid, book_id, sid) + ((gloss,) if gloss else ())).fetchall()
         else:
             word_rows = conn.execute(f"""
-                SELECT v.chapter, v.verse, w.english, w.position
+                SELECT v.chapter, v.verse, w.english AS word,
+                       CASE WHEN w.strongs_base = ? THEN 1 ELSE 0 END AS hl
                 FROM verses v
                 JOIN words w ON w.verse_id = v.id
                 WHERE v.book = ? AND v.id IN (
@@ -2071,24 +2074,30 @@ def lexicon_verses(strongs, book):
                     WHERE strongs_base = ?{" AND english = ?" if gloss else ""}
                 )
                 ORDER BY v.chapter, v.verse, w.position
-            """, ((book, f"H{snum}") if is_heb else (book, f"G{snum}")) + ((gloss,) if gloss else ())).fetchall()
-            verse_map = {}
-            verse_order = []
-            for r in word_rows:
-                key = (r["chapter"], r["verse"])
-                if key not in verse_map:
-                    verse_map[key] = []
-                    verse_order.append(key)
-                if r["english"]:
-                    verse_map[key].append(r["english"])
-            rows = [{"chapter": k[0], "verse": k[1], "text": " ".join(verse_map[k])} for k in verse_order]
-            conn.close()
-            return jsonify(rows)
+            """, (sid, book, sid) + ((gloss,) if gloss else ())).fetchall()
+        verses = {}
+        verse_order = []
+        gloss_counts = {}
+        for r in word_rows:
+            key = (r["chapter"], r["verse"])
+            if key not in verses:
+                verses[key] = []
+                verse_order.append(key)
+            word = r["word"] or ""
+            hl = bool(r["hl"])
+            entry = {"w": word, "h": hl}
+            if corpus == "kjv":
+                entry["i"] = bool(r["italic"])
+            verses[key].append(entry)
+            if hl and word:
+                gloss_counts[word] = gloss_counts.get(word, 0) + 1
+        result_verses = [{"chapter": k[0], "verse": k[1], "words": verses[k]} for k in verse_order]
+        result_glosses = sorted([{"gloss": g, "count": c} for g, c in gloss_counts.items()], key=lambda x: -x["count"])
+        conn.close()
+        return jsonify({"verses": result_verses, "glosses": result_glosses})
     except Exception as e:
         conn.close()
         return jsonify({"error": str(e)}), 500
-    conn.close()
-    return jsonify([{"chapter": r["chapter"], "verse": r["verse"], "text": r["text"]} for r in rows])
 
 
 @app.route("/api/chapter/<book>/<int:chapter>")
