@@ -1687,7 +1687,7 @@ input { font-family: inherit; }
 }
 @media (max-width: 1099px) {
   .hdr { display: none; }
-  .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 56px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; align-items: center; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); gap: 4px; }
+  .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 56px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); gap: 4px; }
   .lib-toolbar-navy { background: var(--navy); border-bottom-color: var(--navy-edge, #1e3050); backdrop-filter: none; }
   .lib-toolbar-navy .mbar-loc-name { color: #e9ecf2; }
   .lib-toolbar-navy .mbar-loc-cv { color: #6a7f9e; }
@@ -1696,7 +1696,7 @@ input { font-family: inherit; }
   .lib-toolbar-navy .mbar-trans { color: #7eb8e8; }
   .lib-toolbar-navy .mbar-trans:active { background: rgba(255,255,255,0.06); }
   .lib-toolbar-navy .mbar-loc:active { background: rgba(255,255,255,0.06); }
-  .mbar-logo-btn { display: flex; align-items: center; justify-content: center; color: #cfd6e3; flex: 0 0 42px; height: 42px; }
+  .mbar-logo-btn { display: flex; align-items: center; justify-content: center; color: #cfd6e3; flex: 0 0 42px; }
   .mbar-logo-name { font-family: var(--f-serif); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; color: #f6f7fa; }
   .mobile-brand-bar { display: flex; align-items: center; gap: 8px; background: var(--navy); color: #cfd6e3; padding: 0 16px; height: 56px; position: sticky; top: 0; z-index: 20; border-bottom: 1px solid var(--navy-edge, #1e3050); }
   .mobile-brand-name { font-family: var(--f-serif); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; color: #f6f7fa; }
