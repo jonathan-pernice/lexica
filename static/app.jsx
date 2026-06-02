@@ -70,6 +70,8 @@ const api = {
     fetch(`/api/lexicon/profile/${encodeURIComponent(strongs)}${corpus ? `?corpus=${corpus}` : ""}`).then(r => r.json()),
   lexiconVerses: (strongs, book, corpus, gloss) =>
     fetch(`/api/lexicon/verses/${encodeURIComponent(strongs)}/${encodeURIComponent(book)}?corpus=${corpus}${gloss ? `&gloss=${encodeURIComponent(gloss)}` : ""}`).then(r => r.json()),
+  lexiconBooks: (strongs, corpus, gloss) =>
+    fetch(`/api/lexicon/books/${encodeURIComponent(strongs)}?corpus=${corpus}${gloss ? `&gloss=${encodeURIComponent(gloss)}` : ""}`).then(r => r.json()),
 };
 
 // Extract proper noun name from a multi-word gloss, skipping function words
@@ -2444,6 +2446,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
   const [error, setError] = useState(null);
   const [selectedGloss, setSelectedGloss] = useState(null);
   const [bookGlosses, setBookGlosses] = useState(null);
+  const [filteredBooks, setFilteredBooks] = useState(null);
 
   useEffect(() => {
     if (!pendingStrongs) return;
@@ -2458,6 +2461,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
     setSelectedBook(null);
     setSelectedGloss(null);
     setBookGlosses(null);
+    setFilteredBooks(null);
     const isHeb = /^H/i.test(strongs) || (!(/^[GgHh]/.test(strongs)) && parseInt(strongs) > 5624);
     const c = corpusOverride ?? (isHeb ? "kjv" : "abp");
     setCorpus(c);
@@ -2478,6 +2482,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
     setTestament("all");
     setSelectedGloss(null);
     setBookGlosses(null);
+    setFilteredBooks(null);
     try {
       const data = await api.lexiconProfile(profile.strongs, c);
       if (!data.error) setProfile(data);
@@ -2509,6 +2514,12 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
   const selectGloss = async (gloss) => {
     const next = selectedGloss === gloss ? null : gloss;
     setSelectedGloss(next);
+    if (next) {
+      const data = await api.lexiconBooks(profile.strongs, corpus, next);
+      setFilteredBooks(data.books && data.books.length ? data.books : null);
+    } else {
+      setFilteredBooks(null);
+    }
     if (selectedBook) await fetchVerses(selectedBook, next);
   };
 
@@ -2610,7 +2621,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
               </div>
             </div>
             <div className="lexicon-dist-grid">
-              {profile.books
+              {(filteredBooks || profile.books)
                 .filter(b => testament === "all" || (b.testament || "").toLowerCase() === testament)
                 .map(b => (
                   <button

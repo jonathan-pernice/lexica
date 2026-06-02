@@ -2063,6 +2063,62 @@ def lexicon_profile(strongs):
         conn.close()
 
 
+@app.route("/api/lexicon/books/<strongs>")
+def lexicon_books(strongs):
+    m = re.match(r'^([GgHh]?)(\d+(?:\.\d+)?)$', strongs.strip())
+    if not m:
+        return jsonify({"error": "invalid"}), 400
+    prefix, snum = m.group(1).upper(), m.group(2)
+    is_heb = prefix == "H"
+    corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
+    gloss = request.args.get("gloss", "").strip().lower()
+    conn = get_db()
+    try:
+        _NT = {"Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph","Php","Col",
+               "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
+        book_meta = {r["abbrev"]: {"name": r["name"], "testament": "NT" if r["abbrev"] in _NT else "OT"}
+                     for r in conn.execute("SELECT abbrev, name FROM books").fetchall()}
+        if corpus == "kjv":
+            rows = conn.execute("""
+                SELECT kw.book_id, kw.word AS english, COUNT(*) AS cnt
+                FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
+                WHERE ks.strongs_id = ?
+                GROUP BY kw.book_id, kw.word
+            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
+            abbrev_by_id = {v: k for k, v in _KJV_BOOK_ID.items()}
+            book_counts = {}
+            for r in rows:
+                if gloss and _normalize_gloss(r["english"] or "") != gloss:
+                    continue
+                abbrev = abbrev_by_id.get(r["book_id"], "")
+                if abbrev:
+                    book_counts[abbrev] = book_counts.get(abbrev, 0) + r["cnt"]
+            books = []
+            for abbrev, cnt in sorted(book_counts.items(), key=lambda x: -x[1]):
+                testament = "NT" if _KJV_BOOK_ID.get(abbrev, 0) >= 40 else "OT"
+                books.append({"book": abbrev, "name": book_meta.get(abbrev, {}).get("name", abbrev), "testament": testament, "count": cnt})
+        else:
+            rows = conn.execute("""
+                SELECT v.book, w.english, COUNT(*) AS cnt
+                FROM words w JOIN verses v ON w.verse_id = v.id
+                WHERE w.strongs_base = ?
+                GROUP BY v.book, w.english
+            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
+            book_counts = {}
+            for r in rows:
+                if gloss and _normalize_gloss(r["english"] or "") != gloss:
+                    continue
+                book_counts[r["book"]] = book_counts.get(r["book"], 0) + r["cnt"]
+            books = [{"book": b, "name": book_meta.get(b, {}).get("name", b),
+                      "testament": book_meta.get(b, {}).get("testament", ""), "count": c}
+                     for b, c in sorted(book_counts.items(), key=lambda x: -x[1])]
+        return jsonify({"books": books})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+
 @app.route("/api/lexicon/verses/<strongs>/<book>")
 def lexicon_verses(strongs, book):
     m = re.match(r'^([GgHh]?)(\d+(?:\.\d+)?)$', strongs.strip())
