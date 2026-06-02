@@ -2046,15 +2046,28 @@ def lexicon_verses(strongs, book):
                 ORDER BY kv.chapter, kv.verse_num
             """, (book_id, f"G{snum}", f"H{snum}", snum)).fetchall()
         else:
-            rows = conn.execute("""
-                SELECT v.chapter, v.verse, v.text
+            word_rows = conn.execute("""
+                SELECT v.chapter, v.verse, w.english, w.position
                 FROM verses v
+                JOIN words w ON w.verse_id = v.id
                 WHERE v.book = ? AND v.id IN (
-                    SELECT w.verse_id FROM words w
-                    WHERE w.strongs_base = ? OR w.strongs_base = ? OR w.strongs_base = ?
+                    SELECT verse_id FROM words
+                    WHERE strongs_base = ? OR strongs_base = ? OR strongs_base = ?
                 )
-                ORDER BY v.chapter, v.verse
+                ORDER BY v.chapter, v.verse, w.position
             """, (book, snum, f"G{snum}", f"H{snum}")).fetchall()
+            verse_map = {}
+            verse_order = []
+            for r in word_rows:
+                key = (r["chapter"], r["verse"])
+                if key not in verse_map:
+                    verse_map[key] = []
+                    verse_order.append(key)
+                if r["english"]:
+                    verse_map[key].append(r["english"])
+            rows = [{"chapter": k[0], "verse": k[1], "text": " ".join(verse_map[k])} for k in verse_order]
+            conn.close()
+            return jsonify(rows)
     except Exception as e:
         conn.close()
         return jsonify({"error": str(e)}), 500
