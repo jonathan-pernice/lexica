@@ -2620,7 +2620,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
                     isHebrew: g.strongs.startsWith('H'),
                   });
                 }}>
-                {g.strongs}
+                {g.strongs}{g.translit ? <span className="lexicon-group-chip-translit"> {g.translit}</span> : null}
               </button>
             ))}
           </div>

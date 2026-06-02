@@ -213,6 +213,7 @@ input { font-family: inherit; }
 }
 .lexicon-group-chip:hover { border-color: var(--rule-2); color: var(--ink); }
 .lexicon-group-chip.active { border-color: var(--gold); background: var(--gold-soft); color: var(--ink); }
+.lexicon-group-chip-translit { font-style: italic; color: var(--ink-3); font-family: var(--f-serif); }
 
 /* Back link from profile to groupings */
 .lexicon-back {
