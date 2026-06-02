@@ -289,58 +289,36 @@ function Header({ activeView, onNavChange }) {
 // ============================================================
 // SEARCH BAR
 // ============================================================
-function SearchBar({ q1, setQ1, q2, setQ2, onSearch, onAiSearch, aiLoading, lexLoading }) {
+function SearchBar({ q2, setQ2, onAiSearch, aiLoading }) {
   return (
     <section className="search">
-      <div className="search-grid">
-        <div className="search-cell">
-          <label className="search-label">
-            <span className="search-eyebrow">Lexicon</span>
-            <span className="search-hint">Word, transliteration, or Strong's №</span>
-          </label>
-          <form className="search-field" onSubmit={(e) => { e.preventDefault(); onSearch(); }}>
-            <Icon.Search className="search-icon"/>
-            <input
-              type="text"
-              className="search-input"
-              placeholder="πνεῦμα  ·  pneuma  ·  G4151"
-              value={q1}
-              onChange={(e) => setQ1(e.target.value)}
-            />
-            <button type="submit" className="search-go" aria-label="Search">
-              {lexLoading ? <span className="spinner"/> : <Icon.ArrowRight/>}
-            </button>
-          </form>
+      <div className="search-cell">
+        <label className="search-label">
+          <span className="search-eyebrow ai">
+            <span className="ai-dot"></span>
+            Ask the corpus
+          </span>
+          <span className="search-hint">Natural language across the lexicon</span>
+        </label>
+        <form className="search-field ai-field" onSubmit={(e) => { e.preventDefault(); onAiSearch(); }}>
+          <Icon.Sparkle className="search-icon"/>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Where does the divine council appear?"
+            value={q2}
+            onChange={(e) => setQ2(e.target.value)}
+          />
+          <button type="submit" className="search-go" aria-label="Submit">
+            {aiLoading ? <span className="spinner"/> : <Icon.ArrowRight/>}
+          </button>
+        </form>
+        <div className="search-chips">
+          <button className="chip suggest" onClick={() => setQ2("Where does pneuma appear in Genesis")}>"Where does pneuma appear in Genesis"</button>
+          <button className="chip suggest" onClick={() => setQ2("Faith in Paul's letters")}>"Faith in Paul's letters"</button>
+          <button className="chip suggest" onClick={() => setQ2("divine council passages")}>"divine council passages"</button>
         </div>
-        <div className="search-divider" aria-hidden="true"></div>
-        <div className="search-cell">
-          <label className="search-label">
-            <span className="search-eyebrow ai">
-              <span className="ai-dot"></span>
-              Ask the corpus
-            </span>
-            <span className="search-hint">Natural language across the lexicon</span>
-          </label>
-          <form className="search-field ai-field" onSubmit={(e) => { e.preventDefault(); onAiSearch(); }}>
-            <Icon.Sparkle className="search-icon"/>
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Where does the divine council appear?"
-              value={q2}
-              onChange={(e) => setQ2(e.target.value)}
-            />
-            <button type="submit" className="search-go" aria-label="Submit">
-              {aiLoading ? <span className="spinner"/> : <Icon.ArrowRight/>}
-            </button>
-          </form>
-          <div className="search-chips">
-            <button className="chip suggest" onClick={() => setQ2("Where does pneuma appear in Genesis")}>"Where does pneuma appear in Genesis"</button>
-            <button className="chip suggest" onClick={() => setQ2("Faith in Paul's letters")}>"Faith in Paul's letters"</button>
-            <button className="chip suggest" onClick={() => setQ2("divine council passages")}>"divine council passages"</button>
-          </div>
-          <p className="search-morph-note">For detailed grammatical analysis including verb forms and pronoun usage, morphological search coming soon.</p>
-        </div>
+        <p className="search-morph-note">For detailed grammatical analysis including verb forms and pronoun usage, morphological search coming soon.</p>
       </div>
     </section>
   );
@@ -3074,12 +3052,9 @@ function App() {
         </div>
         <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about" || mainView === "lexicon") ? "none" : undefined }}>
           <><SearchBar
-            q1={q1} setQ1={setQ1}
             q2={q2} setQ2={setQ2}
-            onSearch={handleSearch}
             onAiSearch={handleAiSearch}
             aiLoading={aiLoading}
-            lexLoading={loading}
           />
 
           {aiNotice && (
@@ -3119,102 +3094,39 @@ function App() {
             />
           )}
 
-          {mode !== "idle" && (
+          {mode === "ai" && (
             <>
-              {mode === "search" && (breadcrumbs.length > 0 || glossFilter) && (
-                <SearchBreadcrumb
-                  breadcrumbs={glossFilter
-                    ? [
-                        ...breadcrumbs,
-                        ...(breadcrumbs[breadcrumbs.length - 1]?.q !== q1.trim() ? [{ label: searchLabel, q: q1.trim() }] : []),
-                        ...(searchLabel !== strongsTag(glossFilter.sn) ? [{ label: strongsTag(glossFilter.sn) }] : [])
-                      ]
-                    : breadcrumbs}
-                  currentLabel={glossFilter ? glossFilter.gloss : searchLabel}
-                  onNav={(crumb, idx) => {
-                    setGlossFilter(null);
-                    if (idx < breadcrumbs.length) handleBreadcrumbNav(crumb, idx);
-                  }}
-                />
-              )}
               <div className="results-head">
                 <div className="results-meta">
-                  {mode === "ai" ? (
-                    <>
-                      <span className="results-count">{(loading || aiLoading) ? "…" : primaryVerseCount}</span>
-                      <span className="results-label">primary {primaryVerseCount === 1 ? "verse" : "verses"}</span>
-                      {!loading && aiMeta && aiMeta.total > primaryVerseCount && (
-                        <button className="see-all-link" onClick={() => setShowAllAi(v => !v)}>
-                          {showAllAi ? "Show less" : `See all ${aiMeta.total} occurrences`}
-                        </button>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <span className="results-count">{loading ? "…" : displayed.length}</span>
-                      <span className="results-label">results</span>
-                    </>
+                  <span className="results-count">{(loading || aiLoading) ? "…" : primaryVerseCount}</span>
+                  <span className="results-label">primary {primaryVerseCount === 1 ? "verse" : "verses"}</span>
+                  {!loading && aiMeta && aiMeta.total > primaryVerseCount && (
+                    <button className="see-all-link" onClick={() => setShowAllAi(v => !v)}>
+                      {showAllAi ? "Show less" : `See all ${aiMeta.total} occurrences`}
+                    </button>
                   )}
                   {searchLabel && !aiLoading && <span className="results-for">for "<b>{searchLabel}</b>"</span>}
                 </div>
                 <div className="results-controls" style={{marginLeft:"auto"}}>
                   <div className="results-sort">
-                    {mode === "ai" && <>
-                      <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
-                      <button className={"sort-btn " + (corpusFilter === "ot"  ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
-                      <button className={"sort-btn " + (corpusFilter === "nt"  ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
-                      <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
-                      <button className={"sort-btn " + (studySort === "curated"   ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
-                      <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
-                      <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
-                      <button className={"sort-btn " + (studyTextMode === "abp" ? "on" : "")} onClick={() => setStudyTextMode("abp")}>ABP</button>
-                      <button className={"sort-btn " + (studyTextMode === "kjv" ? "on" : "")} onClick={() => setStudyTextMode("kjv")}>KJV</button>
-                    </>}
-                    {mode === "search" && <>
-                      <button className={"sort-btn " + (browseTranslation === "abp" ? "on" : "")} onClick={() => setBrowseTranslation("abp")}>ABP</button>
-                      <button className={"sort-btn " + (browseTranslation === "kjv" ? "on" : "")} onClick={() => setBrowseTranslation("kjv")}>KJV</button>
-                      <button className={"sort-btn " + (browseTranslation === "all" ? "on" : "")} onClick={() => setBrowseTranslation("all")}>All</button>
-                    </>}
+                    <button className={"sort-btn " + (corpusFilter === "all" ? "on" : "")} onClick={() => setCorpusFilter("all")}>All</button>
+                    <button className={"sort-btn " + (corpusFilter === "ot"  ? "on" : "")} onClick={() => setCorpusFilter("ot")}>OT</button>
+                    <button className={"sort-btn " + (corpusFilter === "nt"  ? "on" : "")} onClick={() => setCorpusFilter("nt")}>NT</button>
+                    <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
+                    <button className={"sort-btn " + (studySort === "curated"   ? "on" : "")} onClick={() => setStudySort("curated")}>Curated</button>
+                    <button className={"sort-btn " + (studySort === "canonical" ? "on" : "")} onClick={() => setStudySort("canonical")}>Canonical</button>
+                    <span style={{margin:"0 4px",color:"var(--rule-2)"}}>|</span>
+                    <button className={"sort-btn " + (studyTextMode === "abp" ? "on" : "")} onClick={() => setStudyTextMode("abp")}>ABP</button>
+                    <button className={"sort-btn " + (studyTextMode === "kjv" ? "on" : "")} onClick={() => setStudyTextMode("kjv")}>KJV</button>
                   </div>
                 </div>
               </div>
-
-              {!loading && allResults.length > 0 && mode === "search" && !glossFilter && (
-                <GlossGroupings
-                  groupings={activeGroupings}
-                  results={corpusFilteredResults}
-                  variants={browseTranslation === "kjv" ? {} : variants}
-                  onGlossDrill={handleGlossDrill}
-                  onStrongsSearch={handleStrongsSearch}
-                  isKjv={browseTranslation === "kjv"}
-                />
-              )}
-
               {(loading || aiLoading) ? (
                 <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--ink-3)", fontSize: "14px" }}>
                   Searching…
                 </div>
-              ) : displayed.length === 0 ? (
-                <div className="empty">
-                  <div className="empty-title">No matches</div>
-                  <div className="empty-sub">Try a different lemma, gloss, or Strong's number.</div>
-                </div>
-              ) : viewMode === "study" ? (
-                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} studySort={studySort} textMode={studyTextMode} />
               ) : (
-                <div className="results">
-                  {(summaryEntries || displayed).map((entry) => (
-                    <ResultCard
-                      key={summaryEntries ? entry.strongs_base : entry.id}
-                      entry={entry}
-                      active={!summaryEntries && activeEntry && activeEntry.id === entry.id}
-                      onClick={summaryEntries
-                        ? () => setGlossFilter({ sn: entry.strongs_base, gloss: null, label: entry.greek || entry.gloss_head })
-                        : () => setActiveEntry(entry)}
-                      count={countMap[entry.strongs_raw] || 0}
-                    />
-                  ))}
-                </div>
+                <StudyMode allResults={corpusFilteredResults} primaryStrongs={primaryStrongs} citedStrongs={citedStrongsApp} showAll={showAllAi} onWordClick={(e) => setActiveEntry(e)} onReadInContext={handleReadInContext} studySort={studySort} textMode={studyTextMode} />
               )}
             </>
           )}
