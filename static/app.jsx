@@ -451,7 +451,7 @@ function LeafletMap({ lat, lon, name }) {
 // ============================================================
 // DETAIL PANEL — SIDEBAR / BOTTOM SHEET
 // ============================================================
-function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch, onReadInContext, onNameSearch }) {
+function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch, onReadInContext, onNameSearch, onNavigateToLexicon }) {
   const [verseText, setVerseText] = useState("");
   const [verseLoading, setVerseLoading] = useState(false);
   const [abpCount, setAbpCount] = useState(null);
@@ -800,7 +800,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         {!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0 && (
           <section className="sec">
             <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
-            <button className="occ-link" onClick={() => onStrongsSearch(entry.strongs_raw)}>
+            <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)}>
               <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
             </button>
           </section>
@@ -809,7 +809,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         {entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0 && (
           <section className="sec">
             <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
-            <button className="occ-link" onClick={() => onStrongsSearch(entry.strongs, true)}>
+            <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)}>
               <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
             </button>
           </section>
@@ -827,7 +827,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         {isHebrew && kjvCount !== null && kjvCount > 0 && (
           <section className="sec">
             <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
-            <button className="occ-link" onClick={() => onStrongsSearch && onStrongsSearch(entry.strongs)}>
+            <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)}>
               <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
             </button>
           </section>
@@ -2422,7 +2422,7 @@ function AboutView() {
 // ============================================================
 const _STRONGS_RE = /^[GgHh]?\d+(\.\d+)?$/;
 
-function LexiconView({ onNavigateToSearch }) {
+function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, onPendingStrongsConsumed }) {
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -2433,6 +2433,12 @@ function LexiconView({ onNavigateToSearch }) {
   const [verseLoading, setVerseLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!pendingStrongs) return;
+    onPendingStrongsConsumed?.();
+    loadProfile(pendingStrongs);
+  }, [pendingStrongs]);
 
   const loadProfile = async (strongs, corpusOverride) => {
     setLoading(true);
@@ -2588,6 +2594,11 @@ function LexiconView({ onNavigateToSearch }) {
                   : <div key={i} className="lexicon-verse-row">
                       <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
                       <span className="lexicon-verse-text">{v.text}</span>
+                      {onNavigateToLibrary && (
+                        <button className="lexicon-verse-lib-link" onClick={() => onNavigateToLibrary(selectedBook, v.chapter)}>
+                          Read →
+                        </button>
+                      )}
                     </div>
               ))}
             </div>
@@ -2623,6 +2634,7 @@ function App() {
   const [mainView, setMainView] = useState("lexicon");
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
+  const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
   const [libTranslation, setLibTranslation] = useState("abp");
   const [abpGroupings, setAbpGroupings] = useState({});
   const [kjvGroupings, setKjvGroupings] = useState({});
@@ -2821,6 +2833,12 @@ function App() {
   };
   searchFnRef.current = handleSearch;
 
+  const handleNavigateToLexicon = (strongs) => {
+    if (!strongs) return;
+    setLexiconPendingStrongs(strongs);
+    handleNavChange("lexicon");
+  };
+
   const handleStrongsSearch = (strongs_base, fromKjv = false) => {
     if (!strongs_base || strongs_base === "*") return;
     const s = String(strongs_base);
@@ -2903,7 +2921,12 @@ function App() {
           </div>
         )}
         {mainView === "about" && <AboutView />}
-        {mainView === "lexicon" && <LexiconView onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }} />}
+        {mainView === "lexicon" && <LexiconView
+          onNavigateToSearch={(q) => { handleNavChange("search"); setQ1(q); }}
+          onNavigateToLibrary={(book, chapter) => { handleNavChange("library"); setLibNav({ book, chapter }); }}
+          pendingStrongs={lexiconPendingStrongs}
+          onPendingStrongsConsumed={() => setLexiconPendingStrongs(null)}
+        />}
         <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about" || mainView === "lexicon") ? "none" : undefined }}>
           <><SearchBar
             q1={q1} setQ1={setQ1}
@@ -3066,6 +3089,7 @@ function App() {
           occurrences={countMap[activeEntry.strongs_raw] || 0}
           totalResults={allResults.length}
           onStrongsSearch={handleStrongsSearch}
+          onNavigateToLexicon={handleNavigateToLexicon}
           onReadInContext={handleReadInContext}
           onNameSearch={(name) => handleSearch(name)}
         />
@@ -3081,6 +3105,7 @@ function App() {
             occurrences={countMap[activeEntry.strongs_raw] || 0}
             totalResults={allResults.length}
             onStrongsSearch={handleStrongsSearch}
+            onNavigateToLexicon={handleNavigateToLexicon}
             onReadInContext={handleReadInContext}
           />
         </>

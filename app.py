@@ -2011,8 +2011,8 @@ def lexicon_profile(strongs):
                       "testament": book_meta.get(r["book"], {}).get("testament", ""), "count": r["cnt"]} for r in dist]
         total = sum(b["count"] for b in books)
         return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    except Exception:
+        return jsonify({"error": "Server error"}), 500
     finally:
         conn.close()
 
@@ -2068,9 +2068,9 @@ def lexicon_verses(strongs, book):
             rows = [{"chapter": k[0], "verse": k[1], "text": " ".join(verse_map[k])} for k in verse_order]
             conn.close()
             return jsonify(rows)
-    except Exception as e:
+    except Exception:
         conn.close()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Server error"}), 500
     conn.close()
     return jsonify([{"chapter": r["chapter"], "verse": r["verse"], "text": r["text"]} for r in rows])
 
