@@ -2612,6 +2612,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
                   }}>{g.strongs}</button>
                   {g.lemma && <span className="lexicon-group-lemma">{g.lemma}</span>}
                   {g.translit && <span className="lexicon-group-translit">{g.translit}</span>}
+                  <span className="lexicon-group-appears">appears as</span>
                 </div>
                 <div className="lexicon-group-chips">
                   {(g.glosses || []).map(({gloss, count}) => (
