@@ -2653,12 +2653,20 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, pendingStrongs, 
                   : <div key={i} className="lexicon-verse-row">
                       <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
                       <span className="lexicon-verse-text">
-                        {v.text
-                          ? v.text.split(new RegExp(`(\\b(?:${(selectedGloss||"").replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})\\b)`, "gi")).map((part, pi) =>
-                              part.toLowerCase() === (selectedGloss||"").toLowerCase()
-                                ? <span key={pi} className="lex-hl">{part}</span>
-                                : <span key={pi}>{part}</span>
-                            )
+                        {v.text ? (() => {
+                          const hlWords = selectedGloss
+                            ? [selectedGloss]
+                            : (bookGlosses || profile.glosses || []).map(g => g.gloss);
+                          if (!hlWords.length) return v.text;
+                          const esc = hlWords.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+                          const pat = new RegExp(`(\\b(?:${esc.join("|")})\\b)`, "gi");
+                          const set = new Set(hlWords.map(w => w.toLowerCase()));
+                          return v.text.split(pat).map((part, pi) =>
+                            set.has(part.toLowerCase())
+                              ? <span key={pi} className="lex-hl">{part}</span>
+                              : <span key={pi}>{part}</span>
+                          );
+                        })()
                           : v.words
                             ? v.words.map((w, wi) => (
                                 <span key={wi} className={w.h ? "lex-hl" : undefined}>{w.w}{" "}</span>
