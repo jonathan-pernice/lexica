@@ -2013,16 +2013,16 @@ def lexicon_profile(strongs):
         total = sum(b["count"] for b in books)
         if corpus == "kjv":
             gr = conn.execute("""
-                SELECT kw.word AS gloss, COUNT(*) AS cnt
+                SELECT TRIM(kw.word, '.,;:!? ') AS gloss, COUNT(*) AS cnt
                 FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
                 WHERE ks.strongs_id = ?
-                GROUP BY kw.word ORDER BY cnt DESC LIMIT 30
+                GROUP BY TRIM(kw.word, '.,;:!? ') ORDER BY cnt DESC
             """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
         else:
             gr = conn.execute("""
                 SELECT TRIM(english, '.,;:!? ') AS gloss, COUNT(*) AS cnt FROM words
                 WHERE strongs_base = ? AND english IS NOT NULL AND english != '' AND english != '*'
-                GROUP BY TRIM(english, '.,;:!? ') ORDER BY cnt DESC LIMIT 30
+                GROUP BY TRIM(english, '.,;:!? ') ORDER BY cnt DESC
             """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
         glosses = [{"gloss": r["gloss"], "count": r["cnt"]} for r in gr if r["gloss"] and r["gloss"] not in ("*", "")]
         return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus, "glosses": glosses})
