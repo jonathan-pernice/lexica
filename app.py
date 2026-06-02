@@ -1905,6 +1905,96 @@ def books_list():
     return jsonify([{"abbrev": r["abbrev"], "name": r["name"], "chapters": r["chapters"]} for r in rows])
 
 
+@app.route("/api/lexicon/lookup")
+def lexicon_lookup():
+    q = request.args.get("q", "").strip()
+    if not q:
+        return jsonify([])
+    conn = db_ro()
+    try:
+        m = re.match(r'^([GgHh]?)(\d+(?:\.\d+)?)$', q)
+        if m:
+            prefix = m.group(1).upper()
+            num = m.group(2)
+            snum = num.split('.')[0]
+            is_heb = prefix == 'H' or (not prefix and int(snum) > 5624)
+            if is_heb:
+                row = conn.execute(
+                    "SELECT strongs_id, word, xlit, lemma FROM bdb WHERE strongs_id = ?",
+                    (f"H{snum}",)
+                ).fetchone()
+                if row:
+                    return jsonify([{"strongs": row["strongs_id"], "lemma": row["word"] or "", "translit": row["xlit"] or "", "gloss": row["lemma"] or ""}])
+            else:
+                row = conn.execute(
+                    "SELECT strongs, lemma, translit, strongs_def FROM lexicon WHERE strongs = ?",
+                    (snum,)
+                ).fetchone()
+                if row:
+                    return jsonify([{"strongs": f"G{row['strongs']}", "lemma": row["lemma"] or "", "translit": row["translit"] or "", "gloss": row["strongs_def"] or ""}])
+            return jsonify([])
+        # English/transliteration search — Greek lexicon + Hebrew BDB
+        grk = conn.execute(
+            """SELECT strongs, lemma, translit, strongs_def FROM lexicon
+               WHERE strongs_def LIKE ? OR kjv_def LIKE ? OR translit LIKE ?
+               LIMIT 15""",
+            (f"%{q}%", f"%{q}%", f"%{q}%")
+        ).fetchall()
+        heb = conn.execute(
+            "SELECT strongs_id, word, xlit, lemma FROM bdb WHERE lemma LIKE ? LIMIT 10",
+            (f"%{q}%",)
+        ).fetchall()
+        results = [{"strongs": f"G{r['strongs']}", "lemma": r["lemma"] or "", "translit": r["translit"] or "", "gloss": r["strongs_def"] or ""} for r in grk]
+        results += [{"strongs": r["strongs_id"], "lemma": r["word"] or "", "translit": r["xlit"] or "", "gloss": r["lemma"] or ""} for r in heb]
+        return jsonify(results[:20])
+    finally:
+        conn.close()
+
+
+@app.route("/api/lexicon/profile/<strongs>")
+def lexicon_profile(strongs):
+    m = re.match(r'^([GgHh]?)(\d+(?:\.\d+)?)$', strongs.strip())
+    if not m:
+        return jsonify({"error": "invalid"}), 400
+    prefix = m.group(1).upper()
+    num = m.group(2)
+    snum = num.split('.')[0]
+    is_heb = prefix == 'H' or (not prefix and int(snum) > 5624)
+    conn = db_ro()
+    try:
+        if is_heb:
+            strongs_id = f"H{snum}"
+            row = conn.execute(
+                "SELECT word, xlit, lemma FROM bdb WHERE strongs_id = ?", (strongs_id,)
+            ).fetchone()
+            if not row:
+                return jsonify({"error": "not found"}), 404
+            lemma, translit, definition = row["word"] or "", row["xlit"] or "", row["lemma"] or ""
+        else:
+            strongs_id = f"G{snum}"
+            row = conn.execute(
+                "SELECT lemma, translit, strongs_def, kjv_def FROM lexicon WHERE strongs = ?", (snum,)
+            ).fetchone()
+            if not row:
+                return jsonify({"error": "not found"}), 404
+            lemma = row["lemma"] or ""
+            translit = row["translit"] or ""
+            definition = row["strongs_def"] or row["kjv_def"] or ""
+        # Occurrence distribution by book (ABP)
+        dist = conn.execute("""
+            SELECT v.book, COUNT(*) AS cnt
+            FROM words w JOIN verses v ON w.verse_id = v.id
+            WHERE w.strongs_base = ? OR w.strongs_base = ? OR w.strongs_base = ?
+            GROUP BY v.book ORDER BY cnt DESC
+        """, (snum, f"G{snum}", f"H{snum}")).fetchall()
+        book_names = {r["abbrev"]: r["name"] for r in conn.execute("SELECT abbrev, name FROM books").fetchall()}
+        total = sum(r["cnt"] for r in dist)
+        books = [{"book": r["book"], "name": book_names.get(r["book"], r["book"]), "count": r["cnt"]} for r in dist]
+        return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books})
+    finally:
+        conn.close()
+
+
 @app.route("/api/chapter/<book>/<int:chapter>")
 def chapter_text(book, chapter):
     conn = db()
