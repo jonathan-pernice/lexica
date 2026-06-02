@@ -1110,7 +1110,14 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
                     onClick={clickable ? () => onWordClick(entry) : undefined}>
                 <span className="corpus-pos-english">
                   {hasPos && <span className="corpus-pos">{w.greek_pos}</span>}
-                  <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{label}</span>
+                  {label.includes(' ') ? (() => {
+                    const iset = w.italic_words ? new Set(w.italic_words.split(',')) : null;
+                    return label.split(' ').filter(Boolean).map((word, pi) => {
+                      const bare = word.replace(/[^\w]/g, '').toLowerCase();
+                      const isItal = iset ? iset.has(bare) : !!w.italic;
+                      return <span key={pi} className={"corpus-word" + (isItal ? " corpus-word-italic" : "")}>{word}{" "}</span>;
+                    });
+                  })() : <span className={"corpus-word" + (w.italic ? " corpus-word-italic" : "")}>{label}</span>}
                 </span>
                 {clickable
                   ? <span className="corpus-strongs">{strongsTag(wnum)}</span>
