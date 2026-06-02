@@ -2004,9 +2004,9 @@ def lexicon_profile(strongs):
             dist = conn.execute("""
                 SELECT v.book, COUNT(*) AS cnt
                 FROM words w JOIN verses v ON w.verse_id = v.id
-                WHERE w.strongs_base = ? OR w.strongs_base = ?
+                WHERE w.strongs_base = ?
                 GROUP BY v.book ORDER BY cnt DESC
-            """, (snum, f"H{snum}") if is_heb else (snum, f"G{snum}")).fetchall()
+            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
             books = [{"book": r["book"], "name": book_meta.get(r["book"], {}).get("name", r["book"]),
                       "testament": book_meta.get(r["book"], {}).get("testament", ""), "count": r["cnt"]} for r in dist]
         total = sum(b["count"] for b in books)
@@ -2052,10 +2052,10 @@ def lexicon_verses(strongs, book):
                 JOIN words w ON w.verse_id = v.id
                 WHERE v.book = ? AND v.id IN (
                     SELECT verse_id FROM words
-                    WHERE strongs_base = ? OR strongs_base = ?
+                    WHERE strongs_base = ?
                 )
                 ORDER BY v.chapter, v.verse, w.position
-            """, (book, snum, f"H{snum}") if is_heb else (book, snum, f"G{snum}")).fetchall()
+            """, (book, f"H{snum}") if is_heb else (book, f"G{snum}")).fetchall()
             verse_map = {}
             verse_order = []
             for r in word_rows:
