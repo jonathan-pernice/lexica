@@ -1522,11 +1522,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const navBookRef = useRef(null);
 
   useEffect(() => {
-    if (!nav?.book || !navBookRef.current) return;
+    if (!nav?.book || !navBookRef.current || nav.book !== selBook?.abbrev) return;
     requestAnimationFrame(() => {
       navBookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-  }, [nav?.book]);
+  }, [nav?.book, selBook?.abbrev]);
   const [navVisible, setNavVisible] = useState(!isMobile);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
