@@ -1520,11 +1520,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       navBookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, [nav?.book, selBook?.abbrev]);
-  const [navVisible, setNavVisible] = useState(!isMobile);
+  const navVisible = !isMobile;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
-
-  useEffect(() => { setNavVisible(!isMobile); }, [isMobile]);
 
   useEffect(() => {
     api.books().then(data => {
