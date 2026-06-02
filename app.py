@@ -2148,7 +2148,7 @@ def lexicon_verses(strongs, book):
                     WHERE kw2.book_id = kw.book_id AND kw2.chapter = kw.chapter
                       AND kw2.verse_num = kw.verse_num AND ks.strongs_id = ?{" AND kw2.word = ?" if gloss else ""}
                 )
-                ORDER BY kw.chapter, kw.verse_num, kw.position
+                ORDER BY kw.chapter, kw.verse_num, kw.verse_pos
             """, (sid, book_id, sid) + ((gloss,) if gloss else ())).fetchall()
         else:
             word_rows = conn.execute("""
