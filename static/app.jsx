@@ -64,6 +64,10 @@ const api = {
     fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
   crossRefsCurated: (book, chapter, verse) =>
     fetch(`/api/cross-references/curated/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  lexiconLookup: (q) =>
+    fetch(`/api/lexicon/lookup?q=${encodeURIComponent(q)}`).then(r => r.json()),
+  lexiconProfile: (strongs) =>
+    fetch(`/api/lexicon/profile/${encodeURIComponent(strongs)}`).then(r => r.json()),
 };
 
 // Extract proper noun name from a multi-word gloss, skipping function words
@@ -2414,12 +2418,50 @@ function AboutView() {
 // ============================================================
 // LEXICON VIEW
 // ============================================================
-function LexiconView({ onNavigateToSearch }) {
-  const [query, setQuery] = React.useState("");
+const _STRONGS_RE = /^[GgHh]?\d+(\.\d+)?$/;
 
-  const handleSubmit = (e) => {
+function LexiconView({ onNavigateToSearch }) {
+  const [query, setQuery] = useState("");
+  const [matches, setMatches] = useState(null);   // disambiguation list
+  const [profile, setProfile] = useState(null);   // word profile
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const loadProfile = async (strongs) => {
+    setLoading(true);
+    setError(null);
+    setMatches(null);
+    setSelectedBook(null);
+    try {
+      const data = await api.lexiconProfile(strongs);
+      if (data.error) setError("Word not found.");
+      else setProfile(data);
+    } catch { setError("Failed to load word profile."); }
+    finally { setLoading(false); }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (query.trim()) onNavigateToSearch(query.trim());
+    const q = query.trim();
+    if (!q) return;
+    if (_STRONGS_RE.test(q)) {
+      const normalized = /^[GgHh]/i.test(q) ? q.toUpperCase() : q;
+      setProfile(null);
+      loadProfile(normalized);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    setProfile(null);
+    setMatches(null);
+    try {
+      const data = await api.lexiconLookup(q);
+      if (!data.length) setError("No matches found.");
+      else if (data.length === 1) loadProfile(data[0].strongs);
+      else setMatches(data);
+    } catch { setError("Search failed."); }
+    finally { setLoading(false); }
   };
 
   return (
@@ -2433,9 +2475,61 @@ function LexiconView({ onNavigateToSearch }) {
           placeholder="Greek, Hebrew, English, or Strong's (G4151, H7307)…"
           autoFocus
         />
-        <button type="submit" className="lexicon-search-btn">Search</button>
+        <button type="submit" className="lexicon-search-btn" disabled={loading}>
+          {loading ? "…" : "Search"}
+        </button>
       </form>
-      <p className="lexicon-hint">Word study flow — select a word to see its profile, canonical distribution, and verse contexts.</p>
+
+      {error && <p className="lexicon-error">{error}</p>}
+
+      {matches && (
+        <div className="lexicon-matches">
+          {matches.map(m => (
+            <button key={m.strongs} className="lexicon-match-row" onClick={() => loadProfile(m.strongs)}>
+              <span className="lexicon-match-strongs">{m.strongs}</span>
+              <span className="lexicon-match-lemma">{m.lemma}</span>
+              <span className="lexicon-match-translit">{m.translit}</span>
+              <span className="lexicon-match-gloss">{m.gloss}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {profile && (
+        <div className="lexicon-profile">
+          <div className="lexicon-profile-header">
+            <span className="lexicon-lemma">{profile.lemma}</span>
+            <span className="lexicon-translit">{profile.translit}</span>
+            <span className="lexicon-strongs-tag">{profile.strongs}</span>
+            <span className="lexicon-total">{profile.total} occurrences</span>
+          </div>
+          <p className="lexicon-definition">{profile.definition}</p>
+
+          <div className="lexicon-distribution">
+            <div className="lexicon-dist-label">Distribution by book</div>
+            <div className="lexicon-dist-grid">
+              {profile.books.map(b => (
+                <button
+                  key={b.book}
+                  className={"lexicon-dist-book" + (selectedBook === b.book ? " selected" : "")}
+                  onClick={() => setSelectedBook(selectedBook === b.book ? null : b.book)}
+                >
+                  <span className="lexicon-dist-name">{b.name}</span>
+                  <span className="lexicon-dist-count">{b.count}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {selectedBook && (
+            <div className="lexicon-verse-list">
+              <div className="lexicon-verse-list-label">
+                {profile.books.find(b => b.book === selectedBook)?.name} — coming soon
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
