@@ -2445,7 +2445,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [corpus, setCorpus] = useState("abp");
+  const [corpus, setCorpus] = useState("all");
   const [testament, setTestament] = useState("all");
   const [selectedBook, setSelectedBook] = useState(null);
   const [verseList, setVerseList] = useState(null);
@@ -2648,9 +2648,9 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
 
       <div className="lexicon-toolbar">
         <div className="lexicon-corpus-toggle">
+          <button className={"lct-btn" + (corpus === "all" ? " on" : "")} onClick={() => switchCorpus("all")}>All</button>
           <button className={"lct-btn" + (corpus === "abp" ? " on" : "")} onClick={() => switchCorpus("abp")}>ABP</button>
           <button className={"lct-btn" + (corpus === "kjv" ? " on" : "")} onClick={() => switchCorpus("kjv")}>KJV</button>
-          <button className={"lct-btn" + (corpus === "all" ? " on" : "")} onClick={() => switchCorpus("all")}>All</button>
         </div>
         <div className="lexicon-corpus-toggle">
           {["all","ot","nt"].map(t => (
