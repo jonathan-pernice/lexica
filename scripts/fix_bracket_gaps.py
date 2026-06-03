@@ -77,12 +77,12 @@ def build_bh_to_bible_map(bh_words, bible_words):
         for bib_w in bible_words:
             if bib_w["position"] <= min_bible_pos:
                 continue
-            if bib_w["rowid"] in used_bible:
+            if bib_w["wid"] in used_bible:
                 continue
             bib_norm = norm_strongs(bib_w["strongs_base"])
             if bib_norm == bh_norm:
                 bh_to_bible[bh_w["position"]] = bib_w["position"]
-                used_bible.add(bib_w["rowid"])
+                used_bible.add(bib_w["wid"])
                 break
 
     return bh_to_bible
@@ -158,7 +158,7 @@ for gv in gap_verses:
 
     # Get all bible words for this verse (for position mapping)
     bible_all = main_conn.execute("""
-        SELECT rowid, position, english, strongs_base, bracket_id, greek_pos
+        SELECT rowid AS wid, position, english, strongs_base, bracket_id, greek_pos
         FROM words WHERE verse_id=? ORDER BY position
     """, (verse_id,)).fetchall()
 
