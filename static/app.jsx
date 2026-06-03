@@ -2495,28 +2495,14 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
   }, [profile, pendingGloss]);
 
   const switchCorpus = async (c) => {
-    if (loading) return;
+    if (loading || c === corpus) return;
     setCorpus(c);
     const q = query.trim();
     const isEnglishQuery = !!q && !_STRONGS_RE.test(q) && !_isGreekHebrew(q);
 
-    // "All" is a cross-corpus English-search scope (Greek + Hebrew at once).
-    // Re-run the search and drop any drilled-in word so the merged list shows.
-    if (c === "all") {
-      if (!isEnglishQuery) return; // nothing to merge for a Strong's/Greek lookup
-      setLoading(true);
-      setProfile(null); setMatches(null);
-      setSelectedBook(null); setVerseList(null);
-      try {
-        const data = await api.lexiconEnglish(q, "all", testament);
-        setGroupings(data.length ? data : null);
-        setError(data.length ? null : "No matches found.");
-      } catch { setError("Search failed."); }
-      finally { setLoading(false); }
-      return;
-    }
-
-    // ABP / KJV — if a word profile is in focus, switch THAT word's corpus.
+    // A word is in focus → reload THAT word's profile in the chosen corpus.
+    // The profile supports all/abp/kjv (all = merged ABP + KJV), so staying on
+    // the word is correct for every option.
     if (profile) {
       setLoading(true);
       setSelectedBook(null);
@@ -2534,7 +2520,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       return;
     }
 
-    // Otherwise re-scope an English-search results list to this single corpus.
+    // Results list → re-scope the English search to this corpus (all = merged).
     if (groupings && isEnglishQuery) {
       setLoading(true);
       try {
@@ -2611,7 +2597,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     setError(null);
     if (_STRONGS_RE.test(q)) {
       const normalized = /^[GgHh]/i.test(q) ? q.toUpperCase() : q;
-      loadProfile(normalized);
+      loadProfile(normalized, corpus);
       return;
     }
     setLoading(true);
@@ -2619,7 +2605,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       if (_isGreekHebrew(q)) {
         const data = await api.lexiconLookup(q);
         if (!data.length) setError("No matches found.");
-        else if (data.length === 1) loadProfile(data[0].strongs);
+        else if (data.length === 1) loadProfile(data[0].strongs, corpus);
         else setMatches(data);
       } else {
         const data = await api.lexiconEnglish(q, corpus, testament);
@@ -2685,7 +2671,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
           </div>
           {groupings.map(g => (
             <button key={g.strongs} className="lexicon-result-row"
-              onClick={() => loadProfile(g.strongs, corpus === "all" ? undefined : corpus)}>
+              onClick={() => loadProfile(g.strongs, corpus)}>
               <span className="lexicon-match-strongs">{g.strongs}</span>
               {g.lemma && <span className="lexicon-match-lemma" dir={g.strongs[0] === "H" ? "rtl" : undefined}>{g.lemma}</span>}
               {g.translit && <span className="lexicon-match-translit">{g.translit}</span>}
