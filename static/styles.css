@@ -1647,19 +1647,20 @@ input { font-family: inherit; }
   display: none;
 }
 @media (max-width: 1099px) {
-  /* Bottom-nav clearance lives on .main so it covers ALL tabs (Library/Lexicon/About
-     render as siblings of .main-inner, not inside it). */
-  .main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
-  .main-inner { padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 0; max-width: 100%; }
+  /* Section tabs are fixed at the TOP on every tab, so .main carries the top
+     clearance for all tabs. The Library bottom cockpit adds its own bottom
+     clearance (see the view-library block below). */
+  .main { padding-top: calc(56px + env(safe-area-inset-top, 0px)); padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
+  .main-inner { padding: 8px 16px 24px; max-width: 100%; }
   .search { padding-top: 20px; }
   .mobile-tabs {
     display: flex;
     position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--paper);
-    border-top: 1px solid var(--rule);
+    top: 0; left: 0; right: 0;
+    background: var(--navy);
+    border-bottom: 1px solid var(--navy-edge, #1e3050);
     z-index: 200;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-top: env(safe-area-inset-top, 0px);
   }
   .mobile-tab {
     flex: 1;
@@ -1670,12 +1671,12 @@ input { font-family: inherit; }
     padding: 8px 0 10px;
     font-size: 11px;
     font-family: var(--f-sans);
-    color: var(--ink-3);
+    color: #8a9ab8;
     background: none;
     border: none;
     cursor: pointer;
   }
-  .mobile-tab.active { color: var(--accent); }
+  .mobile-tab.active { color: #e9ecf2; }
   .mobile-tab svg { stroke: currentColor; }
   .search { padding: 12px 14px; max-width: 100%; }
   .results-head { margin: 24px 2px 10px; flex-direction: column; align-items: flex-start; gap: 8px; }
@@ -1700,7 +1701,8 @@ input { font-family: inherit; }
   .lib-toolbar-navy .mbar-trans:active { background: rgba(255,255,255,0.06); }
   .lib-toolbar-navy .mbar-loc:active { background: rgba(255,255,255,0.06); }
   .mbar-logo-btn { display: flex; align-items: center; justify-content: center; color: #cfd6e3; flex: 0 0 42px; }
-  .mobile-brand-bar { display: flex; align-items: center; gap: 8px; background: var(--navy); color: #cfd6e3; padding: 0 16px; height: 56px; position: sticky; top: 0; z-index: 20; border-bottom: 1px solid var(--navy-edge, #1e3050); }
+  /* Brand bar retired on mobile: the navy section-tab bar is now the top chrome on every tab. */
+  .mobile-brand-bar { display: none; }
   .mobile-brand-name { font-family: var(--f-serif); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; color: #f6f7fa; }
   .mobile-brand-sub { font-size: 11px; color: #8a9ab8; letter-spacing: 0.01em; margin-left: 2px; }
   .lib-heading { display: none; }
@@ -1745,15 +1747,7 @@ input { font-family: inherit; }
    tabs keep the default bottom section-nav; desktop is unaffected.
 ============================================================ */
 @media (max-width: 1099px) {
-  /* Section tabs → top */
-  .app.view-library .mobile-tabs {
-    top: 0; bottom: auto;
-    border-top: none;
-    border-bottom: 1px solid var(--rule);
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: 0;
-  }
-  /* Reading cockpit → bottom (thumb zone) */
+  /* Reading cockpit → bottom (thumb zone), light theme (no .lib-toolbar-navy). */
   .app.view-library .lib-toolbar {
     position: fixed;
     top: auto; bottom: 0; left: 0; right: 0;
@@ -1761,14 +1755,12 @@ input { font-family: inherit; }
     height: auto; min-height: 56px;
     margin-bottom: 0;
     border-bottom: none;
-    border-top: 1px solid var(--navy-edge, #1e3050);
+    border-top: 1px solid var(--rule);
     padding: 0 6px env(safe-area-inset-bottom, 0px);
   }
-  /* Swap content clearances: top for the tab bar, bottom for the cockpit */
-  .app.view-library .main {
-    padding-top: calc(56px + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
-  }
+  .app.view-library .mbar-logo-btn { display: none; }  /* pointless in the bottom cockpit */
+  /* Bottom clearance for the cockpit; top clearance is global (.main above). */
+  .app.view-library .main { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ============================================================

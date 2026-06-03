@@ -2179,7 +2179,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           </div>
         </div>
       ) : (
-        <div className="lib-toolbar lib-toolbar-navy">
+        <div className="lib-toolbar">
           <div className="mbar-logo-btn" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
