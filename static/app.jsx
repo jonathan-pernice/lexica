@@ -2738,7 +2738,13 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
           {(profile.definition || /^G/i.test(profile.strongs)) && (
             <div className="lexicon-def-section">
               <button className="lexicon-def-toggle" onClick={() => setShowDef(v => !v)}>
-                Definition {showDef ? "▲" : "▼"}
+                Definition
+                {showDef && (!/^G/i.test(profile.strongs)
+                  ? <span className="lexicon-def-src">BDB</span>
+                  : (!lsjLoading && lsjEntry)
+                    ? <span className="lexicon-def-src">{lsjEntry.source === "strongs" ? "Strong's" : lsjEntry.source === "abp_ext" ? "ABP" : "LSJ"}</span>
+                    : null)}
+                {" "}{showDef ? "▲" : "▼"}
               </button>
               {showDef && (
                 !/^G/i.test(profile.strongs)
