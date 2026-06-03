@@ -2222,46 +2222,64 @@ def lexicon_profile(strongs):
                "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
         book_meta = {r["abbrev"]: {"name": r["name"], "testament": "NT" if r["abbrev"] in _NT else "OT"}
                      for r in conn.execute("SELECT abbrev, name FROM books").fetchall()}
-        if corpus == "kjv":
-            dist = conn.execute("""
-                SELECT kw.book_id, COUNT(*) AS cnt
-                FROM kjv_strongs ks
-                JOIN kjv_words kw ON kw.word_id = ks.word_id
-                WHERE ks.strongs_id = ?
-                GROUP BY kw.book_id ORDER BY cnt DESC
-            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
-            abbrev_by_id = {v: k for k, v in _KJV_BOOK_ID.items()}
-            books = []
-            for r in dist:
-                abbrev = abbrev_by_id.get(r["book_id"], "")
-                meta = book_meta.get(abbrev, {})
-                testament = "NT" if r["book_id"] >= 40 else "OT"
-                books.append({"book": abbrev, "name": meta.get("name", abbrev), "testament": testament, "count": r["cnt"]})
-        else:
-            dist = conn.execute("""
-                SELECT v.book, COUNT(*) AS cnt
+        sid = f"H{snum}" if is_heb else f"G{snum}"
+        abbrev_by_id = {v: k for k, v in _KJV_BOOK_ID.items()}
+
+        def _abp_book_counts():  # ABP interlinear: strongs_base in words→verses
+            rows = conn.execute("""
+                SELECT v.book AS book, COUNT(*) AS cnt
                 FROM words w JOIN verses v ON w.verse_id = v.id
-                WHERE w.strongs_base = ?
-                GROUP BY v.book ORDER BY cnt DESC
-            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
-            books = [{"book": r["book"], "name": book_meta.get(r["book"], {}).get("name", r["book"]),
-                      "testament": book_meta.get(r["book"], {}).get("testament", ""), "count": r["cnt"]} for r in dist]
-        total = sum(b["count"] for b in books)
-        if corpus == "kjv":
-            gr = conn.execute("""
-                SELECT kw.word AS gloss, COUNT(*) AS cnt
+                WHERE w.strongs_base = ? GROUP BY v.book
+            """, (sid,)).fetchall()
+            return {r["book"]: r["cnt"] for r in rows}
+
+        def _kjv_book_counts():  # KJV text: strongs_id in kjv_strongs→kjv_words
+            rows = conn.execute("""
+                SELECT kw.book_id AS book_id, COUNT(*) AS cnt
                 FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
-                WHERE ks.strongs_id = ?
-                GROUP BY kw.word ORDER BY cnt DESC
-            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
-        else:
-            gr = conn.execute("""
+                WHERE ks.strongs_id = ? GROUP BY kw.book_id
+            """, (sid,)).fetchall()
+            out = {}
+            for r in rows:
+                abbrev = abbrev_by_id.get(r["book_id"], "")
+                if abbrev:
+                    out[abbrev] = out.get(abbrev, 0) + r["cnt"]
+            return out
+
+        def _abp_gloss_rows():
+            return conn.execute("""
                 SELECT english AS gloss, COUNT(*) AS cnt FROM words
                 WHERE strongs_base = ? AND english IS NOT NULL AND english != '' AND english != '*'
-                GROUP BY english ORDER BY cnt DESC
-            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
+                GROUP BY english
+            """, (sid,)).fetchall()
+
+        def _kjv_gloss_rows():
+            return conn.execute("""
+                SELECT kw.word AS gloss, COUNT(*) AS cnt
+                FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
+                WHERE ks.strongs_id = ? GROUP BY kw.word
+            """, (sid,)).fetchall()
+
+        # corpus=all merges the ABP + KJV distributions/glosses by book/rendering.
+        book_counts = {}
+        if corpus in ("abp", "all"):
+            for b, c in _abp_book_counts().items():
+                book_counts[b] = book_counts.get(b, 0) + c
+        if corpus in ("kjv", "all"):
+            for b, c in _kjv_book_counts().items():
+                book_counts[b] = book_counts.get(b, 0) + c
+        books = [{"book": b, "name": book_meta.get(b, {}).get("name", b),
+                  "testament": book_meta.get(b, {}).get("testament", ""), "count": c}
+                 for b, c in sorted(book_counts.items(), key=lambda x: -x[1])]
+        total = sum(b["count"] for b in books)
+
+        gloss_rows = []
+        if corpus in ("abp", "all"):
+            gloss_rows += _abp_gloss_rows()
+        if corpus in ("kjv", "all"):
+            gloss_rows += _kjv_gloss_rows()
         norm_counts = {}
-        for r in gr:
+        for r in gloss_rows:
             if not r["gloss"] or r["gloss"] in ("*", ""):
                 continue
             key = _normalize_gloss(r["gloss"])
@@ -2290,40 +2308,34 @@ def lexicon_books(strongs):
                "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
         book_meta = {r["abbrev"]: {"name": r["name"], "testament": "NT" if r["abbrev"] in _NT else "OT"}
                      for r in conn.execute("SELECT abbrev, name FROM books").fetchall()}
-        if corpus == "kjv":
-            rows = conn.execute("""
+        abbrev_by_id = {v: k for k, v in _KJV_BOOK_ID.items()}
+        sid = f"H{snum}" if is_heb else f"G{snum}"
+        book_counts = {}  # corpus=all merges ABP + KJV per book (gloss-filtered)
+        if corpus in ("abp", "all"):
+            for r in conn.execute("""
+                SELECT v.book, w.english, COUNT(*) AS cnt
+                FROM words w JOIN verses v ON w.verse_id = v.id
+                WHERE w.strongs_base = ?
+                GROUP BY v.book, w.english
+            """, (sid,)).fetchall():
+                if gloss and _normalize_gloss(r["english"] or "") != gloss:
+                    continue
+                book_counts[r["book"]] = book_counts.get(r["book"], 0) + r["cnt"]
+        if corpus in ("kjv", "all"):
+            for r in conn.execute("""
                 SELECT kw.book_id, kw.word AS english, COUNT(*) AS cnt
                 FROM kjv_strongs ks JOIN kjv_words kw ON kw.word_id = ks.word_id
                 WHERE ks.strongs_id = ?
                 GROUP BY kw.book_id, kw.word
-            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
-            abbrev_by_id = {v: k for k, v in _KJV_BOOK_ID.items()}
-            book_counts = {}
-            for r in rows:
+            """, (sid,)).fetchall():
                 if gloss and _normalize_gloss(r["english"] or "") != gloss:
                     continue
                 abbrev = abbrev_by_id.get(r["book_id"], "")
                 if abbrev:
                     book_counts[abbrev] = book_counts.get(abbrev, 0) + r["cnt"]
-            books = []
-            for abbrev, cnt in sorted(book_counts.items(), key=lambda x: -x[1]):
-                testament = "NT" if _KJV_BOOK_ID.get(abbrev, 0) >= 40 else "OT"
-                books.append({"book": abbrev, "name": book_meta.get(abbrev, {}).get("name", abbrev), "testament": testament, "count": cnt})
-        else:
-            rows = conn.execute("""
-                SELECT v.book, w.english, COUNT(*) AS cnt
-                FROM words w JOIN verses v ON w.verse_id = v.id
-                WHERE w.strongs_base = ?
-                GROUP BY v.book, w.english
-            """, (f"H{snum}",) if is_heb else (f"G{snum}",)).fetchall()
-            book_counts = {}
-            for r in rows:
-                if gloss and _normalize_gloss(r["english"] or "") != gloss:
-                    continue
-                book_counts[r["book"]] = book_counts.get(r["book"], 0) + r["cnt"]
-            books = [{"book": b, "name": book_meta.get(b, {}).get("name", b),
-                      "testament": book_meta.get(b, {}).get("testament", ""), "count": c}
-                     for b, c in sorted(book_counts.items(), key=lambda x: -x[1])]
+        books = [{"book": b, "name": book_meta.get(b, {}).get("name", b),
+                  "testament": book_meta.get(b, {}).get("testament", ""), "count": c}
+                 for b, c in sorted(book_counts.items(), key=lambda x: -x[1])]
         return jsonify({"books": books})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -2344,6 +2356,8 @@ def lexicon_verses(strongs, book):
     conn = db_ro()
     try:
         sid = f"H{snum}" if is_heb else f"G{snum}"
+        if corpus == "all":  # verse text is single-corpus; show the word's native text
+            corpus = "kjv" if is_heb else "abp"
         if corpus == "kjv":
             book_id = _KJV_BOOK_ID.get(book)
             if not book_id:
