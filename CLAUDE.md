@@ -12,11 +12,22 @@ Lexica is a Flask-based Greek and Hebrew Bible word study app. ABP (Apostolic Bi
 - Limit tool calls — do not read files for context unless strictly necessary
 - Go straight to the relevant function, do not scan the whole codebase first
 
-## STOP RULES
-- Never use extended thinking
-- Never explore more than 2 files per task
-- Show code before changing it
-- Maximum 5 tool calls per response
+## Effort mode (Opus 4.8)
+Pick effort by task TYPE, not by default:
+- **Routine work** (known edits, data scripts, config tweaks, one-line fixes):
+  medium/low effort. Follow the STOP RULES below as written.
+- **Diagnosis / root-cause / data-integrity work** (a symptom several hops from
+  its cause, anything touching the words table or Strong's invariants): HIGH
+  effort, and the STOP RULES are LIFTED — read as many spots as the trace needs
+  and reason it through. A wrong guess on data is expensive (see the 2026-06-03
+  strongs_base regression — one wrong word hid a 592k-row break).
+- When unsure which mode you're in, ask the user, or state your assumption.
+
+## STOP RULES (routine work only — lifted for diagnosis, see Effort mode)
+- Prefer no extended thinking for routine edits
+- Avoid exploring more than ~2 files for a routine task
+- Show code before changing it (ALWAYS — applies in every mode)
+- Keep routine responses under ~5 tool calls
 
 ## Important
 - bible.db lives on PythonAnywhere only, not locally
@@ -49,7 +60,7 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 
 ## Database Tables
 - `verses` — ABP verse text
-- `words` — ABP word-level interlinear, Strong's tagged. Has `italic` column (live). Planned: add `morph` column (MorphGNT/CATSS)
+- `words` — ABP word-level interlinear, Strong's tagged. Columns: english, english_head, strongs, strongs_base, greek_pos, bracket_id, italic, italic_words, smcap_words, is_pn. NO greek/lemma column — the Greek lemma is joined live from `lexicon` via `LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)` (this is why strongs_base MUST stay G/H-prefixed). `is_pn=1` marks proper nouns (set by import_tipnr.py). Planned: add `morph` column (MorphGNT/CATSS)
 - `lexicon` — Greek Strong's definitions
 - `lsj` — Liddell-Scott-Jones Greek lexicon
 - `abp_ext` — extended ABP data
@@ -69,10 +80,17 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - No systematic theology imported — text speaks first (Berean approach)
 - Function words (171-word set) are filtered from search results
 
-## strongs_base format
+## strongs_base format — CRITICAL INVARIANT
 - `words.strongs_base` is fully G/H prefixed ('G4151', 'H7307') — normalized 2026-06-01
+- This is NOT cosmetic: the lexicon join does `SUBSTR(w.strongs_base, 2)` to strip the
+  prefix. A BARE strongs_base ('4151') makes SUBSTR shave a DIGIT instead → wrong lemma.
+  (2026-06-03: a rebuild left 592k bare → G2206 ζηλόω rendered as ἄκρον/G206. Fixed by
+  `UPDATE words SET strongs_base='G'||strongs_base WHERE strongs_base GLOB '[0-9]*'`.)
+- `words.strongs` (the other column) is intentionally LEFT BARE ('2206', dotted '2321.1');
+  the frontend renders it as `G{strongs}`. Only strongs_base carries the prefix.
 - `kjv_strongs.strongs_id` is also fully prefixed (was always so)
 - Always use single-match in SQL: WHERE w.strongs_base = 'G4151'
+- After ANY words-table rebuild, verify: `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'` must be 0
 - AI system prompt may still reference old triple-match — update if issues arise
 
 ## Book Abbreviations
@@ -156,3 +174,15 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - Do not touch existing ABP tables when adding unrelated features
 - Do not commit bible.db to git
 - NEVER run `DELETE FROM words` or `DELETE FROM verses` — OT and NT words are both in the words table; clearing destroys hard-to-recover data. If re-importing, use INSERT OR IGNORE (safe to re-run).
+- Avoid the full DELETE+rebuild in `build_words_from_abp.py` unless truly necessary. It
+  (a) clears `is_pn` and proper-noun Strong's, and (b) historically stripped the G prefix
+  off strongs_base. The script is now patched (prefixes at INSERT, prints a reminder), but
+  after ANY run you MUST re-run `import_tipnr.py` and verify the strongs_base invariant above.
+
+## Words rebuild checklist (if you ever rebuild the words table)
+1. Run `build_words_from_abp.py` (now re-applies the 'G' prefix at INSERT)
+2. Verify: `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'` → must be 0
+3. Re-run `import_tipnr.py bible.db` to restore proper-noun Strong's + is_pn (~94% match)
+4. Spot-check: a Greek word (Eze 31:9 "were jealous of" → ζηλόω) and a proper noun
+   (1 Chr 1:1 "Adam" → H121, opens metaV)
+5. Deploy (touch wsgi)
