@@ -1901,6 +1901,16 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         if (!g.isBracket) {
           return chip(g.word, `g${gi}`);
         }
+        // Suppress a duplicate position number on continuation words: when a word
+        // shares the greek_pos of the previous numbered member (e.g. the source
+        // token "2God did" split into God + did, both pos 2), hide the second
+        // number so it renders "²God did", not "²God ²did".
+        let lastGp = null;
+        const gw = g.words.map((w) => {
+          if (w.greek_pos != null && w.greek_pos === lastGp) return { ...w, greek_pos: null };
+          if (w.greek_pos != null) lastGp = w.greek_pos;
+          return w;
+        });
         const bracketChar = (ch, k) => (
           <span key={k} className="lib-bracket">
             {showInterlinear && <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>}
@@ -1910,20 +1920,20 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         );
         return (
           <span key={`bg${gi}`} className="lib-bracket-group">
-            {g.words.length === 1 ? (
+            {gw.length === 1 ? (
               <span className="lib-bracket-unit">
                 {bracketChar("[", "bl")}
-                {bracketChip(g.words[0], `bg${gi}w0`)}
+                {bracketChip(gw[0], `bg${gi}w0`)}
                 {bracketChar("]", "br")}
               </span>
             ) : (<>
               <span className="lib-bracket-unit">
                 {bracketChar("[", "bl")}
-                {bracketChip(g.words[0], `bg${gi}w0`)}
+                {bracketChip(gw[0], `bg${gi}w0`)}
               </span>
-              {g.words.slice(1, -1).map((w, wi) => bracketChip(w, `bg${gi}w${wi + 1}`))}
+              {gw.slice(1, -1).map((w, wi) => bracketChip(w, `bg${gi}w${wi + 1}`))}
               <span className="lib-bracket-unit">
-                {bracketChip(g.words[g.words.length - 1], `bg${gi}w${g.words.length - 1}`)}
+                {bracketChip(gw[gw.length - 1], `bg${gi}w${gw.length - 1}`)}
                 {bracketChar("]", "br")}
               </span>
             </>)}
