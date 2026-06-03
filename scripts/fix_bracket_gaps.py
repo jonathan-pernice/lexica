@@ -192,10 +192,10 @@ for gv in gap_verses:
                                   if w["bracket_id"] == bid]
             after = (min(bracket_positions) - 1) if bracket_positions else 0
 
-        # Normalize strongs: bare number → G-prefixed
+        # Normalize strongs: bare number → G-prefixed; None → '*' (proper noun fallback)
         raw = bh_w["strongs"] or ""
         first_num = re.match(r"(\d+)", raw)
-        strongs_b = f"G{int(first_num.group(1))}" if first_num else None
+        strongs_b = f"G{int(first_num.group(1))}" if first_num else "*"
 
         if DRY_RUN:
             print(f"  {book} {ch}:{vs} bid={bid} gpos={miss_gpos}: "
