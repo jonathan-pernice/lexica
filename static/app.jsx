@@ -547,14 +547,15 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
       const personOk = !pd.error && (pd.birth_year || pd.death_year || pd.relationships?.length >= 2);
       if (personOk) setMetavPersonData(pd);
       if (!ld.error) setMetavPlaceData(ld);
-      // Smart default tab (only matters when BOTH exist): prefer the type the
-      // word's own strongs indicates. A place whose strongs_g matches this word's
-      // strongs is definitive; otherwise fall back to the word's tipnr pn_type.
-      const bareSb = (entry.strongs_base || "").replace(/^[GH]/i, "");
-      const placeStrongsMatch = !ld.error && ld.strongs_g && bareSb &&
-        ld.strongs_g.replace(/^[GH]/i, "") === bareSb;
-      const preferPlace = !ld.error && (placeStrongsMatch || entry.pn_type === "place");
-      setMetavTab(preferPlace ? "place" : "person");
+      // Default tab (only matters when BOTH person+place exist). Default to Person
+      // and flip to Place ONLY when the word's own (prefixed) strongs matches the
+      // place's strongs_g — a genuinely distinct place id. pn_type is NOT trusted:
+      // tipnr.strongs is a PK, so a name sharing one strongs for person AND place
+      // (e.g. Adam H121) stores whichever type was inserted last ('place' for Adam),
+      // which would wrongly default person-names to Place.
+      const placeStrongsMatch = !ld.error && !!ld.strongs_g && !!entry.strongs_base &&
+        ld.strongs_g.split(/[^GH0-9.]+/i).map(s => s.toUpperCase()).includes(entry.strongs_base.toUpperCase());
+      setMetavTab(placeStrongsMatch ? "place" : "person");
       setMetavLoading(false);
     }).catch(() => { if (!cancelled) setMetavLoading(false); });
     return () => { cancelled = true; };
