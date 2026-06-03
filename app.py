@@ -2076,17 +2076,24 @@ def lexicon_english():
             """, (q,)).fetchall()
 
         if corpus in ("kjv", "all"):
-            # KJV Hebrew: match by word
-            heb_rows = conn.execute("""
+            # KJV words → strongs. In 'kjv' mode include BOTH NT Greek (G) and OT
+            # Hebrew (H) — e.g. "spirit" must surface G4151 (pneuma) from the KJV
+            # NT. In 'all' mode restrict to Hebrew so the Greek numbers aren't
+            # duplicated by the ABP side above. Lemma/translit resolve from
+            # lexicon (G) or bdb (H); the LIKE guards prevent G/H number collision.
+            kjv_filter = "AND ks.strongs_id LIKE 'H%'" if corpus == "all" else ""
+            heb_rows = conn.execute(f"""
                 SELECT ks.strongs_id AS sbase,
-                       b.lemma AS lemma, b.xlit AS translit,
+                       COALESCE(l.lemma, b.lemma)   AS lemma,
+                       COALESCE(l.translit, b.xlit) AS translit,
                        COUNT(*) AS cnt
                 FROM kjv_words kw
                 JOIN kjv_strongs ks ON ks.word_id = kw.word_id
-                JOIN bdb b ON b.strongs_id = ks.strongs_id
+                LEFT JOIN lexicon l ON l.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+                LEFT JOIN bdb b ON b.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
                 WHERE kw.word = ? COLLATE NOCASE
-                  AND ks.strongs_id LIKE 'H%'
                   AND (kw.italic IS NULL OR kw.italic = 0)
+                  {kjv_filter}
                 GROUP BY ks.strongs_id
                 ORDER BY cnt DESC
                 LIMIT 10
