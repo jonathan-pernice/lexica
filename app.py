@@ -1079,7 +1079,10 @@ def _resolve_lsj_xref(conn, def_html: str, columns: str = "key, translit, def_ht
     ref_plain = _strip_accents(ref).lower().replace('-', '')
     row = conn.execute(f"SELECT {columns} FROM lsj WHERE key = ?", (ref,)).fetchone()
     if not row:
-        row = conn.execute(f"SELECT {columns} FROM lsj WHERE replace(plain,'-','') = ?", (ref_plain,)).fetchone()
+        row = conn.execute(
+            f"SELECT {columns} FROM lsj WHERE lower(strip_accents(replace(key,'-',''))) = ?",
+            (ref_plain,),
+        ).fetchone()
     return row
 
 
@@ -1702,7 +1705,8 @@ def lsj_lookup(lemma):
         ).fetchone()
         if not row and plain:
             row = conn.execute(
-                "SELECT key, translit, def_html FROM lsj WHERE replace(plain,'-','') = ?", (plain,)
+                "SELECT key, translit, def_html FROM lsj"
+                " WHERE lower(strip_accents(replace(key,'-',''))) = ?", (plain,)
             ).fetchone()
         if row and not abp_row:
             xref = _resolve_lsj_xref(conn, row["def_html"])
