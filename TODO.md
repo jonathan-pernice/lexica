@@ -29,6 +29,28 @@ Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and 
 - `dedup_words.py` — remove exact-duplicate rows
 - All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
 
+## Priority: Lexicon tab & AI corpus search (ORPHANS — need a focused pass)
+
+Two areas the user flagged as under-attended and needing real attention. **Start each by
+AUDITING the current implementation before planning** — neither was deeply reviewed in the
+2026-06-03 session, so read the code first and propose a plan.
+
+### Lexicon tab — finish & polish
+- Nail down the workflow: search box → word profile → gloss chips → book distribution → verse list
+- "Make it pretty" — visual polish, hierarchy, spacing; align with the Library reading-view standards
+- Finish it out — find incomplete states, dead ends, missing affordances; decide what "done" means
+- Code: `LexiconView` in app.jsx (always-mounted, `display:none`); endpoints `/api/lexicon/lookup`,
+  `/api/lexicon/profile/<strongs>`, `/api/lexicon/verses/<strongs>/<book>`; corpus toggle ABP|KJV
+- Cross-check memory `project_lexicon_tab.md`
+
+### AI corpus search — needs attention
+- Genuinely orphaned; revisit the whole flow end-to-end (quality, UX, layout)
+- Audit: result quality, the lexicon-vs-AI two-input split (does it still serve?), result-card rendering
+- Code: Search tab in app.jsx; `/api/search` (returns abp/kjv results+groupings+variants); AI mode uses
+  Haiku Berean prompt, key_strongs chips, empty-result retry, Hebrew bridge, corpus filters
+- Related work already specced below in "Search Layout Revamp" (bare-chip verse rendering, N+1 fetch fix)
+- Cross-check memory `project_ai_search_architecture.md`
+
 ## Advanced Workspace Layout (major feature)
 
 ### Spec
