@@ -2767,15 +2767,17 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
           {(bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && (
             <div className="lexicon-glosses">
               <div className="lexicon-gloss-label">{selectedBook ? "In this book" : "Rendered as"}</div>
-              <div className="lexicon-gloss-chips">
-                {(bookGlosses || profile.glosses).map(g => (
-                  <button
-                    key={g.gloss}
-                    className={"lexicon-gloss-chip" + (selectedGloss === g.gloss ? " selected" : "")}
-                    onClick={() => selectGloss(g.gloss)}
-                  >
-                    {g.gloss} <span className="lexicon-gloss-count">{g.count}</span>
-                  </button>
+              <div className="lexicon-dist-list">
+                {(bookGlosses || profile.glosses).map((g, i) => (
+                  <React.Fragment key={g.gloss}>
+                    {i > 0 && <span className="lexicon-dist-sep"> · </span>}
+                    <button
+                      className={"lexicon-dist-item" + (selectedGloss === g.gloss ? " selected" : "")}
+                      onClick={() => selectGloss(g.gloss)}
+                    >
+                      {g.gloss}<span className="lexicon-dist-count">{g.count}</span>
+                    </button>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
