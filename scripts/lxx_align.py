@@ -62,35 +62,28 @@ def base(s):
 class RahlfsLXX:
     """Loads Rahlfs-1935 once; serves per-verse (strong_base, morph, is_pron)."""
 
-    # ABP book abbrev → Rahlfs book NAME (as in 08_versification/001_verse_c_book.csv).
-    # Protocanonical books that map cleanly. NOTE: the LXX interleaves
-    # deuterocanonical books, so post-Chronicles Hebrew-canon books are offset
-    # in Rahlfs numbering — that reconciliation is a TODO for full-OT scope.
-    # Genesis (the proof book) and the Pentateuch map 1:1.
-    ABP_TO_RAHLFS_NAME = {
-        "Gen": "Gen", "Exo": "Exod", "Lev": "Lev", "Num": "Num", "Deu": "Deut",
-        "Jos": "Josh", "Jdg": "Judg", "Rth": "Ruth",
-        # (extend + verify against 001_verse_c_book.csv before full-OT scope)
+    # ABP book abbrev → Marvel-versification book number (the numbering used by
+    # 12-Marvel.Bible/00-versification_original.csv: 1–39 protocanonical books in
+    # standard English order, validated empirically by scripts/align_survey.pl —
+    # NOT the deuterocanon-interleaved 001_verse_c_book.csv order).
+    # SCOPE GATE: only the 24 books that aligned CLEAN (≤12% flags) are listed, so
+    # only they get corrected. Any book NOT here → booknum() None → kept as G1473
+    # (no regression). Borderline (11) + hard (Psa/Jer/Dan/Joe) are added later.
+    ABP_BOOKNUM = {
+        "Gen": 1,  "Lev": 3,  "Num": 4,  "Deu": 5,  "Jdg": 7,  "Rth": 8,
+        "2Sa": 10, "2Ki": 12, "Ezr": 15, "Est": 17, "Job": 18, "Ecc": 21,
+        "Son": 22, "Isa": 23, "Lam": 25, "Eze": 26, "Amo": 30, "Oba": 31,
+        "Mic": 33, "Hab": 35, "Zep": 36, "Hag": 37, "Zec": 38, "Mal": 39,
     }
 
     def __init__(self, rahlfs_dir):
         self.dir = Path(rahlfs_dir)
-        self._name_to_num = self._load_book_numbers()
         self._strong = self._load_col("07_StrongNumber/final_Strongs.csv", 1)
         self._morph  = self._load_col("03a_morphology_with_JTauber_patches/patched_623693.csv", 1)
         self._ranges = self._load_verse_ranges()   # (booknum,ch,vs) -> (start,end) inclusive
 
     def _open(self, rel):
         return open(self.dir / rel, encoding="utf-8-sig", errors="replace")
-
-    def _load_book_numbers(self):
-        names = {}
-        with self._open("08_versification/001_verse_c_book.csv") as f:
-            for i, line in enumerate(f, start=1):
-                nm = line.strip()
-                if nm:
-                    names[nm] = i
-        return names
 
     def _load_col(self, rel, col):
         arr = {}
@@ -121,8 +114,7 @@ class RahlfsLXX:
         return ranges
 
     def booknum(self, abp_abbrev):
-        name = self.ABP_TO_RAHLFS_NAME.get(abp_abbrev)
-        return self._name_to_num.get(name) if name else None
+        return self.ABP_BOOKNUM.get(abp_abbrev)
 
     def verse(self, booknum, chapter, vs):
         """Return list of (strong_base, morph, is_pron) for the verse, or []."""
