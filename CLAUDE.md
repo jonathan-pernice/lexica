@@ -175,6 +175,34 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 - 386,518 rows loaded from Torrey's TSK
 - Join pattern: cross_references cr JOIN kjv_verses kv ON cr.verse_ref_id = kv.verse_id
 
+## MetaV (person/place sidebar)
+- Tables: `metav_people` (+_aliases, _groups, _relationships), `metav_places` (+_aliases; has lat/lon, strongs_g)
+- Looked up by NAME (not strongs). Frontend fetches person + place in parallel; toggle shown when both exist
+- Hebrew proper nouns: route to metaV (person/place) with BDB stacked BELOW (KJV-style). `isHebrewWord` (any H#)
+  drives BDB; `isHebrew = isHebrewWord && !isPN` drives the Hebrew hero/LSJ suppression
+- Default tab = Person; flips to Place only on a prefix-exact match of the word's strongs_base to the place's
+  strongs_g. **Do NOT trust `tipnr.entity_type`/pn_type** — tipnr.strongs is a PK, so person+place sharing one
+  strongs (Adam H121='place') stores the last-imported type
+- Gentilics (`/ites?$/`: Hivite, Sinite…): card labeled "People / Clan", place header "Homeland", AI summary
+  fires on the clan tab. Kept as persons (Table-of-Nations genealogy is the value; only Jebusite has map coords)
+- AI curation: `/api/metav/ai-description/<name>` — Haiku, 1-2 sentences, text-first prompt, cached in
+  ai_search_cache (`pn:` key). Fills entries with no metaV/BDB data
+- CRITICAL: the lexicon join is `LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base,2) AND w.strongs_base
+  LIKE 'G%'`. The `LIKE 'G%'` guard is REQUIRED — without it a Hebrew H121 matches Greek G121 and gets a bogus
+  Greek lemma (which made the metaV effect early-return and broke Hebrew-PN metaV). Applies to BOTH chapter_text
+  and verse_words
+
+## Maintenance / data-quality scripts
+- `scripts/health_check.py <db>` — READ-ONLY scanner; run after ANY import/rebuild. ~14 checks (strongs_base
+  invariant, dups, misalignment, fragmented brackets, missing/orphan greek_pos, strongs range, lexicon/bdb
+  coverage) + person/place overlap report. Should be 0 warnings
+- `fix_greek_pos_gaps.py` / `fix_bracket_gaps_absorb.py` / `fix_orphan_greek_pos.py` / `dedup_words.py` —
+  targeted data repairs, all with `--dry-run`. Touch only the named column; never blanket DELETE
+
+## Refactor backlog
+- See memory `project_architecture_rework.md` and TODO.md "Code Health" section. #1 (centralize Strong's-number
+  handling — kill `SUBSTR(strongs_base,2)` joins + hardcoded `G{...}`) is the highest-leverage rework
+
 ## Do Not
 - Do not add KJV as the sole primary study text — ABP remains the anchor
 - Do not touch existing ABP tables when adding unrelated features

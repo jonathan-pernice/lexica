@@ -1,5 +1,34 @@
 # TODO
 
+## Code Health & Refactor Backlog (from 2026-06-03 deep-debug session)
+
+Ranked by bug-prevention value. App works today — these are where the bug density is.
+Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and #2 are ~80% of the value.**
+
+1. **Centralize Strong's-number handling** (DO FIRST — root of 4+ bugs today). One canonical
+   module (backend + frontend): `{prefix, number, dotted}` + parse/format + a real JOIN KEY.
+   Kill every `SUBSTR(strongs_base, 2)` join and every hardcoded `G{w.strongs || w.strongs_base}`.
+   Today's evidence: the 592k bare-prefix break + the Hebrew-PN spurious-Greek-lemma (H121→G121).
+2. **Rebuild pipeline**: `build_words_from_abp.py` does `DELETE`+rebuild then a fleet of
+   `fix_*` patches. Make it one authoritative idempotent pass that uses ABP position numbers
+   for greek_pos/bracket (as its own docstring already says — the code does the opposite).
+3. **DRY word serialization**: `/api/chapter` vs `/api/verse-words` drifted (is_pn missing in
+   chapter → broke Library metaV). One `_serialize_word()` backend + one `makeWordEntry()` frontend.
+4. **Detail panel state model**: too many interacting flags (isPN/isHebrew/isHebrewWord/
+   isGentilic/personOk/metavType…). Compute one `{hero, sections[]}` descriptor, render dumbly.
+5. **Schema**: `tipnr.strongs` is a PK → person+place sharing one strongs (Adam H121) collapses
+   to one type; `pn_type` is untrustworthy as a result. Composite key / type-set.
+6. **Tests**: extend `scripts/health_check.py` (data-quality) with code-level tests around the
+   Strong's module (#1) and build invariants (#2). Currently it's deploy-and-eyeball.
+
+### Maintenance / data-quality scripts (2026-06-03)
+- `health_check.py` — READ-ONLY scanner, run after any import/rebuild (currently 0 warnings)
+- `fix_greek_pos_gaps.py` — backfill greek_pos for split bracket words
+- `fix_bracket_gaps_absorb.py` — absorb glossless gap words into surrounding bracket
+- `fix_orphan_greek_pos.py` — null greek_pos on non-bracket words
+- `dedup_words.py` — remove exact-duplicate rows
+- All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
+
 ## Advanced Workspace Layout (major feature)
 
 ### Spec
@@ -95,6 +124,12 @@ ABP follows LXX verse numbering (Psalms especially can be off by 1 from KJV). In
 
 ### ✓ People & Places — DONE
 People sidebar (bio, relationships, genealogy), places sidebar (Leaflet map, coordinates), proper noun routing in both ABP and KJV. All live.
+
+### ✓ Hebrew PN + gentilic handling — DONE (2026-06-03)
+- Hebrew proper nouns route to metaV (person/place) with BDB stacked below (KJV-style); badge shows real H-number.
+- Person/place default: Person, flips to Place only on a prefix-exact strongs_g match (pn_type untrusted — tipnr PK collision).
+- Gentilics (-ite/-ites: Hivite, Sinite…): labeled "People / Clan", place card headed "Homeland", AI summary fires on the clan tab.
+- AI curation (`/api/metav/ai-description`, Haiku, cached `pn:` key, text-first prompt) fills groups with no metaV/BDB.
 
 ### Topic Index
 Browse by concept (Atonement, Covenant, Resurrection, Holy Spirit etc.) as a structured alternative to AI search. Good entry point for users who don't know what to search for.
