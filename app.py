@@ -2076,13 +2076,12 @@ def lexicon_english():
             """, (q,)).fetchall()
 
         if corpus in ("kjv", "all"):
-            # KJV words → strongs. In 'kjv' mode include BOTH NT Greek (G) and OT
-            # Hebrew (H) — e.g. "spirit" must surface G4151 (pneuma) from the KJV
-            # NT. In 'all' mode restrict to Hebrew so the Greek numbers aren't
-            # duplicated by the ABP side above. Lemma/translit resolve from
-            # lexicon (G) or bdb (H); the LIKE guards prevent G/H number collision.
-            kjv_filter = "AND ks.strongs_id LIKE 'H%'" if corpus == "all" else ""
-            heb_rows = conn.execute(f"""
+            # KJV words → strongs: include BOTH NT Greek (G) and OT Hebrew (H),
+            # e.g. "spirit" surfaces G4151 (pneuma) from the KJV NT as well as the
+            # OT Hebrew words. Lemma/translit resolve from lexicon (G) or bdb (H);
+            # the LIKE guards prevent G/H number collision. In 'all' mode these
+            # merge with the ABP rows below (same strongs → combined count).
+            heb_rows = conn.execute("""
                 SELECT ks.strongs_id AS sbase,
                        COALESCE(l.lemma, b.lemma)   AS lemma,
                        COALESCE(l.translit, b.xlit) AS translit,
@@ -2093,7 +2092,6 @@ def lexicon_english():
                 LEFT JOIN bdb b ON b.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
                 WHERE kw.word = ? COLLATE NOCASE
                   AND (kw.italic IS NULL OR kw.italic = 0)
-                  {kjv_filter}
                 GROUP BY ks.strongs_id
                 ORDER BY cnt DESC
                 LIMIT 10
@@ -2104,23 +2102,34 @@ def lexicon_english():
         abp_glosses = _top_glosses_abp(abp_snums)
         heb_glosses = _top_glosses_heb(heb_snums)
 
+        # Merge ABP + KJV rows by strongs so a number tagged in both corpora
+        # (e.g. G4151 in ABP and the KJV NT) shows once with the combined count
+        # and gloss breakdown. For abp/kjv-only modes one list is empty, so this
+        # is a passthrough.
+        merged = {}
+        def _merge(rows, gmap):
+            for r in rows:
+                sid = r["sbase"]
+                e = merged.get(sid)
+                if e is None:
+                    e = merged[sid] = {"strongs": sid, "lemma": "", "translit": "",
+                                       "count": 0, "glosses": {}}
+                e["count"] += r["cnt"]
+                if not e["lemma"] and r["lemma"]:
+                    e["lemma"] = r["lemma"]
+                if not e["translit"] and r["translit"]:
+                    e["translit"] = r["translit"]
+                for g in gmap.get(sid, []):
+                    e["glosses"][g["gloss"]] = e["glosses"].get(g["gloss"], 0) + g["count"]
+        _merge(abp_rows, abp_glosses)
+        _merge(heb_rows, heb_glosses)
+
         results = []
-        for r in abp_rows:
-            results.append({
-                "strongs": r["sbase"],
-                "lemma": r["lemma"] or "",
-                "translit": r["translit"] or "",
-                "count": r["cnt"],
-                "glosses": abp_glosses.get(r["sbase"], []),
-            })
-        for r in heb_rows:
-            results.append({
-                "strongs": r["sbase"],
-                "lemma": r["lemma"] or "",
-                "translit": r["translit"] or "",
-                "count": r["cnt"],
-                "glosses": heb_glosses.get(r["sbase"], []),
-            })
+        for e in merged.values():
+            glosses = sorted(({"gloss": g, "count": c} for g, c in e["glosses"].items()),
+                             key=lambda x: -x["count"])[:8]
+            results.append({"strongs": e["strongs"], "lemma": e["lemma"],
+                            "translit": e["translit"], "count": e["count"], "glosses": glosses})
 
         results.sort(key=lambda x: -x["count"])
         return jsonify(results)
