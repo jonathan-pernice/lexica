@@ -256,7 +256,14 @@ def main():
         "shethar":       "H8370",   "melchisedek":  "H4442",
         "hodijah":       "H1941",   "aholibamah":   "H173",
         "bama":          "H1117",   "hagarite":     "H1905",
-        "hagarites":     "H1905",
+        "hagarites":    "H1905",   "rabbah":       "H7237",
+        "cherethite":   "H3746",   "cherethites":  "H3746",
+        "pelethite":    "H6432",   "pelethites":   "H6432",
+        "pelonite":     "H6397",   "hushathite":   "H2364",
+        "kenite":       "H7017",   "kenites":      "H7017",
+        "shilonite":    "H8024",   "beerothite":   "H881",
+        "abijam":       "H38",     "ivah":         "H5755",
+        "ziglag":       "H6860",
     }
 
     # Gentilics and common variants not stored under their ABP form in TIPNR
@@ -307,7 +314,12 @@ def main():
         "carmelite":     "carmel",     "carmelites":    "carmel",
         "maachathite":   "maacah",     "maachathites":  "maacah",
         "kirjathjearim": "kiriath-jearim",
-        "melchisedek":   "melchizedek",
+        "melchisedek":   "melchizedek", "abijam":     "abijah",
+        "gadite":        "gad",         "gadites":    "gad",
+        "jezreelite":    "jezreel",     "jezreelites":"jezreel",
+        "ashdodite":     "ashdod",      "ashdodites": "ashdod",
+        "arabian":       "arabia",      "arabians":   "arabia",
+        "ziglag":        "ziklag",      "shilonite":  "shiloh",
     }
 
     def find_entry(english):
@@ -319,7 +331,7 @@ def main():
         def _strip_lead(s):
             for prefix in ("land of the ", "land of ", "of the ", "of ", "to ",
                            "in the ", "in ", "for ", "both ", "and ", "this ",
-                           "the ", "a ", "O ", "o "):
+                           "was ", "with ", "the ", "a ", "O ", "o "):
                 if s.lower().startswith(prefix):
                     return s[len(prefix):]
             return s
