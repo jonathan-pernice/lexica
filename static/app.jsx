@@ -1366,8 +1366,13 @@ function getEnglishOrderWords(words) {
     }
     cleaned.sort((a, b) => (a.greek_pos ?? 999) - (b.greek_pos ?? 999));
     if (trailing && cleaned.length) {
-      const last = cleaned[cleaned.length - 1];
-      cleaned[cleaned.length - 1] = { ...last, english: (last.english || "") + trailing };
+      // Attach the floated punctuation to the last word that actually has English
+      // text. Empty-gloss words (e.g. the σου/αὐτός pronouns folded into a
+      // neighboring noun) would otherwise become a standalone "," token, which
+      // renders with a stray leading space ("reprove , me") in prose mode.
+      let li = cleaned.length - 1;
+      while (li > 0 && !((cleaned[li].english || "").trim())) li--;
+      cleaned[li] = { ...cleaned[li], english: (cleaned[li].english || "") + trailing };
     }
     bracketMap[bid] = cleaned;
   }
