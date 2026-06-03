@@ -489,6 +489,10 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   //    PN's hero shows its NAME and metaV stays the primary card.
   const isHebrewWord = entry && entry.strongs && entry.strongs.startsWith("H");
   const isHebrew = isHebrewWord && !isPN;
+  // Gentilics (-ite/-ites: Hivite, Sinite, Amorite…) are eponymous people-groups
+  // from the Table of Nations — labelled "People / Clan", but still shown as a
+  // metaV person so the genealogy (parent/sibling clans) is preserved.
+  const isGentilic = !!(isPN && entry && /ites?$/i.test(extractProperName(entry.pnName || entry.gloss || "")));
 
   // PN occurrence count (by name, for strongs='*' entries)
   const [pnCount, setPnCount] = useState(null);
@@ -546,18 +550,14 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
       if (cancelled) return;
       const personOk = !pd.error && (pd.birth_year || pd.death_year || pd.relationships?.length >= 2);
       if (personOk) setMetavPersonData(pd);
-      // Gentilics (Hivite, Sinite, Amorite…) are PEOPLES, not places — their place
-      // match comes through a misleading metav alias. Suppress it so they read as
-      // person/BDB (the Hebrew BDB entry accurately describes the people/clan).
-      const isGentilic = /ites?$/i.test(name);
-      if (!ld.error && !isGentilic) setMetavPlaceData(ld);
+      if (!ld.error) setMetavPlaceData(ld);
       // Default tab (only matters when BOTH person+place exist). Default to Person
       // and flip to Place ONLY when the word's own (prefixed) strongs matches the
       // place's strongs_g — a genuinely distinct place id. pn_type is NOT trusted:
       // tipnr.strongs is a PK, so a name sharing one strongs for person AND place
       // (e.g. Adam H121) stores whichever type was inserted last ('place' for Adam),
       // which would wrongly default person-names to Place.
-      const placeStrongsMatch = !isGentilic && !ld.error && !!ld.strongs_g && !!entry.strongs_base &&
+      const placeStrongsMatch = !ld.error && !!ld.strongs_g && !!entry.strongs_base &&
         ld.strongs_g.split(/[^GH0-9.]+/i).map(s => s.toUpperCase()).includes(entry.strongs_base.toUpperCase());
       setMetavTab(placeStrongsMatch ? "place" : "person");
       setMetavLoading(false);
@@ -700,7 +700,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               )}
               {metavType === "person" && metavData ? (
               <div className="metav-person">
-                <h4 className="sec-head"><span className="sec-t">Biblical Person</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
+                <h4 className="sec-head"><span className="sec-t">{isGentilic ? "People / Clan" : "Biblical Person"}</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
                 <div className="metav-meta">
                   {metavData.gender && <span className="metav-tag">{metavData.gender === "M" ? "Male" : "Female"}</span>}
                   {metavData.groups.filter(g => g.startsWith("Tribe")).map(g => (
