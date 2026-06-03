@@ -482,10 +482,13 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.strongs_raw]);
 
   const isPN = entry && (entry.is_pn || entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
-  // Proper nouns route to metaV (person/place), NOT the BDB Hebrew lexicon —
-  // even now that they carry a real H-number. Treat them as non-Hebrew here so
-  // the BDB fetch/hero don't preempt the metaV card.
-  const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H") && !isPN;
+  // A word carrying an H-number. For Hebrew PROPER NOUNS we want metaV (person/
+  // place) on top with the BDB lexical entry stacked BELOW (like KJV mode):
+  //  - isHebrewWord drives the BDB fetch + section (shown for ALL Hebrew words, incl. PNs)
+  //  - isHebrew (excludes PNs) drives the Hebrew HERO styling + LSJ suppression, so a
+  //    PN's hero shows its NAME and metaV stays the primary card.
+  const isHebrewWord = entry && entry.strongs && entry.strongs.startsWith("H");
+  const isHebrew = isHebrewWord && !isPN;
 
   // PN occurrence count (by name, for strongs='*' entries)
   const [pnCount, setPnCount] = useState(null);
@@ -584,7 +587,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [bdbLoading, setBdbLoading] = useState(false);
   useEffect(() => {
     setBdbEntry(null);
-    if (!isHebrew || !entry.strongs) return;
+    if (!isHebrewWord || !entry.strongs) return;
     let cancelled = false;
     setBdbLoading(true);
     api.bdb(entry.strongs)
@@ -751,7 +754,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </section>
         )}
 
-        {isHebrew ? (
+        {isHebrewWord ? (
           <section className="sec">
             <h4 className="sec-head"><span className="sec-t">Brown-Driver-Briggs</span><span className="bdb-badge">BDB</span></h4>
             {bdbLoading ? (

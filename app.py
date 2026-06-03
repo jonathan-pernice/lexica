@@ -1650,7 +1650,7 @@ def verse_words(book, chapter, verse):
                       l.lemma, l.translit, l.kjv_def, l.strongs_def, l.derivation,
                       t.entity_type AS pn_type
                FROM words w
-               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2) AND w.strongs_base LIKE 'G%'
                LEFT JOIN tipnr t ON t.strongs = w.strongs_base
                WHERE w.verse_id = ?
                ORDER BY w.position""",
@@ -2359,7 +2359,7 @@ def chapter_text(book, chapter):
                       p.heading
                FROM verses v
                JOIN words w ON w.verse_id = v.id
-               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2) AND w.strongs_base LIKE 'G%'
                LEFT JOIN tipnr t ON t.strongs = w.strongs_base
                LEFT JOIN pericopes p ON p.book = v.book AND p.chapter = v.chapter AND p.verse = v.verse
                WHERE v.book = ? AND v.chapter = ?
