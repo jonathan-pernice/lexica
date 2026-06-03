@@ -102,7 +102,9 @@ def bracket_info(raw: str):
     """
     opens  = "[" in raw
     closes = "]" in raw
-    s = raw.strip().lstrip("[").rstrip("]").strip()
+    # Strip surrounding whitespace, brackets, and trailing punctuation so the
+    # leading position number (e.g. "1 the second]." → "1") is always reachable.
+    s = re.sub(r"[^\w\s]", "", raw.strip().lstrip("[")).strip()
     m = _LEAD_NUM.match(s)
     abp_pos = int(m.group()) if m else None
     return abp_pos, opens, closes
