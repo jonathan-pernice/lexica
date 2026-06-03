@@ -185,6 +185,13 @@ for gv in gap_verses:
         # Determine insertion position
         after = insert_after_pos(bh_w, bh_all, bh_to_bible, bible_all)
 
+        # Fallback: if no preceding match found, insert just before the
+        # first word already in this bracket rather than at position -1
+        if after == -1:
+            bracket_positions = [w["position"] for w in bible_all
+                                  if w["bracket_id"] == bid]
+            after = (min(bracket_positions) - 1) if bracket_positions else 0
+
         # Normalize strongs: bare number → G-prefixed
         raw = bh_w["strongs"] or ""
         first_num = re.match(r"(\d+)", raw)
