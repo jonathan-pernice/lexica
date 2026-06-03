@@ -190,6 +190,10 @@ def build_verse_words(bh_rows, lex: dict | None = None):
       - Counter advances when the first word of a new bracket run is encountered.
       - Compound extension rows (i>0) never get a bracket_id; they don't break
         an in-progress bracket run either (in_bracket state only changes on i==0).
+      - Null-english + null-greek_pos words (bare articles, e.g. G3588 rendered as
+        &nbsp; on BibleHub) do NOT reset in_bracket — they are structural connectors
+        inside a single bracket span. Only words with actual English content close
+        a bracket run.
     """
     words = []
     pos = 0
@@ -215,7 +219,11 @@ def build_verse_words(bh_rows, lex: dict | None = None):
                     bracket_id = bid
                 else:
                     bracket_id = None
-                    in_bracket = False
+                    # Bare articles inside a bracket span have english=None (BibleHub renders
+                    # them as &nbsp; with no reorder number). Keep in_bracket so they don't
+                    # fragment a single [..] group into multiple bracket_ids.
+                    if bh_english is not None:
+                        in_bracket = False
                 greek_pos = bh_greek_pos
             else:
                 bracket_id = None
