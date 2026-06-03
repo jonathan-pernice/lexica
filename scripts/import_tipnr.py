@@ -224,17 +224,27 @@ def main():
 
     # Direct Strong's for entries missing from parsed TIPNR (confirmed numbers)
     DIRECT = {
-        "zion":        "H6726",  "abram":      "H87",
-        "sarai":       "H8297",  "hivite":     "H2340",
-        "hivites":     "H2340",  "amorite":    "H567",
-        "amorites":    "H567",   "jebusite":   "H2983",
-        "jebusites":   "H2983",  "perizzite":  "H6522",
-        "perizzites":  "H6522",  "girgashite": "H1622",
-        "girgashites": "H1622",  "hermon":     "H2768",
-        "shushan":     "H7800",  "necho":      "H5224",
-        "neco":        "H5224",  "meshach":    "H4336",
-        "shadrach":    "H7714",  "abednego":   "H5665",
-        "syrian":      "H761",   "syrians":    "H761",
+        "zion":          "H6726",  "abram":        "H87",
+        "sarai":         "H8297",  "hivite":       "H2340",
+        "hivites":       "H2340",  "amorite":      "H567",
+        "amorites":      "H567",   "jebusite":     "H2983",
+        "jebusites":     "H2983",  "perizzite":    "H6522",
+        "perizzites":    "H6522",  "girgashite":   "H1622",
+        "girgashites":   "H1622",  "hermon":       "H2768",
+        "shushan":       "H7800",  "necho":        "H5224",
+        "neco":          "H5224",  "meshach":      "H4336",
+        "shadrach":      "H7714",  "abednego":     "H5665",
+        "syrian":        "H761",   "syrians":      "H761",
+        # Additional missing entries
+        "horeb":         "H2722",  "iscariot":     "G2469",
+        "ishbosheth":    "H378",   "arphaxad":     "H775",
+        "caesar":        "G2541",  "magdalene":    "G3094",
+        "hinnom":        "H2011",  "tishbite":     "H8664",
+        "bethhoron":     "H1032",  "edomite":      "H130",
+        "edomites":      "H130",   "nethinim":     "H5411",
+        "ezion":         "H6100",  "helkiah":      "H2518",
+        "hilkiah":       "H2518",  "jabesh":       "H3003",
+        "jabish":        "H3003",
     }
 
     # Gentilics and common variants not stored under their ABP form in TIPNR
@@ -253,11 +263,20 @@ def main():
         "ammonite":    "ammon",      "ammonites":   "ammon",
         "philistine":  "philistia",  "philistines": "philistia",
         "israelite":   "israel",     "israelites":  "israel",
-        "pharisee":    "pharisee",   "pharisees":   "pharisee",
-        "sadducee":    "sadducee",   "sadducees":   "sadducee",
-        # Name variants
-        "abram":       "abraham",    # same person, pre-rename form
-        "sarai":       "sarah",      # same person
+        "pharisee":      "pharisee",   "pharisees":     "pharisee",
+        "sadducee":      "sadducee",   "sadducees":     "sadducee",
+        "persian":       "persia",     "persians":      "persia",
+        "gileadite":     "gilead",     "gileadites":    "gilead",
+        "elamite":       "elam",       "elamites":      "elam",
+        "cushite":       "cush",       "cushites":      "cush",
+        "midianite":     "midian",     "midianites":    "midian",
+        "edomite":       "edom",       "edomites":      "edom",
+        "baalim":        "baal",
+        # Spelling variants (ABP vs ESV)
+        "michaiah":      "micaiah",    "abijah":        "abijah",
+        "nabuzaradan":   "nebuzaradan","nabuzar-adan":  "nebuzaradan",
+        "jabish":        "jabesh",     "jabesh":        "jabesh",
+        "helkiah":       "hilkiah",
     }
 
     def find_entry(english):
@@ -306,13 +325,14 @@ def main():
                 e = lookup.get(mapped)
                 if e: return e
         # 8. Direct Strong's map for entries missing from parsed TIPNR
-        for candidate in (bare.lower(), bare2.lower(), clean.lower(), english.lower()):
+        # Also try no-hyphen variant for compound names like 'Abed-nego', 'Beth-horon'
+        candidates_direct = {bare.lower(), bare2.lower(), clean.lower(), english.lower(),
+                              _no_hyphen(bare).lower(), _no_hyphen(clean).lower()}
+        for candidate in candidates_direct:
             s = DIRECT.get(candidate)
             if s:
-                prefix = "H" if s[0] == "H" else "G"
-                return {prefix.lower(): s, "h" if prefix == "H" else "g": s,
-                        "h": s if prefix == "H" else None,
-                        "g": s if prefix == "G" else None,
+                return {"h": s if s[0] == "H" else None,
+                        "g": s if s[0] == "G" else None,
                         "type": "place"}
         return None
 
