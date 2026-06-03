@@ -2095,11 +2095,11 @@ def lexicon_english():
             """, (q, *_abp_params)).fetchall()
 
         if corpus in ("kjv", "all"):
-            # KJV words → strongs: include BOTH NT Greek (G) and OT Hebrew (H),
-            # e.g. "spirit" surfaces G4151 (pneuma) from the KJV NT as well as the
-            # OT Hebrew words. Lemma/translit resolve from lexicon (G) or bdb (H);
-            # the LIKE guards prevent G/H number collision. In 'all' mode these
-            # merge with the ABP rows below (same strongs → combined count).
+            # KJV words → strongs. In 'kjv' mode include BOTH NT Greek (G) and OT
+            # Hebrew (H). In 'all' mode restrict to Hebrew (H) — the ABP rows above
+            # already carry the Greek (LXX OT + Greek NT), and the KJV NT is the
+            # SAME Greek text, so including G here would double-count it.
+            kjv_filter = "AND ks.strongs_id LIKE 'H%'" if corpus == "all" else ""
             heb_rows = conn.execute(f"""
                 SELECT ks.strongs_id AS sbase,
                        COALESCE(l.lemma, b.lemma)   AS lemma,
@@ -2112,6 +2112,7 @@ def lexicon_english():
                 WHERE kw.word = ? COLLATE NOCASE
                   AND (kw.italic IS NULL OR kw.italic = 0)
                   {_kjv_where}
+                  {kjv_filter}
                 GROUP BY ks.strongs_id
                 ORDER BY cnt DESC
                 LIMIT 10
@@ -2122,44 +2123,26 @@ def lexicon_english():
         abp_glosses = _top_glosses_abp(abp_snums)
         heb_glosses = _top_glosses_heb(heb_snums)
 
-        # Merge ABP + KJV rows by strongs so a number tagged in both corpora
-        # (e.g. G4151 in ABP and the KJV NT) shows once with the combined count
-        # and gloss breakdown. For abp/kjv-only modes one list is empty, so this
-        # is a passthrough.
-        merged = {}
-        def _merge(rows, gmap):
-            for r in rows:
-                sid = r["sbase"]
-                e = merged.get(sid)
-                if e is None:
-                    e = merged[sid] = {"strongs": sid, "lemma": "", "translit": "",
-                                       "count": 0, "glosses": {}}
-                e["count"] += r["cnt"]
-                if not e["lemma"] and r["lemma"]:
-                    e["lemma"] = r["lemma"]
-                if not e["translit"] and r["translit"]:
-                    e["translit"] = r["translit"]
-                for g in gmap.get(sid, []):
-                    # Normalize exactly like the profile so case/whitespace/punct
-                    # variants ("Spirit", "spirit ", "spirit,") collapse to one.
-                    key = _normalize_gloss(g["gloss"])
-                    if not key:
-                        continue
-                    slot = e["glosses"].get(key)
-                    if slot is None:
-                        e["glosses"][key] = {"label": key, "count": g["count"]}
-                    else:
-                        slot["count"] += g["count"]
-        _merge(abp_rows, abp_glosses)
-        _merge(heb_rows, heb_glosses)
-
+        # Native-per-strongs: each number counts from its own corpus (Greek from
+        # ABP, Hebrew from KJV). In 'all' the two lists are disjoint (ABP Greek +
+        # KJV Hebrew), so we do NOT sum — summing would double-count the Greek NT,
+        # which appears in both ABP and the KJV. Glosses are normalized so
+        # case/whitespace/punct variants collapse to one.
         results = []
-        for e in merged.values():
-            glosses = sorted(({"gloss": s["label"], "count": s["count"]} for s in e["glosses"].values()),
-                             key=lambda x: -x["count"])[:8]
-            results.append({"strongs": e["strongs"], "lemma": e["lemma"],
-                            "translit": e["translit"], "count": e["count"], "glosses": glosses})
-
+        def _emit(rows, gmap):
+            for r in rows:
+                gl = {}
+                for g in gmap.get(r["sbase"], []):
+                    key = _normalize_gloss(g["gloss"])
+                    if key:
+                        gl[key] = gl.get(key, 0) + g["count"]
+                glosses = sorted(({"gloss": k, "count": c} for k, c in gl.items()),
+                                 key=lambda x: -x["count"])[:8]
+                results.append({"strongs": r["sbase"], "lemma": r["lemma"] or "",
+                                "translit": r["translit"] or "", "count": r["cnt"],
+                                "glosses": glosses})
+        _emit(abp_rows, abp_glosses)
+        _emit(heb_rows, heb_glosses)
         results.sort(key=lambda x: -x["count"])
         return jsonify(results)
     finally:
@@ -2222,6 +2205,8 @@ def lexicon_profile(strongs):
             definition = row["strongs_def"] or row["kjv_def"] or ""
         # Corpus: default H→kjv, G→abp; override via ?corpus=
         corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
+        if corpus == "all":  # profile is single-corpus; 'all' would double-count NT
+            corpus = "kjv" if is_heb else "abp"
         _NT = {"Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph","Php","Col",
                "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
         book_meta = {r["abbrev"]: {"name": r["name"], "testament": "NT" if r["abbrev"] in _NT else "OT"}
@@ -2305,6 +2290,8 @@ def lexicon_books(strongs):
     prefix, snum = m.group(1).upper(), m.group(2)
     is_heb = prefix == "H"
     corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
+    if corpus == "all":
+        corpus = "kjv" if is_heb else "abp"
     gloss = request.args.get("gloss", "").strip().lower()
     conn = db_ro()
     try:
