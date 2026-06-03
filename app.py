@@ -1798,7 +1798,8 @@ def lsj_summary(lemma):
             ).fetchone()
             if not row and plain:
                 row = conn.execute(
-                    "SELECT key, def_html, summary_json FROM lsj WHERE replace(plain,'-','') = ?", (plain,)
+                    "SELECT key, def_html, summary_json FROM lsj"
+                    " WHERE lower(strip_accents(replace(key,'-',''))) = ?", (plain,)
                 ).fetchone()
             if row:
                 xref = _resolve_lsj_xref(conn, row["def_html"], "key, def_html, summary_json")
