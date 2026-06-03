@@ -2140,10 +2140,10 @@ def lexicon_english():
                 if not e["translit"] and r["translit"]:
                     e["translit"] = r["translit"]
                 for g in gmap.get(sid, []):
-                    key = g["gloss"].lower()  # fold case: "Spirit"/"spirit" are one gloss
-                    slot = e["glosses"].get(key)
+                    key = g["gloss"].lower()  # fold case + display lowercase to
+                    slot = e["glosses"].get(key)  # match the profile's normalized glosses
                     if slot is None:
-                        e["glosses"][key] = {"label": g["gloss"], "count": g["count"]}
+                        e["glosses"][key] = {"label": key, "count": g["count"]}
                     else:
                         slot["count"] += g["count"]
         _merge(abp_rows, abp_glosses)
