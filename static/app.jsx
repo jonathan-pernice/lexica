@@ -2679,24 +2679,22 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
 
 
       {groupings && !profile && (
-        <div style={{marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
-          <div className="lexicon-dist-label">rendered as "{query.trim()}"</div>
+        <div className="lexicon-results">
+          <div className="lexicon-dist-label">
+            rendered as "{query.trim()}" · {groupings.length} {groupings.length === 1 ? "word" : "words"}
+          </div>
           {groupings.map(g => (
-            <div key={g.strongs} className="lexicon-dist-grid">
-              <button className="lexicon-dist-book"
-                onClick={() => loadProfile(g.strongs, corpus === "all" ? undefined : corpus)}>
-                <span className="lexicon-match-strongs">{g.strongs}</span>
-                {g.translit && <span className="lexicon-match-translit"> {g.translit}</span>}
-                <span className="lexicon-dist-count">{g.count}</span>
-              </button>
-              {(g.glosses || []).map(({gloss, count}) => (
-                <button key={gloss} className="lexicon-dist-book"
-                  onClick={() => { loadProfile(g.strongs, corpus === "all" ? undefined : corpus); setPendingGloss(gloss); }}>
-                  <span className="lexicon-dist-name">{gloss}</span>
-                  <span className="lexicon-dist-count">{count}</span>
-                </button>
-              ))}
-            </div>
+            <button key={g.strongs} className="lexicon-result-row"
+              onClick={() => loadProfile(g.strongs, corpus === "all" ? undefined : corpus)}>
+              <span className="lexicon-match-strongs">{g.strongs}</span>
+              {g.lemma && <span className="lexicon-match-lemma" dir={g.strongs[0] === "H" ? "rtl" : undefined}>{g.lemma}</span>}
+              {g.translit && <span className="lexicon-match-translit">{g.translit}</span>}
+              <span className="lexicon-result-preview">
+                {(g.glosses || []).slice(0, 3).map(x => x.gloss).join(", ")}
+              </span>
+              <span className="lexicon-result-count">{g.count}</span>
+              <span className="lexicon-result-chev">›</span>
+            </button>
           ))}
         </div>
       )}
