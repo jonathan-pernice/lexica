@@ -4,30 +4,36 @@
 Lexica is a Flask-based Greek and Hebrew Bible word study app. ABP (Apostolic Bible Polyglot) interlinear is the primary text; KJV is a fully searchable parallel corpus. The design is scholarly but accessible — no prior Greek training required.
 
 ## Instructions for Claude Code
-- Read only the specific function or section relevant to the task
-- Do not read the entire app.py or app.jsx unless explicitly asked
+(Account: user is on the Max 20x plan — ample headroom. Bias to being THOROUGH and
+CORRECT over conserving tool calls. The notes below are about staying focused and
+keeping context sharp, NOT about rationing usage.)
+- Target the specific function/section relevant to the task — for focus, not frugality
+- Prefer not to read all of app.py / app.jsx in one shot (they're huge — it dilutes
+  context); read the relevant region(s), but read as many as correctness needs
+- Read as much as you need to get it right — do not starve a task of context to save calls
 - Do not attempt to access bible.db directly
 - Make minimal changes — do not refactor unrelated code
 - Ask for clarification before making large changes
-- Limit tool calls — do not read files for context unless strictly necessary
-- Go straight to the relevant function, do not scan the whole codebase first
+- Go straight to the relevant function; don't scan the whole codebase out of habit
 
-## Effort mode (Opus 4.8)
-Pick effort by task TYPE, not by default:
+## Effort mode (Opus 4.8) — on the Max 20x plan, headroom is ample
+Pick effort by task TYPE. When in doubt, lean higher — the plan affords it.
 - **Routine work** (known edits, data scripts, config tweaks, one-line fixes):
-  medium/low effort. Follow the STOP RULES below as written.
+  medium effort is plenty; stay efficient but don't cut corners on correctness.
 - **Diagnosis / root-cause / data-integrity work** (a symptom several hops from
   its cause, anything touching the words table or Strong's invariants): HIGH
-  effort, and the STOP RULES are LIFTED — read as many spots as the trace needs
-  and reason it through. A wrong guess on data is expensive (see the 2026-06-03
-  strongs_base regression — one wrong word hid a 592k-row break).
+  effort — read as many spots as the trace needs and reason it through. A wrong
+  guess on data is expensive (see the 2026-06-03 strongs_base regression — one
+  wrong word hid a 592k-row break).
 - When unsure which mode you're in, ask the user, or state your assumption.
 
-## STOP RULES (routine work only — lifted for diagnosis, see Effort mode)
-- Prefer no extended thinking for routine edits
-- Avoid exploring more than ~2 files for a routine task
-- Show code before changing it (ALWAYS — applies in every mode)
-- Keep routine responses under ~5 tool calls
+## Working style (not hard caps — 20x plan, optimize for correctness)
+- Show code before changing it (ALWAYS — every mode, no exceptions)
+- Prefer focused reads over broad scans — for context quality, not call-rationing
+- No artificial tool-call or file-count ceiling; use what the task genuinely needs.
+  For diagnosis, that may be many reads — that's expected and fine.
+- Still avoid genuinely wasteful moves (re-reading a file you just edited, scanning
+  the whole repo when you know the target)
 
 ## Important
 - bible.db lives on PythonAnywhere only, not locally
