@@ -1990,6 +1990,10 @@ input { font-family: inherit; }
 
 /* ── metaV sidebar ───────────────────────────────────────────── */
 .lib-word-pn { color: var(--ink); }
+.metav-type-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.metav-type-tab { flex: 1; padding: 5px 0; font-size: 12px; border-radius: 6px; color: var(--ink-3); border: 1px solid var(--rule); background: var(--paper); transition: background 0.1s, color 0.1s; }
+.metav-type-tab:hover { color: var(--ink); border-color: var(--ink-3); }
+.metav-type-tab.on { background: var(--navy); border-color: var(--navy); color: #f4f6fa; font-weight: 500; }
 .metav-meta { display: flex; flex-wrap: wrap; gap: 6px; }
 .metav-tag {
   font-size: 11px;

@@ -509,12 +509,18 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.strongs]);
 
   // metaV person/place lookup — runs on any word click where gloss may be a name
-  const [metavData, setMetavData] = useState(null);
-  const [metavType, setMetavType] = useState(null); // "person" | "place" | null
+  const [metavPersonData, setMetavPersonData] = useState(null);
+  const [metavPlaceData, setMetavPlaceData] = useState(null);
+  const [metavTab, setMetavTab] = useState("person"); // "person" | "place"
   const [metavLoading, setMetavLoading] = useState(false);
+  // Derived — all downstream code uses these unchanged
+  const metavHasBoth = !!(metavPersonData && metavPlaceData);
+  const metavType = metavHasBoth ? metavTab : (metavPersonData ? "person" : metavPlaceData ? "place" : null);
+  const metavData = metavType === "person" ? metavPersonData : metavType === "place" ? metavPlaceData : null;
   useEffect(() => {
-    setMetavData(null);
-    setMetavType(null);
+    setMetavPersonData(null);
+    setMetavPlaceData(null);
+    setMetavTab("person");
     // Skip metaV for words with a real Greek lemma — those belong to LSJ
     // Exception: KJV words that look like proper nouns (capitalized) still go through metaV
     const kjvIsPN = entry.isKjv && extractProperName(entry.pnName || entry.gloss || "") !== "";
@@ -525,20 +531,16 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     if (_DIVINE_SKIP.has(name)) return;
     let cancelled = false;
     setMetavLoading(true);
-    api.metavPerson(name)
-      .then(d => {
-        if (cancelled) return;
-        const hasData = !d.error && (d.birth_year || d.death_year || d.relationships?.length >= 2);
-        if (hasData) { setMetavData(d); setMetavType("person"); setMetavLoading(false); return; }
-        return api.metavPlace(name);
-      })
-      .then(d => {
-        if (cancelled || !d) return;
-        if (!d.error) { setMetavData(d); setMetavType("place"); }
-        else if (!metavData) setMetavLoading(false);
-        setMetavLoading(false);
-      })
-      .catch(() => { if (!cancelled) setMetavLoading(false); });
+    Promise.all([
+      api.metavPerson(name).catch(() => ({ error: true })),
+      api.metavPlace(name).catch(() => ({ error: true })),
+    ]).then(([pd, ld]) => {
+      if (cancelled) return;
+      const personOk = !pd.error && (pd.birth_year || pd.death_year || pd.relationships?.length >= 2);
+      if (personOk) setMetavPersonData(pd);
+      if (!ld.error) setMetavPlaceData(ld);
+      setMetavLoading(false);
+    }).catch(() => { if (!cancelled) setMetavLoading(false); });
     return () => { cancelled = true; };
   }, [entry && entry.id]);
 
@@ -664,11 +666,18 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           )}
         </div>
 
-        {(metavLoading || (metavData && (metavType === "person" || metavType === "place"))) && (
+        {(metavLoading || metavPersonData || metavPlaceData) && (
           <section className="sec">
             {metavLoading ? (
               <div className="lsj-def lsj-def--loading">Looking up…</div>
-            ) : metavType === "person" && metavData ? (
+            ) : <>
+              {metavHasBoth && (
+                <div className="metav-type-tabs">
+                  <button className={"metav-type-tab"+(metavTab==="person"?" on":"")} onClick={()=>setMetavTab("person")}>Person</button>
+                  <button className={"metav-type-tab"+(metavTab==="place"?" on":"")} onClick={()=>setMetavTab("place")}>Place</button>
+                </div>
+              )}
+              {metavType === "person" && metavData ? (
               <div className="metav-person">
                 <h4 className="sec-head"><span className="sec-t">Biblical Person</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
                 <div className="metav-meta">
@@ -715,6 +724,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                 }
               </div>
             ) : null}
+            </>}
           </section>
         )}
 
