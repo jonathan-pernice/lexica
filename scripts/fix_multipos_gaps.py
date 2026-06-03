@@ -306,7 +306,21 @@ for (bh_book, chapter), verse_list in sorted(chapters_needed.items()):
             FROM words WHERE verse_id=? ORDER BY position
         """, (verse_id,)).fetchall()
 
+        # Map greek_pos → set of bracket_ids that already have it, for overlap detection
+        existing_gpos_bids = {}
+        for bw in bible_words:
+            if bw["bracket_id"] is not None and bw["greek_pos"] is not None:
+                existing_gpos_bids.setdefault(bw["greek_pos"], set()).add(bw["bracket_id"])
+
         for miss_gpos in missing:
+            # Skip overlap-type gaps: gpos already exists in another bracket_id.
+            # These are fragmentation artifacts that need a merge, not an insert.
+            if miss_gpos in existing_gpos_bids and bid not in existing_gpos_bids[miss_gpos]:
+                print(f"  OVERLAP {book} {chapter}:{vs} bid={bid} gpos={miss_gpos}: "
+                      f"already in bid={existing_gpos_bids[miss_gpos]} — skipping")
+                skipped_total += 1
+                continue
+
             # Find which multi-position cell covers the missing gpos
             source_cell = None
             for mc in multi_cells:
