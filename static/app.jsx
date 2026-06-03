@@ -2667,12 +2667,13 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       <div className="lexicon-toolbar">
         <div className="lexicon-corpus-toggle">
           {profile ? (
-            /^H/i.test(profile.strongs)
-              ? <button className="lct-btn on">KJV</button>   /* Hebrew word: KJV only */
-              : <>
-                  <button className={"lct-btn" + (profileCorpus === "abp" ? " on" : "")} onClick={() => switchProfileCorpus("abp")}>ABP</button>
-                  <button className={"lct-btn" + (profileCorpus === "kjv" ? " on" : "")} onClick={() => switchProfileCorpus("kjv")}>KJV</button>
-                </>
+            /* Drilled into a word: All is N/A (search-only); gray a corpus the
+               word isn't in — but ABP stays live for backfilled proper nouns. */
+            <>
+              <button className="lct-btn" disabled title="Pick ABP or KJV to study this word">All</button>
+              <button className={"lct-btn" + (profileCorpus === "abp" ? " on" : "")} disabled={!profile.has_abp} onClick={() => switchProfileCorpus("abp")}>ABP</button>
+              <button className={"lct-btn" + (profileCorpus === "kjv" ? " on" : "")} disabled={!profile.has_kjv} onClick={() => switchProfileCorpus("kjv")}>KJV</button>
+            </>
           ) : (
             <>
               <button className={"lct-btn" + (corpus === "all" ? " on" : "")} onClick={() => switchCorpus("all")}>All</button>

@@ -2275,7 +2275,12 @@ def lexicon_profile(strongs):
             if key:
                 norm_counts[key] = norm_counts.get(key, 0) + r["cnt"]
         glosses = [{"gloss": g, "count": c} for g, c in sorted(norm_counts.items(), key=lambda x: -x[1])]
-        return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus, "glosses": glosses})
+        # Which corpora actually have this strongs (so the UI can gray unavailable
+        # toggles). Checks real data — so backfilled proper-noun Hebrew (which DO
+        # have ABP/words rows) keep ABP enabled.
+        has_abp = conn.execute("SELECT 1 FROM words WHERE strongs_base = ? LIMIT 1", (sid,)).fetchone() is not None
+        has_kjv = conn.execute("SELECT 1 FROM kjv_strongs WHERE strongs_id = ? LIMIT 1", (sid,)).fetchone() is not None
+        return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus, "glosses": glosses, "has_abp": has_abp, "has_kjv": has_kjv})
     except Exception:
         return jsonify({"error": "Server error"}), 500
     finally:
