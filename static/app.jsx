@@ -645,7 +645,9 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     let cancelled = false;
     setLsjSummaryLoading(true);
     const summaryStrongs = lsjEntry.source === "abp_ext" ? lsjEntry.key : "";
-    api.lsjSummary(lsjEntry.key, summaryStrongs, entry.book, entry.chapter, entry.verse)
+    // Always request the verse-agnostic ("general") summary. A word's LSJ summary
+    // is cached/shown universally, so it must not name the verse it was first clicked in.
+    api.lsjSummary(lsjEntry.key, summaryStrongs)
       .then(d => { if (!cancelled) setLsjSummary(d); })
       .catch(() => { if (!cancelled) setLsjSummary(null); })
       .finally(() => { if (!cancelled) setLsjSummaryLoading(false); });
