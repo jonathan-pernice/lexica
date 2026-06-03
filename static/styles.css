@@ -199,6 +199,27 @@ input { font-family: inherit; }
 .lexicon-match-translit { font-size: 13px; color: var(--ink-2); font-style: italic; }
 .lexicon-match-gloss { font-size: 13px; color: var(--ink-2); }
 
+/* Compact results list — one scannable row per strongs, glosses live in profile */
+.lexicon-results { display: flex; flex-direction: column; margin-top: 20px; }
+.lexicon-results .lexicon-dist-label { margin-bottom: 8px; }
+.lexicon-result-row {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 10px 10px; background: transparent; border: none;
+  border-bottom: 1px solid var(--rule); cursor: pointer; text-align: left;
+  transition: background .12s;
+}
+.lexicon-result-row:first-of-type { border-top: 1px solid var(--rule); }
+.lexicon-result-row:hover { background: var(--bg-sunk); }
+.lexicon-result-row .lexicon-match-strongs { min-width: 46px; flex-shrink: 0; }
+.lexicon-result-row .lexicon-match-lemma { flex-shrink: 0; }
+.lexicon-result-row .lexicon-match-translit { flex-shrink: 0; }
+.lexicon-result-preview {
+  flex: 1; min-width: 0; color: var(--ink-3); font-size: 13px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lexicon-result-count { font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.lexicon-result-chev { color: var(--ink-3); font-size: 16px; line-height: 1; }
+
 
 /* Back link from profile to groupings */
 .lexicon-back {
