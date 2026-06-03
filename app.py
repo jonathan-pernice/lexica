@@ -2006,6 +2006,22 @@ def lexicon_english():
     q = request.args.get("q", "").strip()
     if not q:
         return jsonify([])
+    corpus = request.args.get("corpus", "all")
+    testament = request.args.get("testament", "all")  # all | ot | nt
+    _NT = {"Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph","Php","Col",
+           "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
+    # Testament filters. ABP: join words→verses and test book membership in the
+    # NT set. KJV: book_id >= 40 is the NT. Empty strings when no filter active.
+    if testament in ("nt", "ot"):
+        _nt_ph = ",".join("?" * len(_NT))
+        _op = "IN" if testament == "nt" else "NOT IN"
+        _abp_join = "JOIN verses v ON v.id = w.verse_id"
+        _abp_where = f"AND v.book {_op} ({_nt_ph})"
+        _abp_params = sorted(_NT)
+        _kjv_where = "AND kw.book_id >= 40" if testament == "nt" else "AND kw.book_id < 40"
+    else:
+        _abp_join = _abp_where = _kjv_where = ""
+        _abp_params = []
     conn = db_ro()
 
     def _top_glosses_abp(snums):
@@ -2013,13 +2029,14 @@ def lexicon_english():
             return {}
         placeholders = ",".join("?" * len(snums))
         rows = conn.execute(f"""
-            SELECT strongs_base, english_head, COUNT(*) AS cnt
-            FROM words
-            WHERE strongs_base IN ({placeholders})
-              AND english_head IS NOT NULL AND english_head != ''
-            GROUP BY strongs_base, english_head
-            ORDER BY strongs_base, cnt DESC
-        """, snums).fetchall()
+            SELECT w.strongs_base, w.english_head, COUNT(*) AS cnt
+            FROM words w {_abp_join}
+            WHERE w.strongs_base IN ({placeholders})
+              AND w.english_head IS NOT NULL AND w.english_head != ''
+              {_abp_where}
+            GROUP BY w.strongs_base, w.english_head
+            ORDER BY w.strongs_base, cnt DESC
+        """, (*snums, *_abp_params)).fetchall()
         out = {}
         for r in rows:
             sn = r["strongs_base"]
@@ -2042,6 +2059,7 @@ def lexicon_english():
             JOIN kjv_strongs ks ON ks.word_id = kw.word_id
             WHERE ks.strongs_id IN ({placeholders})
               AND (kw.italic IS NULL OR kw.italic = 0)
+              {_kjv_where}
             GROUP BY ks.strongs_id, kw.word
             ORDER BY ks.strongs_id, cnt DESC
         """, snums).fetchall()
@@ -2055,25 +2073,26 @@ def lexicon_english():
         return out
 
     try:
-        corpus = request.args.get("corpus", "all")
         abp_rows, heb_rows = [], []
 
         if corpus in ("abp", "all"):
             # ABP Greek: match by english_head
-            abp_rows = conn.execute("""
+            abp_rows = conn.execute(f"""
                 SELECT w.strongs_base AS sbase,
                        l.lemma AS lemma, l.translit AS translit,
                        COUNT(*) AS cnt
                 FROM words w
                 LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+                {_abp_join}
                 WHERE w.english_head = ? COLLATE NOCASE
                   AND w.strongs_base IS NOT NULL
                   AND w.strongs_base != '*'
                   AND w.strongs_base LIKE 'G%'
+                  {_abp_where}
                 GROUP BY w.strongs_base
                 ORDER BY cnt DESC
                 LIMIT 20
-            """, (q,)).fetchall()
+            """, (q, *_abp_params)).fetchall()
 
         if corpus in ("kjv", "all"):
             # KJV words → strongs: include BOTH NT Greek (G) and OT Hebrew (H),
@@ -2081,7 +2100,7 @@ def lexicon_english():
             # OT Hebrew words. Lemma/translit resolve from lexicon (G) or bdb (H);
             # the LIKE guards prevent G/H number collision. In 'all' mode these
             # merge with the ABP rows below (same strongs → combined count).
-            heb_rows = conn.execute("""
+            heb_rows = conn.execute(f"""
                 SELECT ks.strongs_id AS sbase,
                        COALESCE(l.lemma, b.lemma)   AS lemma,
                        COALESCE(l.translit, b.xlit) AS translit,
@@ -2092,6 +2111,7 @@ def lexicon_english():
                 LEFT JOIN bdb b ON b.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
                 WHERE kw.word = ? COLLATE NOCASE
                   AND (kw.italic IS NULL OR kw.italic = 0)
+                  {_kjv_where}
                 GROUP BY ks.strongs_id
                 ORDER BY cnt DESC
                 LIMIT 10
