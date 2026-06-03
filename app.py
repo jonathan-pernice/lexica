@@ -1080,7 +1080,7 @@ def _resolve_lsj_xref(conn, def_html: str, columns: str = "key, translit, def_ht
     row = conn.execute(f"SELECT {columns} FROM lsj WHERE key = ?", (ref,)).fetchone()
     if not row:
         row = conn.execute(
-            f"SELECT {columns} FROM lsj WHERE lower(strip_accents(replace(key,'-',''))) = ?",
+            f"SELECT {columns} FROM lsj WHERE replace(plain,'-','') = ?",
             (ref_plain,),
         ).fetchone()
     return row
