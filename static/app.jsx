@@ -869,7 +869,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                   <span className="iw-translit">{w.translit || ""}</span>
                   <span className="iw-english">{w.english || "—"}</span>
                   {(w.strongs || w.strongs_base) && w.strongs_base !== "*" && (
-                    <span className="iw-strongs">G{w.strongs || w.strongs_base}</span>
+                    <span className="iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
                   )}
                 </div>
               ))}
@@ -1784,7 +1784,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                       : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>)}
                     <span className="lib-iw-english">{word}</span>
                     {showStrongs && (pi === firstNonItalic && w.strongs_base && w.strongs_base !== "*"
-                      ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+                      ? <span className="lib-iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
                       : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>)}
                   </span>
                 );
@@ -1806,7 +1806,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           <span className="lib-iw-english">{label}</span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
-              ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+              ? <span className="lib-iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
               : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
           )}
         </span>
@@ -1852,7 +1852,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                     <span className="lib-iw-english">{word}</span>
                   </span>
                   {showStrongs && (pi === 0 && w.strongs_base && w.strongs_base !== "*"
-                    ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+                    ? <span className="lib-iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
                     : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>)}
                 </span>
               );
@@ -1879,7 +1879,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           </span>
           {showStrongs && (
             w.strongs_base && w.strongs_base !== "*"
-              ? <span className="lib-iw-strongs">G{w.strongs || w.strongs_base}</span>
+              ? <span className="lib-iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
               : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>
           )}
         </span>

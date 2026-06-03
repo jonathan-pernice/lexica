@@ -2352,13 +2352,15 @@ def chapter_text(book, chapter):
     try:
         rows = conn.execute(
             """SELECT v.verse, v.text AS prose, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
-                      l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic,
+                      l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic, w.is_pn,
                       COALESCE(w.italic_words, '') AS italic_words,
                       COALESCE(w.smcap_words,  '') AS smcap_words,
+                      t.entity_type AS pn_type,
                       p.heading
                FROM verses v
                JOIN words w ON w.verse_id = v.id
                LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+               LEFT JOIN tipnr t ON t.strongs = w.strongs_base
                LEFT JOIN pericopes p ON p.book = v.book AND p.chapter = v.chapter AND p.verse = v.verse
                WHERE v.book = ? AND v.chapter = ?
                ORDER BY v.verse, w.position""",
@@ -2387,6 +2389,8 @@ def chapter_text(book, chapter):
             "italic":       r["italic"],
             "italic_words": r["italic_words"],
             "smcap_words":  r["smcap_words"],
+            "is_pn":        bool(r["is_pn"] or 0),
+            "pn_type":      r["pn_type"],
         })
     return jsonify([
         {
