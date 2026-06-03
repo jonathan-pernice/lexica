@@ -113,8 +113,6 @@ print(f"Fragment components to merge: {len(multi)}\n")
 # ── Merge each component ──────────────────────────────────────────────────────
 
 for root, keys in sorted(multi):
-    verse_id = keys.pop()[0]
-    keys.add((verse_id, root[1]))  # restore
     verse_id = root[0]
     bids = {k[1] for k in keys}
     min_bid = min(bids)
