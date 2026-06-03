@@ -359,8 +359,21 @@ _PRONOUN_BASES = frozenset({
 })
 _ARTICLE_BASE = "3588"
 
+# English pronoun words ABP uses — so we can tell the pronoun's OWN word from the
+# verb phrase bundled onto it. (The lexicon def is KJV-style "thee/thy" and won't
+# match ABP's "you/your", so an explicit set is used instead.)
+_ENGLISH_PRONOUN_WORDS = frozenset({
+    "i", "me", "my", "mine", "myself",
+    "you", "your", "yours", "yourself", "yourselves", "thou", "thee", "thy", "thine", "ye",
+    "he", "him", "his", "himself",
+    "she", "her", "hers", "herself",
+    "it", "its", "itself",
+    "we", "us", "our", "ours", "ourselves",
+    "they", "them", "their", "theirs", "themselves", "same",
+})
 
-def _redistribute_pronoun_compounds(rows: list, lex: dict) -> None:
+
+def _redistribute_pronoun_compounds(rows: list) -> None:
     """Symptom #2: ABP bundles a verb's English onto a PRONOUN slot, leaving the
     verb's own slot glossless — e.g. Gen 3:15 "will give heed to your" sits on
     σου/G4675 while τηρέω/G5083 is empty. Keep the pronoun's own word ("your") on
@@ -371,8 +384,8 @@ def _redistribute_pronoun_compounds(rows: list, lex: dict) -> None:
     SURGICAL: fires only for a known-pronoun slot with a multi-word gloss whose
     very next slot is empty, real-Strong's, non-article, and (like the pronoun)
     currently bracket-free. Touches english/english_head/greek_pos/bracket_id
-    ONLY — never strongs/strongs_base/is_pn. Runs AFTER _split_compounds, so it
-    only sees the cases the lexicon-evidence pass left unredistributed.
+    ONLY — never strongs/strongs_base/is_pn. Runs BEFORE _split_compounds so it
+    sees the original bundled gloss (split's one-word-per-slot pass mangles it).
 
     Row tuple (11 elts): 0:pos 1:eng 2:head 3:strongs 4:sbase 5:gpos 6:bid
                          7:italic 8:iw 9:sw 10:abp_pos
@@ -394,11 +407,10 @@ def _redistribute_pronoun_compounds(rows: list, lex: dict) -> None:
         if not sbj or sbj in ("*", "") or sbj == _ARTICLE_BASE or rows[j][6] is not None:
             continue
 
-        own = lex.get(sbase, set())
         keep, move = [], []
         for word in eng.split():
             norm = _NORM.sub("", word).lower()
-            (keep if norm and norm in own else move).append(word)
+            (keep if norm in _ENGLISH_PRONOUN_WORDS else move).append(word)
         if not keep or not move:
             continue
 
@@ -481,9 +493,9 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
         ))
         pos += 1
 
+    _redistribute_pronoun_compounds(rows)
     if lex:
         _split_compounds(rows, lex)
-        _redistribute_pronoun_compounds(rows, lex)
 
     # Strip temporary abp_pos field before returning
     return [r[:10] for r in rows]
