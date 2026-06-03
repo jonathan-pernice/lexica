@@ -2140,8 +2140,12 @@ def lexicon_english():
                 if not e["translit"] and r["translit"]:
                     e["translit"] = r["translit"]
                 for g in gmap.get(sid, []):
-                    key = g["gloss"].lower()  # fold case + display lowercase to
-                    slot = e["glosses"].get(key)  # match the profile's normalized glosses
+                    # Normalize exactly like the profile so case/whitespace/punct
+                    # variants ("Spirit", "spirit ", "spirit,") collapse to one.
+                    key = _normalize_gloss(g["gloss"])
+                    if not key:
+                        continue
+                    slot = e["glosses"].get(key)
                     if slot is None:
                         e["glosses"][key] = {"label": key, "count": g["count"]}
                     else:
