@@ -7,11 +7,21 @@ Usage:
   python3 scripts/fix_bracket_gaps.py bible.db bh_scrape.db
 """
 
+import re
 import sys
 import sqlite3
 
 DB      = "bible.db"
 BH_DB   = "bh_scrape.db"
+DRY_RUN = "--dry-run" in sys.argv
+
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+if len(args) >= 1: DB     = args[0]
+if len(args) >= 2: BH_DB  = args[1]
+
+print(f"{'[DRY RUN] ' if DRY_RUN else ''}fix_bracket_gaps.py")
+print(f"  bible.db  : {DB}")
+print(f"  bh_scrape : {BH_DB}\n")
 
 # bh_scrape.db uses full lowercase names; bible.db uses ABP abbreviations
 BH_BOOK = {
@@ -32,32 +42,71 @@ BH_BOOK = {
     "1Pe":"1_peter","2Pe":"2_peter","1Jo":"1_john","2Jo":"2_john","3Jo":"3_john",
     "Jud":"jude","Rev":"revelation",
 }
-DRY_RUN = "--dry-run" in sys.argv
 
-args = [a for a in sys.argv[1:] if not a.startswith("--")]
-if len(args) >= 1: DB     = args[0]
-if len(args) >= 2: BH_DB  = args[1]
+def norm_strongs(s):
+    """Normalize strongs for matching: 'G1473', '1473', '1473-1510', '1510.2.3' → '1473'"""
+    if not s:
+        return None
+    s = str(s).strip()
+    # Strip G/H prefix
+    s = re.sub(r'^[GH]', '', s)
+    # Take first number before - or .
+    m = re.match(r'(\d+)', s)
+    return m.group(1) if m else None
 
-print(f"{'[DRY RUN] ' if DRY_RUN else ''}fix_bracket_gaps.py")
-print(f"  bible.db  : {DB}")
-print(f"  bh_scrape : {BH_DB}\n")
+
+def build_bh_to_bible_map(bh_words, bible_words):
+    """
+    Build a mapping from bh_pos → bible_pos by matching words that appear in both.
+    Strategy: match bracketed bh_words (those with greek_pos) to bible_words
+    by strongs and verse order.
+    """
+    bh_to_bible = {}
+    used_bible = set()
+
+    # Match only bracketed bh_words to avoid noise
+    bh_bracketed = [w for w in bh_words if w["greek_pos"] is not None]
+
+    for bh_w in bh_bracketed:
+        bh_norm = norm_strongs(bh_w["strongs"])
+        if not bh_norm:
+            continue
+        # Find first unmatched bible word with same strongs after any previous match
+        min_bible_pos = max((bh_to_bible[p] for p in bh_to_bible if p < bh_w["position"]),
+                            default=-1)
+        for bib_w in bible_words:
+            if bib_w["position"] <= min_bible_pos:
+                continue
+            if bib_w["rowid"] in used_bible:
+                continue
+            bib_norm = norm_strongs(bib_w["strongs_base"])
+            if bib_norm == bh_norm:
+                bh_to_bible[bh_w["position"]] = bib_w["position"]
+                used_bible.add(bib_w["rowid"])
+                break
+
+    return bh_to_bible
+
+
+def insert_after_pos(bh_w, bh_words, bh_to_bible, bible_words):
+    """
+    Determine which bible_pos the new word should be inserted AFTER.
+    Looks for the nearest preceding bh_word that has a bible_pos mapping.
+    """
+    bh_pos = bh_w["position"]
+    # Walk backward from bh_pos to find the last mapped word
+    for candidate_bh_pos in sorted((p for p in bh_to_bible if p < bh_pos), reverse=True):
+        return bh_to_bible[candidate_bh_pos]
+    # If nothing before, insert at position -1 (before all words)
+    return -1
+
 
 main_conn = sqlite3.connect(DB)
 main_conn.row_factory = sqlite3.Row
 bh_conn   = sqlite3.connect(BH_DB)
 bh_conn.row_factory = sqlite3.Row
 
-# ── Step 1: Show bh_scrape.db schema ─────────────────────────────────────────
-print("=== bh_scrape.db tables ===")
-tables = bh_conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
-for t in tables:
-    cols = bh_conn.execute(f"PRAGMA table_info({t['name']})").fetchall()
-    col_names = [c['name'] for c in cols]
-    cnt = bh_conn.execute(f"SELECT COUNT(*) FROM {t['name']}").fetchone()[0]
-    print(f"  {t['name']} ({cnt:,} rows): {col_names}")
-print()
-
-# ── Step 2: Find gap verses ───────────────────────────────────────────────────
+# ── Find all gap bracket groups ───────────────────────────────────────────────
 gap_verses = main_conn.execute("""
     WITH stats AS (
       SELECT verse_id, bracket_id,
@@ -75,34 +124,114 @@ gap_verses = main_conn.execute("""
     ORDER BY gap DESC, v.book, v.chapter, v.verse
 """).fetchall()
 
-print(f"=== {len(gap_verses)} bracket groups with gaps ===\n")
+print(f"{len(gap_verses)} bracket groups with gaps\n")
 
-for gv in gap_verses[:10]:  # inspect top 10
-    book, ch, vs = gv['book'], gv['chapter'], gv['verse']
-    bid = gv['bracket_id']
-    print(f"--- {book} {ch}:{vs} bracket_id={bid} "
-          f"(cnt={gv['cnt']} max_pos={gv['max_pos']} gap={gv['gap']}) ---")
+inserted_total  = 0
+skipped_total   = 0
+no_data_total   = 0
 
-    # Current words in bible.db for this bracket group
+for gv in gap_verses:
+    book, ch, vs  = gv["book"], gv["chapter"], gv["verse"]
+    bid           = gv["bracket_id"]
+    verse_id      = gv["verse_id"]
+    bh_book       = BH_BOOK.get(book, book.lower())
+
+    # Current bracket words → find missing greek_pos values
     cur_bracket = main_conn.execute("""
-        SELECT position, english, greek_pos, strongs_base
-        FROM words WHERE verse_id=? AND bracket_id=? ORDER BY greek_pos
-    """, (gv['verse_id'], bid)).fetchall()
-    have_pos = {w['greek_pos'] for w in cur_bracket if w['greek_pos']}
-    all_pos  = set(range(1, gv['max_pos'] + 1))
-    missing  = sorted(all_pos - have_pos)
-    print(f"  Have greek_pos: {sorted(have_pos)}  Missing: {missing}")
+        SELECT greek_pos FROM words
+        WHERE verse_id=? AND bracket_id=? AND greek_pos IS NOT NULL
+    """, (verse_id, bid)).fetchall()
+    have = {r["greek_pos"] for r in cur_bracket}
+    missing = sorted(set(range(1, gv["max_pos"] + 1)) - have)
+    if not missing:
+        continue
 
-    # What bh_scrape.db has for this verse (uses full book names)
-    bh_book = BH_BOOK.get(book, book.lower())
-    bh = bh_conn.execute("""
-        SELECT position, english, greek_pos, strongs
-        FROM bh_words WHERE book=? AND chapter=? AND verse=?
-        ORDER BY position
+    # Get bh_words for this verse
+    bh_all = bh_conn.execute("""
+        SELECT position, english, greek_pos, strongs, smcap_words, italic_words
+        FROM bh_words WHERE book=? AND chapter=? AND verse=? ORDER BY position
     """, (bh_book, ch, vs)).fetchall()
-    print(f"  bh_scrape has {len(bh)} words for this verse:")
-    for w in bh:
-        flag = " ← MISSING" if w['greek_pos'] in missing else ""
-        print(f"    bh_pos={w['position']} greek_pos={w['greek_pos']} "
-              f"strongs={w['strongs']} english={w['english']!r}{flag}")
-    print()
+
+    if not bh_all:
+        no_data_total += len(missing)
+        continue
+
+    # Get all bible words for this verse (for position mapping)
+    bible_all = main_conn.execute("""
+        SELECT rowid, position, english, strongs_base, bracket_id, greek_pos
+        FROM words WHERE verse_id=? ORDER BY position
+    """, (verse_id,)).fetchall()
+
+    # Build bh_pos → bible_pos map
+    bh_to_bible = build_bh_to_bible_map(bh_all, bible_all)
+
+    for miss_gpos in missing:
+        # Find bh_words row with this greek_pos that's NOT already imported
+        candidates = [w for w in bh_all if w["greek_pos"] == miss_gpos]
+        if not candidates:
+            print(f"  SKIP {book} {ch}:{vs} bid={bid} gpos={miss_gpos}: not in bh_scrape")
+            skipped_total += 1
+            continue
+
+        # Pick the one not yet mapped (to handle duplicates across brackets)
+        bh_w = None
+        for c in candidates:
+            if c["position"] not in bh_to_bible:
+                bh_w = c
+                break
+        if not bh_w:
+            bh_w = candidates[0]
+
+        # Determine insertion position
+        after = insert_after_pos(bh_w, bh_all, bh_to_bible, bible_all)
+
+        # Normalize strongs: bare number → G-prefixed
+        raw = bh_w["strongs"] or ""
+        first_num = re.match(r"(\d+)", raw)
+        strongs_b = f"G{int(first_num.group(1))}" if first_num else None
+
+        if DRY_RUN:
+            print(f"  {book} {ch}:{vs} bid={bid} gpos={miss_gpos}: "
+                  f"insert '{bh_w['english']}' ({strongs_b}) after bible_pos={after}")
+            inserted_total += 1
+            # Update map so subsequent missing positions in same verse work
+            bh_to_bible[bh_w["position"]] = after + 1
+            continue
+
+        # Shift words after insertion point
+        main_conn.execute("""
+            UPDATE words SET position=position+1
+            WHERE verse_id=? AND position > ?
+        """, (verse_id, after))
+
+        new_pos = after + 1
+        main_conn.execute("""
+            INSERT INTO words
+              (verse_id, position, english, greek_pos, strongs_base, strongs,
+               bracket_id, is_pn, italic_words, smcap_words)
+            VALUES (?,?,?,?,?,?,?,0,?,?)
+        """, (verse_id, new_pos, bh_w["english"], miss_gpos,
+              strongs_b, strongs_b, bid,
+              bh_w["italic_words"], bh_w["smcap_words"]))
+
+        # Update map
+        bh_to_bible[bh_w["position"]] = new_pos
+        # Rebuild bible_all to reflect shifts
+        bible_all = main_conn.execute("""
+            SELECT rowid, position, english, strongs_base, bracket_id, greek_pos
+            FROM words WHERE verse_id=? ORDER BY position
+        """, (verse_id,)).fetchall()
+
+        inserted_total += 1
+
+if not DRY_RUN:
+    main_conn.commit()
+
+print(f"\nInserted : {inserted_total}")
+print(f"Skipped  : {skipped_total}  (not in bh_scrape by greek_pos)")
+print(f"No data  : {no_data_total}  (verse not in bh_scrape at all)")
+if DRY_RUN:
+    print("\n[DRY RUN] No changes written.")
+
+main_conn.close()
+bh_conn.close()
