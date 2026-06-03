@@ -2894,7 +2894,7 @@ function App() {
   const searchLabel = q2.trim();
 
   return (
-    <div className={"app " + ((activeEntry || libCrossRef) ? "has-detail" : "")}>
+    <div className={"app view-" + mainView + " " + ((activeEntry || libCrossRef) ? "has-detail" : "")}>
       <Header activeView={mainView} onNavChange={handleNavChange}/>
       {isMobile && mainView !== "library" && (
         <div className="mobile-brand-bar">

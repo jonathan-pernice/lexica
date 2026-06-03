@@ -1738,6 +1738,40 @@ input { font-family: inherit; }
 .mbar-ch-nav:disabled { opacity: 0.25; }
 
 /* ============================================================
+   LIBRARY BOTTOM-COCKPIT (mobile prototype)
+   On the Library tab only: the reading toolbar drops to the thumb zone
+   (fixed bottom) and the section tabs rise to the top. Chapter nav is the
+   most-repeated tap while reading, so it earns the easy-reach zone. Other
+   tabs keep the default bottom section-nav; desktop is unaffected.
+============================================================ */
+@media (max-width: 1099px) {
+  /* Section tabs → top */
+  .app.view-library .mobile-tabs {
+    top: 0; bottom: auto;
+    border-top: none;
+    border-bottom: 1px solid var(--rule);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: 0;
+  }
+  /* Reading cockpit → bottom (thumb zone) */
+  .app.view-library .lib-toolbar {
+    position: fixed;
+    top: auto; bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    height: auto; min-height: 56px;
+    margin-bottom: 0;
+    border-bottom: none;
+    border-top: 1px solid var(--navy-edge, #1e3050);
+    padding: 0 6px env(safe-area-inset-bottom, 0px);
+  }
+  /* Swap content clearances: top for the tab bar, bottom for the cockpit */
+  .app.view-library .main {
+    padding-top: calc(56px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ============================================================
    MODES SHEET (mobile reading options — Figma spec)
 ============================================================ */
 .msheet {
