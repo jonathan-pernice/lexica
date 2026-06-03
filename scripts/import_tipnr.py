@@ -143,8 +143,10 @@ def parse_tipnr(lines):
                         cur["g"] = s
 
             # Collect alternate name spellings for better matching
+            # "Greek" captures LXX forms of OT names (e.g. Elias for Elijah)
+            # which the ABP uses throughout since it's LXX-based
             if significance in ("Named", "Spelled", "Spelled combined",
-                                 "Name combined", "Aramaic"):
+                                 "Name combined", "Aramaic", "Greek"):
                 unique = parts[2].strip() if len(parts) > 2 else ""
                 alt = unique.split("|")[0].split("@")[0].strip()
                 if alt and alt != cur["name"]:
@@ -220,6 +222,21 @@ def main():
     matched        = []   # (new_strongs, rowid)
     unmatched_cnt  = defaultdict(int)
 
+    # Direct Strong's for entries missing from parsed TIPNR (confirmed numbers)
+    DIRECT = {
+        "zion":        "H6726",  "abram":      "H87",
+        "sarai":       "H8297",  "hivite":     "H2340",
+        "hivites":     "H2340",  "amorite":    "H567",
+        "amorites":    "H567",   "jebusite":   "H2983",
+        "jebusites":   "H2983",  "perizzite":  "H6522",
+        "perizzites":  "H6522",  "girgashite": "H1622",
+        "girgashites": "H1622",  "hermon":     "H2768",
+        "shushan":     "H7800",  "necho":      "H5224",
+        "neco":        "H5224",  "meshach":    "H4336",
+        "shadrach":    "H7714",  "abednego":   "H5665",
+        "syrian":      "H761",   "syrians":    "H761",
+    }
+
     # Gentilics and common variants not stored under their ABP form in TIPNR
     ALIASES = {
         # Demonyms → root place/person in TIPNR
@@ -250,7 +267,7 @@ def main():
             return re.sub(r"[\s,.:;!?'\"–\-]+$", "", s).strip()
 
         def _strip_lead(s):
-            for prefix in ("of the ", "of ", "to ", "O ", "o "):
+            for prefix in ("of the ", "of ", "to ", "in ", "O ", "o "):
                 if s.lower().startswith(prefix):
                     return s[len(prefix):]
             return s
@@ -288,6 +305,15 @@ def main():
             if mapped:
                 e = lookup.get(mapped)
                 if e: return e
+        # 8. Direct Strong's map for entries missing from parsed TIPNR
+        for candidate in (bare.lower(), bare2.lower(), clean.lower(), english.lower()):
+            s = DIRECT.get(candidate)
+            if s:
+                prefix = "H" if s[0] == "H" else "G"
+                return {prefix.lower(): s, "h" if prefix == "H" else "g": s,
+                        "h": s if prefix == "H" else None,
+                        "g": s if prefix == "G" else None,
+                        "type": "place"}
         return None
 
     for row in word_rows:
