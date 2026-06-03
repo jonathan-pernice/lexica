@@ -264,6 +264,82 @@ def main():
         "shilonite":    "H8024",   "beerothite":   "H881",
         "abijam":       "H38",     "ivah":         "H5755",
         "ziglag":       "H6860",
+        # ── Recurring unmatched batch (2026-06-03), verified H/G ──────────
+        "adonai":        "H136",   # divine title (Adonai)
+        # LXX/Greek-OT place spellings
+        "sor":           "H6865",  # Tyre (LXX Σορ)
+        "gai":           "H5857",  # Ai (LXX Γαι)
+        "sephela":       "H8219",  # Shephelah
+        "negev":         "H5045",
+        "gerizim":       "H1630",
+        "tanis":         "H6814",  # Zoan
+        "artaxerxes":    "H783",   "artasastha":  "H783",
+        # Gentilics (Hebrew)
+        "gergesite":     "H1622",  "gergesites":  "H1622",  # Girgashite
+        "gibeonite":     "H1393",  "gibeonites":  "H1393",
+        "hararite":      "H2043",  "temanite":    "H8489",
+        "ammonitess":    "H5985",  "moabitess":   "H4125",
+        "canaanitess":   "H3669",  "jezreelitess":"H3159",
+        "ishmaelites":   "H3459",  "ziphites":    "H2130",
+        "zarhites":      "H2227",  "hezronites":  "H2697",
+        "arvadite":      "H721",   "sinite":      "H5513",
+        "zemarite":      "H6786",  "horite":      "H2752",
+        "buzite":        "H940",   "antothite":   "H6069",
+        "archite":       "H757",   "adullamite":  "H5726",
+        "ahohite":       "H266",   "harodite":    "H2733",
+        "pirathonite":   "H6553",  "ithrite":     "H3505",
+        "shuhite":       "H7747",  "shunammite":  "H7767",
+        "zebulunite":    "H2075",  "horonite":    "H2772",
+        "geshurites":    "H1651",  "chittim":     "H3794",  # Kittim
+        # Variant name spellings (Hebrew)
+        "aholah":        "H170",   "aholibah":    "H172",
+        "astaroth":      "H6252",  "milcom":      "H4445",
+        "eloth":         "H359",   "ephratah":    "H672",
+        "ephrath":       "H672",   "eshbaal":     "H792",
+        "meribbaal":     "H4807",  "adonizedec":  "H139",
+        "adoniram":      "H141",   "hanameel":    "H2601",
+        "jehonadab":     "H3082",  "jehoshabeath":"H3090",
+        "belteshazzar":  "H1095",  "shetharboznai":"H8370",
+        "malchishua":    "H4444",  "shophach":    "H7780",
+        "shechaniah":    "H7935",  "sibbechai":   "H5444",
+        "azareel":       "H5832",  "elipheleh":   "H466",
+        "elzaphan":      "H469",   "ajah":        "H345",
+        "ajalon":        "H357",   "almon":       "H5960",
+        "asahiah":       "H6222",  "hashub":      "H2815",
+        "hatach":        "H2047",  "phichol":     "H6369",
+        "phurah":        "H6513",  "tatnai":      "H8674",
+        "tou":           "H8583",  "zechri":      "H2147",
+        "zithri":        "H5644",  "maacha":      "H4601",
+        "bethmaacah":    "H1038",  "kirjatharba": "H7153",
+        "kirjathjearim": "H7157",  "kirjathaim":  "H7156",
+        "libna":         "H3841",  "jebus":       "H2982",
+        "remmon":        "H7417",  "bashemath":   "H1315",
+        "timnath":       "H8553",  "shochoh":     "H7755",
+        "achor":         "H5911",  "engedi":      "H5872",
+        "tophet":        "H8612",  "harosheth":   "H2800",
+        "jabok":         "H2999",  "jiphthahel":  "H3317",
+        "abarim":        "H5682",  "zared":       "H2218",
+        "perazim":       "H6559",  "raphaim":     "H7497",
+        "pochereth":     "H6380",  "dalaiah":     "H1806",
+        "hananeel":      "H2606",  "araunah":     "H728",
+        "abishalom":     "H53",    "ocran":       "H5918",
+        "michah":        "H4318",  "micha":       "H4318",
+        "rogel":         "H5883",  "ramathaim":   "H7436",
+        "coniah":        "H3659",  "salem":       "H8004",
+        # NT names / places (Greek)
+        "cretan":        "G2912",  "cretans":     "G2912",
+        "crete":         "G2914",  "galilean":    "G1057",
+        "galileans":     "G1057",  "samaritan":   "G4541",
+        "samaritans":    "G4541",  "hellenists":  "G1675",
+        "cyrenian":      "G2956",  "cyrenians":   "G2956",
+        "macedonian":    "G3110",  "lydda":       "G3069",
+        "sardis":        "G4554",  "sarepta":     "G4558",
+        "cenchrea":      "G2747",  "arimathea":   "G707",
+        "tiberias":      "G5085",  "beelzebul":   "G954",
+        "beelzeboul":    "G954",   "gehenna":     "G1067",
+        "didymus":       "G1322",  "dorcas":      "G1393",
+        "hymeneus":      "G5211",  "pontius":     "G4194",
+        "bosor":         "G1007",
     }
 
     # Gentilics and common variants not stored under their ABP form in TIPNR
@@ -320,6 +396,14 @@ def main():
         "ashdodite":     "ashdod",      "ashdodites": "ashdod",
         "arabian":       "arabia",      "arabians":   "arabia",
         "ziglag":        "ziklag",      "shilonite":  "shiloh",
+        # ── Recurring batch (2026-06-03): NT/LXX name variants → canonical ──
+        "juda":          "judah",       "esrom":      "hezron",
+        "zara":          "zerah",       "enos":       "enosh",
+        "sophar":        "zophar",      "rama":       "ramah",
+        "aminadab":      "amminadab",   "naasson":    "nahshon",
+        "salathiel":     "shealtiel",   "babylonians":"babylon",
+        "mizraim":       "egypt",       "maachah":    "maacah",
+        "nabuzar-ardan": "nebuzaradan", "nabuzarardan":"nebuzaradan",
     }
 
     def find_entry(english):
@@ -380,6 +464,23 @@ def main():
                         "g": s if s[0] == "G" else None,
                         "type": "place"}
         return None
+
+    # ── Validate DIRECT Strong's exist in bdb (H) / lexicon (G) — catch typos ──
+    missing = []
+    for nm, s in sorted(DIRECT.items()):
+        if s.startswith("H"):
+            ok = conn.execute("SELECT 1 FROM bdb WHERE strongs_id=?", (s,)).fetchone()
+        else:
+            ok = conn.execute("SELECT 1 FROM lexicon WHERE strongs=?", (s[1:],)).fetchone()
+        if not ok:
+            missing.append((nm, s))
+    if missing:
+        print(f"⚠️  {len(missing)} DIRECT entries have NO bdb/lexicon row (VERIFY before applying):")
+        for nm, s in missing:
+            print(f"     {nm} -> {s}")
+        print()
+    else:
+        print(f"DIRECT validation: all {len(DIRECT)} entries resolve in bdb/lexicon ✓\n")
 
     for row in word_rows:
         english = row["english"].strip()
