@@ -218,10 +218,31 @@ def main():
     matched        = []   # (new_strongs, rowid)
     unmatched_cnt  = defaultdict(int)
 
+    def find_entry(english):
+        """Try progressively looser matches against the TIPNR lookup."""
+        # 1. Exact (lowercase)
+        e = lookup.get(english.lower())
+        if e: return e
+        # 2. Strip trailing punctuation: 'Jesus,' -> 'Jesus'
+        clean = re.sub(r"[,.:;!?'\"]+$", "", english).strip()
+        if clean != english:
+            e = lookup.get(clean.lower())
+            if e: return e
+        # 3. Strip leading 'of ': 'of Israel' -> 'Israel'
+        if clean.lower().startswith("of "):
+            e = lookup.get(clean[3:].lower())
+            if e: return e
+        # 4. Strip 'of ' from original (before punct strip)
+        if english.lower().startswith("of "):
+            tail = re.sub(r"[,.:;!?'\"]+$", "", english[3:]).strip()
+            e = lookup.get(tail.lower())
+            if e: return e
+        return None
+
     for row in word_rows:
         english = row["english"].strip()
         book    = row["book"]
-        entry   = lookup.get(english.lower())
+        entry   = find_entry(english)
 
         if not entry:
             unmatched_cnt[english] += 1
