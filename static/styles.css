@@ -1562,8 +1562,8 @@ input { font-family: inherit; }
 .lib-interlinear-on .lib-iw-english { color: var(--ink-2); }
 .lib-iw-strongs {
   font-family: var(--f-mono);
-  font-size: 8.5px;
-  color: var(--ink-4);
+  font-size: 9.5px;
+  color: var(--ink-3);
   letter-spacing: 0.02em;
 }
 
