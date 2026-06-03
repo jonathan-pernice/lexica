@@ -412,6 +412,18 @@ def main():
         print(f"  {nm!r:30}  {cnt}")
     print()
 
+    # Dump full unmatched list (recurring first) for triage when doing a dry-run
+    if DRY_RUN:
+        dump = sorted(unmatched_cnt.items(), key=lambda x: (-x[1], x[0].lower()))
+        with open("unmatched_pn.txt", "w", encoding="utf-8") as fh:
+            for nm, cnt in dump:
+                fh.write(f"{cnt}\t{nm}\n")
+        recurring = [x for x in dump if x[1] >= 2]
+        print(f"Wrote unmatched_pn.txt ({len(dump):,} distinct). "
+              f"Recurring (count>=2): {len(recurring):,} names, "
+              f"{sum(c for _,c in recurring):,} occurrences.")
+        print()
+
     if DRY_RUN:
         print("── Sample matches ──────────────────────────────────────")
         for new_s, rowid in matched[:30]:
