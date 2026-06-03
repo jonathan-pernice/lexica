@@ -2452,6 +2452,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
   const [filteredBooks, setFilteredBooks] = useState(null);
   const [groupings, setGroupings] = useState(null);
   const [pendingGloss, setPendingGloss] = useState(null);
+  const [showDef, setShowDef] = useState(false);
 
   useEffect(() => {
     if (!pendingStrongs) return;
@@ -2469,6 +2470,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     setSelectedGloss(null);
     setBookGlosses(null);
     setFilteredBooks(null);
+    setShowDef(false);
     const isHeb = /^H/i.test(strongs) || (!(/^[GgHh]/.test(strongs)) && parseInt(strongs) > 5624);
     const c = corpusOverride ?? (isHeb ? "kjv" : "abp");
     setCorpus(c);
@@ -2488,20 +2490,55 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
   }, [profile, pendingGloss]);
 
   const switchCorpus = async (c) => {
-    if (!profile || loading) return;
+    if (loading) return;
     setCorpus(c);
-    setLoading(true);
-    setSelectedBook(null);
-    setVerseList(null);
-    setTestament("all");
-    setSelectedGloss(null);
-    setBookGlosses(null);
-    setFilteredBooks(null);
-    try {
-      const data = await api.lexiconProfile(profile.strongs, c);
-      if (!data.error) setProfile(data);
-    } catch {}
-    finally { setLoading(false); }
+    const q = query.trim();
+    const isEnglishQuery = !!q && !_STRONGS_RE.test(q) && !_isGreekHebrew(q);
+
+    // "All" is a cross-corpus English-search scope (Greek + Hebrew at once).
+    // Re-run the search and drop any drilled-in word so the merged list shows.
+    if (c === "all") {
+      if (!isEnglishQuery) return; // nothing to merge for a Strong's/Greek lookup
+      setLoading(true);
+      setProfile(null); setMatches(null);
+      setSelectedBook(null); setVerseList(null);
+      try {
+        const data = await api.lexiconEnglish(q, "all");
+        setGroupings(data.length ? data : null);
+        setError(data.length ? null : "No matches found.");
+      } catch { setError("Search failed."); }
+      finally { setLoading(false); }
+      return;
+    }
+
+    // ABP / KJV — if a word profile is in focus, switch THAT word's corpus.
+    if (profile) {
+      setLoading(true);
+      setSelectedBook(null);
+      setVerseList(null);
+      setTestament("all");
+      setSelectedGloss(null);
+      setBookGlosses(null);
+      setFilteredBooks(null);
+      setShowDef(false);
+      try {
+        const data = await api.lexiconProfile(profile.strongs, c);
+        if (!data.error) setProfile(data);
+      } catch {}
+      finally { setLoading(false); }
+      return;
+    }
+
+    // Otherwise re-scope an English-search results list to this single corpus.
+    if (groupings && isEnglishQuery) {
+      setLoading(true);
+      try {
+        const data = await api.lexiconEnglish(q, c);
+        setGroupings(data.length ? data : null);
+        setError(data.length ? null : "No matches found.");
+      } catch { setError("Search failed."); }
+      finally { setLoading(false); }
+    }
   };
 
   const fetchVerses = async (book, gloss) => {
@@ -2588,6 +2625,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
         <div className="lexicon-corpus-toggle">
           <button className={"lct-btn" + (corpus === "abp" ? " on" : "")} onClick={() => switchCorpus("abp")}>ABP</button>
           <button className={"lct-btn" + (corpus === "kjv" ? " on" : "")} onClick={() => switchCorpus("kjv")}>KJV</button>
+          <button className={"lct-btn" + (corpus === "all" ? " on" : "")} onClick={() => switchCorpus("all")}>All</button>
         </div>
         <div className="lexicon-corpus-toggle">
           {["all","ot","nt"].map(t => (
@@ -2618,33 +2656,23 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       {groupings && (
         <div style={{marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px'}}>
           <div className="lexicon-dist-label">rendered as "{query.trim()}"</div>
-          {groupings.map(g => {
-            const entry = {
-              id: `lex-${g.strongs}`, strongs: g.strongs, strongs_base: g.strongs,
-              strongs_raw: g.strongs.replace(/^[GH]/i, ''), greek: g.lemma || '',
-              translit: g.translit || '', gloss: (g.glosses[0] || {}).gloss || '',
-              ref: '', book: '', chapter: '', verse: '',
-              definition: '', derivation: '', is_function: false,
-              isHebrew: g.strongs.startsWith('H'),
-            };
-            return (
-              <div key={g.strongs} className="lexicon-dist-grid">
-                <button className={"lexicon-dist-book" + (profile?.strongs === g.strongs ? " selected" : "")}
-                  onClick={() => { loadProfile(g.strongs); onWordClick?.(entry); }}>
-                  <span className="lexicon-match-strongs">{g.strongs}</span>
-                  {g.translit && <span className="lexicon-match-translit"> {g.translit}</span>}
-                  <span className="lexicon-dist-count">{g.count}</span>
+          {groupings.map(g => (
+            <div key={g.strongs} className="lexicon-dist-grid">
+              <button className={"lexicon-dist-book" + (profile?.strongs === g.strongs ? " selected" : "")}
+                onClick={() => loadProfile(g.strongs)}>
+                <span className="lexicon-match-strongs">{g.strongs}</span>
+                {g.translit && <span className="lexicon-match-translit"> {g.translit}</span>}
+                <span className="lexicon-dist-count">{g.count}</span>
+              </button>
+              {(g.glosses || []).map(({gloss, count}) => (
+                <button key={gloss} className="lexicon-dist-book"
+                  onClick={() => { loadProfile(g.strongs); setPendingGloss(gloss); }}>
+                  <span className="lexicon-dist-name">{gloss}</span>
+                  <span className="lexicon-dist-count">{count}</span>
                 </button>
-                {(g.glosses || []).map(({gloss, count}) => (
-                  <button key={gloss} className="lexicon-dist-book"
-                    onClick={() => { loadProfile(g.strongs); setPendingGloss(gloss); onWordClick?.(entry); }}>
-                    <span className="lexicon-dist-name">{gloss}</span>
-                    <span className="lexicon-dist-count">{count}</span>
-                  </button>
-                ))}
-              </div>
-            );
-          })}
+              ))}
+            </div>
+          ))}
         </div>
       )}
 
@@ -2655,10 +2683,23 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
               <span className="lexicon-lemma">{profile.lemma}</span>
               <span className="lexicon-translit">{profile.translit}</span>
               <span className="lexicon-strongs-tag">{profile.strongs}</span>
-              <span className="lexicon-total">{profile.total} occurrences</span>
+              <span className="lexicon-total">{
+                testament === "all"
+                  ? profile.total
+                  : (filteredBooks || profile.books)
+                      .filter(b => (b.testament || "").toLowerCase() === testament)
+                      .reduce((s, b) => s + b.count, 0)
+              } occurrences</span>
             </div>
           )}
-          {!groupings && <p className="lexicon-definition">{profile.definition}</p>}
+          {!groupings && profile.definition && (
+            <div className="lexicon-def-section">
+              <button className="lexicon-def-toggle" onClick={() => setShowDef(v => !v)}>
+                Definition {showDef ? "▲" : "▼"}
+              </button>
+              {showDef && <p className="lexicon-definition">{profile.definition}</p>}
+            </div>
+          )}
 
           {(bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && (
             <div className="lexicon-glosses">
@@ -2715,7 +2756,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
                         {v.words
                           ? v.words.map((w, wi) => (
                               <span key={wi} className={"lib-word" + (w.h ? " cited" : "") + (w.i ? " lib-abp-italic" : "")}>
-                                <span className="lib-iw-english">{w.w}</span>
+                                <span className="lib-iw-english">{w.w}{w.punc || ""}</span>
                               </span>
                             ))
                           : v.text}

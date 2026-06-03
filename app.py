@@ -1973,13 +1973,13 @@ def lexicon_lookup():
         # English/transliteration search — Greek lexicon + Hebrew BDB
         grk = conn.execute(
             """SELECT strongs, lemma, translit, strongs_def FROM lexicon
-               WHERE strongs_def LIKE ? OR kjv_def LIKE ? OR translit LIKE ?
+               WHERE strongs_def LIKE ? OR kjv_def LIKE ? OR translit LIKE ? OR lemma LIKE ?
                LIMIT 15""",
-            (f"%{q}%", f"%{q}%", f"%{q}%")
+            (f"%{q}%", f"%{q}%", f"%{q}%", f"%{q}%")
         ).fetchall()
         heb = conn.execute(
-            "SELECT strongs_id, lemma, xlit, description FROM bdb WHERE description LIKE ? LIMIT 10",
-            (f"%{q}%",)
+            "SELECT strongs_id, lemma, xlit, description FROM bdb WHERE description LIKE ? OR lemma LIKE ? LIMIT 10",
+            (f"%{q}%", f"%{q}%")
         ).fetchall()
         results = [{"strongs": f"G{r['strongs']}", "lemma": r["lemma"] or "", "translit": r["translit"] or "", "gloss": r["strongs_def"] or ""} for r in grk]
         results += [{"strongs": r["strongs_id"], "lemma": r["lemma"] or "", "translit": r["xlit"] or "", "gloss": r["description"] or ""} for r in heb]
@@ -2042,37 +2042,42 @@ def lexicon_english():
         return out
 
     try:
-        # ABP Greek: match by english_head
-        abp_rows = conn.execute("""
-            SELECT w.strongs_base AS sbase,
-                   l.lemma AS lemma, l.translit AS translit,
-                   COUNT(*) AS cnt
-            FROM words w
-            LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
-            WHERE w.english_head = ? COLLATE NOCASE
-              AND w.strongs_base IS NOT NULL
-              AND w.strongs_base != '*'
-              AND w.strongs_base LIKE 'G%'
-            GROUP BY w.strongs_base
-            ORDER BY cnt DESC
-            LIMIT 20
-        """, (q,)).fetchall()
+        corpus = request.args.get("corpus", "all")
+        abp_rows, heb_rows = [], []
 
-        # KJV Hebrew: match by word
-        heb_rows = conn.execute("""
-            SELECT ks.strongs_id AS sbase,
-                   b.lemma AS lemma, b.xlit AS translit,
-                   COUNT(*) AS cnt
-            FROM kjv_words kw
-            JOIN kjv_strongs ks ON ks.word_id = kw.word_id
-            JOIN bdb b ON b.strongs_id = ks.strongs_id
-            WHERE LOWER(kw.word) = LOWER(?)
-              AND ks.strongs_id LIKE 'H%'
-              AND (kw.italic IS NULL OR kw.italic = 0)
-            GROUP BY ks.strongs_id
-            ORDER BY cnt DESC
-            LIMIT 10
-        """, (q,)).fetchall()
+        if corpus in ("abp", "all"):
+            # ABP Greek: match by english_head
+            abp_rows = conn.execute("""
+                SELECT w.strongs_base AS sbase,
+                       l.lemma AS lemma, l.translit AS translit,
+                       COUNT(*) AS cnt
+                FROM words w
+                LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+                WHERE w.english_head = ? COLLATE NOCASE
+                  AND w.strongs_base IS NOT NULL
+                  AND w.strongs_base != '*'
+                  AND w.strongs_base LIKE 'G%'
+                GROUP BY w.strongs_base
+                ORDER BY cnt DESC
+                LIMIT 20
+            """, (q,)).fetchall()
+
+        if corpus in ("kjv", "all"):
+            # KJV Hebrew: match by word
+            heb_rows = conn.execute("""
+                SELECT ks.strongs_id AS sbase,
+                       b.lemma AS lemma, b.xlit AS translit,
+                       COUNT(*) AS cnt
+                FROM kjv_words kw
+                JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+                JOIN bdb b ON b.strongs_id = ks.strongs_id
+                WHERE LOWER(kw.word) = LOWER(?)
+                  AND ks.strongs_id LIKE 'H%'
+                  AND (kw.italic IS NULL OR kw.italic = 0)
+                GROUP BY ks.strongs_id
+                ORDER BY cnt DESC
+                LIMIT 10
+            """, (q,)).fetchall()
 
         abp_snums = [r["sbase"] for r in abp_rows]
         heb_snums = [r["sbase"] for r in heb_rows]
@@ -2225,7 +2230,7 @@ def lexicon_books(strongs):
     is_heb = prefix == "H"
     corpus = request.args.get("corpus", "kjv" if is_heb else "abp")
     gloss = request.args.get("gloss", "").strip().lower()
-    conn = db()
+    conn = db_ro()
     try:
         _NT = {"Mat","Mar","Luk","Joh","Act","Rom","1Co","2Co","Gal","Eph","Php","Col",
                "1Th","2Th","1Ti","2Ti","Tit","Phm","Heb","Jas","1Pe","2Pe","1Jn","2Jn","3Jn","Jud","Rev"}
@@ -2290,22 +2295,30 @@ def lexicon_verses(strongs, book):
             if not book_id:
                 conn.close()
                 return jsonify({"verses": [], "glosses": []})
-            # One row per verse: use kjv_verses.verse_text for clean prose,
-            # aggregate matched words for gloss normalization
+            # Render full verses from positioned tokens; highlight ONLY the words
+            # actually tagged with the target strongs (exact, not by gloss match).
+            # EXISTS restricts to verses that contain the strongs at least once.
             word_rows = conn.execute("""
-                SELECT kv.chapter, kv.verse_num AS verse, kv.verse_text AS prose,
-                       GROUP_CONCAT(kw.word, '|') AS hl_words
-                FROM kjv_verses kv
-                JOIN kjv_words kw ON kw.book_id = kv.book_id
-                    AND kw.chapter = kv.chapter AND kw.verse_num = kv.verse_num
-                JOIN kjv_strongs ks ON ks.word_id = kw.word_id AND ks.strongs_id = ?
-                WHERE kv.book_id = ?
-                GROUP BY kv.verse_id
-                ORDER BY kv.chapter, kv.verse_num
-            """, (sid, book_id)).fetchall()
+                SELECT kw.chapter, kw.verse_num AS verse, kw.verse_pos,
+                       kw.word, kw.italic, kw.punc,
+                       MAX(CASE WHEN ks.strongs_id = ? THEN 1 ELSE 0 END) AS hl
+                FROM kjv_words kw
+                LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
+                WHERE kw.book_id = ?
+                  AND EXISTS (
+                      SELECT 1 FROM kjv_words kw2
+                      JOIN kjv_strongs ks2 ON ks2.word_id = kw2.word_id
+                      WHERE kw2.book_id = kw.book_id
+                        AND kw2.chapter = kw.chapter
+                        AND kw2.verse_num = kw.verse_num
+                        AND ks2.strongs_id = ?
+                  )
+                GROUP BY kw.word_id
+                ORDER BY kw.verse_num, kw.verse_pos
+            """, (sid, book_id, sid)).fetchall()
         else:
             word_rows = conn.execute("""
-                SELECT v.chapter, v.verse, v.text AS prose, w.english AS word,
+                SELECT v.chapter, v.verse, v.text AS prose, w.english AS word, w.italic,
                        CASE WHEN w.strongs_base = ? THEN 1 ELSE 0 END AS hl
                 FROM verses v
                 JOIN words w ON w.verse_id = v.id
@@ -2316,24 +2329,27 @@ def lexicon_verses(strongs, book):
             """, (sid, book, sid)).fetchall()
         verse_prose = {}
         verse_order = []
-        verse_hl_norms = {}  # key -> set of normalized glosses for filtering
         gloss_counts = {}
         if corpus == "kjv":
+            verses = {}
             for r in word_rows:
                 key = (r["chapter"], r["verse"])
-                verse_prose[key] = r["prose"] or ""
-                verse_order.append(key)
-                norms = set()
-                for w in (r["hl_words"] or "").split("|"):
-                    if w:
-                        norm = _normalize_gloss(w)
-                        if norm:
-                            gloss_counts[norm] = gloss_counts.get(norm, 0) + 1
-                            norms.add(norm)
-                verse_hl_norms[key] = norms
+                if key not in verses:
+                    verses[key] = []
+                    verse_order.append(key)
+                word = r["word"] or ""
+                hl = bool(r["hl"])
+                verses[key].append({"w": word, "h": hl,
+                                    "i": 1 if r["italic"] else 0,
+                                    "punc": r["punc"] or ""})
+                if hl and word:
+                    norm = _normalize_gloss(word)
+                    if norm:
+                        gloss_counts[norm] = gloss_counts.get(norm, 0) + 1
             if gloss:
-                verse_order = [k for k in verse_order if gloss in verse_hl_norms.get(k, set())]
-            result_verses = [{"chapter": k[0], "verse": k[1], "text": verse_prose[k]} for k in verse_order]
+                verse_order = [k for k in verse_order
+                               if any(e["h"] and _normalize_gloss(e["w"]) == gloss for e in verses[k])]
+            result_verses = [{"chapter": k[0], "verse": k[1], "words": verses[k]} for k in verse_order]
         else:
             verses = {}
             for r in word_rows:
@@ -2344,7 +2360,7 @@ def lexicon_verses(strongs, book):
                     verses[key] = []
                     verse_prose[key] = r["prose"]
                     verse_order.append(key)
-                verses[key].append({"w": word, "h": hl})
+                verses[key].append({"w": word, "h": hl, "i": r["italic"] or 0})
                 if hl and word:
                     norm = _normalize_gloss(word)
                     if norm:
