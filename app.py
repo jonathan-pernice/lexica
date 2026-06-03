@@ -2386,7 +2386,7 @@ def lexicon_verses(strongs, book):
                         AND ks2.strongs_id = ?
                   )
                 GROUP BY kw.word_id
-                ORDER BY kw.verse_num, kw.verse_pos
+                ORDER BY kw.chapter, kw.verse_num, kw.verse_pos
             """, (sid, book_id, sid)).fetchall()
         else:
             word_rows = conn.execute("""

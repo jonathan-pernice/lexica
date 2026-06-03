@@ -2687,14 +2687,12 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
 
       {profile && (
         <div className="lexicon-profile">
-          {groupings && (
-            <button className="lexicon-back-link"
-              onClick={() => { setProfile(null); setSelectedBook(null); setVerseList(null); }}>
-              ← Back to "{query.trim()}" results
-            </button>
-          )}
           <div className="lexicon-profile-header">
-            <span className="lexicon-lemma">{profile.lemma}</span>
+            {groupings && (
+              <button className="lexicon-back-btn" title={`Back to "${query.trim()}" results`}
+                onClick={() => { setProfile(null); setSelectedBook(null); setVerseList(null); }}>←</button>
+            )}
+            <span className="lexicon-lemma" dir={profile.strongs[0] === "H" ? "rtl" : undefined}>{profile.lemma}</span>
             <span className="lexicon-translit">{profile.translit}</span>
             <span className="lexicon-strongs-tag">{profile.strongs}</span>
             <span className="lexicon-total">{
