@@ -546,14 +546,18 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
       if (cancelled) return;
       const personOk = !pd.error && (pd.birth_year || pd.death_year || pd.relationships?.length >= 2);
       if (personOk) setMetavPersonData(pd);
-      if (!ld.error) setMetavPlaceData(ld);
+      // Gentilics (Hivite, Sinite, Amorite…) are PEOPLES, not places — their place
+      // match comes through a misleading metav alias. Suppress it so they read as
+      // person/BDB (the Hebrew BDB entry accurately describes the people/clan).
+      const isGentilic = /ites?$/i.test(name);
+      if (!ld.error && !isGentilic) setMetavPlaceData(ld);
       // Default tab (only matters when BOTH person+place exist). Default to Person
       // and flip to Place ONLY when the word's own (prefixed) strongs matches the
       // place's strongs_g — a genuinely distinct place id. pn_type is NOT trusted:
       // tipnr.strongs is a PK, so a name sharing one strongs for person AND place
       // (e.g. Adam H121) stores whichever type was inserted last ('place' for Adam),
       // which would wrongly default person-names to Place.
-      const placeStrongsMatch = !ld.error && !!ld.strongs_g && !!entry.strongs_base &&
+      const placeStrongsMatch = !isGentilic && !ld.error && !!ld.strongs_g && !!entry.strongs_base &&
         ld.strongs_g.split(/[^GH0-9.]+/i).map(s => s.toUpperCase()).includes(entry.strongs_base.toUpperCase());
       setMetavTab(placeStrongsMatch ? "place" : "person");
       setMetavLoading(false);
