@@ -70,13 +70,24 @@ check("english starting with a stray digit  [parse leak]",
       "SELECT count(*) FROM words WHERE english GLOB '[0-9]*'")
 
 # ── strongs range / lexicon coverage ─────────────────────────────────────────
-check("G-number out of range (>5624)  [bad Greek strongs]",
+# NOTE: proper nouns excluded — TIPNR assigns valid EXTENDED numbers (G9xxx/H9xxx)
+# to names not in classic Strong's. Only non-PN out-of-range numbers are bad.
+check("G-number out of range (>5624), non-PN  [bad Greek strongs]",
       """SELECT count(*) FROM words WHERE strongs_base LIKE 'G%'
-         AND CAST(substr(strongs_base,2) AS INT) > 5624""")
+         AND CAST(substr(strongs_base,2) AS INT) > 5624
+         AND COALESCE(is_pn,0)=0 AND COALESCE(strongs,'')!='*'""")
 
-check("H-number out of range (>8674)  [bad Hebrew strongs]",
+check("H-number out of range (>8674), non-PN  [bad Hebrew strongs]",
       """SELECT count(*) FROM words WHERE strongs_base LIKE 'H%'
-         AND CAST(substr(strongs_base,2) AS INT) > 8674""")
+         AND CAST(substr(strongs_base,2) AS INT) > 8674
+         AND COALESCE(is_pn,0)=0 AND COALESCE(strongs,'')!='*'""")
+
+check("proper-noun EXTENDED strongs (TIPNR G9xxx/H9xxx)  [expected]",
+      """SELECT count(*) FROM words
+         WHERE (COALESCE(is_pn,0)=1 OR strongs='*')
+         AND ((strongs_base LIKE 'G%' AND CAST(substr(strongs_base,2) AS INT) > 5624)
+           OR (strongs_base LIKE 'H%' AND CAST(substr(strongs_base,2) AS INT) > 8674))""",
+      expect_zero=False, note="legit STEPBible extended numbers for names")
 
 check("distinct G-bases with NO lexicon gloss",
       """SELECT count(*) FROM (SELECT DISTINCT strongs_base FROM words
