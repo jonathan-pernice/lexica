@@ -72,8 +72,8 @@ const api = {
     fetch(`/api/lexicon/verses/${encodeURIComponent(strongs)}/${encodeURIComponent(book)}?corpus=${corpus}${gloss ? `&gloss=${encodeURIComponent(gloss)}` : ""}`).then(r => r.json()),
   lexiconBooks: (strongs, corpus, gloss) =>
     fetch(`/api/lexicon/books/${encodeURIComponent(strongs)}?corpus=${corpus}${gloss ? `&gloss=${encodeURIComponent(gloss)}` : ""}`).then(r => r.json()),
-  lexiconEnglish: (q, corpus) =>
-    fetch(`/api/lexicon/english?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus)}`).then(r => r.json()),
+  lexiconEnglish: (q, corpus, testament) =>
+    fetch(`/api/lexicon/english?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus)}${testament && testament !== "all" ? `&testament=${encodeURIComponent(testament)}` : ""}`).then(r => r.json()),
 };
 
 // Extract proper noun name from a multi-word gloss, skipping function words
@@ -2508,7 +2508,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       setProfile(null); setMatches(null);
       setSelectedBook(null); setVerseList(null);
       try {
-        const data = await api.lexiconEnglish(q, "all");
+        const data = await api.lexiconEnglish(q, "all", testament);
         setGroupings(data.length ? data : null);
         setError(data.length ? null : "No matches found.");
       } catch { setError("Search failed."); }
@@ -2538,7 +2538,27 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     if (groupings && isEnglishQuery) {
       setLoading(true);
       try {
-        const data = await api.lexiconEnglish(q, c);
+        const data = await api.lexiconEnglish(q, c, testament);
+        setGroupings(data.length ? data : null);
+        setError(data.length ? null : "No matches found.");
+      } catch { setError("Search failed."); }
+      finally { setLoading(false); }
+    }
+  };
+
+  const switchTestament = async (t) => {
+    if (loading) return;
+    setTestament(t);
+    setSelectedBook(null);
+    setVerseList(null);
+    // Profile view filters its distribution + count on `testament` client-side.
+    if (profile) return;
+    // Results view: re-run the English search scoped to the testament.
+    const q = query.trim();
+    if (groupings && q && !_STRONGS_RE.test(q) && !_isGreekHebrew(q)) {
+      setLoading(true);
+      try {
+        const data = await api.lexiconEnglish(q, corpus, t);
         setGroupings(data.length ? data : null);
         setError(data.length ? null : "No matches found.");
       } catch { setError("Search failed."); }
@@ -2602,7 +2622,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
         else if (data.length === 1) loadProfile(data[0].strongs);
         else setMatches(data);
       } else {
-        const data = await api.lexiconEnglish(q, corpus);
+        const data = await api.lexiconEnglish(q, corpus, testament);
         if (!data.length) setError("No matches found for \"" + q + "\".");
         else setGroupings(data);
       }
@@ -2635,7 +2655,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
         <div className="lexicon-corpus-toggle">
           {["all","ot","nt"].map(t => (
             <button key={t} className={"lct-btn" + (testament === t ? " on" : "")}
-              onClick={() => { setTestament(t); setSelectedBook(null); setVerseList(null); }}>
+              onClick={() => switchTestament(t)}>
               {t === "all" ? "All" : t.toUpperCase()}
             </button>
           ))}
