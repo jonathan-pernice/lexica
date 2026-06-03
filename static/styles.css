@@ -1647,7 +1647,10 @@ input { font-family: inherit; }
   display: none;
 }
 @media (max-width: 1099px) {
-  .main-inner { padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(80px + env(safe-area-inset-bottom, 0px)); max-width: 100%; }
+  /* Bottom-nav clearance lives on .main so it covers ALL tabs (Library/Lexicon/About
+     render as siblings of .main-inner, not inside it). */
+  .main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .main-inner { padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 0; max-width: 100%; }
   .search { padding-top: 20px; }
   .mobile-tabs {
     display: flex;
