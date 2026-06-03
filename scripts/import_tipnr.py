@@ -249,7 +249,14 @@ def main():
         "hormah":        "H2767",   "jaalam":       "H3281",
         "josedech":      "H3087",   "jehozadak":    "H3087",
         "hadarezer":     "H1928",   "pashur":       "H6583",
-        "netophah":      "H5199",
+        "netophah":      "H5199",   "jerubbaal":    "H3378",
+        "cana":          "G2580",   "barnea":       "H1251",
+        "jeconiah":      "H3204",   "jechoniah":    "H3204",
+        "anakim":        "H6062",   "anak":         "H6062",
+        "shethar":       "H8370",   "melchisedek":  "H4442",
+        "hodijah":       "H1941",   "aholibamah":   "H173",
+        "bama":          "H1117",   "hagarite":     "H1905",
+        "hagarites":     "H1905",
     }
 
     # Gentilics and common variants not stored under their ABP form in TIPNR
@@ -292,6 +299,15 @@ def main():
         "jeremias":      "jeremiah",   "ezechias":      "hezekiah",
         "ozias":         "uzziah",     "josias":        "josiah",
         "jechonias":     "jehoiachin", "joatham":       "jotham",
+        "ethiopia":      "cush",       "ethiopian":     "cush",
+        "ethiopians":    "cush",       "sidonian":      "sidon",
+        "sidonians":     "sidon",      "mede":          "media",
+        "medes":         "media",      "median":        "media",
+        "gittite":       "gath",       "gittites":      "gath",
+        "carmelite":     "carmel",     "carmelites":    "carmel",
+        "maachathite":   "maacah",     "maachathites":  "maacah",
+        "kirjathjearim": "kiriath-jearim",
+        "melchisedek":   "melchizedek",
     }
 
     def find_entry(english):
@@ -302,8 +318,8 @@ def main():
 
         def _strip_lead(s):
             for prefix in ("land of the ", "land of ", "of the ", "of ", "to ",
-                           "in the ", "in ", "for ", "both ", "and ", "the ",
-                           "a ", "O ", "o "):
+                           "in the ", "in ", "for ", "both ", "and ", "this ",
+                           "the ", "a ", "O ", "o "):
                 if s.lower().startswith(prefix):
                     return s[len(prefix):]
             return s
