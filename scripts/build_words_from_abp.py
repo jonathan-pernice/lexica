@@ -37,11 +37,17 @@ except ImportError:
         return words[0] if words else None
 
 
+try:
+    from lxx_align import RahlfsLXX, correct_verse
+except ImportError:
+    RahlfsLXX = None
+
 BASE_DIR    = Path(__file__).parent.parent
 ABP_OT_ZIP  = BASE_DIR / "abp_ot_texts.zip"
 ABP_NT_ZIP  = BASE_DIR / "abp_nt_texts.zip"
 ABP_OT_DIR  = BASE_DIR / "abp_texts" / "abp_ot_texts"
 ABP_NT_DIR  = BASE_DIR / "abp_texts" / "abp_nt_texts"
+RAHLFS_DIR  = Path.home() / "LXX-Rahlfs-1935"   # 4 data files fetched separately on PA; not in git
 
 ABBREV_TO_SLUG = {
     "Gen": "genesis",        "Exo": "exodus",          "Lev": "leviticus",
@@ -327,6 +333,24 @@ def _sort_brackets(rows: list) -> None:
 
 # ── Verse builder ─────────────────────────────────────────────────────────────
 
+def apply_pronoun_corrections(abp_words: list, corrections: list,
+                              flag_log: list, ref: str) -> list:
+    """Pre-pass: rewrite raw_strongs for G1473 slots that confidently align to a
+    Rahlfs pronoun (correct_verse → action 'fix'/'keep'). SURGICAL — only those
+    slots change; everything else (incl. '*' proper-noun placeholders) passes
+    through untouched. Flagged slots are logged and left as G1473. Returns a NEW
+    list so the downstream reorder logic in build_verse_words is unaffected."""
+    out = []
+    for (eng, raw, ap, ob, cb), c in zip(abp_words, corrections):
+        if c.action in ("fix", "keep") and c.new_strong:
+            out.append((eng, "G" + c.new_strong, ap, ob, cb))
+        else:
+            if c.action == "flag":
+                flag_log.append(f"{ref}\t{eng}\t{c.reason}")
+            out.append((eng, raw, ap, ob, cb))
+    return out
+
+
 def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
     """
     Combine ABP word list with BH metadata.
@@ -448,6 +472,15 @@ def run(bible_db: str, scrape_db: str) -> None:
     bh_index = load_bh_verse_index(scrape)
     print(f"BH verse keys: {len(bh_index):,}\n")
 
+    rahlfs = None
+    if RahlfsLXX and RAHLFS_DIR.is_dir():
+        print("Loading Rahlfs-1935 for pronoun correction …")
+        rahlfs = RahlfsLXX(RAHLFS_DIR)
+        print("  Rahlfs loaded.\n")
+    else:
+        print("⚠️  Rahlfs dir not found — pronoun correction SKIPPED.\n")
+    flag_log = []
+
     print("Clearing words table …")
     main.execute("DELETE FROM words")
     main.commit()
@@ -485,6 +518,15 @@ def run(bible_db: str, scrape_db: str) -> None:
 
         slug      = ABBREV_TO_SLUG.get(abbrev)
         bh_rows   = bh_index.get((slug, chapter, verse), []) if slug else []
+
+        if rahlfs:
+            bnum = rahlfs.booknum(abbrev)
+            if bnum:
+                corrs = correct_verse([w[1] for w in abp_words],
+                                      rahlfs.verse(bnum, chapter, verse))
+                abp_words = apply_pronoun_corrections(
+                    abp_words, corrs, flag_log, f"{abbrev} {chapter}:{verse}")
+
         word_rows = build_verse_words(abp_words, bh_rows, lex)
 
         main.executemany(
@@ -503,6 +545,10 @@ def run(bible_db: str, scrape_db: str) -> None:
     main.commit()
     main.close()
     scrape.close()
+
+    if flag_log:
+        Path("pronoun_review.tsv").write_text("\n".join(flag_log), encoding="utf-8")
+        print(f"\n  Flagged {len(flag_log):,} pronoun slots for review → pronoun_review.tsv")
 
     print(f"\n── Results ─────────────────────────────────────────────")
     print(f"  Words inserted: {inserted:,}")
@@ -525,6 +571,12 @@ def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,
         conn.close()
         print(f"Lexicon: {len(lex):,} entries\n")
 
+    rahlfs = None
+    if RahlfsLXX and RAHLFS_DIR.is_dir():
+        rahlfs = RahlfsLXX(RAHLFS_DIR)
+        print("Rahlfs: loaded for pronoun correction\n")
+    flag_log = []
+
     slug   = ABBREV_TO_SLUG.get(book_abbrev, book_abbrev.lower())
     verses = {}
     for abbrev, ch, vs, words in iter_verses(*_abp_sources()):
@@ -541,6 +593,13 @@ def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,
             continue
         abp_words = verses[vs]
         bh_rows   = bh_index.get((slug, chapter, vs), [])
+        if rahlfs:
+            bnum = rahlfs.booknum(book_abbrev)
+            if bnum:
+                corrs = correct_verse([w[1] for w in abp_words],
+                                      rahlfs.verse(bnum, chapter, vs))
+                abp_words = apply_pronoun_corrections(
+                    abp_words, corrs, flag_log, f"{book_abbrev} {chapter}:{vs}")
         word_rows = build_verse_words(abp_words, bh_rows, lex)
 
         print(f"{book_abbrev} {chapter}:{vs}")
