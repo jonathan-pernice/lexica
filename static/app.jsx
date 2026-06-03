@@ -2445,7 +2445,8 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [corpus, setCorpus] = useState("all");
+  const [corpus, setCorpus] = useState("all");          // search-results scope: all | abp | kjv
+  const [profileCorpus, setProfileCorpus] = useState("abp"); // drilled-in word view: abp | kjv (never "all")
   const [testament, setTestament] = useState("all");
   const [selectedBook, setSelectedBook] = useState(null);
   const [verseList, setVerseList] = useState(null);
@@ -2509,8 +2510,8 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     setFilteredBooks(null);
     setShowDef(false);
     const isHeb = /^H/i.test(strongs) || (!(/^[GgHh]/.test(strongs)) && parseInt(strongs) > 5624);
-    const c = corpusOverride ?? (isHeb ? "kjv" : "abp");
-    setCorpus(c);
+    const c = corpusOverride ?? (isHeb ? "kjv" : "abp");  // drilling in always lands in a single corpus
+    setProfileCorpus(c);
     try {
       const data = await api.lexiconProfile(strongs, c);
       if (data.error) setError(data.error);
@@ -2526,33 +2527,13 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     }
   }, [profile, pendingGloss]);
 
+  // Search-results scope toggle (All / ABP / KJV). Only shown when no word is
+  // in focus; re-runs the English search in that corpus.
   const switchCorpus = async (c) => {
     if (loading || c === corpus) return;
     setCorpus(c);
     const q = query.trim();
     const isEnglishQuery = !!q && !_STRONGS_RE.test(q) && !_isGreekHebrew(q);
-
-    // A word is in focus → reload THAT word's profile in the chosen corpus.
-    // The profile supports all/abp/kjv (all = merged ABP + KJV), so staying on
-    // the word is correct for every option.
-    if (profile) {
-      setLoading(true);
-      setSelectedBook(null);
-      setVerseList(null);
-      setTestament("all");
-      setSelectedGloss(null);
-      setBookGlosses(null);
-      setFilteredBooks(null);
-      setShowDef(false);
-      try {
-        const data = await api.lexiconProfile(profile.strongs, c);
-        if (!data.error) setProfile(data);
-      } catch {}
-      finally { setLoading(false); }
-      return;
-    }
-
-    // Results list → re-scope the English search to this corpus (all = merged).
     if (groupings && isEnglishQuery) {
       setLoading(true);
       try {
@@ -2562,6 +2543,25 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       } catch { setError("Search failed."); }
       finally { setLoading(false); }
     }
+  };
+
+  // Profile corpus toggle (ABP / KJV). Reloads the focused word in that corpus.
+  const switchProfileCorpus = async (c) => {
+    if (loading || c === profileCorpus || !profile) return;
+    setProfileCorpus(c);
+    setLoading(true);
+    setSelectedBook(null);
+    setVerseList(null);
+    setTestament("all");
+    setSelectedGloss(null);
+    setBookGlosses(null);
+    setFilteredBooks(null);
+    setShowDef(false);
+    try {
+      const data = await api.lexiconProfile(profile.strongs, c);
+      if (!data.error) setProfile(data);
+    } catch {}
+    finally { setLoading(false); }
   };
 
   const switchTestament = async (t) => {
@@ -2588,7 +2588,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     setVerseList(null);
     setVerseLoading(true);
     try {
-      const data = await api.lexiconVerses(profile.strongs, book, corpus, gloss);
+      const data = await api.lexiconVerses(profile.strongs, book, profileCorpus, gloss);
       if (data.error) {
         setVerseList([{ error: data.error }]);
       } else {
@@ -2609,7 +2609,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     const next = selectedGloss === gloss ? null : gloss;
     setSelectedGloss(next);
     if (next) {
-      const data = await api.lexiconBooks(profile.strongs, corpus, next);
+      const data = await api.lexiconBooks(profile.strongs, profileCorpus, next);
       setFilteredBooks(data.books && data.books.length ? data.books : null);
     } else {
       setFilteredBooks(null);
@@ -2629,7 +2629,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     setError(null);
     if (_STRONGS_RE.test(q)) {
       const normalized = /^[GgHh]/i.test(q) ? q.toUpperCase() : q;
-      loadProfile(normalized, corpus);
+      loadProfile(normalized);
       return;
     }
     setLoading(true);
@@ -2637,7 +2637,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
       if (_isGreekHebrew(q)) {
         const data = await api.lexiconLookup(q);
         if (!data.length) setError("No matches found.");
-        else if (data.length === 1) loadProfile(data[0].strongs, corpus);
+        else if (data.length === 1) loadProfile(data[0].strongs);
         else setMatches(data);
       } else {
         const data = await api.lexiconEnglish(q, corpus, testament);
@@ -2666,9 +2666,20 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
 
       <div className="lexicon-toolbar">
         <div className="lexicon-corpus-toggle">
-          <button className={"lct-btn" + (corpus === "all" ? " on" : "")} onClick={() => switchCorpus("all")}>All</button>
-          <button className={"lct-btn" + (corpus === "abp" ? " on" : "")} onClick={() => switchCorpus("abp")}>ABP</button>
-          <button className={"lct-btn" + (corpus === "kjv" ? " on" : "")} onClick={() => switchCorpus("kjv")}>KJV</button>
+          {profile ? (
+            /^H/i.test(profile.strongs)
+              ? <button className="lct-btn on">KJV</button>   /* Hebrew word: KJV only */
+              : <>
+                  <button className={"lct-btn" + (profileCorpus === "abp" ? " on" : "")} onClick={() => switchProfileCorpus("abp")}>ABP</button>
+                  <button className={"lct-btn" + (profileCorpus === "kjv" ? " on" : "")} onClick={() => switchProfileCorpus("kjv")}>KJV</button>
+                </>
+          ) : (
+            <>
+              <button className={"lct-btn" + (corpus === "all" ? " on" : "")} onClick={() => switchCorpus("all")}>All</button>
+              <button className={"lct-btn" + (corpus === "abp" ? " on" : "")} onClick={() => switchCorpus("abp")}>ABP</button>
+              <button className={"lct-btn" + (corpus === "kjv" ? " on" : "")} onClick={() => switchCorpus("kjv")}>KJV</button>
+            </>
+          )}
         </div>
         <div className="lexicon-corpus-toggle">
           {["all","ot","nt"].map(t => (
@@ -2703,7 +2714,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
           </div>
           {groupings.map(g => (
             <button key={g.strongs} className="lexicon-result-row"
-              onClick={() => loadProfile(g.strongs, corpus)}>
+              onClick={() => loadProfile(g.strongs)}>
               <span className="lexicon-match-strongs">{g.strongs}</span>
               {g.lemma && <span className="lexicon-match-lemma" dir={g.strongs[0] === "H" ? "rtl" : undefined}>{g.lemma}</span>}
               {g.translit && <span className="lexicon-match-translit">{g.translit}</span>}
