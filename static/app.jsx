@@ -2458,6 +2458,38 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
   const [groupings, setGroupings] = useState(null);
   const [pendingGloss, setPendingGloss] = useState(null);
   const [showDef, setShowDef] = useState(false);
+  const [lsjEntry, setLsjEntry] = useState(null);
+  const [lsjSummary, setLsjSummary] = useState(null);
+  const [lsjLoading, setLsjLoading] = useState(false);
+  const [lsjSummaryLoading, setLsjSummaryLoading] = useState(false);
+
+  // Reset the curated LSJ definition whenever the focused word changes.
+  useEffect(() => { setLsjEntry(null); setLsjSummary(null); }, [profile?.strongs]);
+
+  // Lazily fetch the LSJ entry + AI-curated summary when the Greek definition is
+  // opened (Haiku, cached). Hebrew keeps its BDB definition. The /api/lsj endpoint
+  // auto-falls back to strongs_def when there's no LSJ match.
+  useEffect(() => {
+    if (!showDef || !profile || !/^G/i.test(profile.strongs) || lsjEntry || lsjLoading) return;
+    let cancelled = false;
+    setLsjLoading(true);
+    api.lsj(profile.lemma || "", profile.strongs.replace(/^[GH]/i, ""))
+      .then(d => {
+        if (cancelled) return;
+        const entry = d && !d.error ? d : null;
+        setLsjEntry(entry);
+        setLsjLoading(false);
+        if (entry && entry.source !== "strongs") {
+          setLsjSummaryLoading(true);
+          api.lsjSummary(entry.key)
+            .then(s => { if (!cancelled) setLsjSummary(s); })
+            .catch(() => {})
+            .finally(() => { if (!cancelled) setLsjSummaryLoading(false); });
+        }
+      })
+      .catch(() => { if (!cancelled) { setLsjEntry(null); setLsjLoading(false); } });
+    return () => { cancelled = true; };
+  }, [showDef, profile?.strongs]);
 
   useEffect(() => {
     if (!pendingStrongs) return;
@@ -2703,12 +2735,26 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
                     .reduce((s, b) => s + b.count, 0)
             } occurrences</span>
           </div>
-          {profile.definition && (
+          {(profile.definition || /^G/i.test(profile.strongs)) && (
             <div className="lexicon-def-section">
               <button className="lexicon-def-toggle" onClick={() => setShowDef(v => !v)}>
                 Definition {showDef ? "▲" : "▼"}
               </button>
-              {showDef && <p className="lexicon-definition">{profile.definition}</p>}
+              {showDef && (
+                !/^G/i.test(profile.strongs)
+                  ? <p className="lexicon-definition">{profile.definition}</p>     /* Hebrew: BDB */
+                  : lsjLoading
+                    ? <div className="lsj-def lsj-def--loading">Loading…</div>
+                    : !lsjEntry
+                      ? <p className="lexicon-definition">{profile.definition}</p>  /* no LSJ: strongs_def */
+                      : lsjEntry.source === "strongs"
+                        ? <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
+                        : lsjSummaryLoading
+                          ? <LsjSummary data={null} loading={true} />
+                          : (lsjSummary && lsjSummary.summary)
+                            ? <LsjSummary data={lsjSummary} loading={false} />
+                            : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />  /* AI down: raw LSJ */
+              )}
             </div>
           )}
 
