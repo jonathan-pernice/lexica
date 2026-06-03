@@ -72,13 +72,15 @@ while True:
         if not word:
             continue
 
-        # Confirm it also lives in another bracket in this verse
+        # Confirm it also lives in another bracket with the SAME strongs_base
+        # (different english at same gpos = legitimate parallel bracket, not duplicate)
         other = conn.execute("""
             SELECT bracket_id, english FROM words
             WHERE verse_id=? AND bracket_id!=? AND greek_pos=?
               AND bracket_id IS NOT NULL
+              AND strongs_base = ?
             LIMIT 1
-        """, (vid, bid, max_pos)).fetchone()
+        """, (vid, bid, max_pos, word['strongs_base'])).fetchone()
         if not other:
             continue
 
