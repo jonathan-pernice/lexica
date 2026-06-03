@@ -133,12 +133,8 @@ input { font-family: inherit; }
 .main { flex: 1; min-width: 0; }
 .main-inner {
   padding: 36px 28px 80px 28px;
-  max-width: 100%;
-}
-@media (min-width: 1100px) {
-  .has-detail .main-inner {
-    max-width: calc(100vw - var(--sidebar-w));
-  }
+  max-width: 760px;   /* match .lexicon-view — centered column, not full-bleed */
+  margin: 0 auto;
 }
 
 /* ============================================================
