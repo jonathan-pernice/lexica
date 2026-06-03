@@ -37,9 +37,11 @@ except ImportError:
         return words[0] if words else None
 
 
-BASE_DIR   = Path(__file__).parent.parent
-ABP_OT_ZIP = BASE_DIR / "abp_ot_texts.zip"
-ABP_NT_ZIP = BASE_DIR / "abp_nt_texts.zip"
+BASE_DIR    = Path(__file__).parent.parent
+ABP_OT_ZIP  = BASE_DIR / "abp_ot_texts.zip"
+ABP_NT_ZIP  = BASE_DIR / "abp_nt_texts.zip"
+ABP_OT_DIR  = BASE_DIR / "abp_texts" / "abp_ot_texts"
+ABP_NT_DIR  = BASE_DIR / "abp_texts" / "abp_nt_texts"
 
 ABBREV_TO_SLUG = {
     "Gen": "genesis",        "Exo": "exodus",          "Lev": "leviticus",
@@ -134,17 +136,34 @@ def parse_abp_line(line: str):
     return book, chapter, verse, words
 
 
-def iter_verses(*zip_paths):
-    for zp in zip_paths:
-        with zipfile.ZipFile(zp) as z:
-            for name in sorted(z.namelist()):
-                if not name.endswith(".txt"):
-                    continue
-                with z.open(name) as f:
+def _abp_sources():
+    """Return directory paths if present, otherwise fall back to zip files."""
+    ot = ABP_OT_DIR if ABP_OT_DIR.is_dir() else ABP_OT_ZIP
+    nt = ABP_NT_DIR if ABP_NT_DIR.is_dir() else ABP_NT_ZIP
+    return ot, nt
+
+
+def iter_verses(*sources):
+    """Accept zip file paths or directory paths interchangeably."""
+    for src in sources:
+        src = Path(src)
+        if src.is_dir():
+            for txt in sorted(src.glob("*.txt")):
+                with txt.open(encoding="utf-8", errors="replace") as f:
                     for raw in f:
-                        parsed = parse_abp_line(raw.decode("utf-8", errors="replace"))
+                        parsed = parse_abp_line(raw)
                         if parsed:
                             yield parsed
+        else:
+            with zipfile.ZipFile(src) as z:
+                for name in sorted(z.namelist()):
+                    if not name.endswith(".txt"):
+                        continue
+                    with z.open(name) as f:
+                        for raw in f:
+                            parsed = parse_abp_line(raw.decode("utf-8", errors="replace"))
+                            if parsed:
+                                yield parsed
 
 
 # ── BH index ──────────────────────────────────────────────────────────────────
@@ -429,7 +448,7 @@ def run(bible_db: str, scrape_db: str) -> None:
 
     inserted = skipped = 0
 
-    for abbrev, chapter, verse, abp_words in iter_verses(ABP_OT_ZIP, ABP_NT_ZIP):
+    for abbrev, chapter, verse, abp_words in iter_verses(*_abp_sources()):
         verse_id = verse_map.get((abbrev, chapter, verse))
         if not verse_id:
             skipped += 1
@@ -476,7 +495,7 @@ def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,
 
     slug   = ABBREV_TO_SLUG.get(book_abbrev, book_abbrev.lower())
     verses = {}
-    for abbrev, ch, vs, words in iter_verses(ABP_OT_ZIP, ABP_NT_ZIP):
+    for abbrev, ch, vs, words in iter_verses(*_abp_sources()):
         if abbrev == book_abbrev and ch == chapter:
             verses[vs] = words
 
