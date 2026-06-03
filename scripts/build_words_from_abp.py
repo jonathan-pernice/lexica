@@ -353,6 +353,10 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
             sbase   = "*"
             gpos, iw, sw = None, "", ""
         else:
+            # Keep strongs/sbase BARE here — bh_lookup() and the lexicon index
+            # match on bare numbers. The 'G' prefix is re-applied to strongs_base
+            # at INSERT time (see _prefix_base in main). Do NOT prefix here or the
+            # internal matching against lex/bh bare keys breaks.
             strongs = raw_strongs[1:]
             sbase   = strongs.split(".")[0]
             gpos, iw, sw = bh_lookup(bh_rows, used, sbase, normalize(english))
@@ -450,6 +454,21 @@ def run(bible_db: str, scrape_db: str) -> None:
 
     inserted = skipped = 0
 
+    def _prefix_base(w):
+        """Restore the 'G' on strongs_base at INSERT time.
+
+        The ABP source is Greek-only; the parser strips the 'G' so internal
+        lex/BH matching can compare bare numbers. The DB invariant, however, is
+        that words.strongs_base is fully G-prefixed (e.g. 'G2206') — the lexicon
+        join does SUBSTR(strongs_base, 2), which shaves a *digit* off a bare
+        number and resolves the wrong lemma. The bare `strongs` column (idx 3)
+        is intentionally left as-is (frontend renders it as G{strongs}). '*'
+        (proper-noun placeholder) and '' (no strongs) pass through untouched.
+        """
+        if len(w) > 4 and w[4] and w[4][0].isdigit():
+            return (*w[:4], "G" + w[4], *w[5:])
+        return w
+
     for abbrev, chapter, verse, abp_words in iter_verses(*_abp_sources()):
         verse_id = verse_map.get((abbrev, chapter, verse))
         if not verse_id:
@@ -465,7 +484,7 @@ def run(bible_db: str, scrape_db: str) -> None:
             " (verse_id, position, english, english_head, strongs, strongs_base,"
             "  greek_pos, bracket_id, italic, italic_words, smcap_words)"
             " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [(verse_id, *w) for w in word_rows],
+            [(verse_id, *_prefix_base(w)) for w in word_rows],
         )
         inserted += len(word_rows)
 
@@ -480,6 +499,9 @@ def run(bible_db: str, scrape_db: str) -> None:
     print(f"\n── Results ─────────────────────────────────────────────")
     print(f"  Words inserted: {inserted:,}")
     print(f"  Verses skipped: {skipped:,}")
+    print(f"\n⚠️  This rebuild CLEARED words.is_pn and proper-noun Strong's.")
+    print(f"    You MUST re-run the proper-noun import next:")
+    print(f"      python3 scripts/import_tipnr.py bible.db")
 
 
 def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,

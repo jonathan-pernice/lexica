@@ -340,6 +340,11 @@ def main():
         "didymus":       "G1322",  "dorcas":      "G1393",
         "hymeneus":      "G5211",  "pontius":     "G4194",
         "bosor":         "G1007",
+        # Stragglers (2026-06-03 follow-up)
+        "gaber":         "H1398",  # Geber
+        "ishuah":        "H3438",  # Ishvah
+        "baalpeor":      "H1187",  # Baal-peor
+        "en gedi":       "H5872",  # En-gedi (spaced form)
     }
 
     # Gentilics and common variants not stored under their ABP form in TIPNR
@@ -404,6 +409,7 @@ def main():
         "salathiel":     "shealtiel",   "babylonians":"babylon",
         "mizraim":       "egypt",       "maachah":    "maacah",
         "nabuzar-ardan": "nebuzaradan", "nabuzarardan":"nebuzaradan",
+        "zachariah":     "zechariah",   "zacharias":  "zechariah",
     }
 
     def find_entry(english):
@@ -415,7 +421,7 @@ def main():
         def _strip_lead(s):
             for prefix in ("land of the ", "land of ", "of the ", "of ", "to ",
                            "in the ", "in ", "for ", "both ", "and ", "this ",
-                           "was ", "with ", "the ", "a ", "O ", "o "):
+                           "was ", "with ", "the ", "an ", "a ", "O ", "o "):
                 if s.lower().startswith(prefix):
                     return s[len(prefix):]
             return s
