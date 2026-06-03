@@ -220,23 +220,38 @@ def main():
 
     def find_entry(english):
         """Try progressively looser matches against the TIPNR lookup."""
-        # 1. Exact (lowercase)
-        e = lookup.get(english.lower())
+        # Normalise once: strip trailing punct + dashes, strip leading particles
+        def _strip_trail(s):
+            return re.sub(r"[\s,.:;!?'\"–\-]+$", "", s).strip()
+
+        def _strip_lead(s):
+            for prefix in ("of the ", "of ", "to ", "O ", "o "):
+                if s.lower().startswith(prefix):
+                    return s[len(prefix):]
+            return s
+
+        def _no_hyphen(s):
+            return s.replace("-", "")
+
+        # 1. Exact
+        e = lookup.get(english.lower());
         if e: return e
-        # 2. Strip trailing punctuation: 'Jesus,' -> 'Jesus'
-        clean = re.sub(r"[,.:;!?'\"]+$", "", english).strip()
-        if clean != english:
-            e = lookup.get(clean.lower())
+        # 2. Strip trailing punctuation/dashes
+        clean = _strip_trail(english)
+        e = lookup.get(clean.lower())
+        if e: return e
+        # 3. Strip leading particle from cleaned
+        bare = _strip_lead(clean)
+        if bare != clean:
+            e = lookup.get(bare.lower())
             if e: return e
-        # 3. Strip leading 'of ': 'of Israel' -> 'Israel'
-        if clean.lower().startswith("of "):
-            e = lookup.get(clean[3:].lower())
-            if e: return e
-        # 4. Strip 'of ' from original (before punct strip)
-        if english.lower().startswith("of "):
-            tail = re.sub(r"[,.:;!?'\"]+$", "", english[3:]).strip()
-            e = lookup.get(tail.lower())
-            if e: return e
+        # 4. Remove hyphens: 'Beth-el' -> 'Bethel'
+        e = lookup.get(_no_hyphen(bare).lower())
+        if e: return e
+        # 5. Strip particle from original then clean trailing
+        bare2 = _strip_trail(_strip_lead(english))
+        e = lookup.get(bare2.lower())
+        if e: return e
         return None
 
     for row in word_rows:
