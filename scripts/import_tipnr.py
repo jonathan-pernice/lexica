@@ -169,9 +169,11 @@ def main():
     print(f"  {len(lookup):,} name entries (incl. alternates)")
     print(f"  {len(tipnr_rows):,} strongs entries for tipnr table\n")
 
-    # Spot-check key names
+    # Spot-check key names + known problematic ones
     checks = ["Jesus","Israel","Edom","Abraham","Jerusalem","Moses",
-               "Elijah","David","Mary","Judah","Ephraim","Aaron"]
+               "Elijah","David","Mary","Judah","Ephraim","Aaron",
+               "Zion","Abram","Levi","Pharisee","Canaan","Heth",
+               "Assyria","Chaldea","Hivite","Amorite","Moab","Ammon"]
     print("Spot checks:")
     for nm in checks:
         print(f"  {nm:12} → {lookup.get(nm.lower())}")
@@ -218,6 +220,29 @@ def main():
     matched        = []   # (new_strongs, rowid)
     unmatched_cnt  = defaultdict(int)
 
+    # Gentilics and common variants not stored under their ABP form in TIPNR
+    ALIASES = {
+        # Demonyms → root place/person in TIPNR
+        "levite":      "levi",       "levites":     "levi",
+        "jew":         "judah",      "jews":        "judah",
+        "egyptian":    "egypt",      "egyptians":   "egypt",
+        "assyrian":    "assyria",    "assyrians":   "assyria",
+        "chaldean":    "chaldea",    "chaldeans":   "chaldea",
+        "canaanite":   "canaan",     "canaanites":  "canaan",
+        "hittite":     "heth",       "hittites":    "heth",
+        "hivite":      "hivite",     "hivites":     "hivite",
+        "amorite":     "amorite",    "amorites":    "amorite",
+        "moabite":     "moab",       "moabites":    "moab",
+        "ammonite":    "ammon",      "ammonites":   "ammon",
+        "philistine":  "philistia",  "philistines": "philistia",
+        "israelite":   "israel",     "israelites":  "israel",
+        "pharisee":    "pharisee",   "pharisees":   "pharisee",
+        "sadducee":    "sadducee",   "sadducees":   "sadducee",
+        # Name variants
+        "abram":       "abraham",    # same person, pre-rename form
+        "sarai":       "sarah",      # same person
+    }
+
     def find_entry(english):
         """Try progressively looser matches against the TIPNR lookup."""
         # Normalise once: strip trailing punct + dashes, strip leading particles
@@ -252,6 +277,17 @@ def main():
         bare2 = _strip_trail(_strip_lead(english))
         e = lookup.get(bare2.lower())
         if e: return e
+        # 6. Try singular (strip trailing 's'): 'Pharisees' -> 'Pharisee'
+        for candidate in (bare, bare2, clean):
+            if candidate.endswith("s"):
+                e = lookup.get(candidate[:-1].lower())
+                if e: return e
+        # 7. Manual alias table for gentilics and name variants
+        for candidate in (bare.lower(), bare2.lower(), clean.lower(), english.lower()):
+            mapped = ALIASES.get(candidate)
+            if mapped:
+                e = lookup.get(mapped)
+                if e: return e
         return None
 
     for row in word_rows:
