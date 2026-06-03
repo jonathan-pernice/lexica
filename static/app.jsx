@@ -481,8 +481,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     return () => { cancelled = true; };
   }, [entry && entry.strongs_raw]);
 
-  const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H");
   const isPN = entry && (entry.is_pn || entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
+  // Proper nouns route to metaV (person/place), NOT the BDB Hebrew lexicon —
+  // even now that they carry a real H-number. Treat them as non-Hebrew here so
+  // the BDB fetch/hero don't preempt the metaV card.
+  const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H") && !isPN;
 
   // PN occurrence count (by name, for strongs='*' entries)
   const [pnCount, setPnCount] = useState(null);
