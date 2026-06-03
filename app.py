@@ -2120,13 +2120,18 @@ def lexicon_english():
                 if not e["translit"] and r["translit"]:
                     e["translit"] = r["translit"]
                 for g in gmap.get(sid, []):
-                    e["glosses"][g["gloss"]] = e["glosses"].get(g["gloss"], 0) + g["count"]
+                    key = g["gloss"].lower()  # fold case: "Spirit"/"spirit" are one gloss
+                    slot = e["glosses"].get(key)
+                    if slot is None:
+                        e["glosses"][key] = {"label": g["gloss"], "count": g["count"]}
+                    else:
+                        slot["count"] += g["count"]
         _merge(abp_rows, abp_glosses)
         _merge(heb_rows, heb_glosses)
 
         results = []
         for e in merged.values():
-            glosses = sorted(({"gloss": g, "count": c} for g, c in e["glosses"].items()),
+            glosses = sorted(({"gloss": s["label"], "count": s["count"]} for s in e["glosses"].values()),
                              key=lambda x: -x["count"])[:8]
             results.append({"strongs": e["strongs"], "lemma": e["lemma"],
                             "translit": e["translit"], "count": e["count"], "glosses": glosses})
