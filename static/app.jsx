@@ -116,6 +116,7 @@ function makeEntry(r, idx) {
     definition: r.strongs_def || "",
     derivation: r.derivation || "",
     is_function: r.is_function || false,
+    is_pn: r.is_pn || false,
   };
 }
 
@@ -140,6 +141,7 @@ function flattenAiResults(verses) {
         definition: w.strongs_def || "",
         derivation: w.derivation || "",
         is_function: w.is_function || false,
+        is_pn: w.is_pn || false,
         is_primary: v.is_primary || false,
         is_additional: v.is_additional || false,
       });
@@ -480,7 +482,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [entry && entry.strongs_raw]);
 
   const isHebrew = entry && entry.strongs && entry.strongs.startsWith("H");
-  const isPN = entry && (entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
+  const isPN = entry && (entry.is_pn || entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
 
   // PN occurrence count (by name, for strongs='*' entries)
   const [pnCount, setPnCount] = useState(null);
@@ -1091,7 +1093,7 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
           function renderCorpusWord(w, key) {
             const label = corpusWordLabel(w);
             if (!label) return null;
-            const isPN = w.strongs_base === "*";
+            const isPN = !!(w.is_pn || w.strongs_base === "*");
             const clickable = !!(w.strongs_base && (w.strongs_base !== "*" || w.english));
             const wnum = w.strongs || w.strongs_base;
             const foundEntry = !isPN && clickable && entryMap.get(wnum);
@@ -1712,7 +1714,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
     // Plain chip (English mode or non-bracketed word in Greek mode)
     const chip = (w, key) => {
-      const isPN = w.strongs_base === "*";
+      const isPN = !!(w.is_pn || w.strongs_base === "*");
       const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english || w.english_head) && (w.english || w.english_head));
 
       // Split multi-word gloss: mute italic sub-words, style smcap sub-words, chip the rest
@@ -1774,7 +1776,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
     // Bracket chip (bracketed word in Greek mode — shows inline position number)
     const bracketChip = (w, key) => {
-      const isPN = w.strongs_base === "*";
+      const isPN = !!(w.is_pn || w.strongs_base === "*");
       const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english));
 
       // Split multi-word gloss within a bracket word

@@ -463,7 +463,7 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
     """Return the full word list for a verse, used when fetching cited/primary verses."""
     wrows = conn.execute(
         """SELECT w.strongs_base, w.strongs, w.english, w.english_head, w.greek_pos,
-                  w.bracket_id, w.italic,
+                  w.bracket_id, w.italic, w.is_pn,
                   COALESCE(w.italic_words, '') AS italic_words,
                   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
            FROM words w
@@ -484,6 +484,7 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
             "bracket_id":   wr["bracket_id"],
             "italic":       bool(wr["italic"]),
             "italic_words": wr["italic_words"],
+            "is_pn":        bool(wr["is_pn"] or 0),
             "is_function":  wr["strongs_base"] in _FUNCTION_STRONGS,
             "gloss":        _clean_gloss(wr["english"]),
             "lemma":        wr["lemma"],
@@ -1642,7 +1643,7 @@ def verse_words(book, chapter, verse):
         wrows = conn.execute(
             """SELECT w.position, w.english, w.english_head, w.greek_pos, w.bracket_id, w.italic,
                       COALESCE(w.italic_words, '') AS italic_words,
-                      w.strongs_base, w.strongs,
+                      w.strongs_base, w.strongs, w.is_pn,
                       l.lemma, l.translit, l.kjv_def, l.strongs_def, l.derivation
                FROM words w
                LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
@@ -1669,6 +1670,7 @@ def verse_words(book, chapter, verse):
                 "translit":   w["translit"],
                 "strongs_def": (w["strongs_def"] or "").strip(),
                 "derivation": (w["derivation"] or "").strip(),
+                "is_pn":      bool(w["is_pn"] or 0),
                 "is_content": w["strongs_base"] not in _FUNCTION_STRONGS,
             }
             for w in wrows
