@@ -219,13 +219,10 @@ def build_verse_words(bh_rows, lex: dict | None = None):
                     bracket_id = bid
                 else:
                     bracket_id = None
-                    # Keep in_bracket through bridge words inside a bracket span:
-                    #  - null-english words (bare articles rendered as &nbsp; on BibleHub)
-                    #  - function words (_SKIP_STRONGS: articles, conjunctions, prepositions)
-                    #    that appear as glue between reordered bracket members
-                    bh_bare = str(bh_strongs).split(".")[0] if bh_strongs else None
-                    is_bridge = (bh_english is None) or (bh_bare in _SKIP_STRONGS)
-                    if not is_bridge:
+                    # Bare articles inside a bracket span have english=None (BibleHub renders
+                    # them as &nbsp; with no reorder number). Keep in_bracket so they don't
+                    # fragment a single [..] group into multiple bracket_ids.
+                    if bh_english is not None:
                         in_bracket = False
                 greek_pos = bh_greek_pos
             else:
