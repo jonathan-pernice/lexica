@@ -2785,18 +2785,19 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
             <div className="lexicon-dist-header">
               <div className="lexicon-dist-label">Distribution by book</div>
             </div>
-            <div className="lexicon-dist-grid">
+            <div className="lexicon-dist-list">
               {(filteredBooks || profile.books)
                 .filter(b => testament === "all" || (b.testament || "").toLowerCase() === testament)
-                .map(b => (
-                  <button
-                    key={b.book}
-                    className={"lexicon-dist-book" + (selectedBook === b.book ? " selected" : "")}
-                    onClick={() => selectBook(b.book)}
-                  >
-                    <span className="lexicon-dist-name">{b.name}</span>
-                    <span className="lexicon-dist-count">{b.count}</span>
-                  </button>
+                .map((b, i) => (
+                  <React.Fragment key={b.book}>
+                    {i > 0 && <span className="lexicon-dist-sep"> · </span>}
+                    <button
+                      className={"lexicon-dist-item" + (selectedBook === b.book ? " selected" : "")}
+                      onClick={() => selectBook(b.book)}
+                    >
+                      {b.name}<span className="lexicon-dist-count">{b.count}</span>
+                    </button>
+                  </React.Fragment>
                 ))}
             </div>
           </div>
