@@ -12,7 +12,7 @@ from html.parser import HTMLParser
 
 import anthropic
 from dotenv import load_dotenv
-from flask import Flask, Response, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request, url_for
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -1155,6 +1155,21 @@ def _strongs_num(q: str):
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, default_limits=[], storage_uri="memory://")
+
+
+@app.context_processor
+def _asset_helpers():
+    """Cache-busting static URLs: append each file's mtime as ?v=<mtime> so a
+    deploy (git pull bumps the mtime) forces browsers to refetch. Brave/Chrome
+    cache app.jsx + styles.css aggressively; a stale app.jsx served against a
+    fresh styles.css broke the mobile nav layout (both bars stacked at top)."""
+    def asset_url(filename):
+        try:
+            mtime = int(os.path.getmtime(os.path.join(app.static_folder, filename)))
+        except OSError:
+            mtime = 0
+        return url_for("static", filename=filename, v=mtime)
+    return {"asset_url": asset_url}
 
 
 def _migrate_db():
