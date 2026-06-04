@@ -226,6 +226,23 @@ def load_lexicon(conn: sqlite3.Connection) -> dict:
 
 # ── Compound splitting ────────────────────────────────────────────────────────
 
+def _is_pronoun_slot_morph(morph: str) -> bool:
+    """True if morph marks a pronoun / article / demonstrative / relative — the slot
+    classes whose short glosses (the/this/he/which) spuriously match words inside
+    legitimate multi-word glosses, so _split_compounds must NOT redistribute into them.
+      CATSS (OT): any R* — RA article, RD demonstrative (incl. αὐτός), RP personal,
+                  RR relative, RI interrogative/indefinite.
+      Robinson (NT): X- where X in T/P/D/R/F/S/K/Q/I (article/pronoun/demonstrative/
+                  relative/reflexive/possessive/reciprocal/correlative/interrogative).
+    Deliberately EXCLUDES conjunctions (καί/δέ→'and'), prepositions, adverbs (νῦν→'now')
+    and particles — those legitimately receive their gloss word via redistribution."""
+    if not morph:
+        return False
+    if morph[0] == "R":                       # CATSS R* + Robinson R- (relative)
+        return True
+    return len(morph) >= 2 and morph[1] == "-" and morph[0] in "TPDFSKQI"
+
+
 def _split_compounds(rows: list, lex: dict) -> None:
     """
     Redistribute words from compound ABP glosses to subsequent empty-english slots
@@ -255,22 +272,21 @@ def _split_compounds(rows: list, lex: dict) -> None:
                 break
             slot_base = rows[j][4]
             if slot_base and slot_base not in ("*", ""):
-                # Never redistribute a gloss word INTO a FUNCTION-word slot. Their
-                # short glosses ("the/this/he/of/and") spuriously match words inside
-                # legitimate multi-word glosses, so the matcher pulls e.g. "this" out
-                # of "of this possession" into the οὗτος(G3778) slot and fronts it →
-                # "this of possession". Only CONTENT slots (verb/noun/adjective per
-                # morph) legitimately receive a redistributed (object) word.
-                #   - copula εἰμί (base 1510, morph V) is content-POS but must also be
-                #     excluded — extracting "is" from "he is a prophet" and fronting it
-                #     gives "is he a prophet" (facet a). Explicit, morph-independent.
-                #   - when morph is absent (~22%) we fall back to the prior behavior
-                #     (allow), guarding only the copula, to avoid over-suppressing
-                #     genuine object redistribution.
+                # Never redistribute a gloss word INTO a PRONOUN/ARTICLE/DEMONSTRATIVE/
+                # RELATIVE slot. Their short glosses ("the/this/he/which") spuriously
+                # match words inside legitimate multi-word glosses, so the matcher pulls
+                # e.g. "this" out of "of this possession" into the οὗτος(G3778) slot and
+                # fronts it → "this of possession". Conjunctions/prepositions/adverbs/
+                # particles are NOT excluded — they legitimately receive their gloss word
+                # (δέ→"And", νῦν→"now"), so excluding them regressed Gen 20:7's opening.
+                #   - copula εἰμί (base 1510) also excluded — extracting "is" from
+                #     "he is a prophet" and fronting it gives "is he a prophet" (facet a).
+                #   - morph-absent (~22%) falls back to prior behavior (allow), guarding
+                #     only the copula, to avoid over-suppressing genuine redistribution.
                 slot_morph = rows[j][11] or ""
                 if slot_base == "1510":
                     continue
-                if slot_morph and slot_morph[:1] not in ("V", "N", "A"):
+                if _is_pronoun_slot_morph(slot_morph):
                     continue
                 ahead.append((j, slot_base, lex.get(slot_base, set())))
 
