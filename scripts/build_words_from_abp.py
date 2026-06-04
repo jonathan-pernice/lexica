@@ -255,6 +255,13 @@ def _split_compounds(rows: list, lex: dict) -> None:
                 break
             slot_base = rows[j][4]
             if slot_base and slot_base not in ("*", ""):
+                # facet (a): never redistribute a gloss word INTO the copula slot
+                # (εἰμί, every conjugation → base 1510). Extracting e.g. "is" from
+                # "he is a prophet" and fronting it (the swap below) renders
+                # "is he a prophet"; leaving the copula slot empty keeps the
+                # predicate gloss whole → "...for he is a prophet,".
+                if slot_base == "1510":
+                    continue
                 ahead.append((j, slot_base, lex.get(slot_base, set())))
 
         if not ahead:
