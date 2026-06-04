@@ -122,7 +122,27 @@ Live (rebuild #6) is correct and untouched — this is the only remaining sympto
 Relates to the ABP eSword re-source idea (project_abp_esword_fidelity) — the source bundles
 these glosses, so a re-source may dissolve the problem.
 
-## LSJ coverage audit — generalize the pronoun-stub fix (queued 2026-06-04)
+## LSJ coverage audit — generalize the pronoun-stub fix (✅ PRONOUN CLASS DONE 2026-06-04)
+
+✅ **Pronoun paradigms audited and closed (2026-06-04).** Morph-driven audit (distinct Greek
+`strongs_base` whose `morph` GLOBs a pronoun tag → `lexicon.lemma` → exact-key test) over
+demonstratives/relatives/αὐτός-obliques/reflexives/interrog-indef. STRUCTURAL FINDING: the big
+paradigms DON'T dead-end — αὐτός (G846), demonstratives (οὗτος G3778, ἐκεῖνος, ὅδε), relatives
+(ὅς G3739, ὅστις) collapse ALL case forms onto ONE Strong's with a NOMINATIVE lemma that has a
+full LSJ entry, so τοῦτον/ὅν/αὐτόν resolve as οὗτος/ὅς/αὐτός. Reflexives + σός have own entries.
+Only 3 genuine new gaps → fixed with stubs: **ἐμοῦ(G1700)/ἐμοί(G1698)/ἐμέ(G1691) → `v. ἐγώ`**
+(emphatic 1st-sing, same class as the enclitic μοῦ/μοί/μέ stubs). τὶς(G5100) was a FALSE flag
+(exact-key test misses the plain fallback; strip_accents('τὶς')='τις' already hits the full `τις`
+entry). τηλικοῦτος(G5082, 4×) optional `v. τηλίκος`. Verified in-app (σέ→σύ, ἐμ-→ἐγώ). See memory
+`project_pronoun_fix_path_c.md` (LSJ pronoun-coverage AUDIT block). Rollback = `DELETE FROM lsj
+WHERE key IN ('ἐμοῦ','ἐμοί','ἐμέ','τηλικοῦτος')`.
+
+RESIDUAL (optional, lower value): a corpus-wide sweep of NON-pronoun inflected forms. Likely
+near-empty — `lexicon.lemma` for verbs/nouns is already the dictionary headword (present 1st-sing
+/ nominative), so they resolve directly; the pronoun class was special because of case-split
+Strong's numbers. Re-open only if a specific non-pronoun word is reported showing the terse gloss.
+
+--- ORIGINAL TASK NOTES (kept for the method) ---
 
 Inflected Greek forms whose dictionary headword is a *different* word have no own LSJ key,
 so `/api/lsj` falls through to the terse Strong's gloss (e.g. σέ → "thee"). 2026-06-04 we
@@ -270,7 +290,7 @@ Live on `bible.db` = rebuild #6 (rollback `bible_pre_morph_20260604.db`). Detail
 ### ✓ Prose Reading Mode — DONE
 Chip/Prose toggle live. Prose renders clickable inline word spans, no chip borders. Continuous flow and poetry detection complete (Text Structure Session).
 
-### ✓ Morphology Display — DONE + LIVE (2026-06-04, commit ab6657b)
+### ✓ Morphology Display — DONE + LIVE (2026-06-04, commits ab6657b + e90f2ff)
 Word-click sidebar now renders the `morph` parsing in plain English under the headword
 (e.g. "Verb · Aorist · Active · Indicative · 3rd person · Singular"). Frontend-only:
 `decodeMorph()` in app.jsx (per-scheme tables — CATSS dotted OT / Robinson hyphen NT, since
@@ -279,9 +299,14 @@ the letters conflict: CATSS perfect=X/imperative=D vs Robinson perfect=R/imperat
 (Hebrew/PN/NULL hide cleanly). Verified in-app: V.AAI3S verb, RP.NS pronoun (Gen 3:15 σύ / 6:13
 ἐγώ → "Pronoun · Nominative · Singular"), NT Robinson, Hebrew/`*` omit. Decoder handles
 person-prefixed Robinson pronouns (P-1GS), trailing name markers (N-GSM-T), PRT-N,
-indeclinables (N-PRI/A-NUI), 2nd aorist. NOTE: CATSS tags αὐτός as RD → renders "Demonstrative
-pronoun" (faithful to source; one-word change to _CATSS_POS.RD if plain "Pronoun" preferred).
-Original kickoff brief below for reference.
+indeclinables (N-PRI/A-NUI), 2nd aorist.
+RD-class disambiguation (commit e90f2ff): CATSS lumps αὐτός, the reflexives (ἑαυτοῦ/σεαυτοῦ/
+ἐμαυτοῦ), the reciprocal (ἀλλήλων) and the true demonstratives all under RD. `_CATSS_RD_LEMMA`
+maps by lemma (passed in as entry.greek, NFC-normalized) → αὐτός="Pronoun" (matches Robinson
+P, 19.4k words), ἑαυτοῦ…="Reflexive pronoun" (547), ἀλλήλων="Reciprocal pronoun"; default for
+the rest (οὗτος/ἐκεῖνος/ὅδε/τοιοῦτος) stays "Demonstrative pronoun". Verified in-app: αὐτός
+(Gen 4:4) → "Pronoun · Nominative · Singular · Masculine". So OT now matches the finer P/F/C/D
+distinctions Robinson already encodes. Original kickoff brief below for reference.
 
 ### ★ Morphology Display — KICKOFF (data DONE 2026-06-04 · display PENDING · NEXT SESSION)
 
