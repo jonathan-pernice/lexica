@@ -219,6 +219,19 @@ Live on `bible.db` = rebuild #6 (rollback `bible_pre_morph_20260604.db`). Detail
 ### ✓ Prose Reading Mode — DONE
 Chip/Prose toggle live. Prose renders clickable inline word spans, no chip borders. Continuous flow and poetry detection complete (Text Structure Session).
 
+### ✓ Morphology Display — DONE + LIVE (2026-06-04, commit ab6657b)
+Word-click sidebar now renders the `morph` parsing in plain English under the headword
+(e.g. "Verb · Aorist · Active · Indicative · 3rd person · Singular"). Frontend-only:
+`decodeMorph()` in app.jsx (per-scheme tables — CATSS dotted OT / Robinson hyphen NT, since
+the letters conflict: CATSS perfect=X/imperative=D vs Robinson perfect=R/imperative=M),
+`morph` plumbed through the Library makeEntry, one muted `.detail-morph` line, ABP Greek only
+(Hebrew/PN/NULL hide cleanly). Verified in-app: V.AAI3S verb, RP.NS pronoun (Gen 3:15 σύ / 6:13
+ἐγώ → "Pronoun · Nominative · Singular"), NT Robinson, Hebrew/`*` omit. Decoder handles
+person-prefixed Robinson pronouns (P-1GS), trailing name markers (N-GSM-T), PRT-N,
+indeclinables (N-PRI/A-NUI), 2nd aorist. NOTE: CATSS tags αὐτός as RD → renders "Demonstrative
+pronoun" (faithful to source; one-word change to _CATSS_POS.RD if plain "Pronoun" preferred).
+Original kickoff brief below for reference.
+
 ### ★ Morphology Display — KICKOFF (data DONE 2026-06-04 · display PENDING · NEXT SESSION)
 
 GOAL: when a Greek word is clicked, show its grammatical parsing in plain English in the
