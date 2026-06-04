@@ -122,18 +122,20 @@ class RahlfsLXX:
     # standard English order, validated empirically by scripts/align_survey.pl —
     # NOT the deuterocanon-interleaved 001_verse_c_book.csv order).
     # SCOPE GATE: a book is corrected ONLY if it's listed here; any book NOT here
-    # → booknum() None → its pronouns stay G1473 (no regression). Now 35 books:
-    # the 24 CLEAN (≤12% flags) + the 11 BORDERLINE, validated 2026-06-03 with
-    # both guards (per-verse RATE=0.0/MIN=1 + gloss-consistency) → MISMATCH 0 on
-    # all. OMITTED (4 hard, need versification bridges before they can align):
-    # Psa 19, Jer 24, Dan 27, Joe 29 — added in a later pass.
+    # → booknum() None → its pronouns stay G1473 (no regression). ALL 39 OT books
+    # now enabled (validated 2026-06-03 with both guards → MISMATCH 0 on every
+    # book). Two needed versification bridges (see _VERSIFICATION): Psa 19 (MT→LXX)
+    # and Joe 29 (Eng 3ch→LXX 4ch). Jer 24 and Dan 27 align DIRECTLY — their
+    # survey flag% was LXX-vs-MT divergence (safe gaps), not misalignment, proven
+    # by low/zero per-verse guard-flags (Jer 67, Dan 0). No NT here (separate pass).
     ABP_BOOKNUM = {
         "Gen": 1,  "Exo": 2,  "Lev": 3,  "Num": 4,  "Deu": 5,  "Jos": 6,
         "Jdg": 7,  "Rth": 8,  "1Sa": 9,  "2Sa": 10, "1Ki": 11, "2Ki": 12,
         "1Ch": 13, "2Ch": 14, "Ezr": 15, "Neh": 16, "Est": 17, "Job": 18,
-        "Pro": 20, "Ecc": 21, "Son": 22, "Isa": 23, "Lam": 25, "Eze": 26,
-        "Hos": 28, "Amo": 30, "Oba": 31, "Jon": 32, "Mic": 33, "Nah": 34,
-        "Hab": 35, "Zep": 36, "Hag": 37, "Zec": 38, "Mal": 39,
+        "Psa": 19, "Pro": 20, "Ecc": 21, "Son": 22, "Isa": 23, "Jer": 24,
+        "Lam": 25, "Eze": 26, "Dan": 27, "Hos": 28, "Joe": 29, "Amo": 30,
+        "Oba": 31, "Jon": 32, "Mic": 33, "Nah": 34, "Hab": 35, "Zep": 36,
+        "Hag": 37, "Zec": 38, "Mal": 39,
     }
 
     def __init__(self, rahlfs_dir):
