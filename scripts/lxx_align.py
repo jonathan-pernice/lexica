@@ -98,7 +98,19 @@ def _psalm_mt_to_lxx(ch, vs):
     if ch == 147:  return (146, vs) if vs <= 11 else (147, vs - 11) # MT 147 → LXX 146+147
     return ch, vs                                 # MT 148..150 identical
 
-_VERSIFICATION = {19: _psalm_mt_to_lxx}           # ABP booknum → (ch,vs) -> (ch,vs)
+def _joel_eng_to_lxx(ch, vs):
+    # ABP Joel uses English/MT-English (3 ch, Joel 2 = 32v incl. the 2:28-32
+    # "pour out my Spirit"); Rahlfs/LXX uses 4 ch. ABP 2:28-32 → LXX 3:1-5;
+    # ABP 3 → LXX 4. ABP 1 and 2:1-27 unchanged. (Verified 2026-06-03: the
+    # misaligned tail 2:28→3:21 ≈ 36% = the survey's 34% pre-bridge flag rate.)
+    if ch == 2 and vs >= 28:  return 3, vs - 27    # ABP 2:28→LXX 3:1 … 2:32→3:5
+    if ch == 3:               return 4, vs         # ABP 3 → LXX 4
+    return ch, vs
+
+_VERSIFICATION = {                                 # ABP booknum → (ch,vs) -> (ch,vs)
+    19: _psalm_mt_to_lxx,                          # Psalms  MT → LXX
+    29: _joel_eng_to_lxx,                          # Joel    Eng(3ch) → LXX(4ch)
+}
 
 
 # ── Rahlfs data (line-aligned parallel arrays, 623,693 words) ───────────────
