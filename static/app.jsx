@@ -1410,6 +1410,28 @@ function groupForGreekMode(words) {
   return groups;
 }
 
+// Which sub-word of a split multi-word gloss carries the Strong's number + Greek
+// lemma superscript in chip mode. For a CONTENT-word slot (verb/noun/adjective per
+// the morph POS) the number belongs to the head content word — english_head, e.g.
+// "put" in "you shall put it" — not the leading "you". For a FUNCTION-word slot
+// (article/preposition/pronoun/conjunction/particle), and whenever morph is absent,
+// it stays on the first non-italic token (prior behavior), which IS the function
+// word itself ("of", "the"). Only ever returns a non-italic (visible) token so the
+// superscript actually renders. morph schemes: OT CATSS (V./N./A.) + NT Robinson
+// (V-/N-/A-) — content words start V/N/A in both.
+function strongsAnchorIndex(parts, italicSet, w) {
+  const bare = s => s.replace(/[^\w]/g, "").toLowerCase();
+  const firstNonItalic = parts.findIndex(word => !italicSet.has(bare(word)));
+  const m = w.morph || "";
+  const isContent = m && (m[0] === "V" || m[0] === "N" || m[0] === "A");
+  if (isContent && w.english_head) {
+    const hb = bare(w.english_head);
+    const hi = parts.findIndex(word => bare(word) === hb && !italicSet.has(bare(word)));
+    if (hi >= 0) return hi;
+  }
+  return firstNonItalic;
+}
+
 // ============================================================
 // LIB NAV PANEL — desktop left sidebar (≥1100px)
 // ============================================================
@@ -1779,7 +1801,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         return (
           <React.Fragment key={key}>
             {(() => {
-              const firstNonItalic = parts.findIndex(word => !italicSet.has(word.replace(/[^\w]/g,'').toLowerCase()));
+              const anchorIdx = strongsAnchorIndex(parts, italicSet, w);
               return parts.map((word, pi) => {
                 const bare = word.replace(/[^\w]/g, '').toLowerCase();
                 if (italicSet.has(bare)) {
@@ -1794,11 +1816,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                   <span key={`${key}-p${pi}`}
                     className={"lib-word" + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
                     onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
-                    {showInterlinear && (pi === firstNonItalic && w.lemma
+                    {showInterlinear && (pi === anchorIdx && w.lemma
                       ? <span className="lib-iw-greek">{w.lemma}</span>
                       : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>)}
                     <span className="lib-iw-english">{word}</span>
-                    {showStrongs && (pi === firstNonItalic && w.strongs_base && w.strongs_base !== "*"
+                    {showStrongs && (pi === anchorIdx && w.strongs_base && w.strongs_base !== "*"
                       ? <span className="lib-iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
                       : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>)}
                   </span>
@@ -1838,6 +1860,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         const italicSet = new Set(w.italic_words.split(','));
         const smcapSet  = w.smcap_words ? new Set(w.smcap_words.split(',')) : new Set();
         const parts = w.english.split(' ');
+        const anchorIdx = strongsAnchorIndex(parts, italicSet, w);
         return (
           <React.Fragment key={key}>
             {parts.map((word, pi) => {
@@ -1858,7 +1881,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 <span key={`${key}-p${pi}`}
                   className={"lib-word lib-word-bracketed" + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : "")}
                   onClick={clickable ? () => onWordClick(isPN ? { ...makeEntry(w), isPN: true, pnName: w.english || w.english_head } : makeEntry(w)) : undefined}>
-                  {showInterlinear && (pi === 0 && w.lemma
+                  {showInterlinear && (pi === anchorIdx && w.lemma
                     ? <span className="lib-iw-greek">{w.lemma}</span>
                     : <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>)}
                   <span className="lib-iw-pos-english">
@@ -1866,7 +1889,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                       <span className="lib-iw-pos">{w.greek_pos}</span>}
                     <span className="lib-iw-english">{word}</span>
                   </span>
-                  {showStrongs && (pi === 0 && w.strongs_base && w.strongs_base !== "*"
+                  {showStrongs && (pi === anchorIdx && w.strongs_base && w.strongs_base !== "*"
                     ? <span className="lib-iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
                     : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>)}
                 </span>

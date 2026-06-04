@@ -1674,7 +1674,7 @@ def verse_words(book, chapter, verse):
         wrows = conn.execute(
             """SELECT w.position, w.english, w.english_head, w.greek_pos, w.bracket_id, w.italic,
                       COALESCE(w.italic_words, '') AS italic_words,
-                      w.strongs_base, w.strongs, w.is_pn,
+                      w.strongs_base, w.strongs, w.is_pn, w.morph,
                       l.lemma, l.translit, l.kjv_def, l.strongs_def, l.derivation,
                       t.entity_type AS pn_type
                FROM words w
@@ -1695,6 +1695,7 @@ def verse_words(book, chapter, verse):
                 "greek_pos":  w["greek_pos"],
                 "bracket_id":   w["bracket_id"],
                 "italic":       bool(w["italic"]),
+                "morph":        w["morph"],
                 "italic_words": w["italic_words"],
                 "kjv_def":    w["kjv_def"],
                 "strongs_base": w["strongs_base"],
@@ -2449,7 +2450,7 @@ def chapter_text(book, chapter):
     try:
         rows = conn.execute(
             """SELECT v.verse, v.text AS prose, w.position, w.english, w.english_head, w.strongs_base, w.strongs,
-                      l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic, w.is_pn,
+                      l.lemma, l.translit, l.kjv_def, w.greek_pos, w.bracket_id, w.italic, w.is_pn, w.morph,
                       COALESCE(w.italic_words, '') AS italic_words,
                       COALESCE(w.smcap_words,  '') AS smcap_words,
                       t.entity_type AS pn_type,
@@ -2484,6 +2485,7 @@ def chapter_text(book, chapter):
             "greek_pos":    r["greek_pos"],
             "bracket_id":   r["bracket_id"],
             "italic":       r["italic"],
+            "morph":        r["morph"],
             "italic_words": r["italic_words"],
             "smcap_words":  r["smcap_words"],
             "is_pn":        bool(r["is_pn"] or 0),
