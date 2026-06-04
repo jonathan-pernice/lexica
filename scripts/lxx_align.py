@@ -194,11 +194,16 @@ class Correction:
         self.morph = morph
         self.reason = reason
 
-def correct_verse(abp_strongs_raw, rahlfs_verse):
+def correct_verse(abp_strongs_raw, rahlfs_verse, glosses=None):
     """
     abp_strongs_raw : list of ABP raw Strong's per word, in ABP source order
                       (e.g. 'G1473', 'G3077', 'G*', None).
     rahlfs_verse    : output of RahlfsLXX.verse() — [(strong, morph, is_pron), ...]
+    glosses         : optional ABP English gloss per word (same order). When
+                      given (and the guard is on), a correction is REFUSED and
+                      flagged if its person contradicts ABP's own gloss — ABP is
+                      the primary text, so we never write a number ABP disagrees
+                      with (kills the η/υ and local-shift mistags). None → skip.
     Returns a list of Correction objects, one per ABP word, same order.
 
       action 'fix'  : was G1473, aligned to a known Rahlfs pronoun → new_strong+morph
@@ -209,6 +214,13 @@ def correct_verse(abp_strongs_raw, rahlfs_verse):
     a_bases = [base(s) for s in abp_strongs_raw]
     b_bases = [t[0] for t in rahlfs_verse]
     b_pron  = [t[2] for t in rahlfs_verse]
+
+    # ABP's OWN English gloss → person bucket per slot (None = no clear cue).
+    # Used below to refuse any correction that contradicts ABP's reading.
+    # (_gloss_buckets / _EN_BUCKET / _CAT_BUCKET are module-level, defined below;
+    # resolved at call time.) Disabled wholesale when the guard is off.
+    gloss_buckets = (_gloss_buckets(glosses)
+                     if (glosses is not None and GUARD_ENABLED) else None)
 
     # No Rahlfs data → flag every pronoun slot, leave everything else.
     if not rahlfs_verse:
@@ -249,9 +261,18 @@ def correct_verse(abp_strongs_raw, rahlfs_verse):
                 # Mis-sliced verse: leave as G1473, log for the versification pass.
                 out.append(Correction("flag", reason="low-confidence-verse"))
             elif rt and rt[0] in RESOLVE:
-                act = "keep" if rt[0] in EGO else "fix"
-                out.append(Correction(act, new_strong=rt[0], morph=rt[1],
-                                       reason=_category(rt[0])))
+                cat = _category(rt[0])
+                gb = gloss_buckets[i] if gloss_buckets is not None else None
+                if gb is not None and gb != _CAT_BUCKET.get(cat):
+                    # ABP's gloss is a clear pronoun of a DIFFERENT person than
+                    # the aligned number (gloss 'me'/1S vs αὐτός/3P; η/υ ἡμεῖς↔
+                    # ὑμεῖς plural variants; local person-shifts). Defer to ABP:
+                    # leave G1473, log for review — never write a contested number.
+                    out.append(Correction("flag",
+                                          reason=f"gloss-mismatch:{gb}≠{_CAT_BUCKET.get(cat)}"))
+                else:
+                    act = "keep" if rt[0] in EGO else "fix"
+                    out.append(Correction(act, new_strong=rt[0], morph=rt[1], reason=cat))
             else:
                 why = "gap" if rt is None else ("blank" if rt[0] == "" else f"non-pron:{rt[0]}")
                 out.append(Correction("flag", reason=why))
@@ -279,7 +300,7 @@ def _probe(abp_abbrev, abp_txt, rahlfs_dir):
             continue
         ch, vs = int(m.group(2)), int(m.group(3))
         abp_raw = _STRONGS_RE.findall(m.group(4))
-        corrs = correct_verse(abp_raw, rx.verse(bnum, ch, vs))
+        corrs = correct_verse(abp_raw, rx.verse(bnum, ch, vs), _verse_glosses(m.group(4)))
         for c in corrs:
             if c.action in ("fix", "keep"):
                 n1473 += 1; cats[c.reason] = cats.get(c.reason, 0) + 1
@@ -335,6 +356,17 @@ def _verse_glosses(text):
     is the text immediately preceding gnum[i]."""
     return _STRONGS_RE.split(text)[0::2]
 
+def _gloss_buckets(glosses):
+    """Per-slot ABP-English person bucket (1S/1P/2P/3P) or None for no clear
+    cue. '-self'/'-selves' → None: αὐτός used intensively ('you yourself') is
+    valid with any person, so reflexive forms must not constrain the number."""
+    out = []
+    for g in glosses:
+        w = _last_en_word(g)
+        out.append(None if (w.endswith("self") or w.endswith("selves"))
+                   else _EN_BUCKET.get(w))
+    return out
+
 def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
     bnum = _FULL_BOOKNUM.get(abp_abbrev)
     if not bnum:
@@ -343,7 +375,7 @@ def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
     verse_re = re.compile(r"^\((\w+)\s+(\d+):(\d+)\)\s+(.*)")
     mism = []           # (ref, gloss_word, cat, morph, en_bucket, cat_bucket)
     okeng = {}          # cat -> [(ref, gloss_word, morph)]
-    morph_only = fixes = guard_flags = 0
+    morph_only = fixes = guard_flags = gloss_flags = 0
     for line in open(abp_txt, encoding="utf-8", errors="replace"):
         m = verse_re.match(line.strip())
         if not m or m.group(1) != abp_abbrev:
@@ -352,11 +384,14 @@ def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
         text = m.group(4)
         abp_raw = _STRONGS_RE.findall(text)
         glosses = _verse_glosses(text)
-        corrs = correct_verse(abp_raw, rx.verse(bnum, ch, vs))
+        corrs = correct_verse(abp_raw, rx.verse(bnum, ch, vs), glosses)
         ref = f"{abp_abbrev} {ch}:{vs}"
         for i, c in enumerate(corrs):
             if c.action == "flag" and c.reason == "low-confidence-verse":
                 guard_flags += 1
+                continue
+            if c.action == "flag" and c.reason.startswith("gloss-mismatch"):
+                gloss_flags += 1
                 continue
             if c.action not in ("fix", "keep"):
                 continue
@@ -376,9 +411,10 @@ def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
     print(f"\n══ lxx_align --dump: {abp_abbrev} (book {bnum})  guard={'on' if GUARD_ENABLED else 'OFF'} ══")
     print(f"  corrected (fix+keep) slots : {fixes}")
     print(f"  guard-flagged (low-conf)   : {guard_flags}")
+    print(f"  gloss-flagged (person≠ABP) : {gloss_flags}")
     print(f"  English gloss CONFIRMS     : {sum(len(v) for v in okeng.values())}")
     print(f"  no English cue (morph only): {morph_only}")
-    print(f"  *** MISMATCH (english≠num) : {len(mism)} ***")
+    print(f"  *** MISMATCH (should be 0) : {len(mism)} ***")
     if mism:
         print("\n  ── MISMATCHES (english gloss contradicts assigned number) ──")
         for ref, gw, cat, mo, eb, cb in mism[:80]:

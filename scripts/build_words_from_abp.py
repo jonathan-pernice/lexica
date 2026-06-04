@@ -600,7 +600,8 @@ def run(bible_db: str, scrape_db: str) -> None:
             bnum = rahlfs.booknum(abbrev)
             if bnum:
                 corrs = correct_verse([w[1] for w in abp_words],
-                                      rahlfs.verse(bnum, chapter, verse))
+                                      rahlfs.verse(bnum, chapter, verse),
+                                      [w[0] for w in abp_words])
                 abp_words = apply_pronoun_corrections(
                     abp_words, corrs, flag_log, f"{abbrev} {chapter}:{verse}")
 
@@ -674,7 +675,8 @@ def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,
             bnum = rahlfs.booknum(book_abbrev)
             if bnum:
                 corrs = correct_verse([w[1] for w in abp_words],
-                                      rahlfs.verse(bnum, chapter, vs))
+                                      rahlfs.verse(bnum, chapter, vs),
+                                      [w[0] for w in abp_words])
                 abp_words = apply_pronoun_corrections(
                     abp_words, corrs, flag_log, f"{book_abbrev} {chapter}:{vs}")
         word_rows = build_verse_words(abp_words, bh_rows, lex)
