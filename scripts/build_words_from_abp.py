@@ -255,12 +255,22 @@ def _split_compounds(rows: list, lex: dict) -> None:
                 break
             slot_base = rows[j][4]
             if slot_base and slot_base not in ("*", ""):
-                # facet (a): never redistribute a gloss word INTO the copula slot
-                # (εἰμί, every conjugation → base 1510). Extracting e.g. "is" from
-                # "he is a prophet" and fronting it (the swap below) renders
-                # "is he a prophet"; leaving the copula slot empty keeps the
-                # predicate gloss whole → "...for he is a prophet,".
+                # Never redistribute a gloss word INTO a FUNCTION-word slot. Their
+                # short glosses ("the/this/he/of/and") spuriously match words inside
+                # legitimate multi-word glosses, so the matcher pulls e.g. "this" out
+                # of "of this possession" into the οὗτος(G3778) slot and fronts it →
+                # "this of possession". Only CONTENT slots (verb/noun/adjective per
+                # morph) legitimately receive a redistributed (object) word.
+                #   - copula εἰμί (base 1510, morph V) is content-POS but must also be
+                #     excluded — extracting "is" from "he is a prophet" and fronting it
+                #     gives "is he a prophet" (facet a). Explicit, morph-independent.
+                #   - when morph is absent (~22%) we fall back to the prior behavior
+                #     (allow), guarding only the copula, to avoid over-suppressing
+                #     genuine object redistribution.
+                slot_morph = rows[j][11] or ""
                 if slot_base == "1510":
+                    continue
+                if slot_morph and slot_morph[:1] not in ("V", "N", "A"):
                     continue
                 ahead.append((j, slot_base, lex.get(slot_base, set())))
 
