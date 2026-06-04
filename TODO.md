@@ -29,6 +29,29 @@ Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and 
 - `dedup_words.py` — remove exact-duplicate rows
 - All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
 
+## LSJ coverage audit — generalize the pronoun-stub fix (queued 2026-06-04)
+
+Inflected Greek forms whose dictionary headword is a *different* word have no own LSJ key,
+so `/api/lsj` falls through to the terse Strong's gloss (e.g. σέ → "thee"). 2026-06-04 we
+fixed the personal-pronoun families by adding 11 "v. <base>" stub rows to `lsj`
+(σέ/ὑμεῖς/ὑμᾶς/ὑμῖν/ὑμῶν→σύ; μέ/μοί/μοῦ→ἐγώ; ἡμᾶς/ἡμῖν/ἡμῶν→ἡμεῖς) — see memory
+`project_pronoun_fix_path_c.md` (LSJ note). That was SCOPED to those forms only.
+
+This task = the corpus-wide version:
+- AUDIT: for every distinct `lexicon.lemma` the `words` table actually uses (G-numbers),
+  check whether it resolves in `lsj` (exact `key`, accent-strip via `plain` =
+  `lower(strip_accents(lemma))`, or an existing "v. X" xref stub) vs falls to the Strong's
+  gloss. List the misses by frequency. NOTE: `strip_accents` is an app-registered SQLite
+  fn (not in the bare CLI) — run the audit via a small read-only Python script using the
+  app's `db()` connection (or replicate NFD-strip in Python).
+- FIX only the misses that are an **inflected form of an existing LSJ headword** — add a
+  `<b>FORM</b>, v. <i>BASE</i>.` stub with `plain=lower(strip_accents(FORM))`, exactly like
+  the σέ fix; the generic `_resolve_lsj_xref` then follows it. Likely paradigms still
+  unaudited: αὐτός obliques (αὐτόν/αὐτοῦ/αὐτῷ/αὐτήν…), demonstratives (οὗτος/τοῦτον/ἐκεῖνος),
+  relatives (ὅς/ὅν/οὗ/ᾧ), reflexives (ἑαυτοῦ/σεαυτοῦ/ἐμαυτοῦ), interrogative/indefinite (τίς/τινος).
+- DO NOT stub genuinely-absent rare words (no base headword exists) — they correctly keep the
+  Strong's gloss. No code change, no rebuild — pure `lsj` data (idempotent INSERT OR IGNORE).
+
 ## Priority: Lexicon tab & AI corpus search (ORPHANS — need a focused pass)
 
 Two areas the user flagged as under-attended and needing real attention. **Start each by
