@@ -26,6 +26,7 @@ Self-test (reproduces the Genesis measurement, ~94.7% resolved):
         abp_texts/abp_ot_texts/abp_genesis.txt  /path/to/LXX-Rahlfs-1935
 """
 
+import os
 import re
 import sys
 from pathlib import Path
@@ -37,6 +38,18 @@ SU     = {"4771", "4675", "4671", "4571", "4674"}                  # σύ family
 HUMEIS = {"5210", "5216", "5213", "5209"}                          # ὑμεῖς fam (fix)
 AUTOS  = {"846"}                                                   # αὐτός     (fix)
 RESOLVE = EGO | HEMEIS | SU | HUMEIS | AUTOS   # G1473 may be corrected to one of these
+
+# ── per-verse alignment-confidence guard ────────────────────────────────────
+# A G1473 correction is trusted only if the verse's NON-pronoun anchor words
+# actually matched Rahlfs — proof we sliced the RIGHT verse. Mis-versified
+# chapters (LXX 1Ki 20<->21 swap, Jon 2 / Hos 2,12,14 / Exo 8,22 offsets…)
+# align the WRONG Rahlfs verse, so their anchors don't match → the verse's
+# pronoun slots are flagged 'low-confidence-verse' instead of mis-corrected.
+# This also catches the morph-only (possessive) leak that English can't see.
+# Toggle off for A/B measurement: LXX_GUARD=0 python3 scripts/lxx_align.py …
+GUARD_ENABLED     = os.environ.get("LXX_GUARD", "1") != "0"
+GUARD_MIN_RATE    = float(os.environ.get("LXX_GUARD_RATE", "0.50"))  # ≥X of anchorable match
+GUARD_MIN_ANCHORS = int(os.environ.get("LXX_GUARD_MIN", "1"))        # ≥N actual matches
 
 def _category(strong: str) -> str:
     if strong in AUTOS:  return "αὐτός"
@@ -208,12 +221,34 @@ def correct_verse(abp_strongs_raw, rahlfs_verse):
         if ai >= 0:
             amap[ai] = bj
 
+    # ── per-verse confidence: did we slice the RIGHT Rahlfs verse? ──────────
+    # Count non-pronoun ABP anchors that match Rahlfs in their aligned slot.
+    # Low match-rate ⇒ wrong verse sliced (versification offset) ⇒ don't trust
+    # ANY pronoun correction here. anchorable==0 (pure-pronoun verse) → no
+    # evidence either way → keep prior behavior (rare; a guard can't help).
+    anchorable = matched = 0
+    for i, ab in enumerate(a_bases):
+        if ab in ("", "*", "1473"):
+            continue
+        bj = amap.get(i, -1)
+        if bj is None or bj < 0:
+            continue
+        anchorable += 1
+        if rahlfs_verse[bj][0] == ab:
+            matched += 1
+    confident = (not GUARD_ENABLED) or (anchorable == 0) or (
+        matched >= GUARD_MIN_ANCHORS and matched >= GUARD_MIN_RATE * anchorable
+    )
+
     out = []
     for i, ab in enumerate(a_bases):
         bj = amap.get(i, -1)
         rt = rahlfs_verse[bj] if bj is not None and bj >= 0 else None
         if ab == "1473":
-            if rt and rt[0] in RESOLVE:
+            if not confident:
+                # Mis-sliced verse: leave as G1473, log for the versification pass.
+                out.append(Correction("flag", reason="low-confidence-verse"))
+            elif rt and rt[0] in RESOLVE:
                 act = "keep" if rt[0] in EGO else "fix"
                 out.append(Correction(act, new_strong=rt[0], morph=rt[1],
                                        reason=_category(rt[0])))
@@ -308,7 +343,7 @@ def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
     verse_re = re.compile(r"^\((\w+)\s+(\d+):(\d+)\)\s+(.*)")
     mism = []           # (ref, gloss_word, cat, morph, en_bucket, cat_bucket)
     okeng = {}          # cat -> [(ref, gloss_word, morph)]
-    morph_only = fixes = 0
+    morph_only = fixes = guard_flags = 0
     for line in open(abp_txt, encoding="utf-8", errors="replace"):
         m = verse_re.match(line.strip())
         if not m or m.group(1) != abp_abbrev:
@@ -320,6 +355,9 @@ def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
         corrs = correct_verse(abp_raw, rx.verse(bnum, ch, vs))
         ref = f"{abp_abbrev} {ch}:{vs}"
         for i, c in enumerate(corrs):
+            if c.action == "flag" and c.reason == "low-confidence-verse":
+                guard_flags += 1
+                continue
             if c.action not in ("fix", "keep"):
                 continue
             fixes += 1
@@ -335,8 +373,9 @@ def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
                 okeng.setdefault(cat, []).append((ref, gword, c.morph))
             else:
                 mism.append((ref, gword, cat, c.morph, ebkt, cbkt))
-    print(f"\n══ lxx_align --dump: {abp_abbrev} (book {bnum}) ══")
+    print(f"\n══ lxx_align --dump: {abp_abbrev} (book {bnum})  guard={'on' if GUARD_ENABLED else 'OFF'} ══")
     print(f"  corrected (fix+keep) slots : {fixes}")
+    print(f"  guard-flagged (low-conf)   : {guard_flags}")
     print(f"  English gloss CONFIRMS     : {sum(len(v) for v in okeng.values())}")
     print(f"  no English cue (morph only): {morph_only}")
     print(f"  *** MISMATCH (english≠num) : {len(mism)} ***")
