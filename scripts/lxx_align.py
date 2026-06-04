@@ -261,9 +261,105 @@ def _probe(abp_abbrev, abp_txt, rahlfs_dir):
     print("  (expect ~94.7% on Genesis — matches the validated Perl probe)")
 
 
+# ── per-verse correction dump (no DB) — borderline-book spot-check ──────────
+# INSPECTION-ONLY book map: ALL 39 protocanonical ABP books → Marvel booknum.
+# This is deliberately NOT the correction scope gate (ABP_BOOKNUM, smaller).
+# --dump uses it so we can eyeball a book's corrections BEFORE deciding whether
+# to add it to ABP_BOOKNUM. Adding a book here changes NOTHING about the build.
+_FULL_BOOKNUM = {
+    "Gen": 1,  "Exo": 2,  "Lev": 3,  "Num": 4,  "Deu": 5,  "Jos": 6,
+    "Jdg": 7,  "Rth": 8,  "1Sa": 9,  "2Sa": 10, "1Ki": 11, "2Ki": 12,
+    "1Ch": 13, "2Ch": 14, "Ezr": 15, "Neh": 16, "Est": 17, "Job": 18,
+    "Psa": 19, "Pro": 20, "Ecc": 21, "Son": 22, "Isa": 23, "Jer": 24,
+    "Lam": 25, "Eze": 26, "Dan": 27, "Hos": 28, "Joe": 29, "Amo": 30,
+    "Oba": 31, "Jon": 32, "Mic": 33, "Nah": 34, "Hab": 35, "Zep": 36,
+    "Hag": 37, "Zec": 38, "Mal": 39,
+}
+
+# English pronoun → person/number bucket, used to cross-check the alignment.
+# σύ (sing) + ὑμεῖς (plur) both surface as English "you/your" → same 2P bucket
+# (the aligner picks sing-vs-plur from Rahlfs morph, which English can't show);
+# a 2P-vs-2P sing/plur slip is harmless, only cross-PERSON slips are dangerous.
+_EN_BUCKET = {}
+for _w in "i me my mine".split():                              _EN_BUCKET[_w] = "1S"
+for _w in "we us our ours".split():                            _EN_BUCKET[_w] = "1P"
+for _w in "you your yours thee thy thine thou ye".split():     _EN_BUCKET[_w] = "2P"
+for _w in "him his he it its them their theirs they she her hers".split(): _EN_BUCKET[_w] = "3P"
+_CAT_BUCKET = {"ἐγώ": "1S", "ἡμεῖς": "1P", "σύ": "2P", "ὑμεῖς": "2P", "αὐτός": "3P"}
+
+def _last_en_word(chunk):
+    """Last alphabetic word of a gloss chunk, lowercased ('' if none). ABP
+    bracket digits/markers are ignored, e.g. '1his servants]' → 'servants'.
+    (A possessive often rides on the NOUN's gloss, leaving the G1473 slot blank
+    → no cue here → the caller falls back to morph.)"""
+    words = re.findall(r"[A-Za-z]+", chunk or "")
+    return words[-1].lower() if words else ""
+
+def _verse_glosses(text):
+    """English-gloss chunks parallel to _STRONGS_RE.findall(text): chunk[i]
+    is the text immediately preceding gnum[i]."""
+    return _STRONGS_RE.split(text)[0::2]
+
+def _dump(abp_abbrev, abp_txt, rahlfs_dir, sample=12):
+    bnum = _FULL_BOOKNUM.get(abp_abbrev)
+    if not bnum:
+        print(f"No booknum for {abp_abbrev}"); return
+    rx = RahlfsLXX(rahlfs_dir)
+    verse_re = re.compile(r"^\((\w+)\s+(\d+):(\d+)\)\s+(.*)")
+    mism = []           # (ref, gloss_word, cat, morph, en_bucket, cat_bucket)
+    okeng = {}          # cat -> [(ref, gloss_word, morph)]
+    morph_only = fixes = 0
+    for line in open(abp_txt, encoding="utf-8", errors="replace"):
+        m = verse_re.match(line.strip())
+        if not m or m.group(1) != abp_abbrev:
+            continue
+        ch, vs = int(m.group(2)), int(m.group(3))
+        text = m.group(4)
+        abp_raw = _STRONGS_RE.findall(text)
+        glosses = _verse_glosses(text)
+        corrs = correct_verse(abp_raw, rx.verse(bnum, ch, vs))
+        ref = f"{abp_abbrev} {ch}:{vs}"
+        for i, c in enumerate(corrs):
+            if c.action not in ("fix", "keep"):
+                continue
+            fixes += 1
+            cat = c.reason                       # αὐτός / σύ / ὑμεῖς / ἡμεῖς / ἐγώ
+            gword = _last_en_word(glosses[i] if i < len(glosses) else "")
+            ebkt = _EN_BUCKET.get(gword)
+            cbkt = _CAT_BUCKET.get(cat)
+            if gword.endswith("self") or gword.endswith("selves"):
+                ebkt = cbkt                      # intensive/reflexive: never flag
+            if ebkt is None:
+                morph_only += 1                  # blank/non-pronoun gloss → rely on morph
+            elif ebkt == cbkt:
+                okeng.setdefault(cat, []).append((ref, gword, c.morph))
+            else:
+                mism.append((ref, gword, cat, c.morph, ebkt, cbkt))
+    print(f"\n══ lxx_align --dump: {abp_abbrev} (book {bnum}) ══")
+    print(f"  corrected (fix+keep) slots : {fixes}")
+    print(f"  English gloss CONFIRMS     : {sum(len(v) for v in okeng.values())}")
+    print(f"  no English cue (morph only): {morph_only}")
+    print(f"  *** MISMATCH (english≠num) : {len(mism)} ***")
+    if mism:
+        print("\n  ── MISMATCHES (english gloss contradicts assigned number) ──")
+        for ref, gw, cat, mo, eb, cb in mism[:80]:
+            print(f"    {ref:<12} gloss '{gw}' ({eb}) → assigned {cat} ({cb})  morph={mo}")
+    print("\n  ── sample CONFIRMED corrections (english agrees with number) ──")
+    for cat in ("αὐτός", "σύ", "ὑμεῖς", "ἡμεῖς", "ἐγώ"):
+        rows = okeng.get(cat, [])
+        if not rows:
+            continue
+        print(f"   {cat} ({len(rows)}):")
+        for ref, gw, mo in rows[:sample]:
+            print(f"     {ref:<12} '{gw}'  morph={mo}")
+
+
 if __name__ == "__main__":
     if len(sys.argv) >= 5 and sys.argv[1] == "--probe":
         _probe(sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) >= 5 and sys.argv[1] == "--dump":
+        _dump(sys.argv[2], sys.argv[3], sys.argv[4])
     else:
         print(__doc__)
         print("Usage: python3 scripts/lxx_align.py --probe <ABP_ABBREV> <abp_book.txt> <rahlfs_dir>")
+        print("       python3 scripts/lxx_align.py --dump  <ABP_ABBREV> <abp_book.txt> <rahlfs_dir>")
