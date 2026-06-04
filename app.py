@@ -1737,7 +1737,8 @@ def lsj_lookup(lemma):
         if not row and plain:
             row = conn.execute(
                 "SELECT key, translit, def_html FROM lsj"
-                " WHERE lower(strip_accents(replace(key,'-',''))) = ?", (plain,)
+                " WHERE lower(strip_accents(replace(key,'-',''))) = ?"
+                "   AND key NOT LIKE '-%'", (plain,)        # don't match suffix headwords (-σε, -θεν…)
             ).fetchone()
         if row and not abp_row:
             xref = _resolve_lsj_xref(conn, row["def_html"])
@@ -1830,7 +1831,8 @@ def lsj_summary(lemma):
             if not row and plain:
                 row = conn.execute(
                     "SELECT key, def_html, summary_json FROM lsj"
-                    " WHERE lower(strip_accents(replace(key,'-',''))) = ?", (plain,)
+                    " WHERE lower(strip_accents(replace(key,'-',''))) = ?"
+                    "   AND key NOT LIKE '-%'", (plain,)     # don't match suffix headwords (-σε, -θεν…)
                 ).fetchone()
             if row:
                 xref = _resolve_lsj_xref(conn, row["def_html"], "key, def_html, summary_json")
