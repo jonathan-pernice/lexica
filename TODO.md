@@ -29,6 +29,37 @@ Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and 
 - `dedup_words.py` — remove exact-duplicate rows
 - All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
 
+## _split_compounds demonstrative over-reach — "this/that of X" (queued 2026-06-04)
+
+`_split_compounds` pulls a word out of an already-correct multi-word gloss into a
+following empty slot and FRONTS it (position swap). For a front determiner this is
+right ("the LORD", "their gatherings" — split off "the"/"their" → correct). But when
+the matched word sits AFTER a kept word (esp. a preposition), fronting reorders wrongly:
+- Jer 32:14 source `of this possession!G2934.3 G3778` → DB renders "the scroll **this of
+  possession**" (should be "of this possession"); "this"(οὗτος) pulled into G3778 + fronted.
+- Gen 2:12 "of that land" → "that of land" (same, ἐκεῖνος).
+Facet (a) already fixes the copula sub-case (skip εἰμί/G1510 as a target).
+
+ATTEMPT 1 REVERTED (2026-06-04): a morph-POS gate skipping ALL pronoun/article/
+demonstrative (CATSS R*) target slots. Build+diff vs live showed it changed **11,036
+verses / 34,032 slots** — it correctly stopped "this/that of X" BUT also bundled the
+beneficial re-separation of "the"/"their"/"her"/"my" determiners corpus-wide ("the LORD"
+→ one chip, article G3588 emptied; reading unchanged but loses the separate clickable
+article/possessive). Target-POS can't tell "front determiner (split it)" from "middle
+word after a preposition (don't front it)". Commits 924f53c+bdd11d4 reverted.
+
+REAL FIX (next attempt): key on **gloss word-order**, not target POS — only redistribute
++front a word that is the LEADING run of the gloss (no kept "own" word precedes it). That
+allows "the LORD"/"their X" (determiner first) and blocks "of **this** possession" / "he
+**is** a prophet" (kept word precedes). CAVEATS to validate before trusting it: (a) I did
+NOT fully verify `_split_compounds`'s swap direction during attempt 1 — STUDY the swap
+(L~299) + how it inherits src_bid/greek_pos before changing it; (b) check object-fronting
+cases (object glossed at END, e.g. "[²hatred ¹I will put]") aren't regressed; (c) MANDATORY
+build-to-`bible_test.db` + diff-vs-live + eyeball (the 11k blast radius makes --test on a
+few verses insufficient). Live (rebuild #6) is correct and untouched — this is the only
+remaining symptom-#2 facet. Also relates to the ABP eSword re-source idea
+(project_abp_esword_fidelity) since the source itself bundles these glosses.
+
 ## LSJ coverage audit — generalize the pronoun-stub fix (queued 2026-06-04)
 
 Inflected Greek forms whose dictionary headword is a *different* word have no own LSJ key,
