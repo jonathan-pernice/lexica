@@ -196,16 +196,41 @@ Non-poetry books wrap as a single flowing paragraph in prose mode with inline ve
 ### ✓ Font Size Preference
 A−/A+ in desktop lib-bar and mobile modes sheet. `--lib-font-size` CSS custom property on `.lib-reading`. Persisted in localStorage. Defaults: 15px mobile / 18px desktop. Range 13–24px.
 
+## ✓ Symptom #2 + Morphology Session — DONE (2026-06-04)
+
+Live on `bible.db` = rebuild #6 (rollback `bible_pre_morph_20260604.db`). Detail in memory
+`project_pronoun_fix_path_c.md`.
+- **✓ morph + lemma columns** — `words.morph` + `words.lemma`, populated from the existing
+  Rahlfs(CATSS)/TAGNT alignment (78%; NULL only where the source is blank). Commit 998b92c.
+- **✓ Symptom #2 facet (a) — copula reorder** — Gen 20:7 "he is a prophet" (was "is he…").
+  `_split_compounds` no longer extracts the copula (εἰμί/G1510) into its own slot. Commit 90c911e.
+- **✓ Symptom #2 facet (c) — chip Strong's anchoring** — multi-word-gloss chip puts the
+  Strong's/lemma superscript on the morph-resolved head (content→`english_head`, function→
+  firstNonItalic), not blindly the first word. Jer 32:14 G5087 now on "put". Commit 675ba46.
+- **✓ LSJ pronoun definitions** — 11 oblique "v. ‹base›" stub rows in `lsj` (σέ→σύ etc.) so
+  inflected pronouns resolve to their dictionary entry, not the terse "thee". Data-only.
+- **✗ Symptom #2 demonstrative ("this/that of X")** — attempted, REVERTED (broad gate
+  regressed); requeued above as "_split_compounds demonstrative over-reach".
+- **Still open: facet (b)** — possessive split ("your rod": "your" rides the noun slot,
+  σου empty). Cosmetic, lowest priority; the last untouched symptom-#2 facet besides demonstrative.
+
 ## Planned Features
 
 ### ✓ Prose Reading Mode — DONE
 Chip/Prose toggle live. Prose renders clickable inline word spans, no chip borders. Continuous flow and poetry detection complete (Text Structure Session).
 
-### Morphology Display
-Show grammatical parsing (case, tense, number, etc.) in the word click sidebar in plain English: "Verb · Aorist · Active · Indicative · 3rd Person · Singular". Morphological data source: MorphGNT (NT) + CATSS/CCAT (LXX OT) — needs import into a `morph` column on the `words` table.
+### Morphology Display (data DONE 2026-06-04 · display PENDING)
+The `morph` column is now imported, populated, and serialized to the frontend (`w.morph`) —
+rebuild #6, CATSS/Rahlfs (OT) + Robinson/TAGNT (NT), 78% coverage; `words.lemma` stored too.
+REMAINING = the DISPLAY: render the parsing in the word-click sidebar in plain English, e.g.
+"Verb · Aorist · Active · Indicative · 3rd Person · Singular". Decode two morph schemes:
+CATSS dotted (`V.AAI3S`, `N.ASN`, `RA.ASN`…) for OT, Robinson hyphen (`V-AAI-3S`, `N-NSM`,
+`T-NSM`…) for NT.
 
-### Parallel Mode Versification Alignment
-ABP follows LXX verse numbering (Psalms especially can be off by 1 from KJV). In Parallel mode, mismatched verses currently show blank on one side. Need to: (1) audit how bad the mismatch is in practice, (2) decide whether to offset-map or leave gaps.
+### ✓ Parallel Mode Versification Alignment — DONE
+Audited: ABP and KJV both use MT-style verse numbering, so they align in Parallel mode — no
+systematic off-by-one (Psalms specifically audited, memory `project_pericopes_parallel`). No
+offset-map needed; residual one-off gaps are inherent LXX/MT text differences, not a bug.
 
 ## MetaV
 
