@@ -267,10 +267,13 @@ class TAGNTSource:
     _REF_RE = re.compile(r"^([0-9A-Za-z]+)\.(\d+)\.(\d+)#")
     _F4_RE  = re.compile(r"^(G\d+)=([A-Za-z0-9-]+)")   # first 'G####=MORPH' (ignores '+ G..' crasis tail)
 
-    # SCOPE GATE (correction): only books here are corrected at build time. Start
-    # with John for the proof; extend after --dump validation (MISMATCH stays 0).
+    # SCOPE GATE (correction): only books here are corrected at build time.
+    # All 27 NT books enabled 2026-06-04 after the full-NT --dump-nt survey:
+    # MISMATCH 0 and guard-flagged 0 on every book, ~11,066 corrections.
     # (--dump-nt bypasses this via _ABP_TO_TAGNT so any book can be inspected.)
-    SCOPE = {"Joh"}
+    SCOPE = {"Mat", "Mar", "Luk", "Joh", "Act", "Rom", "1Co", "2Co", "Gal",
+             "Eph", "Php", "Col", "1Th", "2Th", "1Ti", "2Ti", "Tit", "Phm",
+             "Heb", "Jas", "1Pe", "2Pe", "1Jn", "2Jn", "3Jn", "Jud", "Rev"}
 
     def __init__(self, tagnt_paths):
         self._verses = {}        # (tagnt_book, ch, vs) -> [(strong, morph, is_pron)]

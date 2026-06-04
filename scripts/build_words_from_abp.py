@@ -38,9 +38,9 @@ except ImportError:
 
 
 try:
-    from lxx_align import RahlfsLXX, correct_verse
+    from lxx_align import RahlfsLXX, TAGNTSource, correct_verse
 except ImportError:
-    RahlfsLXX = None
+    RahlfsLXX = TAGNTSource = None
 
 BASE_DIR    = Path(__file__).parent.parent
 ABP_OT_ZIP  = BASE_DIR / "abp_ot_texts.zip"
@@ -48,6 +48,8 @@ ABP_NT_ZIP  = BASE_DIR / "abp_nt_texts.zip"
 ABP_OT_DIR  = BASE_DIR / "abp_texts" / "abp_ot_texts"
 ABP_NT_DIR  = BASE_DIR / "abp_texts" / "abp_nt_texts"
 RAHLFS_DIR  = Path.home() / "LXX-Rahlfs-1935"   # 4 data files fetched separately on PA; not in git
+TAGNT_FILES = [Path.home() / "TAGNT_Mat-Jhn.txt",
+               Path.home() / "TAGNT_Act-Rev.txt"]  # STEPBible TAGNT (CC-BY); fetched on PA, not in git
 
 ABBREV_TO_SLUG = {
     "Gen": "genesis",        "Exo": "exodus",          "Lev": "leviticus",
@@ -555,7 +557,14 @@ def run(bible_db: str, scrape_db: str) -> None:
         rahlfs = RahlfsLXX(RAHLFS_DIR)
         print("  Rahlfs loaded.\n")
     else:
-        print("⚠️  Rahlfs dir not found — pronoun correction SKIPPED.\n")
+        print("⚠️  Rahlfs dir not found — OT pronoun correction SKIPPED.\n")
+    tagnt = None
+    if TAGNTSource and all(p.is_file() for p in TAGNT_FILES):
+        print("Loading TAGNT for NT pronoun correction …")
+        tagnt = TAGNTSource([str(p) for p in TAGNT_FILES])
+        print("  TAGNT loaded.\n")
+    else:
+        print("⚠️  TAGNT files not found — NT pronoun correction SKIPPED.\n")
     flag_log = []
 
     print("Clearing words table …")
@@ -596,14 +605,17 @@ def run(bible_db: str, scrape_db: str) -> None:
         slug      = ABBREV_TO_SLUG.get(abbrev)
         bh_rows   = bh_index.get((slug, chapter, verse), []) if slug else []
 
-        if rahlfs:
-            bnum = rahlfs.booknum(abbrev)
-            if bnum:
-                corrs = correct_verse([w[1] for w in abp_words],
-                                      rahlfs.verse(bnum, chapter, verse),
-                                      [w[0] for w in abp_words])
-                abp_words = apply_pronoun_corrections(
-                    abp_words, corrs, flag_log, f"{abbrev} {chapter}:{verse}")
+        src = bnum = None
+        if rahlfs and rahlfs.booknum(abbrev):           # OT → Rahlfs
+            src, bnum = rahlfs, rahlfs.booknum(abbrev)
+        elif tagnt and tagnt.booknum(abbrev):           # NT → TAGNT
+            src, bnum = tagnt, tagnt.booknum(abbrev)
+        if src:
+            corrs = correct_verse([w[1] for w in abp_words],
+                                  src.verse(bnum, chapter, verse),
+                                  [w[0] for w in abp_words])
+            abp_words = apply_pronoun_corrections(
+                abp_words, corrs, flag_log, f"{abbrev} {chapter}:{verse}")
 
         word_rows = build_verse_words(abp_words, bh_rows, lex)
 
@@ -652,7 +664,11 @@ def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,
     rahlfs = None
     if RahlfsLXX and RAHLFS_DIR.is_dir():
         rahlfs = RahlfsLXX(RAHLFS_DIR)
-        print("Rahlfs: loaded for pronoun correction\n")
+        print("Rahlfs: loaded for OT pronoun correction\n")
+    tagnt = None
+    if TAGNTSource and all(p.is_file() for p in TAGNT_FILES):
+        tagnt = TAGNTSource([str(p) for p in TAGNT_FILES])
+        print("TAGNT: loaded for NT pronoun correction\n")
     flag_log = []
 
     slug   = ABBREV_TO_SLUG.get(book_abbrev, book_abbrev.lower())
@@ -671,14 +687,17 @@ def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,
             continue
         abp_words = verses[vs]
         bh_rows   = bh_index.get((slug, chapter, vs), [])
-        if rahlfs:
-            bnum = rahlfs.booknum(book_abbrev)
-            if bnum:
-                corrs = correct_verse([w[1] for w in abp_words],
-                                      rahlfs.verse(bnum, chapter, vs),
-                                      [w[0] for w in abp_words])
-                abp_words = apply_pronoun_corrections(
-                    abp_words, corrs, flag_log, f"{book_abbrev} {chapter}:{vs}")
+        src = bnum = None
+        if rahlfs and rahlfs.booknum(book_abbrev):       # OT → Rahlfs
+            src, bnum = rahlfs, rahlfs.booknum(book_abbrev)
+        elif tagnt and tagnt.booknum(book_abbrev):       # NT → TAGNT
+            src, bnum = tagnt, tagnt.booknum(book_abbrev)
+        if src:
+            corrs = correct_verse([w[1] for w in abp_words],
+                                  src.verse(bnum, chapter, vs),
+                                  [w[0] for w in abp_words])
+            abp_words = apply_pronoun_corrections(
+                abp_words, corrs, flag_log, f"{book_abbrev} {chapter}:{vs}")
         word_rows = build_verse_words(abp_words, bh_rows, lex)
 
         print(f"{book_abbrev} {chapter}:{vs}")
