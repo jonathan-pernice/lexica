@@ -78,6 +78,29 @@ def base(s):
     return s
 
 
+# ── versification bridges: ABP book numbering → Rahlfs(LXX) numbering ───────
+# Most OT books share Rahlfs's numbering. A few diverge and need a per-book map
+# applied BEFORE the Rahlfs verse lookup. Psalms: ABP uses MT (Hebrew/English)
+# numbering, Rahlfs uses LXX. Verified 2026-06-03 against Rahlfs psalm verse
+# counts: LXX 9=39v=MT 9+10; LXX 113=26v=MT 114+115; LXX 114/115=MT 116;
+# LXX 116=2v=MT 117; LXX 118=176v=MT 119; LXX 146/147=MT 147; +LXX 151.
+# All boundaries EXACT except the MT 9/10 join inside LXX 9 (±1, absorbed by
+# the NW aligner + per-verse guard). Add Jer/Dan/Joe maps here later.
+def _psalm_mt_to_lxx(ch, vs):
+    if ch <= 8:    return ch, vs                  # identical
+    if ch == 9:    return 9, vs                   # LXX 9 = MT 9 (+ MT 10)
+    if ch == 10:   return 9, 20 + vs              # MT 10 continues LXX 9 (after MT 9's 20v)
+    if ch <= 113:  return ch - 1, vs              # MT 11..113 → LXX 10..112
+    if ch == 114:  return 113, vs                 # LXX 113 = MT 114 (+ MT 115)
+    if ch == 115:  return 113, 8 + vs             # MT 115 continues LXX 113 (after MT 114's 8v)
+    if ch == 116:  return (114, vs) if vs <= 9 else (115, vs - 9)   # MT 116 → LXX 114+115
+    if ch <= 146:  return ch - 1, vs              # MT 117..146 → LXX 116..145
+    if ch == 147:  return (146, vs) if vs <= 11 else (147, vs - 11) # MT 147 → LXX 146+147
+    return ch, vs                                 # MT 148..150 identical
+
+_VERSIFICATION = {19: _psalm_mt_to_lxx}           # ABP booknum → (ch,vs) -> (ch,vs)
+
+
 # ── Rahlfs data (line-aligned parallel arrays, 623,693 words) ───────────────
 class RahlfsLXX:
     """Loads Rahlfs-1935 once; serves per-verse (strong_base, morph, is_pron)."""
@@ -143,6 +166,9 @@ class RahlfsLXX:
 
     def verse(self, booknum, chapter, vs):
         """Return list of (strong_base, morph, is_pron) for the verse, or []."""
+        remap = _VERSIFICATION.get(booknum)        # versification bridge (e.g. Psalms MT→LXX)
+        if remap:
+            chapter, vs = remap(chapter, vs)
         rng = self._ranges.get((booknum, chapter, vs))
         if not rng:
             return []
