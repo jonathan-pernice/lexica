@@ -117,6 +117,14 @@ const _CATSS_POS = { N:"Noun", A:"Adjective", RA:"Article", RP:"Pronoun",
 const _CATSS_TENSE = { P:"Present", I:"Imperfect", F:"Future", A:"Aorist", X:"Perfect", Y:"Pluperfect" };
 const _CATSS_VOICE = { A:"Active", M:"Middle", P:"Passive" };
 const _CATSS_MOOD  = { I:"Indicative", D:"Imperative", S:"Subjunctive", O:"Optative", N:"Infinitive", P:"Participle" };
+// CATSS lumps several pronoun sub-classes under RD; disambiguate by lemma so
+// αὐτός (3rd-person personal, = Robinson P) and the reflexives/reciprocal don't
+// all read "Demonstrative". Anything not listed (οὗτος/ἐκεῖνος/ὅδε/τοιοῦτος…)
+// keeps the demonstrative default.
+const _CATSS_RD_LEMMA = {
+  "αὐτός":"Pronoun", "ἑαυτοῦ":"Reflexive pronoun", "σεαυτοῦ":"Reflexive pronoun",
+  "ἐμαυτοῦ":"Reflexive pronoun", "ἀλλήλων":"Reciprocal pronoun",
+};
 
 const _ROB_POS = { N:"Noun", A:"Adjective", T:"Article", P:"Pronoun",
   R:"Relative pronoun", D:"Demonstrative pronoun", K:"Correlative pronoun",
@@ -137,7 +145,7 @@ function _decodeCNG(s) {            // case + number + (optional) gender, by pos
   return out;
 }
 
-function decodeMorph(morph) {
+function decodeMorph(morph, lemma) {
   if (!morph) return "";
   const m = morph.trim();
   let parts = [];
@@ -157,8 +165,9 @@ function decodeMorph(morph) {
           if (_NUM[rest[1]])  parts.push(_NUM[rest[1]]);
         }
       } else {
-        const label = _CATSS_POS[pos];
+        let label = _CATSS_POS[pos];
         if (!label) return "";
+        if (pos === "RD") label = _CATSS_RD_LEMMA[(lemma || "").normalize("NFC")] || "Demonstrative pronoun";
         parts = [label, ..._decodeCNG(p)];
       }
     } else if (m.indexOf("-") >= 0) {                  // ---- Robinson (NT) ----
@@ -766,7 +775,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   if (!entry) return null;
 
   const barWidth = Math.min(100, (occurrences / Math.max(1, totalResults)) * 100);
-  const morphLine = (entry.greek && !isHebrew) ? decodeMorph(entry.morph) : "";
+  const morphLine = (entry.greek && !isHebrew) ? decodeMorph(entry.morph, entry.greek) : "";
   const { handleProps, sheetStyle } = useSwipeToDismiss(onClose);
 
   return (
