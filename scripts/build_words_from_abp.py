@@ -239,7 +239,8 @@ def _split_compounds(rows: list, lex: dict) -> None:
     _NORM = re.compile(r"[^\w]")
 
     for i in range(len(rows)):
-        pos_i, eng, head, strongs, sbase, gpos, bid, italic, iw, sw, abp_pos_i = rows[i]
+        pos_i, eng, head, strongs, sbase, gpos, bid, italic, iw, sw, abp_pos_i = rows[i][:11]
+        morph_i, lemma_i = rows[i][11], rows[i][12]     # slot i's own morph/lemma (carried along)
         if not eng or " " not in eng:
             continue
         if not sbase or sbase in ("*", ""):
@@ -290,11 +291,13 @@ def _split_compounds(rows: list, lex: dict) -> None:
         src_abp_pos = rows[i][10]
         for j, word in taken.items():
             r = rows[j]
-            rows[j] = (r[0], word, word, r[3], r[4], src_gpos, src_bid, r[7], r[8], r[9], src_abp_pos)
+            # slot j keeps its OWN morph/lemma (r[11]/r[12]) — only the english moved in
+            rows[j] = (r[0], word, word, r[3], r[4], src_gpos, src_bid, r[7], r[8], r[9],
+                       src_abp_pos, r[11], r[12])
 
         new_eng = " ".join(own) if own else None
         rows[i] = (pos_i, new_eng, _head_word(new_eng) if new_eng else None,
-                   strongs, sbase, None, bid, italic, iw, sw, abp_pos_i)
+                   strongs, sbase, None, bid, italic, iw, sw, abp_pos_i, morph_i, lemma_i)
 
         for j in sorted(taken.keys()):
             p_i, p_j = rows[i][0], rows[j][0]
@@ -341,15 +344,19 @@ def apply_pronoun_corrections(abp_words: list, corrections: list,
     Rahlfs pronoun (correct_verse → action 'fix'/'keep'). SURGICAL — only those
     slots change; everything else (incl. '*' proper-noun placeholders) passes
     through untouched. Flagged slots are logged and left as G1473. Returns a NEW
-    list so the downstream reorder logic in build_verse_words is unaffected."""
+    list so the downstream reorder logic in build_verse_words is unaffected.
+
+    Each output tuple is widened to 7 elements — (eng, raw, abp_pos, opens, closes,
+    morph, lemma) — carrying the per-word morph + lemma the alignment found
+    (None where it didn't anchor-match) on into build_verse_words."""
     out = []
     for (eng, raw, ap, ob, cb), c in zip(abp_words, corrections):
         if c.action in ("fix", "keep") and c.new_strong:
-            out.append((eng, "G" + c.new_strong, ap, ob, cb))
+            out.append((eng, "G" + c.new_strong, ap, ob, cb, c.morph, c.lemma))
         else:
             if c.action == "flag":
                 flag_log.append(f"{ref}\t{eng}\t{c.reason}")
-            out.append((eng, raw, ap, ob, cb))
+            out.append((eng, raw, ap, ob, cb, c.morph, c.lemma))
     return out
 
 
@@ -423,10 +430,10 @@ def _redistribute_pronoun_compounds(rows: list) -> None:
         ri, rj = rows[i], rows[j]
         # pronoun keeps its word, English-SECOND (greek_pos 2); joins the bracket
         rows[i] = (ri[0], keep_eng, _head_word(keep_eng), ri[3], ri[4],
-                   2, bid, ri[7], ri[8], ri[9], ri[10])
+                   2, bid, ri[7], ri[8], ri[9], ri[10], ri[11], ri[12])
         # verb gets the moved phrase, English-FIRST (greek_pos 1); joins the bracket
         rows[j] = (rj[0], move_eng, _head_word(move_eng), rj[3], rj[4],
-                   1, bid, rj[7], rj[8], rj[9], rj[10])
+                   1, bid, rj[7], rj[8], rj[9], rj[10], rj[11], rj[12])
 
 
 def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
@@ -435,9 +442,15 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
     Bracket groups and reading order within brackets come from ABP position
     numbers ([1...2...3...]) — opens/closes bracket flags drive bracket_id.
 
-    Row tuple (11 elements during processing, 10 returned):
+    Row tuple (13 elements during processing, 12 returned):
       pos, english, english_head, strongs, strongs_base, greek_pos,
-      bracket_id, italic, italic_words, smcap_words  [+ abp_pos stripped on return]
+      bracket_id, italic, italic_words, smcap_words  [+ abp_pos (idx 10) stripped on
+      return; morph (idx 11) + lemma (idx 12) kept as the final two columns].
+      morph/lemma pin to the slot's OWN Greek word — they ride along by index
+      through the reorder passes (which redistribute ENGLISH, never the Greek slot).
+
+    abp_words tuples may be 5-wide (eng, raw, abp_pos, opens, closes) or 7-wide
+    (… + morph, lemma) when apply_pronoun_corrections ran first; both are accepted.
     """
     used: set = set()
     rows: list = []
@@ -445,7 +458,10 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
     bid = 0
     in_bracket = False
 
-    for english, raw_strongs, abp_pos, opens_bracket, closes_bracket in abp_words:
+    for w in abp_words:
+        english, raw_strongs, abp_pos, opens_bracket, closes_bracket = w[:5]
+        w_morph = w[5] if len(w) > 5 else None     # aligned morph (None if not anchor-matched)
+        w_lemma = w[6] if len(w) > 6 else None     # aligned Greek lemma (None likewise)
         if raw_strongs is None:
             strongs = ""
             sbase   = ""
@@ -491,7 +507,7 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
             pos, english or None, english_head,
             strongs, sbase, gpos, bracket_id, italic,
             iw if iw else "", sw if sw else "",
-            abp_pos,
+            abp_pos, w_morph, w_lemma,
         ))
         pos += 1
 
@@ -499,8 +515,8 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
     if lex:
         _split_compounds(rows, lex)
 
-    # Strip temporary abp_pos field before returning
-    return [r[:10] for r in rows]
+    # Strip temporary abp_pos (idx 10); keep morph (11) + lemma (12) as the last two columns.
+    return [r[:10] + (r[11], r[12]) for r in rows]
 
 
 # ── Run / test ────────────────────────────────────────────────────────────────
@@ -533,7 +549,7 @@ def run(bible_db: str, scrape_db: str) -> None:
     print("Backup done.")
 
     main_cols = {r[1] for r in main.execute("PRAGMA table_info(words)")}
-    for col in ("italic_words", "smcap_words"):
+    for col in ("italic_words", "smcap_words", "morph", "lemma"):
         if col not in main_cols:
             main.execute(f"ALTER TABLE words ADD COLUMN {col} TEXT")
             main.commit()
@@ -622,8 +638,8 @@ def run(bible_db: str, scrape_db: str) -> None:
         main.executemany(
             "INSERT INTO words"
             " (verse_id, position, english, english_head, strongs, strongs_base,"
-            "  greek_pos, bracket_id, italic, italic_words, smcap_words)"
-            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "  greek_pos, bracket_id, italic, italic_words, smcap_words, morph, lemma)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [(verse_id, *_prefix_base(w)) for w in word_rows],
         )
         inserted += len(word_rows)
@@ -701,11 +717,13 @@ def run_test(scrape_db: str, book_abbrev: str = "Gen", chapter: int = 1,
         word_rows = build_verse_words(abp_words, bh_rows, lex)
 
         print(f"{book_abbrev} {chapter}:{vs}")
-        for (p, eng, head, sn, sb, gpos, bid, italic, iw, sw) in word_rows:
+        for (p, eng, head, sn, sb, gpos, bid, italic, iw, sw, morph, lemma) in word_rows:
             flags = ""
             if bid  is not None: flags += f"  bid={bid}"
             if gpos is not None: flags += f"  gpos={gpos}"
             if iw:               flags += f"  iw={iw!r}"
+            if morph:            flags += f"  m={morph}"
+            if lemma:            flags += f"  lem={lemma}"
             print(
                 f"  [{p:2}] {str(sn or '-'):12}  "
                 f"eng={str(eng):22}  head={str(head):15}  italic={italic}{flags}"
