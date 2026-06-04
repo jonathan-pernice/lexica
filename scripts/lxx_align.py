@@ -41,15 +41,22 @@ RESOLVE = EGO | HEMEIS | SU | HUMEIS | AUTOS   # G1473 may be corrected to one o
 
 # ── per-verse alignment-confidence guard ────────────────────────────────────
 # A G1473 correction is trusted only if the verse's NON-pronoun anchor words
-# actually matched Rahlfs — proof we sliced the RIGHT verse. Mis-versified
-# chapters (LXX 1Ki 20<->21 swap, Jon 2 / Hos 2,12,14 / Exo 8,22 offsets…)
-# align the WRONG Rahlfs verse, so their anchors don't match → the verse's
-# pronoun slots are flagged 'low-confidence-verse' instead of mis-corrected.
-# This also catches the morph-only (possessive) leak that English can't see.
-# Toggle off for A/B measurement: LXX_GUARD=0 python3 scripts/lxx_align.py …
+# matched Rahlfs — proof we sliced the RIGHT verse. Mis-versified chapters
+# (LXX 1Ki 20<->21 swap, Jon 2 / Hos 2,12,14 / Exo 8,22 offsets…) align the
+# WRONG Rahlfs verse → its pronoun slots are flagged 'low-confidence-verse'.
+#
+# OPERATING POINT (validated 2026-06-03, RATE=0.0/MIN=1): fire ONLY on positive
+# evidence of a mis-slice — the verse HAD ≥1 content anchor and NONE matched.
+# This catches truly-offset verses (≈0 anchors) without over-flagging clean
+# books' short/divergent-but-correctly-sliced verses (RATE=0.50 reverted 7–12%
+# of CORRECT live corrections back to a visible ἐγώ on Deu/2Sa/Ecc/Son/Mic).
+# English-visible person errors are caught regardless by the gloss guard below,
+# so MISMATCH stays 0. Residual: a morph-only (possessive) slot in an offset
+# verse that shares one coincidental anchor — owned by the versification-bridge
+# pass (Psa/Jer/Dan/Joe). Sweep via env: LXX_GUARD=0/1, LXX_GUARD_RATE/_MIN.
 GUARD_ENABLED     = os.environ.get("LXX_GUARD", "1") != "0"
-GUARD_MIN_RATE    = float(os.environ.get("LXX_GUARD_RATE", "0.50"))  # ≥X of anchorable match
-GUARD_MIN_ANCHORS = int(os.environ.get("LXX_GUARD_MIN", "1"))        # ≥N actual matches
+GUARD_MIN_RATE    = float(os.environ.get("LXX_GUARD_RATE", "0.0"))   # need >X·anchorable matched
+GUARD_MIN_ANCHORS = int(os.environ.get("LXX_GUARD_MIN", "1"))        # need ≥N matched (else flag)
 
 def _category(strong: str) -> str:
     if strong in AUTOS:  return "αὐτός"
@@ -79,14 +86,19 @@ class RahlfsLXX:
     # 12-Marvel.Bible/00-versification_original.csv: 1–39 protocanonical books in
     # standard English order, validated empirically by scripts/align_survey.pl —
     # NOT the deuterocanon-interleaved 001_verse_c_book.csv order).
-    # SCOPE GATE: only the 24 books that aligned CLEAN (≤12% flags) are listed, so
-    # only they get corrected. Any book NOT here → booknum() None → kept as G1473
-    # (no regression). Borderline (11) + hard (Psa/Jer/Dan/Joe) are added later.
+    # SCOPE GATE: a book is corrected ONLY if it's listed here; any book NOT here
+    # → booknum() None → its pronouns stay G1473 (no regression). Now 35 books:
+    # the 24 CLEAN (≤12% flags) + the 11 BORDERLINE, validated 2026-06-03 with
+    # both guards (per-verse RATE=0.0/MIN=1 + gloss-consistency) → MISMATCH 0 on
+    # all. OMITTED (4 hard, need versification bridges before they can align):
+    # Psa 19, Jer 24, Dan 27, Joe 29 — added in a later pass.
     ABP_BOOKNUM = {
-        "Gen": 1,  "Lev": 3,  "Num": 4,  "Deu": 5,  "Jdg": 7,  "Rth": 8,
-        "2Sa": 10, "2Ki": 12, "Ezr": 15, "Est": 17, "Job": 18, "Ecc": 21,
-        "Son": 22, "Isa": 23, "Lam": 25, "Eze": 26, "Amo": 30, "Oba": 31,
-        "Mic": 33, "Hab": 35, "Zep": 36, "Hag": 37, "Zec": 38, "Mal": 39,
+        "Gen": 1,  "Exo": 2,  "Lev": 3,  "Num": 4,  "Deu": 5,  "Jos": 6,
+        "Jdg": 7,  "Rth": 8,  "1Sa": 9,  "2Sa": 10, "1Ki": 11, "2Ki": 12,
+        "1Ch": 13, "2Ch": 14, "Ezr": 15, "Neh": 16, "Est": 17, "Job": 18,
+        "Pro": 20, "Ecc": 21, "Son": 22, "Isa": 23, "Lam": 25, "Eze": 26,
+        "Hos": 28, "Amo": 30, "Oba": 31, "Jon": 32, "Mic": 33, "Nah": 34,
+        "Hab": 35, "Zep": 36, "Hag": 37, "Zec": 38, "Mal": 39,
     }
 
     def __init__(self, rahlfs_dir):
@@ -269,7 +281,7 @@ def correct_verse(abp_strongs_raw, rahlfs_verse, glosses=None):
                     # ὑμεῖς plural variants; local person-shifts). Defer to ABP:
                     # leave G1473, log for review — never write a contested number.
                     out.append(Correction("flag",
-                                          reason=f"gloss-mismatch:{gb}≠{_CAT_BUCKET.get(cat)}"))
+                                          reason=f"gloss-mismatch:{gb}!={_CAT_BUCKET.get(cat)}"))
                 else:
                     act = "keep" if rt[0] in EGO else "fix"
                     out.append(Correction(act, new_strong=rt[0], morph=rt[1], reason=cat))
