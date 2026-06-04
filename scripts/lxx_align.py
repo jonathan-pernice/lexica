@@ -107,9 +107,37 @@ def _joel_eng_to_lxx(ch, vs):
     if ch == 3:               return 4, vs         # ABP 3 → LXX 4
     return ch, vs
 
+def _jeremiah_mt_to_lxx(ch, vs):
+    # MT(ABP) Jeremiah → LXX(Rahlfs). LXX relocates the Oracles Against the
+    # Nations (MT 46-51) into the middle (LXX 25:14-31) and shifts MT 26-45 up
+    # by 7. Verified vs Marvel book-24 verse counts (2026-06-04): EXACT-count
+    # anchors at MT 26,28,31,32,34,35,36,37,38,40,41,42,43 (+7, same verse);
+    # MT 47=LXX29=7v; MT 50=LXX27=46v; MT 44(30)+45(5)=LXX51(35). Aligned head
+    # (MT 1-25:13) and tail (52) returned unchanged → zero regression there.
+    # OAN nation verse-boundaries (Egypt/Moab/49-block) are best-estimate; a
+    # wrong sub-map just leaves those verses flagged (guard-safe), never wrong.
+    if ch <= 24:               return ch, vs              # aligned head
+    if ch == 25:
+        if vs <= 13:           return 25, vs              # MT 25:1-13 = LXX 25:1-13
+        if vs >= 15:           return 32, vs - 14         # cup of wrath → LXX 32
+        return 25, vs                                     # MT 25:14 doublet (no clean LXX)
+    if 26 <= ch <= 44:         return ch + 7, vs          # MT 26-44 → LXX 33-51 (+7)
+    if ch == 45:               return 51, 30 + vs         # MT 45 → LXX 51:31-35
+    # ── OAN (MT 46-51) → LXX 25:14-31, reordered ──
+    if ch == 46:               return 26, vs              # Egypt
+    if ch == 47:               return 29, vs              # Philistines (7=7)
+    if ch == 48:               return 31, vs              # Moab
+    if ch == 49:
+        if vs >= 34:           return 25, vs - 20         # Elam (49:34-39) → LXX 25:14-19
+        return 30, vs                                     # Ammon/Edom/Damascus/Kedar → LXX 30
+    if ch == 50:               return 27, vs              # Babylon (46=46)
+    if ch == 51:               return 28, vs              # Babylon
+    return ch, vs                                         # MT 52 = LXX 52
+
 _VERSIFICATION = {                                 # ABP booknum → (ch,vs) -> (ch,vs)
-    19: _psalm_mt_to_lxx,                          # Psalms  MT → LXX
-    29: _joel_eng_to_lxx,                          # Joel    Eng(3ch) → LXX(4ch)
+    19: _psalm_mt_to_lxx,                          # Psalms    MT → LXX
+    24: _jeremiah_mt_to_lxx,                        # Jeremiah  MT → LXX (OAN reorder + 7-shift)
+    29: _joel_eng_to_lxx,                          # Joel      Eng(3ch) → LXX(4ch)
 }
 
 
