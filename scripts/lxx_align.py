@@ -170,6 +170,10 @@ class RahlfsLXX:
         self.dir = Path(rahlfs_dir)
         self._strong = self._load_col("07_StrongNumber/final_Strongs.csv", 1)
         self._morph  = self._load_col("03a_morphology_with_JTauber_patches/patched_623693.csv", 1)
+        try:                                        # lemma (dictionary form); optional 5th file
+            self._lemma = self._load_col("02_lexemes/OSSP_lexemes.csv", 1)
+        except OSError:
+            self._lemma = {}                        # absent → lemma column stays NULL, morph still loads
         self._ranges = self._load_verse_ranges()   # (booknum,ch,vs) -> (start,end) inclusive
 
     def _open(self, rel):
@@ -207,7 +211,7 @@ class RahlfsLXX:
         return self.ABP_BOOKNUM.get(abp_abbrev)
 
     def verse(self, booknum, chapter, vs):
-        """Return list of (strong_base, morph, is_pron) for the verse, or []."""
+        """Return list of (strong_base, morph, is_pron, lemma) for the verse, or []."""
         remap = _VERSIFICATION.get(booknum)        # versification bridge (e.g. Psalms MT→LXX)
         if remap:
             chapter, vs = remap(chapter, vs)
@@ -218,7 +222,7 @@ class RahlfsLXX:
         for i in range(rng[0], rng[1] + 1):
             mo = self._morph.get(i, "")
             is_pron = bool(re.match(r"^R(?!A)", mo))     # RP/RD/RR/RI  (exclude RA article)
-            out.append((base(self._strong.get(i, "")), mo, is_pron))
+            out.append((base(self._strong.get(i, "")), mo, is_pron, self._lemma.get(i, "")))
         return out
 
 
@@ -290,7 +294,7 @@ def _tagnt_is_pron(morph):
 class TAGNTSource:
     """STEPBible TAGNT NT — mirrors RahlfsLXX's interface for correct_verse.
     booknum(abp_abbrev) returns the TAGNT book abbrev (str) or None (scope gate);
-    verse() returns [(strong_base_casesplit, morph, is_pron), …] in text order."""
+    verse() returns [(strong_base_casesplit, morph, is_pron, lemma), …] in text order."""
 
     _REF_RE = re.compile(r"^([0-9A-Za-z]+)\.(\d+)\.(\d+)#")
     _F4_RE  = re.compile(r"^(G\d+)=([A-Za-z0-9-]+)")   # first 'G####=MORPH' (ignores '+ G..' crasis tail)
@@ -304,7 +308,7 @@ class TAGNTSource:
              "Heb", "Jas", "1Pe", "2Pe", "1Jn", "2Jn", "3Jn", "Jud", "Rev"}
 
     def __init__(self, tagnt_paths):
-        self._verses = {}        # (tagnt_book, ch, vs) -> [(strong, morph, is_pron)]
+        self._verses = {}        # (tagnt_book, ch, vs) -> [(strong, morph, is_pron, lemma)]
         for p in tagnt_paths:
             self._load(p)
 
@@ -324,9 +328,12 @@ class TAGNTSource:
                     continue
                 dbase = base(mf4.group(1)).lstrip("0") or "0"   # 'G0846' -> '846'
                 morph = mf4.group(2)
+                # field5 is 'lemma(s)=meaning'; lemma part may list variants comma-joined
+                # ('οὕτω, οὕτως=thus(-ly)') — take the first form ('σύ=you' → σύ).
+                lemma = parts[4].split("=")[0].split(",")[0].strip() if len(parts) > 4 else ""
                 self._verses.setdefault(
                     (mref.group(1), int(mref.group(2)), int(mref.group(3))), []
-                ).append((_tagnt_casesplit(dbase, morph), morph, _tagnt_is_pron(morph)))
+                ).append((_tagnt_casesplit(dbase, morph), morph, _tagnt_is_pron(morph), lemma))
 
     def booknum(self, abp_abbrev):
         if abp_abbrev not in self.SCOPE:
@@ -382,18 +389,19 @@ def align(a_bases, b_bases, b_pron, MATCH=3, MIS=-1, GAP=-2):
 
 # ── per-verse correction ────────────────────────────────────────────────────
 class Correction:
-    __slots__ = ("action", "new_strong", "morph", "reason")
-    def __init__(self, action, new_strong=None, morph=None, reason=""):
+    __slots__ = ("action", "new_strong", "morph", "lemma", "reason")
+    def __init__(self, action, new_strong=None, morph=None, lemma=None, reason=""):
         self.action = action          # 'fix' | 'keep' | 'flag' | 'none'
         self.new_strong = new_strong  # bare, e.g. '846' (caller re-applies 'G')
         self.morph = morph
+        self.lemma = lemma            # Greek dictionary form, where aligned (else None)
         self.reason = reason
 
 def correct_verse(abp_strongs_raw, rahlfs_verse, glosses=None):
     """
     abp_strongs_raw : list of ABP raw Strong's per word, in ABP source order
                       (e.g. 'G1473', 'G3077', 'G*', None).
-    rahlfs_verse    : output of RahlfsLXX.verse() — [(strong, morph, is_pron), ...]
+    rahlfs_verse    : output of RahlfsLXX.verse() — [(strong, morph, is_pron, lemma), ...]
     glosses         : optional ABP English gloss per word (same order). When
                       given (and the guard is on), a correction is REFUSED and
                       flagged if its person contradicts ABP's own gloss — ABP is
@@ -404,7 +412,7 @@ def correct_verse(abp_strongs_raw, rahlfs_verse, glosses=None):
       action 'fix'  : was G1473, aligned to a known Rahlfs pronoun → new_strong+morph
       action 'keep' : was G1473, genuinely ἐγώ (Rahlfs also 1473) → new_strong=1473
       action 'flag' : was G1473 but no confident pronoun match → review (unchanged)
-      action 'none' : not a G1473 slot (morph attached if Strong's anchor-matched)
+      action 'none' : not a G1473 slot (morph+lemma attached if Strong's anchor-matched)
     """
     a_bases = [base(s) for s in abp_strongs_raw]
     b_bases = [t[0] for t in rahlfs_verse]
@@ -467,14 +475,17 @@ def correct_verse(abp_strongs_raw, rahlfs_verse, glosses=None):
                                           reason=f"gloss-mismatch:{gb}!={_CAT_BUCKET.get(cat)}"))
                 else:
                     act = "keep" if rt[0] in EGO else "fix"
-                    out.append(Correction(act, new_strong=rt[0], morph=rt[1], reason=cat))
+                    out.append(Correction(act, new_strong=rt[0], morph=rt[1],
+                                          lemma=rt[3], reason=cat))
             else:
                 why = "gap" if rt is None else ("blank" if rt[0] == "" else f"non-pron:{rt[0]}")
                 out.append(Correction("flag", reason=why))
         else:
-            # bonus: attach morph only where the Strong's anchor-matches (safe)
-            morph = rt[1] if (rt and ab not in ("", "*") and rt[0] == ab) else None
-            out.append(Correction("none", morph=morph))
+            # bonus: attach morph + lemma only where the Strong's anchor-matches (safe)
+            anchored = rt and ab not in ("", "*") and rt[0] == ab
+            morph = rt[1] if anchored else None
+            lemma = rt[3] if anchored else None
+            out.append(Correction("none", morph=morph, lemma=lemma))
     return out
 
 
