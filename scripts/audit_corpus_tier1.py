@@ -158,6 +158,27 @@ def share_root(a, b, frac=0.6, floor=4):
     return common >= floor and common >= frac * min(len(a), len(b))
 
 
+def edit_distance(a, b, cap=2):
+    """Levenshtein on normalised lemmas, early-out above `cap`. Catches INTERNAL
+    spelling variants share_root misses: ἄρσην/ἄῤῥην (σ/ρ), νοέω/νοιέω (ι-insert),
+    χοῦς/χόος (contraction), ἔνατος/ἔννατος (νν). Distance >cap = genuinely
+    different word (παρεμβάλλω/παρεκτός)."""
+    a, b = norm_lemma(a), norm_lemma(b)
+    if a == b:
+        return 0
+    if abs(len(a) - len(b)) > cap:
+        return cap + 1
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+        if min(prev) > cap:
+            return cap + 1
+    return prev[len(b)]
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Collect findings.  Each finding: (tier, name, count, likelihood, rationale, samples)
 # tier 0 = HIGH signal, 1 = MEDIUM, 2 = LOW/structural.  partition = known-OK notes.
@@ -249,10 +270,9 @@ if HAS_LEMMA:
         pos = modal_pos.get(sb)
         if pos in PRONART:
             a1_pron_rows += n
-        elif share_root(wlem, llem):
-            a1_ortho_rows += n
+        elif share_root(wlem, llem) or edit_distance(wlem, llem) <= 2:
+            a1_ortho_rows += n          # internal spelling/dialect/voice variant
         elif pos is None:
-            # no morph to judge; still check root similarity already failed
             a1_unkpos_rows += n
             a1_genuine.append((sb, wlem, llem, n, "?POS"))
         else:
@@ -264,7 +284,8 @@ if HAS_LEMMA:
     for sb, wlem, llem, n, pos in a1_genuine[:SAMPLES]:
         refs = sample_refs("w.strongs_base = ?", (sb,), n=1)
         ref = refs[0] if refs else "?"
-        a1_samples.append(f"{ref}  {sb} ({pos}): words.lemma={wlem!r} vs lexicon={llem!r}  (×{n})")
+        ed = edit_distance(wlem, llem, cap=9)
+        a1_samples.append(f"{ref}  {sb} ({pos}, edit={ed}): words.lemma={wlem!r} vs lexicon={llem!r}  (×{n})")
     add(0, "A1 · GENUINE Strong's↔lemma mismatch (different root)", a1_genuine_rows + a1_unkpos_rows,
         "HIGH", f"raw A1={a1_rows} rows; after removing pron/art case-headwords "
                 f"({a1_pron_rows}) + orthographic variants ({a1_ortho_rows}), residue "
@@ -272,8 +293,8 @@ if HAS_LEMMA:
         a1_samples or ["(none — no genuine different-root mismatches)"])
     partition.append(("A1-raw · pron/art lemma-vs-case-headword (σύ/ὑμῖν)", a1_pron_rows,
                       "dictionary lemma vs Strong's case-specific headword — by-design, not a defect"))
-    partition.append(("A1-raw · orthographic/declension variant (shared root)", a1_ortho_rows,
-                      "γῆρας/γῆρος, διασώζω/διασῴζω etc. — same word, spelling variant"))
+    partition.append(("A1-raw · orthographic/dialect/voice variant (shared root or edit≤2)", a1_ortho_rows,
+                      "γῆρας/γῆρος, ἄρσην/ἄῤῥην, νοέω/νοιέω — same word, internal spelling variant"))
 
     # A3 — same G-base mapping to >1 distinct lemma in words
     a3 = {sb: lems for sb, lems in lemma_by_sb.items() if len(lems) > 1}
@@ -361,30 +382,57 @@ c1_total = scalar(f"SELECT count(*) FROM words WHERE {C1_BASE}") or 0
 # routinely left unglossed in ABP — partition it out so the genuine dropped-
 # gloss residue (nouns/other verbs) is visible.
 COPULA = "G1510"
+
+
+def verse_render(verse_id, target_pos):
+    """Full English of a verse (sibling words joined by position) + whether the
+    target slot's lemma-gloss survives elsewhere. Tells render-blank from
+    gloss-lives-in-head/sibling."""
+    rows = conn.execute(
+        "SELECT position, english, english_head FROM words WHERE verse_id=? ORDER BY position",
+        (verse_id,)).fetchall()
+    txt = " ".join((r["english"] or "·").strip() for r in rows if (r["english"] or "").strip())
+    head = next((r["english_head"] for r in rows if r["position"] == target_pos), None)
+    return txt[:90], head
+
+
 c1_content_rows = 0           # content-POS, copula EXCLUDED = the real watch list
 c1_copula_rows = 0           # content-POS but εἰμί = expected ellipsis
+c1_has_head = 0              # of the residue, how many carry an english_head (renders!)
+c1_by_sb = defaultdict(int)  # strongs_base -> count (top offenders)
 c1_content_samples = []
 if HAS_MORPH and c1_total:
     pulled = conn.execute(
-        f"SELECT w.strongs_base AS sb, w.morph AS morph, "
+        f"SELECT w.strongs_base AS sb, w.morph AS morph, w.english_head AS eh, "
+        f"       w.verse_id AS vid, w.position AS pos, w.lemma AS lem, "
         f"       ({REF}) AS ref "
         f"FROM words w JOIN verses v ON v.id = w.verse_id "
         f"WHERE {C1_BASE} LIMIT 200000").fetchall()
     for r in pulled:
-        if coarse_pos(r["morph"]) in CONTENT:
-            if r["sb"] == COPULA:
-                c1_copula_rows += 1
-                continue
-            c1_content_rows += 1
-            if len(c1_content_samples) < SAMPLES:
-                c1_content_samples.append(f"{r['ref']}  {r['sb']}  (morph {r['morph']})")
+        if coarse_pos(r["morph"]) not in CONTENT:
+            continue
+        if r["sb"] == COPULA:
+            c1_copula_rows += 1
+            continue
+        c1_content_rows += 1
+        c1_by_sb[r["sb"]] += 1
+        if (r["eh"] or "").strip():
+            c1_has_head += 1
+        if len(c1_content_samples) < SAMPLES:
+            vtxt, head = verse_render(r["vid"], r["pos"])
+            c1_content_samples.append(
+                f"{r['ref']}  {r['sb']} ({r['lem'] or '?'}, head={head!r}): verse=\"{vtxt}\"")
+top_c1 = sorted(c1_by_sb.items(), key=lambda kv: -kv[1])[:8]
+top_str = ", ".join(f"{sb}×{n}" for sb, n in top_c1)
 add(1, "C1 · real Strong's + EMPTY English, content-word, NON-copula (non-bracket)", c1_content_rows,
-    "MED", f"Greek/Hebrew source word with a noun/verb/adj morph but no gloss — "
-           f"likely dropped gloss. (raw {c1_total} empty-gloss non-bracket slots; "
-           f"{c1_copula_rows} of the content ones are εἰμί/G1510 copula = expected, excluded)",
+    "MED", f"empty `english` slot with a content morph. {c1_has_head} of {c1_content_rows} "
+           f"carry an english_head (likely still render). Top G-bases: {top_str}. "
+           f"(raw {c1_total} empty non-bracket slots; {c1_copula_rows} εἰμί copula excluded)",
     c1_content_samples)
 partition.append(("C1 · εἰμί/G1510 copula, empty-gloss content slot", c1_copula_rows,
                   "Greek copula routinely unrendered in ABP — expected ellipsis, not a defect"))
+partition.append(("C1 · residue that carries an english_head (renders anyway)", c1_has_head,
+                  "empty `english` but english_head populated — word still displays; likely false positive"))
 
 C2 = ("english GLOB '*[A-Za-z]*' "
       "AND (strongs_base IS NULL OR TRIM(strongs_base) = '') "
