@@ -80,7 +80,38 @@ Would make this the most rigorously-audited ABP digital edition in existence —
 downstream of ABP audits the source at all (see the αὐτós saga, memory
 `project_pronoun_strongs_corruption`).
 
-## _split_compounds demonstrative over-reach — "this/that of X" (queued 2026-06-04)
+## ✓ _split_compounds demonstrative over-reach — "this/that of X" — DONE + LIVE (2026-06-05)
+
+FIXED and live on bible.db (rollback `bible_pre_splitfix_20260604.db`). Solution = the
+**leading-run rule, gated to NON-bracketed head slots** (build_words_from_abp.py
+`_split_compounds`, commits 6755053 + 52e1002): a redistributed gloss word is fronted only
+when no kept "own" word precedes it AND the head slot is non-bracketed (`bid is None`).
+- WHY the non-bracket gate: non-bracketed slots render straight from `position`, so the
+  fronting swap visibly garbled them ("this of possession", "the of LORD", "LORD the was
+  enraged"); bracketed slots render in abp_pos order via `_sort_brackets`, so the swap is
+  invisible there AND the redistribution keeps a useful separate chip — leave them alone.
+- HEAD-vs-TARGET resolved (the open question): head = the content/noun slot bearing the
+  bundled gloss; target = the following empty function-word slot. So "the LORD" (leading
+  "the") still splits; "of **this** possession" (kept "of" before "this") stays whole.
+- VALIDATION method that worked: `--test` trace → build to `bible_test.db` (copy-first) →
+  **position-INDEPENDENT** diff `scripts/diff_split_fix.py` ((strongs,english) multiset per
+  verse; bracket-aware [BRK]/[non-brk] tags). Final impact = **3,438 verses fixed**, all clean
+  garble-fixes across books (1Ch/2Ch/Jer/Gen/1Co spot-checked), 0 health warnings, strongs_base
+  invariant 0, repair counts identical to rebuild #6. Canaries confirmed live: Jer 32:14 "of
+  this possession", Gen 2:12 "of that land", Gen 3:8 "of the LORD", 2Ch 6:10 triple-fix,
+  1Ch 13:10 "the LORD was enraged".
+- ATTEMPT-1 lesson held: target-POS was the wrong axis; gloss word-order (leading-run) is right.
+  The [BRK] tag in the diff is per-strongs and NOISY — judge cases by content, not the tag.
+- KNOWN RESIDUAL (spawned as separate tasks — all PRE-EXISTING, NOT regressions): (1) content-
+  noun chip bundled onto a neighbor verb loses its own chip in non-bracketed cases (reading
+  correct, click less granular) — restore later via bracket+abp_pos dual-ordering; (2) complex-
+  bracket reorder garbles with tangled/missing abp_pos ("the and LORD", 1Ch 15:13); (3)
+  punctuation riding the wrong token ("mourned many, days", 1Ch 7:22). Leading-run does NOT
+  touch (2)/(3) — they live in the bracketed/abp_pos layer.
+
+---
+
+### Original brief (kept for history — queued 2026-06-04)
 
 `_split_compounds` pulls a word out of an already-correct multi-word gloss into a
 following empty slot and FRONTS it (position swap). For a front determiner this is
