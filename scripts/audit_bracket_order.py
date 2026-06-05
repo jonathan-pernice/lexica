@@ -12,18 +12,17 @@ source words onto our words via a Counter, which mis-pairs repeated words (you/w
 -> ~63 false positives. This one never fuzzy-matches words: it builds two ORDERED word
 sequences (source ground-truth vs DB) and compares them as lists. No greedy pairing.
 
-GROUND TRUTH (per source bracket):
-  tokens sorted by abp_pos ascending, each keeping its FULL multi-word gloss, words
-  concatenated  ->  the intended English reading.
-  ( `[2day 1the second]`  ->  abp_pos 1 "the second", 2 "day"  ->  "the second day" )
-
-DB READINGS (compared against ground truth):
-  CHIP  = words in `position` order      (what chip/Greek mode renders)
-  PROSE = words in `greek_pos` order      (what prose mode renders; ties -> position)
-  Both SHOULD equal the ground truth. `_sort_brackets` writes `position` from abp_pos,
-  so a CHIP mismatch means the build tangled the abp_pos->position mapping (usually
-  `_split_compounds` fronting a redistributed word inside a real bracket — the
-  1Ch 15:13 "the and LORD" class).
+TWO AXES — the build never calls _sort_brackets, so `position` is NOT abp_pos order:
+  CHIP  = words in `position` order  -> should equal the source's PRINTED (Greek
+          L-to-R) token order. Only `_split_compounds` fronting perturbs `position`,
+          so a CHIP mismatch is a real garble (the 1Ch 15:13 "the and LORD" class).
+  PROSE = words in `greek_pos` order -> should equal the abp_pos READING order
+          (the frontend sorts brackets by greek_pos). A PROSE-only mismatch is
+          greek_pos-vs-abp_pos (BH numbering) divergence — a separate, lower
+          priority class, NOT the _split_compounds garble.
+  ( `[2day 1the second]`  printed = "day the second" (chip);  abp# reading =
+    "the second day" (prose).  Earlier versions wrongly judged BOTH against the
+    reading order, flagging every reordered bracket -> ~647 false positives. )
 
 REAL vs SYNTHETIC:
   Source brackets are numbered `[...]` in the txt. Synthetic brackets (created by
@@ -197,8 +196,8 @@ def overlap(a, b):
 
 
 # ── compare ───────────────────────────────────────────────────────────────────
-reorder_hits = []
-wordset_hits = []
+chip_hits = []        # chip (position) disagrees with PRINTED source order
+prose_hits = []       # chip OK but prose (greek_pos) disagrees with READING order
 synthetic_refs = set()
 real_checked = 0
 
@@ -213,9 +212,14 @@ for ref, grpmap in src_brackets.items():
         if len(disp) < MIN_WORDS:
             continue
 
-        # ground-truth reading: abp_pos asc, ties by source order; full gloss words
-        gt_sorted = sorted(disp, key=lambda t: (t["abp_pos"] if t["abp_pos"] is not None else 9999, t["src_i"]))
-        gt_seq = [w for t in gt_sorted for w in t["words"]]
+        # TWO ground-truth axes — the build never calls _sort_brackets, so:
+        #   CHIP  renders in `position` = source PRINTED (Greek L-to-R) order
+        #   PROSE renders in `greek_pos` = abp_pos READING order (frontend sorts by it)
+        # Each DB channel must be judged against its OWN source axis, NOT a single one
+        # (checking chip against the reading order flagged every reordered bracket).
+        printed_gt = [w for t in sorted(disp, key=lambda t: t["src_i"]) for w in t["words"]]
+        abp_gt = [w for t in sorted(disp, key=lambda t: (t["abp_pos"] if t["abp_pos"] is not None else 9999, t["src_i"]))
+                  for w in t["words"]]
         src_ms = base_multiset(disp, "sbase")
 
         # find best-matching unused DB bracket in this verse (by strongs overlap)
@@ -238,13 +242,15 @@ for ref, grpmap in src_brackets.items():
         prose_seq = [w for r in sorted(disp_rows, key=lambda r: (r["greek_pos"] if r["greek_pos"] is not None else 9999, r["position"]))
                      for w in norm_words(r["english"])]
 
-        chip_bad  = chip_seq != gt_seq
-        prose_bad = prose_seq != gt_seq
+        chip_bad  = chip_seq != printed_gt      # chip judged vs PRINTED order
+        prose_bad = prose_seq != abp_gt          # prose judged vs READING order
         if not chip_bad and not prose_bad:
             continue
 
-        # classify
-        same_multiset = sorted(chip_seq) == sorted(gt_seq)
+        # A chip mismatch can only come from _split_compounds fronting a redistributed
+        # word (the only pass that perturbs `position`); that is the real "our build
+        # tangled the printed order" garble. A prose-only mismatch is greek_pos vs
+        # abp_pos divergence (BH numbering) — separate, lower-priority.
         bases = [r["strongs_base"] for r in rows]
         tags = []
         if "G2962" in bases and "G3588" in bases:
@@ -254,12 +260,17 @@ for ref, grpmap in src_brackets.items():
 
         hit = {
             "ref": ref, "tags": tags,
-            "gt": " ".join(gt_seq),
+            "printed": " ".join(printed_gt), "reading": " ".join(abp_gt),
             "chip": " ".join(chip_seq), "prose": " ".join(prose_seq),
             "chip_bad": chip_bad, "prose_bad": prose_bad,
-            "nwords": len(gt_seq),
+            "chip_reorder": sorted(chip_seq) == sorted(printed_gt),   # same words, wrong order
+            "prose_reorder": sorted(prose_seq) == sorted(abp_gt),
+            "nwords": len(printed_gt),
         }
-        (reorder_hits if same_multiset else wordset_hits).append(hit)
+        if chip_bad:
+            chip_hits.append(hit)
+        elif prose_bad:
+            prose_hits.append(hit)
 
     # any DB bracket left unmatched in a verse that HAS source brackets is synthetic-ish
     for bid in db_grps:
@@ -268,52 +279,55 @@ for ref, grpmap in src_brackets.items():
 
 
 def rank_key(h):
-    # genuine pure-reorder, no benign tag, most words first
+    # no benign tag first, most words first
     return (bool(h["tags"]), -h["nwords"], h["ref"])
 
 
-reorder_hits.sort(key=rank_key)
-wordset_hits.sort(key=rank_key)
+chip_hits.sort(key=rank_key)
+prose_hits.sort(key=rank_key)
 
-clean_reorder = [h for h in reorder_hits if not h["tags"]]
-tagged_reorder = [h for h in reorder_hits if h["tags"]]
+chip_clean  = [h for h in chip_hits if not h["tags"]]
+chip_tagged = [h for h in chip_hits if h["tags"]]
 
 print(f"READ-ONLY bracket-ORDER audit -> {DB}")
 print(f"  source verses with brackets : {len(src_brackets)}")
 print(f"  real brackets compared (>= {MIN_WORDS} words): {real_checked}")
-print(f"  ORDER mismatches (same words, wrong order): {len(reorder_hits)}")
-print(f"      genuine (no benign tag)             : {len(clean_reorder)}   <-- TRIAGE THESE")
-print(f"      tagged benign (kurios-dup/carrier)  : {len(tagged_reorder)}")
-print(f"  WORDSET diffs (word moved in/out)       : {len(wordset_hits)}   (use --all to list)")
-print(f"  synthetic / unmatched DB brackets       : {len(synthetic_refs)}")
+print()
+print(f"  CHIP mismatches (position != source PRINTED order): {len(chip_hits)}")
+print(f"      genuine (no benign tag)              : {len(chip_clean)}   <-- TRIAGE THESE")
+print(f"      tagged benign (kurios-dup/carrier)   : {len(chip_tagged)}")
+print(f"  PROSE-only mismatches (greek_pos vs reading order): {len(prose_hits)}   (use --all)")
+print(f"  synthetic / unmatched DB brackets        : {len(synthetic_refs)}")
+print()
+print("  CHIP = position order, should equal the source's PRINTED (Greek L-to-R) order;")
+print("        only _split_compounds fronting perturbs it -> a mismatch is real garble.")
+print("  PROSE-only = greek_pos disagrees with abp_pos reading order (BH numbering);")
+print("        separate, lower-priority class — not the _split_compounds garble.")
 print()
 
 
-def show(title, hits):
+def show(title, hits, axis):
     print(f"=== {title} ({len(hits)}) ===")
     for h in hits:
         b, ch, vs = h["ref"]
-        flags = []
-        if h["chip_bad"]:
-            flags.append("CHIP")
-        if h["prose_bad"]:
-            flags.append("PROSE")
+        kind = "reorder" if h[("chip_reorder" if axis == "chip" else "prose_reorder")] else "WORDSET"
         tagstr = ("  [" + ",".join(h["tags"]) + "]") if h["tags"] else ""
-        print(f"  {b} {ch}:{vs}  ({'+'.join(flags)} off, {h['nwords']}w){tagstr}")
-        print(f"      source : {h['gt']}")
-        if h["chip_bad"]:
+        print(f"  {b} {ch}:{vs}  ({kind}, {h['nwords']}w){tagstr}")
+        if axis == "chip":
+            print(f"      printed: {h['printed']}")
             print(f"      chip   : {h['chip']}")
-        if h["prose_bad"]:
+        else:
+            print(f"      reading: {h['reading']}")
             print(f"      prose  : {h['prose']}")
     print()
 
 
-show("GENUINE ORDER GARBLE — triage first", clean_reorder)
-if tagged_reorder:
-    show("ORDER mismatch w/ benign tag — verify before trusting", tagged_reorder)
-if SHOW_ALL and wordset_hits:
-    show("WORDSET diffs (word moved in/out of bracket)", wordset_hits)
+show("GENUINE CHIP GARBLE — triage first (position vs printed order)", chip_clean, "chip")
+if chip_tagged:
+    show("CHIP mismatch w/ benign tag — verify before trusting", chip_tagged, "chip")
+if SHOW_ALL and prose_hits:
+    show("PROSE-only mismatches (greek_pos vs reading order)", prose_hits, "prose")
 
-print("Next: triage the GENUINE list. Source order is ground truth; a CHIP mismatch")
-print("means position (from abp_pos) was tangled — usually _split_compounds fronting.")
+print("Next: triage the GENUINE CHIP list — these are brackets where _split_compounds")
+print("fronting tangled the printed word order (the 1Ch 15:13 'the and LORD' class).")
 print("Fix nothing from this script — report scope, then propose a targeted repair.")
