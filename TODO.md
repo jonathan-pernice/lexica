@@ -120,7 +120,21 @@ when no kept "own" word precedes it AND the head slot is non-bracketed (`bid is 
   ordering is tangled: 1Ch 15:13 "the and LORD", Exo 19:4, Gal 4:12, Job 21:22 "it he", Eze 40:3
   "set he them" (last two surfaced by audit_order_mismatch but left under our source-bracket
   gate — re-examine here). Tackle during the Full Corpus Audit; may want the insert-row machinery
-  (below). (3) ✓ DONE 2026-06-04/05: punctuation riding the wrong token ("mourned many, days")
+  (below).
+  → KICKOFF METHOD (next session): START READ-ONLY. Build/extend an audit over multi-word
+    brackets (≥3 displayed words) that compares our rendered order (greek_pos for prose /
+    position for chip) against the ABP **source line** order in `abp_texts/` — the source's
+    numbered `[1.. 2..]` order is the ground truth. Distinguish REAL source brackets (numbered
+    in the txt) from SYNTHETIC (_redistribute) — garble in a real one means our build dropped/
+    tangled the abp_pos→greek_pos mapping. REPORT SCOPE before proposing fixes. NOTE
+    audit_order_mismatch.py's greedy-matching bug (wrong repeated you/we → ~63 false positives) —
+    fix matching first if reusing, or write a fresh comparator. Constraints: bible.db PA-only
+    (give run commands), copy-first (cp→dry-run→diff_split_fix→health_check 0/0→strongs_base GLOB
+    '[0-9]*'=0→swap), NEVER DELETE FROM words, repair scripts touch only needed columns + --dry-run
+    + idempotent + added to post-rebuild checklist. This is the word-order slice of the Full
+    Corpus Audit — consider just starting that audit's Tier 1 (internal Strong's↔lemma↔morph↔order
+    SQL) and letting it surface these.
+  (3) ✓ DONE 2026-06-04/05: punctuation riding the wrong token ("mourned many, days")
   — fix_bracket_punct.py (365 verses, data) + chip renders clause punct OUTSIDE the "]" (d0a2456).
   TOOLING CAVEAT: audit_order_mismatch.py greedy-matches the wrong "you"/"we" in repeated-word
   verses → ~63 false positives; benign unless reused, then fix the matching first.
