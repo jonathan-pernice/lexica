@@ -2079,6 +2079,30 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           if (w.greek_pos != null) lastGp = w.greek_pos;
           return w;
         });
+        // Lift the bracket's trailing clause punctuation OUTSIDE the "]". ABP
+        // writes "...many]," (mark after the bracket), but clean_english glued it
+        // onto the word ("many,") so it renders inside. fix_bracket_punct already
+        // parks the mark on the bracket's LAST word, so we snip it off here and
+        // re-emit it just after the "]" — "[...dominate]." not "[...dominate.]".
+        const TRAIL = /[.,;:!?·]+$/;
+        let bracketTrail = "";
+        let gwR = gw;
+        {
+          const li = gw.length - 1;
+          const lastEng = (gw[li] && gw[li].english) || "";
+          const m = lastEng.match(TRAIL);
+          if (m) {
+            bracketTrail = m[0];
+            gwR = gw.map((w, i) => i === li ? { ...w, english: lastEng.slice(0, m.index) } : w);
+          }
+        }
+        const trailChar = (txt, k) => (
+          <span key={k} className="lib-bracket-trail">
+            {showInterlinear && <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>}
+            <span className="lib-iw-english">{txt}</span>
+            {showStrongs && <span className="lib-iw-strongs" style={{visibility:"hidden"}}>G0</span>}
+          </span>
+        );
         const bracketChar = (ch, k) => (
           <span key={k} className="lib-bracket">
             {showInterlinear && <span className="lib-iw-greek" style={{visibility:"hidden"}}>x</span>}
@@ -2088,21 +2112,23 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         );
         return (
           <span key={`bg${gi}`} className="lib-bracket-group">
-            {gw.length === 1 ? (
+            {gwR.length === 1 ? (
               <span className="lib-bracket-unit">
                 {bracketChar("[", "bl")}
-                {bracketChip(gw[0], `bg${gi}w0`)}
+                {bracketChip(gwR[0], `bg${gi}w0`)}
                 {bracketChar("]", "br")}
+                {bracketTrail && trailChar(bracketTrail, "bt")}
               </span>
             ) : (<>
               <span className="lib-bracket-unit">
                 {bracketChar("[", "bl")}
-                {bracketChip(gw[0], `bg${gi}w0`)}
+                {bracketChip(gwR[0], `bg${gi}w0`)}
               </span>
-              {gw.slice(1, -1).map((w, wi) => bracketChip(w, `bg${gi}w${wi + 1}`))}
+              {gwR.slice(1, -1).map((w, wi) => bracketChip(w, `bg${gi}w${wi + 1}`))}
               <span className="lib-bracket-unit">
-                {bracketChip(gw[gw.length - 1], `bg${gi}w${gw.length - 1}`)}
+                {bracketChip(gwR[gwR.length - 1], `bg${gi}w${gwR.length - 1}`)}
                 {bracketChar("]", "br")}
+                {bracketTrail && trailChar(bracketTrail, "bt")}
               </span>
             </>)}
           </span>
