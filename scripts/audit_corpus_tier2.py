@@ -135,7 +135,8 @@ where = "WHERE v.book = ?" if ONLY_BOOK else ""
 params = (ONLY_BOOK,) if ONLY_BOOK else ()
 rows = conn.execute(
     f"""SELECT v.book AS book, v.chapter AS ch, v.verse AS vs, w.position AS pos,
-               w.strongs_base AS sb, w.lemma AS lem, w.english AS eng
+               w.strongs_base AS sb, w.lemma AS lem, w.english AS eng,
+               COALESCE(w.is_pn, 0) AS is_pn
         FROM words w JOIN verses v ON v.id = w.verse_id
         {where}
         ORDER BY v.book, v.chapter, v.verse, w.position""", params).fetchall()
@@ -156,16 +157,36 @@ for r in rows:
 # ══════════════════════════════════════════════════════════════════════════════
 # Align each verse to its reference, classify each ABP word.
 # ══════════════════════════════════════════════════════════════════════════════
-# per-book tallies
+def fmt(b):
+    """Format a Strong's base for display: H-numbers keep their H, bare = Greek."""
+    return b if (b[:1] == "H") else "G" + b
+
+
+def abp_gloss_bucket(eng, own_cat):
+    """ABP English person-bucket for a slot, with reflexive/intensive neutralised
+    against ABP's own number (a '-self' gloss never contradicts)."""
+    gw = L._last_en_word(eng or "")
+    eb = L._EN_BUCKET.get(gw)
+    if gw.endswith("self") or gw.endswith("selves"):
+        eb = L._CAT_BUCKET.get(own_cat)   # never flag intensive/reflexive
+    return gw, eb
+
+
+# per-book tallies (NON-PN content words only)
 bk = defaultdict(lambda: dict(anchorable=0, confirmed=0, gap=0, nummis=0, lemmis=0, verses=0))
-num_pairs = defaultdict(int)          # (abp_base, ref_base) -> count
-num_pair_refs = defaultdict(list)     # (abp_base, ref_base) -> sample refs (+lemmas)
-lem_pairs = defaultdict(int)          # (norm_abp_lemma, norm_ref_lemma) for num-agreeing slots
+num_pairs = defaultdict(int)          # (abp_base, ref_base) -> count  (non-PN)
+num_pair_refs = defaultdict(list)
+lem_pairs = defaultdict(int)
 lem_pair_refs = defaultdict(list)
-real_errors = []                      # pronoun gloss-contradiction (the high bucket)
-skipped_books = defaultdict(int)      # book -> word count (no reference source)
+internal_contra = []                  # (a) ABP gloss contradicts ABP's OWN number → REAL
+pron_diverge = 0                      # pronoun slot: ABP self-consistent, reference differs → textual
+skipped_books = defaultdict(int)
 pn_blank = 0                          # '*'/blank abp slots (not audited)
-unmatched_ref = 0                     # verses with no reference verse found
+unmatched_ref = 0
+# proper-noun (is_pn / H-number) cross-numbering — different system, not comparable
+pn_total = pn_match = pn_cross = 0
+pn_pairs = defaultdict(int)
+pn_pair_refs = defaultdict(list)
 
 
 def ref_for(book):
@@ -184,7 +205,6 @@ for (book, ch, vs), words in verses:
     bk[book]["verses"] += 1
     if not ref_verse:
         unmatched_ref += 1
-        # every anchorable word becomes a gap (no reference verse to compare)
         for w in words:
             if (L.base(w["sb"]) or "") not in ("", "*"):
                 bk[book]["gap"] += 1
@@ -202,44 +222,62 @@ for (book, ch, vs), words in verses:
         if ab in ("", "*"):
             pn_blank += 1
             continue
+        is_pn = bool(w["is_pn"]) or ab[:1] == "H"
         bj = amap.get(i, -1)
         rt = b[bj] if bj is not None and bj >= 0 else None
+
+        # ── (a) ABP-INTERNAL check: does ABP's gloss contradict ABP's OWN number?
+        # Independent of the reference — a genuine residual mis-tag (e.g. a G1473
+        # slot glossed "him"/"it"). This is the class Tier 1 never checked.
+        own_cat = L._category(ab)
+        if own_cat != "?" and not is_pn:
+            gw, eb = abp_gloss_bucket(w["eng"], own_cat)
+            cb = L._CAT_BUCKET.get(own_cat)
+            if eb is not None and cb is not None and eb != cb:
+                internal_contra.append(
+                    f"{ref}  abp={fmt(ab)}/{own_cat}({cb}) but gloss '{gw}'({eb})")
+
+        # ── proper-noun H↔G cross-numbering: different numbering system ──
+        if is_pn:
+            if rt is not None and rt[0] != "":
+                pn_total += 1
+                if ab == rt[0]:
+                    pn_match += 1
+                else:
+                    pn_cross += 1
+                    key = (ab, rt[0])
+                    pn_pairs[key] += 1
+                    if len(pn_pair_refs[key]) < SAMPLES:
+                        pn_pair_refs[key].append(f"{ref}  {fmt(ab)}→{fmt(rt[0])}({rt[3] or '?'})")
+            continue
+
+        # ── content-word alignment vs reference ──
         if rt is None or rt[0] == "":
             bk[book]["gap"] += 1
             continue
         bk[book]["anchorable"] += 1
         ref_base, ref_morph, ref_is_pron, ref_lemma = rt
-        # pronoun-equivalence: align() treats abp 1473 vs any ref pronoun as match,
-        # but post-fix the DB number should equal ref_base directly. Compare raw.
         if ab == ref_base:
             bk[book]["confirmed"] += 1
-            # number agrees — is the lemma the same word?
             al, rl = w["lem"], ref_lemma
             if al and rl and norm_lemma(al) != norm_lemma(rl) and edit_distance(al, rl) > 2:
                 bk[book]["lemmis"] += 1
                 key = (al, rl)
                 lem_pairs[key] += 1
                 if len(lem_pair_refs[key]) < SAMPLES:
-                    lem_pair_refs[key].append(f"{ref}  {ab}")
+                    lem_pair_refs[key].append(f"{ref}  {fmt(ab)}")
             continue
-        # ── Strong's number disagrees with reference ──
+        # number disagrees with reference
         bk[book]["nummis"] += 1
         key = (ab, ref_base)
         num_pairs[key] += 1
         if len(num_pair_refs[key]) < SAMPLES:
             num_pair_refs[key].append(
-                f"{ref}  abp={ab}({w['lem'] or '?'}) vs ref={ref_base}({ref_lemma or '?'})")
-        # (a) pronoun gloss-contradiction → REAL error
-        cat = L._category(ref_base)
-        if cat != "?":
-            gw = L._last_en_word(w["eng"] or "")
-            eb = L._EN_BUCKET.get(gw)
-            cb = L._CAT_BUCKET.get(cat)
-            if gw.endswith("self") or gw.endswith("selves"):
-                eb = cb
-            if eb is not None and cb is not None and eb != cb:
-                real_errors.append(
-                    f"{ref}  abp={ab} gloss '{gw}'({eb}) vs ref={ref_base}/{cat}({cb})  morph={ref_morph}")
+                f"{ref}  abp={fmt(ab)}({w['lem'] or '?'}) vs ref={fmt(ref_base)}({ref_lemma or '?'})")
+        # pronoun slot where ABP is self-consistent but the reference text differs
+        # = textual divergence (NOT an ABP error; the internal check above owns errors)
+        if own_cat != "?" or L._category(ref_base) != "?":
+            pron_diverge += 1
 
 # ── totals ────────────────────────────────────────────────────────────────────
 T_anchor = sum(b["anchorable"] for b in bk.values())
@@ -261,12 +299,15 @@ def pct(a, b):
     return f"{100*a/b:.2f}%" if b else "—"
 
 
-print("┌─ HEADLINE: Strong's-number agreement vs independent witness " + "─" * 12)
-print(f"│  anchorable words (aligned, non-PN): {T_anchor}")
+print("┌─ HEADLINE: content-word Strong's agreement vs independent witness " + "─" * 6)
+print(f"│  anchorable CONTENT words (aligned, non-PN): {T_anchor}")
 print(f"│  CONFIRMED (abp number == reference): {T_conf}   = {pct(T_conf, T_anchor)}")
 print(f"│  number-mismatch: {T_num}   lemma-mismatch (num agreed, lemma far): {T_lem}")
 print(f"│  alignment gaps (no ref token): {T_gap}   |  '*'/blank slots skipped: {pn_blank}")
 print(f"│  verses with NO reference verse (versification/scope): {unmatched_ref}")
+print("├─ proper nouns audited SEPARATELY (ABP Hebrew# vs Rahlfs/TAGNT Greek#) " + "─" * 2)
+print(f"│  is_pn/H-number slots aligned: {pn_total}   "
+      f"H↔G cross-numbered (same name, expected): {pn_cross}   coincident G-match: {pn_match}")
 print("└" + "─" * 72)
 
 print("\n┌─ PER-BOOK agreement (sorted worst-first — low % = offset/divergence) " + "─" * 3)
@@ -277,23 +318,30 @@ for book in sorted(bk, key=lambda b: (bk[b]["confirmed"] / bk[b]["anchorable"]) 
           f"{pct(d['confirmed'], d['anchorable']):>9} {d['gap']:>6} {d['nummis']:>7} {d['lemmis']:>7}")
 print("└" + "─" * 72)
 
-print(f"\n┌─ (b) SYSTEMATIC number-mismatch pairs (count ≥ {SYSTEMATIC}) — convention/textual " + "─" * 2)
-print(f"│  {sys_rows} rows across {len(sys_pairs)} pairs. Recurring abp→ref = an ABP LXX")
-print(f"│  number-reuse convention or a stable textual difference (expected, not a bug).")
-for (ab, rb), n in sorted(sys_pairs.items(), key=lambda kv: -kv[1])[:25]:
-    ex = num_pair_refs[(ab, rb)][0] if num_pair_refs[(ab, rb)] else ""
-    print(f"│   abp G{ab} → ref G{rb}  ×{n}    e.g. {ex}")
+print(f"\n┌─ PN H↔G cross-numbering top pairs (ABP Hebrew# vs reference Greek#) " + "─" * 3)
+print(f"│  {pn_cross} rows — same proper noun, two numbering systems. ALL EXPECTED (TIPNR).")
+for (ab, rb), n in sorted(pn_pairs.items(), key=lambda kv: -kv[1])[:12]:
+    ex = pn_pair_refs[(ab, rb)][0] if pn_pair_refs[(ab, rb)] else ""
+    print(f"│   {fmt(ab)} → {fmt(rb)}  ×{n}    e.g. {ex}")
 print("└" + "─" * 72)
 
-print(f"\n┌─ (c)+SUSPECTS: ONE-OFF number-mismatch pairs (count < {SYSTEMATIC}) " + "─" * 8)
-print(f"│  {one_rows} rows across {len(one_pairs)} pairs. Scattered = local textual variant")
-print(f"│  OR a genuine one-off mis-tag — the human-review pile (can't auto-resolve).")
+print(f"\n┌─ (b) SYSTEMATIC content mismatch pairs (count ≥ {SYSTEMATIC}) — convention/textual " + "─" * 2)
+print(f"│  {sys_rows} rows across {len(sys_pairs)} pairs. Recurring abp→ref = a same-word")
+print(f"│  convention (τις/τίς, εἴδω/ὁράω) or a stable textual difference (κύριος/θεός).")
+for (ab, rb), n in sorted(sys_pairs.items(), key=lambda kv: -kv[1])[:25]:
+    ex = num_pair_refs[(ab, rb)][0] if num_pair_refs[(ab, rb)] else ""
+    print(f"│   {fmt(ab)} → {fmt(rb)}  ×{n}    e.g. {ex}")
+print("└" + "─" * 72)
+
+print(f"\n┌─ (c)+SUSPECTS: ONE-OFF content mismatch pairs (count < {SYSTEMATIC}) " + "─" * 8)
+print(f"│  {one_rows} rows across {len(one_pairs)} pairs. Scattered = local textual variant,")
+print(f"│  alignment slip, OR a genuine one-off mis-tag — the human-review pile.")
 shown = 0
 for (ab, rb), n in sorted(one_pairs.items(), key=lambda kv: -kv[1]):
     if shown >= SAMPLES * 2:
         break
     ex = num_pair_refs[(ab, rb)][0] if num_pair_refs[(ab, rb)] else ""
-    print(f"│   abp G{ab} → ref G{rb}  ×{n}    {ex}")
+    print(f"│   {fmt(ab)} → {fmt(rb)}  ×{n}    {ex}")
     shown += 1
 print("└" + "─" * 72)
 
@@ -304,10 +352,15 @@ for (al, rl), n in sorted(lem_pairs.items(), key=lambda kv: -kv[1])[:20]:
     print(f"│   abp {al!r} vs ref {rl!r}  ×{n}    e.g. {ex}")
 print("└" + "─" * 72)
 
-print("\n┌─ (a) REAL-ERROR bucket: pronoun number contradicts ABP's own English " + "─" * 3)
-print(f"│  {len(real_errors)} slot(s) — should be ~0 (the pronoun fix drove live MISMATCH to 0).")
-for s in real_errors[:40]:
+print("\n┌─ (a) REAL-ERROR bucket: ABP gloss contradicts ABP's OWN pronoun number " + "─" * 1)
+print(f"│  {len(internal_contra)} slot(s) — INTERNAL contradiction (e.g. a G1473 slot glossed")
+print(f"│  'him'/'it'). Reference-independent → a genuine residual mis-tag. This is the")
+print(f"│  real fixable class (Tier 1 never checked gloss-vs-number).")
+for s in internal_contra[:40]:
     print(f"│   {s}")
+print("├─ (informational) pronoun textual divergence (ABP self-consistent, ref differs) " + "─" * 1)
+print(f"│  {pron_diverge} pronoun slots where ABP's number+gloss AGREE but the reference text")
+print(f"│  reads a different pronoun → ABP↔Rahlfs/TAGNT textual variant, NOT an ABP error.")
 print("└" + "─" * 72)
 
 if skipped_books:
@@ -317,8 +370,8 @@ if skipped_books:
         print(f"│   {book:<5} {n:>7} words   ({why})")
     print("└" + "─" * 72)
 
-print(f"\nSUMMARY  confirmed {pct(T_conf, T_anchor)} of {T_anchor} anchorable Strong's numbers "
-      f"vs reference.\n  REAL-error pronoun slots: {len(real_errors)}.  "
-      f"Systematic(convention): {sys_rows} rows.  One-off(suspect): {one_rows} rows.  "
-      f"Gaps: {T_gap}.\n  Tier 2 = numbers/lemmas vs external witness. Tier 3 (LLM English) "
-      f"only if a suspect class warrants it.\n")
+print(f"\nSUMMARY  content-word Strong's confirmed {pct(T_conf, T_anchor)} of {T_anchor} "
+      f"vs reference.\n  (a) REAL internal-contradiction slots: {len(internal_contra)}.  "
+      f"PN H↔G cross-numbered (expected): {pn_cross}.\n  Content convention/textual: "
+      f"{sys_rows} systematic + {one_rows} one-off.  Pronoun divergence: {pron_diverge}.  "
+      f"Gaps: {T_gap}.\n  Tier 3 (LLM English) only if the one-off suspect pile warrants it.\n")
