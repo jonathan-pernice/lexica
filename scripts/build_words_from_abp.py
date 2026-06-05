@@ -245,6 +245,16 @@ def _split_compounds(rows: list, lex: dict) -> None:
             continue
         if not sbase or sbase in ("*", ""):
             continue
+        # Bracketed slots are left exactly as the source orders them. ee84aa0 ("Keep
+        # Greek word order within brackets") set bracket rendering to Greek/source order,
+        # with the gpos superscripts conveying the English reading order. The
+        # redistribution + front-swap below was only ever safe under the _sort_brackets
+        # re-sort that ee84aa0 removed — so inside a bracket the swap silently garbled the
+        # word order (audit_bracket_order.py: 374 cases, e.g. 1Ch 15:13 "the and LORD").
+        # Splitting still runs for NON-bracketed glosses ("God made" → a separate
+        # θεός/G2316 chip), where there are no source numbers to order by.
+        if bid is not None:
+            continue
 
         own_def = lex.get(sbase, set())
         gloss_words = eng.split()
@@ -270,15 +280,11 @@ def _split_compounds(rows: list, lex: dict) -> None:
         if not ahead:
             continue
 
-        # Leading-run rule applies only to NON-bracketed slots: those render
-        # straight from `position`, so the fronting swap below visibly garbles
-        # them ("this of possession", "LORD the was enraged"). Bracketed slots
-        # render in abp_pos order via _sort_brackets, so the swap is invisible
-        # there AND the redistribution yields a useful separate chip on the
-        # correct Strong's — keep the original behavior for them (chip preserved
-        # on already-correct reading; restoring the same for non-bracketed cases
-        # is deferred — see TODO "_split_compounds demonstrative over-reach").
-        apply_leading_run = (bid is None)
+        # Leading-run rule (only non-bracketed slots reach here now): front a
+        # redistributed gloss word only when no kept "own" word precedes it — so a
+        # leading determiner ("the LORD", "their X") still splits, but a word sitting
+        # after a kept word ("of this possession", "he is a prophet") stays put.
+        apply_leading_run = True
         taken: dict = {}
         own = []
         seen_own = False
@@ -511,9 +517,12 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
             sbase   = strongs.split(".")[0]
             gpos, iw, sw = bh_lookup(bh_rows, used, sbase, normalize(english))
 
-        # For bracketed words with no BH gpos (e.g. proper nouns), fall back to
-        # the ABP position number so the number still displays on the chip.
-        if gpos is None and abp_pos is not None:
+        # The bracket chip's superscript IS the source's ABP position number (ee84aa0:
+        # "gpos superscripts show English reading order"). abp_pos is non-None only for
+        # bracketed source tokens, so this makes the source number authoritative there
+        # (fixing the cases where the BibleHub gpos disagreed with the source) while
+        # non-bracketed words keep their BH gpos.
+        if abp_pos is not None:
             gpos = abp_pos
 
         # Bracket state machine driven by ABP [/] markers
