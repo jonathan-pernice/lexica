@@ -214,9 +214,26 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
   after ANY run you MUST re-run `import_tipnr.py` and verify the strongs_base invariant above.
 
 ## Words rebuild checklist (if you ever rebuild the words table)
-1. Run `build_words_from_abp.py` (now re-applies the 'G' prefix at INSERT)
-2. Verify: `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'` → must be 0
-3. Re-run `import_tipnr.py bible.db` to restore proper-noun Strong's + is_pn (~94% match)
-4. Spot-check: a Greek word (Eze 31:9 "were jealous of" → ζηλόω) and a proper noun
-   (1 Chr 1:1 "Adam" → H121, opens metaV)
-5. Deploy (touch wsgi)
+COPY-FIRST: validate on a `cp bible.db bible_test.db` build + `audit_bracket_order.py` BEFORE
+the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated rollback copy.
+1. Rollback copy: `cp bible.db bible_pre_<reason>_<date>.db`
+2. Rebuild: `python3 scripts/build_words_from_abp.py bible.db bh_scrape.db` (type 'rebuild';
+   re-applies the 'G' prefix at INSERT). Needs Rahlfs + TAGNT present for pronoun correction.
+   Confirm `Words inserted: ~624,591`, `Verses skipped: 0`.
+3. Restore proper nouns (rebuild CLEARS is_pn + PN Strong's): `import_tipnr.py bible.db` (~94%)
+4. Repair chain — ORDER MATTERS (these WRITE by default; `--dry-run` previews):
+   `fix_bracket_punct` → `fix_subject_reorder` → `fix_mat25_37` → `fix_supplied_attach` →
+   `fix_g1473_gloss bible.db --apply` (note: this one needs `--apply`).
+   Sanity counts: bracket_punct ~331v, subject_reorder 20, supplied_attach 5, g1473 ~1724.
+5. Gap-fixers (clear the standard post-rebuild health warnings; `--dry-run` first):
+   `dedup_words` (exact-dup rows) → `fix_greek_pos_gaps` (bracketed NULL greek_pos).
+6. Invariant (MUST be 0): `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'`
+7. Audits (the gates): `health_check.py` (≤ minor warnings) → `audit_bracket_order.py`
+   (CHIP genuine ≈ 0; ~8 twin-bracket WORDSET false positives are a KNOWN audit-matcher
+   limitation, not garbles) → `audit_corpus_tier1.py` (A1 ≈ 176 baseline) →
+   `audit_corpus_tier2.py bible.db --rahlfs ~/LXX-Rahlfs-1935 --tagnt ~/TAGNT_*.txt` (~92%).
+8. Spot-check: Greek (Eze 31:9 "were jealous of" → ζηλόω), proper noun (1Chr 1:1 "Adam" →
+   H121, opens metaV), bracket order (1Ch 15:13 chip → "cut through · and the LORD · our God").
+9. Deploy (touch wsgi).
+KNOWN: rebuild double-processes Hab 3:14 (duplicate rows; dedup_words clears most, ~1 non-exact
+residual lingers as health `misalignment:1`/`fragmented:1`) — isolated, not a blocker.
