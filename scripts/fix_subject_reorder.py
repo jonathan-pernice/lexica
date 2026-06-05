@@ -106,8 +106,11 @@ for grp, book, ch, vs, anchor, overrides, retag, remorph in FIXES:
             conn.execute("UPDATE words SET english=? WHERE verse_id=? AND position=?",
                          (eng, vid, pos))
         for pos, sb in retag.items():
-            conn.execute("UPDATE words SET strongs_base=? WHERE verse_id=? AND position=?",
-                         (sb, vid, pos))
+            # update BOTH columns: strongs_base (drives the lemma join) AND strongs
+            # (drives the displayed number; left bare, no G/H prefix).
+            bare = sb.lstrip("GH")
+            conn.execute("UPDATE words SET strongs_base=?, strongs=? WHERE verse_id=? AND position=?",
+                         (sb, bare, vid, pos))
         for pos, mo in remorph.items():
             conn.execute("UPDATE words SET morph=? WHERE verse_id=? AND position=?",
                          (mo, vid, pos))
