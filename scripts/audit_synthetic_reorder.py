@@ -52,7 +52,19 @@ PRONOUN_SB = {f"G{n}" for n in (
 
 # English pronoun words ABP uses, split by likely syntactic role. SUBJECT forms
 # are the ones where "verb + pronoun" reordering would read backwards → flag.
-SUBJECT_PRON = {"i", "he", "she", "they", "we", "it"}
+# ("it" is excluded — it functions as an OBJECT far more than a subject here:
+# "called it", "strew it".)
+SUBJECT_PRON = {"i", "he", "she", "they", "we"}
+
+# Words that legitimately reorder AROUND a subject pronoun without being a verb:
+# postpositive conjunctions/particles (Greek δέ/γάρ → "but/for he") and articles.
+# A flagged case whose moved words are ALL function words is a benign conjunction
+# reorder, not a real "verb-before-subject" error.
+FUNCTION_MOVERS = {
+    "and", "but", "for", "or", "nor", "yet", "so", "then", "now", "also",
+    "indeed", "therefore", "moreover", "however", "thus", "the", "a", "an",
+    "--", "behold",
+}
 OBJ_POSS_PRON = {
     "me", "my", "mine", "myself",
     "you", "your", "yours", "yourself", "yourselves", "thou", "thee", "thy", "thine", "ye",
@@ -89,7 +101,7 @@ groups = defaultdict(list)
 for r in rows:
     groups[(r["verse_id"], r["bracket_id"])].append(r)
 
-candidates = []   # (ref, testament, pronoun_word, move_phrase, is_subject)
+candidates = []
 for (vid, bid), members in groups.items():
     disp = [m for m in members if (m["english"] or "").strip()]
     if len(disp) < 2:
@@ -106,38 +118,51 @@ for (vid, bid), members in groups.items():
     movers = [m for m in disp if m is not pron and (m["greek_pos"] or 99) < pron["greek_pos"]]
     if not movers:
         continue
-    book = pron["book"]
-    testament = "NT" if book in NT_BOOKS else "OT"
-    move_phrase = " ".join((m["english"] or "").strip() for m in
-                           sorted(movers, key=lambda m: (m["greek_pos"] or 99, m["position"])))
+    movers_sorted = sorted(movers, key=lambda m: (m["greek_pos"] or 99, m["position"]))
+    move_words = [bareword(m["english"]) for m in movers_sorted if bareword(m["english"])]
+    move_phrase = " ".join((m["english"] or "").strip() for m in movers_sorted)
+    is_subject = pw in SUBJECT_PRON
+    # benign if EVERY moved word is a function word (conjunction/article) — that's a
+    # postpositive reorder ("he δέ" -> "but he"), not a verb dragged before a subject.
+    benign = is_subject and move_words and all(w in FUNCTION_MOVERS for w in move_words)
     candidates.append({
-        "ref": f"{book} {pron['chapter']}:{pron['verse']}",
-        "testament": testament,
+        "key": (vid, bid),
+        "ref": f"{pron['book']} {pron['chapter']}:{pron['verse']}",
+        "testament": "NT" if pron["book"] in NT_BOOKS else "OT",
         "pron": (pron["english"] or "").strip(),
-        "pw": pw,
         "move": move_phrase,
-        "subject": pw in SUBJECT_PRON,
+        "subject": is_subject,
+        "benign": benign,
+        "review": is_subject and not benign,
     })
 
 n = len(candidates)
 ot = sum(1 for c in candidates if c["testament"] == "OT")
-nt = n - ot
-flagged = [c for c in candidates if c["subject"]]
+subj = [c for c in candidates if c["subject"]]
+benign = [c for c in subj if c["benign"]]
+review = [c for c in candidates if c["review"]]
 
 print(f"READ-ONLY synthetic-reorder audit -> {DB}\n")
-print(f"  synthetic pronoun-reorder brackets ... {n:,}   (OT {ot:,} / NT {nt:,})")
-print(f"  SUBJECT-pronoun cases (review!) ...... {len(flagged):,}")
+print(f"  synthetic pronoun-reorder brackets ..... {n:,}   (OT {ot:,} / NT {n-ot:,})")
+print(f"  subject-pronoun cases .................. {len(subj):,}")
+print(f"    - benign (conjunction/particle reorder) {len(benign):,}")
+print(f"    - NEED REVIEW (verb before subject) ... {len(review):,}")
 print()
-print("  Each reads 'verb + pronoun'. Correct for object/possessive pronouns;")
-print("  a SUBJECT pronoun would read backwards ('verb he') and needs a look.\n")
+print("  Object/possessive cases read 'verb + you/him/them' (correct). Subject")
+print("  cases are benign when only a conjunction moved ('he δέ' -> 'but he'); the")
+print("  REVIEW set is where a content word sits before a subject pronoun.\n")
 
-if flagged:
-    print("=== FLAGGED: subject-form pronoun (reads 'verb + subject') ===")
-    for c in flagged[:SAMPLE]:
-        print(f"  [{c['testament']}] {c['ref']:<12}  reorder reads: "
-              f"\"{c['move']} {c['pron']}\"   (pronoun='{c['pron']}')")
-    if len(flagged) > SAMPLE:
-        print(f"  ... and {len(flagged) - SAMPLE:,} more flagged")
+if review:
+    print("=== NEED REVIEW: content word before a subject pronoun (raw bracket) ===")
+    for c in review[:SAMPLE]:
+        vid, bid = c["key"]
+        mem = sorted(groups[(vid, bid)], key=lambda m: m["position"])
+        print(f"\n  [{c['testament']}] {c['ref']}   reads: \"{c['move']} {c['pron']}\"")
+        for m in mem:
+            print(f"      pos {m['position']:>3}  gp={str(m['greek_pos']):>4}  "
+                  f"{(m['strongs_base'] or ''):<7} {(m['english'] or '')!r}")
+    if len(review) > SAMPLE:
+        print(f"\n  ... and {len(review) - SAMPLE:,} more review cases")
     print()
 
 print("=== Sample of normal (object/possessive) cases ===")
