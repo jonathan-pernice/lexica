@@ -19,8 +19,12 @@ import sys
 DB = next((a for a in sys.argv[1:] if not a.startswith("--")), "bible.db")
 
 REFS = [
-    ("1Pe", 5, 10), ("Mar", 1, 45), ("Joh", 4, 51), ("Jer", 10, 16),
-    ("Dan", 2, 47), ("Psa", 79, 13), ("Eze", 11, 3), ("Job", 35, 13),
+    ("1Pe", 5, 10), ("Mar", 1, 45), ("Joh", 4, 51), ("Dan", 2, 47),
+    ("Eze", 11, 3), ("Job", 35, 13), ("Psa", 79, 13), ("Mat", 5, 14),
+    ("Act", 3, 25), ("Act", 10, 15), ("Act", 11, 9), ("Mat", 25, 37),
+    ("Mat", 26, 48), ("Mar", 14, 44), ("2Ch", 6, 25), ("2Ki", 19, 11),
+    ("1Ki", 17, 20), ("1Ki", 1, 24), ("Isa", 65, 11), ("Isa", 28, 20),
+    ("Ecc", 10, 17),
 ]
 
 conn = sqlite3.connect(f"file:{DB}?mode=ro", uri=True)
