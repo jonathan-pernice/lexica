@@ -673,7 +673,9 @@ in the ABP interlinear, what it means in OT and NT contexts, and what its semant
 range reveals about the text. Do not reference classical authors (Homer, Attic, Plato, \
 Aristotle etc.) or classical Greek literary usage — the audience is reading the Bible, \
 not classical literature. No imported systematic theology, no denominational assumptions \
-— follow where the words actually lead. Write in plain prose, no markdown, no headers.\
+— follow where the words actually lead. Write in plain prose, no markdown, no headers. \
+Do not state the word's grammatical parsing (part of speech, case, number, tense, \
+voice, mood) — that is shown separately. Focus only on meaning and semantic range.\
 """
 
 _XREF_SYNTHESIS_SYSTEM = """\
