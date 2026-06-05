@@ -270,9 +270,18 @@ def _split_compounds(rows: list, lex: dict) -> None:
         if not ahead:
             continue
 
+        # Leading-run rule applies only to NON-bracketed slots: those render
+        # straight from `position`, so the fronting swap below visibly garbles
+        # them ("this of possession", "LORD the was enraged"). Bracketed slots
+        # render in abp_pos order via _sort_brackets, so the swap is invisible
+        # there AND the redistribution yields a useful separate chip on the
+        # correct Strong's — keep the original behavior for them (chip preserved
+        # on already-correct reading; restoring the same for non-bracketed cases
+        # is deferred — see TODO "_split_compounds demonstrative over-reach").
+        apply_leading_run = (bid is None)
         taken: dict = {}
         own = []
-        seen_own = False   # leading-run guard: once a kept word appears, stop fronting
+        seen_own = False
 
         for word in gloss_words:
             norm = _NORM.sub("", word).lower()
@@ -284,25 +293,24 @@ def _split_compounds(rows: list, lex: dict) -> None:
                 own.append(word)
                 seen_own = True
                 continue
-            # Leading-run rule: only front a word with NO kept "own" word before it
-            # in the gloss. A determiner at the head ("the LORD", "their X") fronts
-            # correctly; one sitting AFTER a kept word ("of THIS possession", "of
-            # THAT land", "of THE LORD") must NOT be pulled out + fronted — that
-            # produced "this of possession" / "the of LORD". Keys on gloss word-
-            # order, not target POS (the POS gate of attempt 1 regressed every
-            # leading determiner). See TODO "_split_compounds demonstrative over-reach".
-            if not seen_own:
-                for j, slot_base, slot_def in ahead:
-                    if j in taken:
-                        continue
-                    if slot_def and norm in slot_def:
-                        taken[j] = word
-                        break
-                else:
-                    own.append(word)
-                    seen_own = True
+            # Once a kept "own" word has appeared, a non-bracketed slot stops
+            # fronting (leading-run): a determiner at the head ("the LORD",
+            # "their X") still fronts; one sitting AFTER a kept word ("of THIS
+            # possession", "of THE LORD") stays put. Keys on gloss word-order,
+            # not target POS (the POS gate of attempt 1 regressed every leading
+            # determiner corpus-wide).
+            if apply_leading_run and seen_own:
+                own.append(word)
+                continue
+            for j, slot_base, slot_def in ahead:
+                if j in taken:
+                    continue
+                if slot_def and norm in slot_def:
+                    taken[j] = word
+                    break
             else:
                 own.append(word)
+                seen_own = True
 
         if not taken:
             continue
