@@ -272,21 +272,35 @@ def _split_compounds(rows: list, lex: dict) -> None:
 
         taken: dict = {}
         own = []
+        seen_own = False   # leading-run guard: once a kept word appears, stop fronting
 
         for word in gloss_words:
             norm = _NORM.sub("", word).lower()
             if not norm:
                 own.append(word)
+                seen_own = True
                 continue
             if norm in own_def:
                 own.append(word)
+                seen_own = True
                 continue
-            for j, slot_base, slot_def in ahead:
-                if j in taken:
-                    continue
-                if slot_def and norm in slot_def:
-                    taken[j] = word
-                    break
+            # Leading-run rule: only front a word with NO kept "own" word before it
+            # in the gloss. A determiner at the head ("the LORD", "their X") fronts
+            # correctly; one sitting AFTER a kept word ("of THIS possession", "of
+            # THAT land", "of THE LORD") must NOT be pulled out + fronted — that
+            # produced "this of possession" / "the of LORD". Keys on gloss word-
+            # order, not target POS (the POS gate of attempt 1 regressed every
+            # leading determiner). See TODO "_split_compounds demonstrative over-reach".
+            if not seen_own:
+                for j, slot_base, slot_def in ahead:
+                    if j in taken:
+                        continue
+                    if slot_def and norm in slot_def:
+                        taken[j] = word
+                        break
+                else:
+                    own.append(word)
+                    seen_own = True
             else:
                 own.append(word)
 
