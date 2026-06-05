@@ -1612,10 +1612,10 @@ input { font-family: inherit; }
   padding: 5px 0 2px;
   user-select: none;
 }
-.lib-bracket:first-child { margin-right: -3px; }
-.lib-bracket:last-child  { margin-left:  -3px; }
+.lib-bracket:first-child { margin-right: -4px; }
+.lib-bracket:last-child  { margin-left:  -4px; }
 /* close-bracket keeps its leftward tuck even when trailing punctuation follows */
-.lib-bracket:has(+ .lib-bracket-trail) { margin-left: -3px; }
+.lib-bracket:has(+ .lib-bracket-trail) { margin-left: -4px; }
 /* trailing clause punctuation lifted outside the "]": hug it tight, baseline-aligned */
 .lib-bracket-trail { flex-shrink: 0; margin-left: -2px; }
 .lib-bracket-glyph {
