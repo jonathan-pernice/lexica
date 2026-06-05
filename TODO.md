@@ -29,6 +29,15 @@ Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and 
 - `dedup_words.py` — remove exact-duplicate rows
 - All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
 
+## Deferred bug — supplied-word attribution on split-verb reorders (2026-06-05)
+1Pe 5:10 ("may he ready") + Joh 4:51 ("as he was going down") read correctly but the
+supplied word ("may"/"as") rides the pronoun slot (αυτος/G846) because it's English from a
+SINGLE Greek verb (καταρτισαι / καταβαινοντος) split AROUND the subject. Clean fix needs an
+INSERTED word row for the supplied word (tag it with the verb's strongs, renumber, and make
+the repair script idempotently re-insert post-rebuild). Judged not worth it now (mild rider on
+the CORRECT anchor; reading is right). Revisit after the Full Corpus Audit below — same
+insert-row machinery may be wanted elsewhere. Context: memory [[project_bracket_punct_fix]].
+
 ## Full Corpus Audit — verify the whole text output (queued 2026-06-04)
 
 GOAL: a single rigorous audit report over all ~624k word rows — Strong's tags, interlinear
