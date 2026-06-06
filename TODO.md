@@ -52,10 +52,14 @@ scopers added: `audit_funcword_wrongslot.py`, `audit_bracket_collapse.py`.
 (κατὰ πρόσωπον "in front/person/face" G4383 + ἐν τάχει "quickly" G5034). 96 total across rounds 1+2.
 health 0/0, bracket_order baseline, idempotent. Rollback `bible_pre_funcword_idioms_20260606.db`. Chain now
 runs `--include-idioms` to restore all 96.
-REMAINING (none urgent): 5 bracketed stragglers (bracket-aware pass) + ~90 REPAIRABLE-OTHER adj/particle
-gray zone + ~15 plural/synonym NOMATCH misses (add stemming). Then **#3** wrapped verb-gloss INSERT
-(1Pe 5:10 / Joh 4:51 / the ~90 "May the LORD add" jussives — the one case needing an inserted row). Below
-is the original kickoff brief (kept for #2/#3 context).
+✅ **#2 ROUND 3 (plurals + in-bracket) DONE + LIVE 2026-06-06** — `--include-idioms --include-bracketed`,
+applied 12 (5 plural fruits/judgments/places/myriads + 7 in-bracket way/place/year/time/part + 2 πρόσωπον).
+gloss_has() plural-stems; --include-bracketed carries greek_pos so audit_bracket_order stays baseline.
+**108 total across rounds 1+2+3.** Rollback was `bible_pre_funcword_idioms_20260606.db` (round 2; round 3
+applied on top, health 0/0). Chain runs `--include-idioms --include-bracketed`.
+REMAINING (none urgent): ~90 REPAIRABLE-OTHER adj/particle gray zone ("#4", deferred) + a few semantic
+synonym misses. Then **#3** wrapped verb-gloss INSERT (1Pe 5:10 / Joh 4:51 / the ~90 "May the LORD add"
+jussives — the one case needing an inserted row). Below is the original kickoff brief (kept for #3 context).
 
 🔎 **BIGGEST WRONG-SLOT SOURCE — function-word slots (G3588 article, prepositions)** (flagged
 2026-06-06 via the Lexicon "rendered as" panel). G3588 ὁ "renders as" a huge list: most is LEGIT

@@ -225,13 +225,14 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    `fix_bracket_punct` → `fix_subject_reorder` → `fix_mat25_37` → `fix_supplied_attach` →
    `fix_g1473_gloss bible.db --apply` (note: this one needs `--apply`) →
    `fix_lord_subject` (dual-ordering pilot #1) →
-   `fix_funcword_subject bible.db --include-idioms` (dual-ordering #2 rounds 1+2; both run LAST so
-   they see clean data + bracket_punct has already run on source brackets). Sanity counts:
-   bracket_punct ~331v, subject_reorder 20, supplied_attach 5, g1473 ~1724, lord_subject ~795,
-   funcword_subject ~96 (21 nouns + 75 idiom; WITHOUT --include-idioms it's just the 21). After
-   lord_subject, verify `audit_lord_strongs.py bible.db` shows WRONG-SLOT REPAIRABLE = 0 (was ~795).
-   After funcword_subject, `audit_funcword_wrongslot.py bible.db --preps` REPAIRABLE-NOUN drops to
-   ~5 (only the bracketed stragglers remain by design — Ecc10:3/Zec14:10/Rom5:6/Rom11:25/Heb9:7).
+   `fix_funcword_subject bible.db --include-idioms --include-bracketed` (dual-ordering #2 rounds
+   1+2+3; both run LAST so they see clean data + bracket_punct has already run on source brackets).
+   Sanity counts: bracket_punct ~331v, subject_reorder 20, supplied_attach 5, g1473 ~1724,
+   lord_subject ~795, funcword_subject ~108 (21 nouns + 75 idiom + 12 plural/in-bracket; without the
+   flags it's just the 21). After lord_subject, verify `audit_lord_strongs.py bible.db` shows
+   WRONG-SLOT REPAIRABLE = 0 (was ~795). After funcword_subject, `audit_funcword_wrongslot.py bible.db
+   --preps` REPAIRABLE-NOUN drops to ~0 (only the REPAIRABLE-OTHER adj/particle gray zone remains by
+   design). The in-bracket relocations carry greek_pos → audit_bracket_order stays at baseline.
 5. Gap-fixers (clear the standard post-rebuild health warnings; `--dry-run` first):
    `dedup_words` (exact-dup rows) → `fix_greek_pos_gaps` (bracketed NULL greek_pos).
 6. Invariant (MUST be 0): `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'`
