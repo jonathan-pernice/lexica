@@ -166,8 +166,16 @@ when no kept "own" word precedes it AND the head slot is non-bracketed (`bid is 
     PROSE vs READING; replaced audit_order_mismatch.py's greedy matcher). Its strongs-overlap
     matcher cross-matches twin sibling brackets → ~8 WORDSET false positives (Jon 4:9, Gen 44:26,
     Lev 14:36, 1Ki 12:12, Jon 1:8, Jdg 8:8, Lev 27:12) — DB is correct, DON'T re-chase; tighten
-    the matcher (sibling-in-source-order) only if it ever matters. RESIDUAL: Hab 3:14 builds with
-    duplicate rows (1 verse, separate build quirk — task spawned).
+    the matcher (sibling-in-source-order) only if it ever matters.
+  (2b) ✓ DONE 2026-06-05: Hab 3:14 duplicate-rows quirk RESOLVED. ROOT CAUSE was the ABP source —
+    two byte-identical `(Hab 3:14)` lines in `abp_texts/abp_ot_texts/abp_habakkuk.txt` (the ONLY
+    duplicated verse marker in the whole corpus); `iter_verses()`/the build loop have no per-verse
+    dedup, so every rebuild inserted it twice. `dedup_words` only catches byte-identical rows; the
+    second-pass bracket rows differ in `bracket_id` only → survived as a doubled "of mighty ones"
+    (G1413) chip + the lone health misalignment:1/fragmented:1 + an audit WORDSET hit. FIX: removed
+    the dup source line (permanent — future rebuilds insert once; commit 5543213) + `scripts/
+    fix_hab314_dupes.py` cleaned the live DB without a rebuild (deleted 1 residual row at position
+    4). health 0/0, audit GENUINE 3→2 (the 2 remaining = the Jon 4:9 twin-bracket FPs above).
   (3) ✓ DONE 2026-06-04/05: punctuation riding the wrong token ("mourned many, days")
   — fix_bracket_punct.py (365 verses, data) + chip renders clause punct OUTSIDE the "]" (d0a2456).
   TOOLING CAVEAT: audit_order_mismatch.py greedy-matches the wrong "you"/"we" in repeated-word
