@@ -29,14 +29,44 @@ Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and 
 - `dedup_words.py` — remove exact-duplicate rows
 - All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
 
-## Deferred bug — supplied-word attribution on split-verb reorders (2026-06-05)
-1Pe 5:10 ("may he ready") + Joh 4:51 ("as he was going down") read correctly but the
-supplied word ("may"/"as") rides the pronoun slot (αυτος/G846) because it's English from a
-SINGLE Greek verb (καταρτισαι / καταβαινοντος) split AROUND the subject. Clean fix needs an
-INSERTED word row for the supplied word (tag it with the verb's strongs, renumber, and make
-the repair script idempotently re-insert post-rebuild). Judged not worth it now (mild rider on
-the CORRECT anchor; reading is right). Revisit after the Full Corpus Audit below — same
-insert-row machinery may be wanted elsewhere. Context: memory [[project_bracket_punct_fix]].
+## ★ NEXT PROJECT — DUAL-ORDERING: give bundled words their own clickable Strong's chip (KICKOFF)
+Queued 2026-06-05. Full context: memory [[project_bracket_order_fix]] ("DUAL-ORDERING project").
+NOT a bug — reading is correct everywhere today; this is a precision/clickability upgrade.
+
+THE ONE IDEA: split a bundled gloss onto its OWN Greek slot while keeping BOTH orders correct —
+`position` = Greek/source order (what CHIP renders), `greek_pos` = English reading order (what
+PROSE sorts by). Build this once; it fixes three things that are all the same shape:
+  1. **κύριος-subject (~879, HIGHEST VALUE)** — "the LORD was enraged" is bundled onto the VERB
+     (G2373), so clicking the divine name "LORD" gives the verb, not κύριος/G2962. Dry-run
+     1Ch 13:10 CONFIRMS the empty κύριος/G2962 slot ALREADY EXISTS right after the verb (so NOT
+     an insert-row case). Blockers: (a) the `_split_compounds` leading-run guard keeps "LORD" on
+     the verb because supplied "the" fails to redistribute and sets seen_own=True — and that is
+     LOAD-BEARING for the "of this possession" fix, so DON'T just rip it out; (b) English is
+     subject-verb but the slot is verb-subject (Greek) order → moving "LORD" naively garbles →
+     this is exactly why you need the dual-ordering (position vs greek_pos), not a flat move.
+  2. **Split out brackets (user-flagged)** — bracketed multi-word glosses share ONE Strong's
+     ("and the LORD" = 3 chips all on G2962). Give each bracket token its own slot by `abp_pos`.
+     SAFEST use case: brackets carry the source numbers, so split + order with NO heuristic.
+  3. **Supplied-word riders (1Pe 5:10 "may he ready" / Joh 4:51 "as he")** — "may"/"as" is English
+     from a SINGLE Greek verb split around the subject, riding the αὐτός/G846 slot. The ONE
+     sub-case with NO spare slot → genuinely needs an INSERTED row. Same family, do last.
+
+KICKOFF METHOD (next session): START READ-ONLY, scope first. Tools already built this session:
+  `audit_lord_strongs.py` (κύριος buckets), `audit_bracket_order.py` (bracket order, CHIP vs
+  PRINTED), `count_redistributions.py` (the ~10,058 non-bracket splits ALREADY done this way =
+  proof the pattern works), `diff_split_fix.py` (position-independent build diff). Decide PER use
+  case: build-change (rebuild) vs targeted post-build repair. RECOMMENDED PILOT: do use-case #1
+  (κύριος-subject) first — highest value, slot exists, narrow pattern — as the proof of the
+  dual-ordering mechanism, then generalize to #2, then #3.
+CONSTRAINTS (same as the bracket-order fix that worked): bible.db PA-only (give run commands);
+  COPY-FIRST (cp → --test dry-run → build to bible_test.db → diff_split_fix → health_check 0/0 →
+  strongs_base GLOB '[0-9]*'=0 → audit_bracket_order + audit_lord_strongs → tier1/tier2 → swap);
+  NEVER `DELETE FROM words`; repair scripts touch only needed columns + `--dry-run` + idempotent
+  + ADD to the CLAUDE.md post-rebuild checklist. The leading-run logic is FRAGILE (attempt-1 was
+  reverted — see memory [[project_bracket_punct_fix]] / [[project_bracket_order_fix]]); validate
+  position-INDEPENDENTLY, never by per-position diff.
+SHIPPED already (the easy half, 2026-06-05): κύριος ANCHOR-MORPH display fix — 552→3 LORDs
+  recovered via the frontend `strongsAnchorIndex` (commit 4652aa4). The 879 above are what's left.
 
 ## Full Corpus Audit — ✓ TIER 1 + TIER 2 DONE + LIVE (2026-06-05)
 
