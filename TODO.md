@@ -29,9 +29,19 @@ Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and 
 - `dedup_words.py` — remove exact-duplicate rows
 - All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
 
-## ★ NEXT PROJECT — DUAL-ORDERING: give bundled words their own clickable Strong's chip (KICKOFF)
+## ★ DUAL-ORDERING: give bundled words their own clickable Strong's chip
 Queued 2026-06-05. Full context: memory [[project_bracket_order_fix]] ("DUAL-ORDERING project").
 NOT a bug — reading is correct everywhere today; this is a precision/clickability upgrade.
+
+✅ **PILOT #1 (κύριος-subject) DONE + LIVE 2026-06-05** — `scripts/fix_lord_subject.py` (post-build
+repair, no rebuild, UPDATE-only: the empty κύριος slot already exists). 795 `(the) LORD <verb...>`
+slots split: "the LORD" → its own κύριος/G2962 chip (greek_pos=1), verb keeps its gloss (greek_pos=2),
+bound in a new bracket. CHIP stays Greek order, PROSE reads "the LORD <verb>". audit REPAIRABLE 795→0,
+OK +795, health 0/0, audit_bracket_order at baseline, idempotent. Rollback `bible_pre_lordsubj_20260605.db`.
+Added to the CLAUDE.md post-rebuild repair chain (runs last). **The dual-ordering mechanism is PROVEN.**
+REMAINING (separate session): #2 split brackets by abp_pos (safest next), then #3 wrapped verb-gloss
+INSERT (1Pe 5:10 / Joh 4:51 / the ~90 "May the LORD add" jussives in the OTHER bucket — the one case
+needing an inserted row). Below is the original kickoff brief (kept for #2/#3 context).
 
 THE ONE IDEA: split a bundled gloss onto its OWN Greek slot while keeping BOTH orders correct —
 `position` = Greek/source order (what CHIP renders), `greek_pos` = English reading order (what
