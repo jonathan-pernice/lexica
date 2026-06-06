@@ -42,8 +42,13 @@ Usage:
 """
 import os
 import re
+import signal
 import sqlite3
 import sys
+
+# Don't traceback when piped into head/less (SIGPIPE). Unix-only; no-op elsewhere.
+if hasattr(signal, "SIGPIPE"):
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from parse_abp import _head_word          # last-content-word head (preserves LORD/God case)
