@@ -235,5 +235,10 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
 8. Spot-check: Greek (Eze 31:9 "were jealous of" → ζηλόω), proper noun (1Chr 1:1 "Adam" →
    H121, opens metaV), bracket order (1Ch 15:13 chip → "cut through · and the LORD · our God").
 9. Deploy (touch wsgi).
-KNOWN: rebuild double-processes Hab 3:14 (duplicate rows; dedup_words clears most, ~1 non-exact
-residual lingers as health `misalignment:1`/`fragmented:1`) — isolated, not a blocker.
+FIXED (2026-06-05): Hab 3:14 double-insert. ROOT CAUSE was the ABP source — two byte-identical
+`(Hab 3:14)` lines in `abp_texts/abp_ot_texts/abp_habakkuk.txt` (the ONLY duplicated verse marker
+in the whole corpus); `iter_verses()`/the build have no per-verse-key dedup, so every rebuild
+inserted it twice. Duplicate source line removed → future rebuilds insert it once. Existing live DB
+cleaned (without a rebuild) by `scripts/fix_hab314_dupes.py` (scoped to Hab 3:14's verse_id;
+collapses dup (verse_id,position) rows to the lowest id). This cleared the lone `misalignment:1`/
+`fragmented:1` health warnings + the audit_bracket_order WORDSET hit.
