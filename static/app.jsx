@@ -1542,9 +1542,12 @@ function groupForGreekMode(words) {
 function strongsAnchorIndex(parts, italicSet, w) {
   const bare = s => s.replace(/[^\w]/g, "").toLowerCase();
   const firstNonItalic = parts.findIndex(word => !italicSet.has(bare(word)));
-  const m = w.morph || "";
-  const isContent = m && (m[0] === "V" || m[0] === "N" || m[0] === "A");
-  if (isContent && w.english_head) {
+  // Anchor the Strong's on the gloss's head word whenever it's present — even when
+  // the row has no morph. The old morph gate dropped the Strong's onto the FIRST word
+  // for null-morph rows ("of the LORD" → shown on "of", not "LORD"); the head is the
+  // Strong's-bearing word, so anchoring on it is always at least as good (recovers ~552
+  // κύριος/G2962 displays — see scripts/audit_lord_strongs.py ANCHOR-MORPH bucket).
+  if (w.english_head) {
     const hb = bare(w.english_head);
     const hi = parts.findIndex(word => bare(word) === hb && !italicSet.has(bare(word)));
     if (hi >= 0) return hi;
