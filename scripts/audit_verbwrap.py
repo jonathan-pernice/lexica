@@ -92,7 +92,7 @@ empties = conn.execute(
 
 buckets = Counter()
 wrapper_hits = Counter()
-samples = {k: [] for k in ("PRONOUN-HOST", "NOUN-HOST", "BRACKETED")}
+samples = {k: [] for k in ("PRONOUN-WRAP", "PRONOUN-HOST", "NOUN-HOST", "BRACKETED")}
 
 for e in empties:
     if BOOK_FILTER and e["book"] != BOOK_FILTER:
@@ -130,12 +130,12 @@ for e in empties:
     if bucket in ("PRONOUN-HOST", "NOUN-HOST") and has_wrap:
         wrapper_hits[bucket] += 1
 
-    if bucket in samples:
-        cap = 9999 if (SHOW_ALL and bucket == "PRONOUN-HOST") else 15
-        if len(samples[bucket]) < cap:
-            samples[bucket].append((
-                ref, e["strongs_base"], f"{hdelta:+d}", host["strongs_base"],
-                (host["english"] or "")[:42], "WRAP" if has_wrap else ""))
+    rec = (ref, e["strongs_base"], f"{hdelta:+d}", host["strongs_base"],
+           (host["english"] or "")[:42], "WRAP" if has_wrap else "")
+    if bucket == "PRONOUN-HOST" and has_wrap:
+        samples["PRONOUN-WRAP"].append(rec)        # the clean core — collect ALL
+    elif bucket in samples and len(samples[bucket]) < 15:
+        samples[bucket].append(rec)
 
 conn.close()
 
@@ -150,11 +150,12 @@ print()
 print("  PRONOUN-HOST + WRAP = the clean 1Pe 5:10 / Joh 4:51 core (verb gloss wrapped")
 print("  around the subject pronoun). BRACKETED = the jussive shape (1Th 3:11 / Num 6:24).")
 print()
-for k in ("PRONOUN-HOST", "NOUN-HOST", "BRACKETED"):
+for k in ("PRONOUN-WRAP", "PRONOUN-HOST", "NOUN-HOST", "BRACKETED"):
     if samples[k]:
-        print(f"  --- {k} samples (ref | empty-verb | host@Δ | host strongs | host english | wrap) ---")
+        label = "ALL clean core" if k == "PRONOUN-WRAP" else "samples"
+        print(f"  --- {k} {label} (ref | empty-verb | host@Δ | host strongs | host english | wrap) ---")
         for ref, vb, d, hsb, heng, w in samples[k]:
-            print(f"      {ref:12} | {vb:7} | {d:+3} | {hsb or '-':7} | {heng!r:44} | {w}")
+            print(f"      {ref:12} | {vb:7} | {d:>3} | {hsb or '-':7} | {heng!r:44} | {w}")
         print()
 print("Read-only. Report PRONOUN-HOST/WRAP count before proposing a #3 fix (it may need")
 print("an INSERTED row to keep the verb wrapping around the subject).")
