@@ -43,6 +43,21 @@ REMAINING (separate session): #2 split brackets by abp_pos (safest next), then #
 INSERT (1Pe 5:10 / Joh 4:51 / the ~90 "May the LORD add" jussives in the OTHER bucket — the one case
 needing an inserted row). Below is the original kickoff brief (kept for #2/#3 context).
 
+🔎 **BIGGEST WRONG-SLOT SOURCE — function-word slots (G3588 article, prepositions)** (flagged
+2026-06-06 via the Lexicon "rendered as" panel). G3588 ὁ "renders as" a huge list: most is LEGIT
+(the 46979; substantival ones/one/things/he/she/that/who/both; oblique-case article carrying the
+case's English prep — to/in/with/of/for/by/against), but the tail is BUNDLING ARTIFACTS — concrete/
+proper nouns leaked onto the article slot when their OWN Strong's slot was left empty (son 206, god 5,
+lord 1, jesus 2, wisdom 2, israel/uriah 1, covenant/sacrifice/blood/name/word/stone/gates…). Clicking
+"son" then opens the ARTICLE, not υἱός/G5207. SAME WRONG-SLOT family as pilot #1, just onto function
+words instead of a verb — and the highest-VOLUME source of it (G3588 is the commonest word). It's the
+ideal stress-test for the #2/#3 DISCRIMINATOR: the hard part is telling legit one-Greek-many-English
+(neuter substantival "things"/"ones", oblique-prep) from many-Greek-collapsed (concrete noun "son"/
+"jesus" bundled, own slot empty). A blanket "article = only 'the'" rule would DESTROY real Greek — so
+the read-only audit must PARTITION first (legit vs artifact) before any split. Scope this when doing
+#2/#3; start by auditing G3588 (and prep) slots whose english_head is a concrete/proper noun with an
+adjacent empty content slot. NOT a new project — the loudest symptom of this same backlog.
+
 THE ONE IDEA: split a bundled gloss onto its OWN Greek slot while keeping BOTH orders correct —
 `position` = Greek/source order (what CHIP renders), `greek_pos` = English reading order (what
 PROSE sorts by). Build this once; it fixes three things that are all the same shape:
