@@ -48,11 +48,14 @@ reorder (can't garble). health 0/0, bracket_order baseline, idempotent. Rollback
 20260606.db`. In the CLAUDE.md repair chain after fix_lord_subject. Slice A (bracket-internal collapse)
 was confirmed EMPTY (audit_bracket_collapse.py GENUINE-COLLAPSE=0 — subsumed by 0a4b146). Read-only
 scopers added: `audit_funcword_wrongslot.py`, `audit_bracket_collapse.py`.
-REMAINING: **#2 ROUND 2** = `fix_funcword_subject.py --include-idioms` (the held-back κατὰ πρόσωπον "in
-front" G4383 ~54 + ἐν τάχει "quickly" G5034 ~8) + 5 bracketed stragglers + ~90 REPAIRABLE-OTHER adj/
-particle gray zone + ~15 plural/synonym NOMATCH misses. Then **#3** wrapped verb-gloss INSERT (1Pe 5:10 /
-Joh 4:51 / the ~90 "May the LORD add" jussives — the one case needing an inserted row). Below is the
-original kickoff brief (kept for #2/#3 context).
+✅ **#2 ROUND 2 (idioms) DONE + LIVE 2026-06-06** — `fix_funcword_subject.py --include-idioms`, applied 75
+(κατὰ πρόσωπον "in front/person/face" G4383 + ἐν τάχει "quickly" G5034). 96 total across rounds 1+2.
+health 0/0, bracket_order baseline, idempotent. Rollback `bible_pre_funcword_idioms_20260606.db`. Chain now
+runs `--include-idioms` to restore all 96.
+REMAINING (none urgent): 5 bracketed stragglers (bracket-aware pass) + ~90 REPAIRABLE-OTHER adj/particle
+gray zone + ~15 plural/synonym NOMATCH misses (add stemming). Then **#3** wrapped verb-gloss INSERT
+(1Pe 5:10 / Joh 4:51 / the ~90 "May the LORD add" jussives — the one case needing an inserted row). Below
+is the original kickoff brief (kept for #2/#3 context).
 
 🔎 **BIGGEST WRONG-SLOT SOURCE — function-word slots (G3588 article, prepositions)** (flagged
 2026-06-06 via the Lexicon "rendered as" panel). G3588 ὁ "renders as" a huge list: most is LEGIT
