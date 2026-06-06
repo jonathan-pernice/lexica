@@ -58,8 +58,12 @@ gloss_has() plural-stems; --include-bracketed carries greek_pos so audit_bracket
 **108 total across rounds 1+2+3.** Rollback was `bible_pre_funcword_idioms_20260606.db` (round 2; round 3
 applied on top, health 0/0). Chain runs `--include-idioms --include-bracketed`.
 REMAINING (none urgent): ~90 REPAIRABLE-OTHER adj/particle gray zone ("#4", deferred) + a few semantic
-synonym misses. Then **#3** wrapped verb-gloss INSERT (1Pe 5:10 / Joh 4:51 / the ~90 "May the LORD add"
-jussives — the one case needing an inserted row). Below is the original kickoff brief (kept for #3 context).
+synonym misses.
+⛔ **#3 (wrapped verb-gloss INSERT) SCRAPPED 2026-06-06** — scoped read-only (audit_verbwrap.py); the
+clean core is small, heterogeneous (μὴ γένοιτο idiom, εἰμί copulas we don't touch, negative-particle
+hosts), needs per-case inserts, and the 1Pe 5:10 headline shape isn't even in the empty-verb net. Minor
+payoff (click-target only; verbs read fine), real row-insert risk. Parked indefinitely. Below is the
+original kickoff brief (kept for history).
 
 🔎 **BIGGEST WRONG-SLOT SOURCE — function-word slots (G3588 article, prepositions)** (flagged
 2026-06-06 via the Lexicon "rendered as" panel). G3588 ὁ "renders as" a huge list: most is LEGIT
