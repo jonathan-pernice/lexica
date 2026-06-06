@@ -1556,9 +1556,12 @@ input { font-family: inherit; }
   transition: background 0.12s;
 }
 .lib-prose-italic { color: var(--ink-2); font-style: italic; }
-.lib-word:hover { background: var(--bg-sunk); }
 .lib-word.lib-word-clickable { cursor: pointer; }
-.lib-word.lib-word-clickable:hover { background: var(--accent-soft); }
+/* Real-hover devices only — keeps the highlight from sticking under a finger on touch/swipe. */
+@media (hover: hover) {
+  .lib-word:hover { background: var(--bg-sunk); }
+  .lib-word.lib-word-clickable:hover { background: var(--accent-soft); }
+}
 .lib-iw-pos-english {
   display: flex;
   flex-direction: row;

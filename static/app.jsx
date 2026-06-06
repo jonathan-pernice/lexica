@@ -1772,14 +1772,22 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   }, [selBook && selBook.abbrev, selChapter, translation]);
 
   useEffect(() => {
-    if (!nav?.scroll || !verses.length) return;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (!nav?.scroll || loading || !verses.length) return;
+    // Don't scroll while the requested chapter's verses are still the OLD chapter's —
+    // otherwise we scroll to (and burn the scroll flag on) a wrong same-numbered verse.
+    if (nav.chapter != null && nav.chapter !== selChapter) return;
+    let raf, tries = 0;
+    const tryScroll = () => {
       if (highlightRef.current) {
         highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         onNavChange?.({ ...nav, scroll: false });
+      } else if (tries++ < 30) {
+        raf = requestAnimationFrame(tryScroll); // highlight row not rendered yet — keep waiting
       }
-    }));
-  }, [nav?.scroll, verses]);
+    };
+    raf = requestAnimationFrame(tryScroll);
+    return () => cancelAnimationFrame(raf);
+  }, [nav?.scroll, nav?.highlight, nav?.chapter, verses, loading, selChapter]);
 
   const maxChap = selBook ? selBook.chapters : 1;
   const showStrongs     = libOptions.showStrongs     || false;
@@ -1795,9 +1803,21 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const isPoetry = POETRY_BOOKS.has(selBook?.abbrev);
 
   const swipeRef = React.useRef(null);
+  const tapMovedRef = React.useRef(false);
   const swipeHandlers = isMobile ? {
     onTouchStart: (e) => {
+      tapMovedRef.current = false;
       swipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    },
+    onTouchMove: (e) => {
+      if (!swipeRef.current) return;
+      const dx = e.touches[0].clientX - swipeRef.current.x;
+      const dy = e.touches[0].clientY - swipeRef.current.y;
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) tapMovedRef.current = true;
+    },
+    // A swipe/scroll that ends over a word must NOT open its panel — only a real tap should.
+    onClickCapture: (e) => {
+      if (tapMovedRef.current) { e.stopPropagation(); e.preventDefault(); }
     },
     onTouchEnd: (e) => {
       if (!swipeRef.current) return;
@@ -3145,6 +3165,8 @@ function App() {
 
   const handleNavigateToLexicon = (strongs) => {
     if (!strongs) return;
+    setActiveEntry(null);   // close the word panel (bottom sheet on mobile) before showing the lexicon
+    setLibCrossRef(null);
     setLexiconPendingStrongs(strongs);
     handleNavChange("lexicon");
   };
