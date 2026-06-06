@@ -88,6 +88,22 @@ def bare(s):
     return re.sub(r"[^\w]", "", s or "").lower()
 
 
+def singular(w):
+    """Crude singulariser so a plural head matches a singular gloss (fruits->fruit)."""
+    if len(w) > 4 and w.endswith("ies"):
+        return w[:-3] + "y"
+    if len(w) > 4 and w.endswith(("ses", "xes", "zes", "ches", "shes")):
+        return w[:-2]
+    if len(w) > 3 and w.endswith("s") and not w.endswith("ss"):
+        return w[:-1]
+    return w
+
+
+def gloss_has(head, base):
+    d = lex.get(base, set())
+    return head in d or singular(head) in d
+
+
 def derive_head(english):
     """Re-derive the content head from the gloss (last word not in SKIP_HEADS),
     independent of the possibly-stale english_head column. None if all function."""
@@ -185,7 +201,7 @@ for c in cands:
     if HAS_PN and orphan["is_pn"] == 1:
         buckets["ARTIFACT-PN"] += 1
         hits["ARTIFACT-PN"].append(rec)
-    elif hb in lex.get(obase, set()):
+    elif gloss_has(hb, obase):
         pos_tally[opos or "?"] += 1
         is_noun = (opos == "N") or (HAS_PN and orphan["is_pn"] == 1)
         if is_noun:

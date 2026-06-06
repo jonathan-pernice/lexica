@@ -38,10 +38,16 @@ Validate: audit_funcword_wrongslot.py (REPAIRABLE-NOUN -> ~0 after, idioms aside
 health_check.py (0/0), strongs_base GLOB '[0-9]*' = 0, audit_bracket_order.py (at
 baseline — we create NO brackets).
 
+Plural/synonym matching: the gloss-match also tries a singular form of the head
+('fruits'->'fruit', 'judgments'->'judgment') so true-plural noun leaks aren't missed.
+
 Usage:
   python3 scripts/fix_funcword_subject.py bible.db --dry-run
   python3 scripts/fix_funcword_subject.py bible.db
-  python3 scripts/fix_funcword_subject.py bible.db --include-idioms   # round 2
+  python3 scripts/fix_funcword_subject.py bible.db --include-idioms       # round 2
+  python3 scripts/fix_funcword_subject.py bible.db --include-idioms --include-bracketed
+        # --include-bracketed: also do the 5 in-bracket stragglers (carries greek_pos
+        #   so PROSE order is preserved; verify audit_bracket_order.py stays at baseline)
 """
 import os
 import re
@@ -58,6 +64,7 @@ from parse_abp import _head_word, _FUNCTION_WORDS, _HEAD_STOP
 DB = next((a for a in sys.argv[1:] if not a.startswith("--")), "bible.db")
 DRY = "--dry-run" in sys.argv
 INCLUDE_IDIOMS = "--include-idioms" in sys.argv
+INCLUDE_BRACKETED = "--include-bracketed" in sys.argv   # the 5 in-bracket stragglers
 
 ARTICLE_BASE = "G3588"
 PREP_BASES = {
@@ -83,6 +90,25 @@ IDIOM_ORPHANS = {"4383", "5034"}     # πρόσωπον "in front/person/face", 
 
 def bare(s):
     return re.sub(r"[^\w]", "", s or "").lower()
+
+
+def singular(w):
+    """Crude English singulariser so a plural head matches a singular lexicon gloss
+    ('fruits'->'fruit', 'judgments'->'judgment', 'cities'->'city'). Conservative —
+    only strips obvious plural endings; non-plurals pass through unchanged."""
+    if len(w) > 4 and w.endswith("ies"):
+        return w[:-3] + "y"
+    if len(w) > 4 and w.endswith(("ses", "xes", "zes", "ches", "shes")):
+        return w[:-2]
+    if len(w) > 3 and w.endswith("s") and not w.endswith("ss"):
+        return w[:-1]
+    return w
+
+
+def gloss_has(head, base, lexicon):
+    """The head (or its singular form) appears in the orphan's lexicon definition."""
+    d = lexicon.get(base, set())
+    return head in d or singular(head) in d
 
 
 def derive_head(english):
@@ -126,13 +152,17 @@ def neighbour(verse_id, position, delta):
         (verse_id, position + delta)).fetchone()
 
 
-def orphan_ok(nb):
-    """nb is an EMPTY, bracket-free, real-Strong's NOUN whose def matches the head
-    (checked by caller). Returns the bare base if it qualifies structurally."""
+def orphan_ok(nb, host_bid):
+    """nb is an EMPTY, real-Strong's NOUN in the SAME bracket context as the host
+    (both non-bracketed, or — with --include-bracketed — both in the same bracket).
+    Returns the bare base if it qualifies structurally (def/POS checked by caller)."""
     if not nb or (nb["english"] or "").strip() != "":
         return None
-    if nb["bracket_id"] is not None:
+    obid = nb["bracket_id"]
+    if obid != host_bid:                 # must share the host's bracket context
         return None
+    if obid is not None and not INCLUDE_BRACKETED:
+        return None                      # in-bracket pair only with the flag
     sb = nb["strongs_base"]
     if not sb or sb in ("*", "", ARTICLE_BASE) or sb in HOSTS:
         return None
@@ -147,12 +177,13 @@ def orphan_ok(nb):
     return base
 
 
+bracket_filter = "" if INCLUDE_BRACKETED else "AND w.bracket_id IS NULL"
 cands = conn.execute(
-    "SELECT w.verse_id, w.position, w.english, w.strongs_base, w.italic, "
-    "       w.italic_words, w.bracket_id, v.book, v.chapter, v.verse "
+    "SELECT w.verse_id, w.position, w.english, w.strongs_base, w.greek_pos, "
+    "       w.italic, w.italic_words, w.bracket_id, v.book, v.chapter, v.verse "
     "FROM words w JOIN verses v ON v.id = w.verse_id "
     f"WHERE w.strongs_base IN ({','.join('?' * len(HOSTS))}) "
-    "  AND w.english IS NOT NULL AND w.english != '' AND w.bracket_id IS NULL "
+    f"  AND w.english IS NOT NULL AND w.english != '' {bracket_filter} "
     "ORDER BY w.verse_id, w.position", tuple(HOSTS)).fetchall()
 
 applied = 0
@@ -166,11 +197,12 @@ for c in cands:
     vid, ph = c["verse_id"], c["position"]
 
     # Find the adjacent empty NOUN slot (prefer +1) whose def contains the head.
+    host_bid = c["bracket_id"]
     chosen = None
     for delta in (1, -1):
         nb = neighbour(vid, ph, delta)
-        base = orphan_ok(nb)
-        if base and head in lex.get(base, set()):
+        base = orphan_ok(nb, host_bid)
+        if base and gloss_has(head, base, lex):
             chosen = (nb, delta, base)
             break
     if not chosen:
@@ -184,19 +216,32 @@ for c in cands:
     new_head = _head_word(moved_eng)
     if not new_head or bare(new_head) in SKIP_HEADS:
         new_head = head
+    # In a bracket, carry the host's greek_pos to the noun slot so PROSE (greek_pos
+    # order) reads the phrase in the SAME spot the host did — the only thing that
+    # could otherwise shift order. CHIP (position order) is already safe: the slots
+    # are adjacent and one is always empty. Non-bracketed slots ignore greek_pos.
+    in_bracket = host_bid is not None
+    tag = "in-bracket" if in_bracket else ("after" if delta > 0 else "before")
     ref = f"{c['book']} {c['chapter']}:{c['verse']}"
     print(f"  {ref:12} host[{ph}]{c['strongs_base']:7} -> noun[{nb['position']}]"
-          f"{nb['strongs_base']:7} ({'after' if delta > 0 else 'before'})")
+          f"{nb['strongs_base']:7} ({tag})")
     print(f"      move english {moved_eng!r}  (head -> {new_head!r})")
 
     if not DRY:
         # noun slot receives the bundled english (keeps its OWN strongs/morph/lemma)
-        conn.execute(
-            "UPDATE words SET english=?, english_head=?, italic=?, italic_words=? "
-            "WHERE verse_id=? AND position=?",
-            (moved_eng, new_head, c["italic"], c["italic_words"] or "",
-             vid, nb["position"]))
-        # function-word slot goes empty (keeps its OWN G3588/prep strongs)
+        if in_bracket:
+            conn.execute(
+                "UPDATE words SET english=?, english_head=?, greek_pos=?, italic=?, "
+                "italic_words=? WHERE verse_id=? AND position=?",
+                (moved_eng, new_head, c["greek_pos"], c["italic"],
+                 c["italic_words"] or "", vid, nb["position"]))
+        else:
+            conn.execute(
+                "UPDATE words SET english=?, english_head=?, italic=?, italic_words=? "
+                "WHERE verse_id=? AND position=?",
+                (moved_eng, new_head, c["italic"], c["italic_words"] or "",
+                 vid, nb["position"]))
+        # function-word slot goes empty (keeps its OWN G3588/prep strongs + bracket_id)
         conn.execute(
             "UPDATE words SET english=NULL, english_head=NULL, italic=0, italic_words='' "
             "WHERE verse_id=? AND position=?",
