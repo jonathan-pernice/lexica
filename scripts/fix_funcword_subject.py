@@ -146,8 +146,8 @@ def orphan_ok(nb):
 
 
 cands = conn.execute(
-    "SELECT w.verse_id, w.position, w.english, w.italic, w.italic_words, "
-    "       w.bracket_id, v.book, v.chapter, v.verse "
+    "SELECT w.verse_id, w.position, w.english, w.strongs_base, w.italic, "
+    "       w.italic_words, w.bracket_id, v.book, v.chapter, v.verse "
     "FROM words w JOIN verses v ON v.id = w.verse_id "
     f"WHERE w.strongs_base IN ({','.join('?' * len(HOSTS))}) "
     "  AND w.english IS NOT NULL AND w.english != '' AND w.bracket_id IS NULL "
