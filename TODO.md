@@ -47,9 +47,19 @@ PROSE sorts by). Build this once; it fixes three things that are all the same sh
   2. **Split out brackets (user-flagged)** — bracketed multi-word glosses share ONE Strong's
      ("and the LORD" = 3 chips all on G2962). Give each bracket token its own slot by `abp_pos`.
      SAFEST use case: brackets carry the source numbers, so split + order with NO heuristic.
-  3. **Supplied-word riders (1Pe 5:10 "may he ready" / Joh 4:51 "as he")** — "may"/"as" is English
-     from a SINGLE Greek verb split around the subject, riding the αὐτός/G846 slot. The ONE
-     sub-case with NO spare slot → genuinely needs an INSERTED row. Same family, do last.
+  3. **Verb-gloss fragment wrapped around the subject (1Pe 5:10 "may he ready" / Joh 4:51 "as he")**
+     — "may"/"as" is part of a REAL Greek VERB's gloss (καταρτίσαι "may ready" / καταβαίνοντος
+     "as … going down") that wraps AROUND the subject in English, so it currently rides the
+     αὐτός/G846 pronoun slot. NOT a no-Greek italic — it HAS a Greek source (the verb). Fix = its
+     own inserted cell tagged with the VERB'S Strong's, ordered before the subject. The ONE
+     sub-case that truly needs an INSERTED row (the verb's own slot is taken by "ready"). Do last.
+
+NON-GOAL — true italics (translator-supplied words with NO Greek, e.g. an added "the"/"is"/copula):
+  these get NO Strong's and NO new cell — they are English scaffolding, not Greek words; inventing
+  a tag would be inventing data. The ONLY requirement is they stay INERT: rendered muted (existing
+  `italic` flag) and NEVER borrowing a neighbor's real Strong's on click. Display-only, NOT part of
+  the slot-splitting. (Every other word in this project IS a real Greek word — or a real verb-gloss
+  fragment — reclaiming its CORRECT slot; italics are the opposite case and stay hands-off.)
 
 KICKOFF METHOD (next session): START READ-ONLY, scope first. Tools already built this session:
   `audit_lord_strongs.py` (κύριος buckets), `audit_bracket_order.py` (bracket order, CHIP vs
