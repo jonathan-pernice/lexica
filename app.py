@@ -14,7 +14,8 @@ from flask import Flask, Response, jsonify, render_template, request, url_for
 from core import (
     log, DB, db, db_ro, limiter, _anthropic, _anthropic_key, _FUNCTION_STRONGS,
     _STRONGS_RE, _strip_accents, _word_boundary_match, _strongs_num,
-    _serialize_word_core, _clean_gloss,
+    _serialize_word_core, _clean_gloss, _ai_cache,
+    _KJV_BOOK_ID, _KJV_BOOK_ID_REV,
 )
 
 # @@CORPUS_LIST@@  — comma-separated full book names, e.g. "Genesis, Exodus, …"
@@ -636,29 +637,6 @@ Do not state the word's grammatical parsing (part of speech, case, number, tense
 voice, mood) — that is shown separately. Focus only on meaning and semantic range.\
 """
 
-_XREF_SYNTHESIS_SYSTEM = """\
-You are a textual scholar working from a Berean approach: the text speaks first. \
-Let the Greek and Hebrew source words anchor the analysis. Import no systematic \
-theology, no denominational assumptions, and no doctrinal framework from outside \
-the passages themselves — follow where the words actually lead. Write 3 to 5 complete sentences identifying the thematic thread connecting a set of \
-cross-referenced passages. Focus on the underlying Greek/Hebrew lexical range, canonical \
-patterns, and intertextual echoes. Never mention any app, database, data source, \
-or translation by name. Do not begin with a label, heading, or prefix of any kind — \
-start directly with the first sentence. Write in plain, direct language — clear and readable, not academic jargon. \
-Each sentence should be one complete thought — not a fragment, not a paragraph.\
-"""
-
-_XREF_CURATION_SYSTEM = """\
-You are a biblical scholar evaluating cross-references from Torrey's Treasury of \
-Scripture Knowledge. Given a source verse and a numbered list of candidate passages, \
-select the 8 to 10 with the strongest connection to the source — prioritizing direct \
-quotations, shared key terms in the Greek or Hebrew, thematic parallels, and \
-canonical echoes. Exclude weak matches that share only common vocabulary with no \
-deeper connection. Return ONLY a JSON array of the selected 1-based numbers, \
-e.g. [1,3,7,12]. No prose, no explanation — only the array.\
-"""
-
-
 def _enrich_explanation_with_cross_refs(
     query: str, results: list[dict], explanation: str
 ) -> str:
@@ -755,7 +733,6 @@ def _normalize_union_sql(sql: str) -> str:
     )
 
 
-_ai_cache: dict = {}            # in-memory L1 cache (query → payload)
 _search_cache: dict = {}        # in-memory lexicon search cache (q → payload)
 _lsj_summary_cache: dict = {}  # keyed on LSJ key; persists for server lifetime
 _ai_cache_ver: str | None = None  # computed once from prompt template + book list
@@ -1098,11 +1075,15 @@ class _SectionParser(HTMLParser):
         return self._sections
 
 from views_metav import bp as metav_bp
+# _XREF_SYNTHESIS_SYSTEM is imported for _enrich_explanation_with_cross_refs (below),
+# which will move to the AI module in the final extraction step.
+from views_crossref import bp as crossref_bp, _XREF_SYNTHESIS_SYSTEM
 
 app = Flask(__name__)
 limiter.init_app(app)
 
 app.register_blueprint(metav_bp)
+app.register_blueprint(crossref_bp)
 
 
 @app.context_processor
@@ -2425,28 +2406,6 @@ def chapter_text(book, chapter):
     ])
 
 
-# ABP abbreviation → KJV CSV BookID (standard Protestant 1-66).
-# The books table uses ABP auto-increment IDs that include apocrypha, so
-# they don't match KJV BookIDs; we bypass the join entirely.
-_KJV_BOOK_ID: dict[str, int] = {
-    "Gen":  1, "Exo":  2, "Lev":  3, "Num":  4, "Deu":  5,
-    "Jos":  6, "Jdg":  7, "Rth":  8, "1Sa":  9, "2Sa": 10,
-    "1Ki": 11, "2Ki": 12, "1Ch": 13, "2Ch": 14, "Ezr": 15,
-    "Neh": 16, "Est": 17, "Job": 18, "Psa": 19, "Pro": 20,
-    "Ecc": 21, "Son": 22, "Isa": 23, "Jer": 24, "Lam": 25,
-    "Eze": 26, "Dan": 27, "Hos": 28, "Joe": 29, "Amo": 30,
-    "Oba": 31, "Jon": 32, "Mic": 33, "Nah": 34, "Hab": 35,
-    "Zep": 36, "Hag": 37, "Zec": 38, "Mal": 39,
-    "Mat": 40, "Mar": 41, "Luk": 42, "Joh": 43, "Act": 44,
-    "Rom": 45, "1Co": 46, "2Co": 47, "Gal": 48, "Eph": 49,
-    "Php": 50, "Col": 51, "1Th": 52, "2Th": 53, "1Ti": 54,
-    "2Ti": 55, "Tit": 56, "Phm": 57, "Heb": 58, "Jas": 59,
-    "1Pe": 60, "2Pe": 61, "1Jn": 62, "2Jn": 63, "3Jn": 64,
-    "Jud": 65, "Rev": 66,
-}
-_KJV_BOOK_ID_REV: dict[int, str] = {v: k for k, v in _KJV_BOOK_ID.items()}
-
-
 @app.route("/api/kjv/chapter/<book>/<int:chapter>")
 def kjv_chapter(book, chapter):
     book_id = _KJV_BOOK_ID.get(book)
@@ -2597,246 +2556,6 @@ def kjv_verse_words_batch():
     finally:
         conn.close()
     return jsonify(result)
-
-
-@app.route("/api/cross-references/<book>/<int:chapter>/<int:verse>")
-def cross_references_route(book, chapter, verse):
-    book_id = _KJV_BOOK_ID.get(book)
-    if book_id is None:
-        return jsonify([])
-    conn = db_ro()
-    try:
-        row = conn.execute(
-            "SELECT verse_id FROM kjv_verses WHERE book_id=? AND chapter=? AND verse_num=?",
-            (book_id, chapter, verse),
-        ).fetchone()
-        if not row:
-            return jsonify([])
-        refs = conn.execute(
-            """SELECT kv.book_id, kv.chapter, kv.verse_num, kv.verse_text
-               FROM cross_references cr
-               JOIN kjv_verses kv ON kv.verse_id = cr.verse_ref_id
-               WHERE cr.verse_id = ?
-               ORDER BY kv.verse_id""",
-            (row["verse_id"],),
-        ).fetchall()
-    finally:
-        conn.close()
-    result = []
-    for r in refs:
-        abbrev = _KJV_BOOK_ID_REV.get(r["book_id"])
-        if abbrev:
-            result.append({
-                "book":     abbrev,
-                "chapter":  r["chapter"],
-                "verse":    r["verse_num"],
-                "ref":      f"{abbrev} {r['chapter']}:{r['verse_num']}",
-                "kjv_text": r["verse_text"],
-            })
-    return jsonify(result)
-
-
-@app.route("/api/cross-references/synthesis/<book>/<int:chapter>/<int:verse>")
-@limiter.limit("200 per hour")
-def cross_ref_synthesis(book, chapter, verse):
-    if not _anthropic:
-        return jsonify({"synthesis": None})
-    book_id = _KJV_BOOK_ID.get(book)
-    if book_id is None:
-        return jsonify({"synthesis": None})
-    cache_key = f"xref_synth:{book}:{chapter}:{verse}"
-    if cache_key in _ai_cache:
-        return jsonify(_ai_cache[cache_key])
-    conn = db_ro()
-    try:
-        cached = conn.execute(
-            "SELECT result_json FROM ai_search_cache WHERE query=?", (cache_key,)
-        ).fetchone()
-        if cached:
-            payload = json.loads(cached["result_json"])
-            _ai_cache[cache_key] = payload
-            return jsonify(payload)
-        src = conn.execute(
-            "SELECT verse_id, verse_text FROM kjv_verses"
-            " WHERE book_id=? AND chapter=? AND verse_num=?",
-            (book_id, chapter, verse),
-        ).fetchone()
-        if not src:
-            return jsonify({"synthesis": None})
-        refs = conn.execute(
-            """SELECT kv.verse_text FROM cross_references cr
-               JOIN kjv_verses kv ON kv.verse_id = cr.verse_ref_id
-               WHERE cr.verse_id = ? LIMIT 20""",
-            (src["verse_id"],),
-        ).fetchall()
-    finally:
-        conn.close()
-    if not refs:
-        return jsonify({"synthesis": None})
-    ref_block = "\n".join(f"- {r['verse_text']}" for r in refs)
-    try:
-        msg = _anthropic.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=350,
-            temperature=0,
-            system=_XREF_SYNTHESIS_SYSTEM,
-            messages=[{"role": "user", "content":
-                f'Source: "{src["verse_text"]}"\n\nCross-references:\n{ref_block}'}],
-        )
-        synthesis = re.sub(r"^#+\s*[^:\n]*:\s*", "", msg.content[0].text.strip())
-    except Exception as exc:
-        log.warning("Cross-ref synthesis failed: %s", exc)
-        return jsonify({"synthesis": None})
-    payload = {"synthesis": synthesis}
-    conn = db()
-    try:
-        conn.execute(
-            "INSERT OR REPLACE INTO ai_search_cache"
-            " (query, result_json, ver_key, created_at) VALUES (?,?,?,?)",
-            (cache_key, json.dumps(payload), "xref", time.time()),
-        )
-        conn.commit()
-    finally:
-        conn.close()
-    _ai_cache[cache_key] = payload
-    return jsonify(payload)
-
-
-@app.route("/api/cross-references/curated/<book>/<int:chapter>/<int:verse>")
-@limiter.limit("200 per hour")
-def cross_refs_curated(book, chapter, verse):
-    if not _anthropic:
-        return jsonify({"refs": [], "synthesis": None})
-    book_id = _KJV_BOOK_ID.get(book)
-    if book_id is None:
-        return jsonify({"refs": [], "synthesis": None})
-
-    cache_key = f"xref_cur:{book}:{chapter}:{verse}"
-    if cache_key in _ai_cache:
-        return jsonify(_ai_cache[cache_key])
-
-    conn = db_ro()
-    try:
-        cached = conn.execute(
-            "SELECT result_json FROM ai_search_cache WHERE query=?", (cache_key,)
-        ).fetchone()
-        if cached:
-            payload = json.loads(cached["result_json"])
-            _ai_cache[cache_key] = payload
-            return jsonify(payload)
-
-        src = conn.execute(
-            "SELECT verse_id, verse_text FROM kjv_verses"
-            " WHERE book_id=? AND chapter=? AND verse_num=?",
-            (book_id, chapter, verse),
-        ).fetchone()
-        if not src:
-            return jsonify({"refs": [], "synthesis": None})
-
-        all_refs = conn.execute(
-            """SELECT kv.verse_id, kv.book_id, kv.chapter, kv.verse_num, kv.verse_text
-               FROM cross_references cr
-               JOIN kjv_verses kv ON kv.verse_id = cr.verse_ref_id
-               WHERE cr.verse_id = ?
-               ORDER BY kv.verse_id""",
-            (src["verse_id"],),
-        ).fetchall()
-
-        # Fetch ABP text for the source verse so synthesis reflects ABP vocabulary
-        abp_text = ""
-        abp_id_row = conn.execute(
-            "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
-            (book, chapter, verse),
-        ).fetchone()
-        if abp_id_row:
-            abp_words = conn.execute(
-                "SELECT english FROM words WHERE verse_id=? AND english IS NOT NULL ORDER BY position",
-                (abp_id_row["id"],),
-            ).fetchall()
-            abp_text = " ".join(w["english"] for w in abp_words)
-    finally:
-        conn.close()
-
-    if not all_refs:
-        return jsonify({"refs": [], "synthesis": None})
-
-    # Step 1: Haiku selects the 8–10 most relevant cross-refs
-    numbered = "\n".join(f"{i+1}. {r['verse_text']}" for i, r in enumerate(all_refs))
-    selected_refs = []
-    try:
-        sel_msg = _anthropic.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=120,
-            temperature=0,
-            system=_XREF_CURATION_SYSTEM,
-            messages=[{"role": "user", "content": (
-                f'Source: "{src["verse_text"]}"\n\nCandidates:\n{numbered}\n\n'
-                "Return ONLY a JSON array of selected 1-based numbers."
-            )}],
-        )
-        raw = sel_msg.content[0].text.strip()
-        m = re.search(r'\[[\d,\s]+\]', raw)
-        if m:
-            indices = json.loads(m.group())
-            selected_refs = [
-                all_refs[i - 1] for i in indices
-                if isinstance(i, int) and 1 <= i <= len(all_refs)
-            ][:10]
-    except Exception as exc:
-        log.warning("Cross-ref curation failed: %s", exc)
-
-    if not selected_refs:
-        selected_refs = list(all_refs[:8])
-
-    refs = []
-    for r in selected_refs:
-        abbrev = _KJV_BOOK_ID_REV.get(r["book_id"])
-        if abbrev:
-            refs.append({
-                "book":    abbrev,
-                "chapter": r["chapter"],
-                "verse":   r["verse_num"],
-                "ref":     f"{abbrev} {r['chapter']}:{r['verse_num']}",
-                "kjv_text": r["verse_text"],
-            })
-
-    # Step 2: Synthesis from the curated set
-    synthesis = None
-    if refs:
-        ref_block = "\n".join(f"- {r['kjv_text']}" for r in refs)
-        src_line = (
-            f'Source (ABP): "{abp_text}"\n'
-            "The cross-references below are KJV; let the ABP source vocabulary guide your word choices."
-            if abp_text else f'Source: "{src["verse_text"]}"'
-        )
-        try:
-            syn_msg = _anthropic.messages.create(
-                model="claude-haiku-4-5-20251001",
-                max_tokens=350,
-                temperature=0,
-                system=_XREF_SYNTHESIS_SYSTEM,
-                messages=[{"role": "user", "content":
-                    f'{src_line}\n\nCross-references:\n{ref_block}'}],
-            )
-            synthesis = re.sub(
-                r"^#+\s*[^:\n]*:\s*", "", syn_msg.content[0].text.strip()
-            )
-        except Exception as exc:
-            log.warning("Cross-ref synthesis failed: %s", exc)
-
-    payload = {"refs": refs, "synthesis": synthesis}
-    conn = db()
-    try:
-        conn.execute(
-            "INSERT OR REPLACE INTO ai_search_cache"
-            " (query, result_json, ver_key, created_at) VALUES (?,?,?,?)",
-            (cache_key, json.dumps(payload), "xref", time.time()),
-        )
-        conn.commit()
-    finally:
-        conn.close()
-    _ai_cache[cache_key] = payload
-    return jsonify(payload)
 
 
 @app.route("/api/bdb/<path:strongs_id>")

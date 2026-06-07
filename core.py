@@ -40,6 +40,34 @@ limiter = Limiter(get_remote_address, default_limits=[], storage_uri="memory://"
 # PLACE at startup by app.py's _build_function_strongs_cache (see module docstring).
 _FUNCTION_STRONGS: set[str] = set()
 
+# In-memory L1 cache for AI-derived payloads (ai-search queries + xref synthesis/
+# curation). Shared by the AI and cross-reference blueprints; mutated IN PLACE
+# (cache[key] = payload), never reassigned, so `from core import _ai_cache`
+# references stay valid. Startup loads only the AI-search entries into it.
+_ai_cache: dict = {}
+
+# ABP abbreviation → KJV CSV BookID (standard Protestant 1-66). The books table
+# uses ABP auto-increment IDs that include apocrypha, so they don't match KJV
+# BookIDs; we bypass the join entirely. Shared by the kjv/crossref/lexicon/search
+# blueprints, so it lives in core.
+_KJV_BOOK_ID: dict[str, int] = {
+    "Gen":  1, "Exo":  2, "Lev":  3, "Num":  4, "Deu":  5,
+    "Jos":  6, "Jdg":  7, "Rth":  8, "1Sa":  9, "2Sa": 10,
+    "1Ki": 11, "2Ki": 12, "1Ch": 13, "2Ch": 14, "Ezr": 15,
+    "Neh": 16, "Est": 17, "Job": 18, "Psa": 19, "Pro": 20,
+    "Ecc": 21, "Son": 22, "Isa": 23, "Jer": 24, "Lam": 25,
+    "Eze": 26, "Dan": 27, "Hos": 28, "Joe": 29, "Amo": 30,
+    "Oba": 31, "Jon": 32, "Mic": 33, "Nah": 34, "Hab": 35,
+    "Zep": 36, "Hag": 37, "Zec": 38, "Mal": 39,
+    "Mat": 40, "Mar": 41, "Luk": 42, "Joh": 43, "Act": 44,
+    "Rom": 45, "1Co": 46, "2Co": 47, "Gal": 48, "Eph": 49,
+    "Php": 50, "Col": 51, "1Th": 52, "2Th": 53, "1Ti": 54,
+    "2Ti": 55, "Tit": 56, "Phm": 57, "Heb": 58, "Jas": 59,
+    "1Pe": 60, "2Pe": 61, "1Jn": 62, "2Jn": 63, "3Jn": 64,
+    "Jud": 65, "Rev": 66,
+}
+_KJV_BOOK_ID_REV: dict[int, str] = {v: k for k, v in _KJV_BOOK_ID.items()}
+
 _STRONGS_RE = re.compile(r'^[GH]?(\d+(?:\.\d+)*)$', re.IGNORECASE)
 _WORD_BOUNDARY_RE_CACHE: dict[str, re.Pattern] = {}
 
