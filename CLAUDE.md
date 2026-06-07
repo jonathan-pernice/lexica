@@ -325,6 +325,9 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    Then `fix_kyrios_mistags bible.db --apply` — 3 stray κύριος/G2962 source mistags:
    Dan 4:19 "and" → καί/G2532; "of Cyrus" (Dan 11:1, Ezr 5:13) → H3566 proper noun
    (Κύρου looks like κυρίου). Pinned, safe to re-run.
+   Then `fix_merge_misses bible.db --apply` — hand-verified merge fixes the auto
+   generator can't catch (verb in a word-FORM the lexicon match misses, e.g. Dan
+   9:10 "hearkened" vs dict "hearken"). Embedded list, added one at a time, pinned.
 5. Gap-fixers (clear the standard post-rebuild health warnings; `--dry-run` first):
    `dedup_words` (exact-dup rows) → `fix_greek_pos_gaps` (bracketed NULL greek_pos).
 6. Invariant (MUST be 0): `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'`
