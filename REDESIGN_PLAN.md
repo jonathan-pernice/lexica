@@ -161,7 +161,13 @@ handshakes + Leaflet parse — that's the bulk of the live ~748ms render delay.
   would risk the state-survival caveat (CLAUDE.md) for negligible gain. Left as-is by design.
 - Verified: local snapshot 28/28; visual click-through (Eden place card map, θεός LSJ panel) clean,
   no new console errors (the H5731 LSJ 404 is pre-existing Hebrew-PN BDB-fallback behavior).
-- Risk: low, frontend-only. **Next: re-trace LIVE cold after deploy to prove the delta.**
+- Risk: low, frontend-only. **DEPLOYED + LIVE 2026-06-06.** Live traces confirmed the structural win:
+  critical-path render-blocking cross-origin unpkg requests **4 → 0** (react/react-dom now same-origin,
+  leaflet gone). Head-to-head fetch shows PA ≈ unpkg for transfer (self-host saves a cold cross-origin
+  handshake + drops the third-party-CDN dependency). FCP (first paint) ~410–540ms cold post-deploy.
+  NOTE: the LCP element is the Gen-1 chapter text, gated by `/api/chapter/Gen/1`, whose PA server time
+  swings wildly (cold worker post-`touch wsgi` ~1006ms; warm ~240ms) — so single-trace LCP is
+  server-bound noise, NOT the frontend. The next *speed* lever is the chapter API / PA tier.
 
 ## Phase 6 — Schema + tests  *(backlog #5, #6)*
 - [ ] Fix `tipnr.strongs` PK collision (person+place sharing one number → composite key/type-set).
