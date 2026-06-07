@@ -186,6 +186,13 @@ def lexicon_english():
                 ORDER BY cnt DESC
                 LIMIT 20
             """, (q, *_abp_params)).fetchall()
+            # Drop function-word Strong's (ἐν, the article, conjunctions…). They
+            # only reach an English-text lookup via a stray phrase-gloss whose
+            # english_head borrowed a content noun ("in blessing" → head
+            # "blessing"), so a content search like "blessing" would otherwise
+            # surface them as junk hits. The Search tab filters them the same way.
+            abp_rows = [r for r in abp_rows
+                        if r["sbase"][1:] not in _FUNCTION_STRONGS]
 
         if corpus in ("kjv", "all"):
             # KJV words → strongs. In 'kjv' mode include BOTH NT Greek (G) and OT
