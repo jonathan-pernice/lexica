@@ -328,6 +328,12 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    Then `fix_merge_misses bible.db --apply` — hand-verified merge fixes the auto
    generator can't catch (verb in a word-FORM the lexicon match misses, e.g. Dan
    9:10 "hearkened" vs dict "hearken"). Embedded list, added one at a time, pinned.
+   Then `split_kyrios_lead bible.db --all --apply` — splits the leading "to/of/the"
+   off κύριος/G2962 chips so only "LORD" carries G2962 (the function words become a
+   separate no-strongs chip → clicking "to/of/the" no longer shows κύριος). 5,225
+   chips / ~4,529 verses; ADDS ~5,225 rows (so the words count rises and a content
+   hash changes — expected). Validated: health 0/0, audit_bracket_order unchanged
+   (2 genuine). Re-runnable (skips already-split chips).
 5. Gap-fixers (clear the standard post-rebuild health warnings; `--dry-run` first):
    `dedup_words` (exact-dup rows) → `fix_greek_pos_gaps` (bracketed NULL greek_pos).
 6. Invariant (MUST be 0): `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'`
