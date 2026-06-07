@@ -12,8 +12,8 @@ reads identically — only the tag under each word is corrected.
 
   1Sa 5:2   "of"/"God"    ("God" -> θεός instead of the article)
   Rom 8:34  "of"/"God"    (same)
-  Act 19:4  "Jesus the"   (swap tags, THEN split into two chips: "Jesus" (proper
-                           noun) | "the" (G3588) — two clickable words, eSword layout)
+  Act 19:4  "Jesus the"   (eSword keeps "Jesus the"; swap so it carries the PN and
+                           the empty slot takes the article G3588 — reads the same)
   1Pe 5:12  "a little"    ("little" -> ὀλίγος instead of διά)
   2Co 8:10  "a year ago"  ("year ago" -> πέρυσι instead of ἀπό)
   Eph 3:3   "a little"    ("little" -> ὀλίγος instead of ἐν)
@@ -50,16 +50,6 @@ SWAPS = [
     ("Eph", 3, 3, 10, 9, "G1722", "G3641"),   # "little"  <-> ὀλίγος
     ("Mat", 26, 44, 7, 6, "G1537", "G5154"),  # "third time" <-> τρίτος
     ("Zec", 8, 13, 22, 21, "G1722", "G2129"), # "blessing" <-> εὐλογία
-]
-
-# English splits — after the SWAP above fixes the tags, split a lumped two-word
-# gloss into its two slots so each word is its own chip (matches eSword). Only
-# touches english/english_head. Guarded on the lumped text so re-running is a
-# no-op. (book, ch, vs, pos_a, pos_b, lumped, eng_a, head_a, eng_b, head_b)
-SPLITS = [
-    # Act 19:4: "Jesus the" on the PN slot + empty article slot -> "Jesus" | "the"
-    # (eSword: two chips, "the" keeps its own G3588, "Jesus" the proper noun).
-    ("Act", 19, 4, 20, 21, "Jesus the", "Jesus", "jesus", "the", None),
 ]
 
 conn = sqlite3.connect(DB)
@@ -115,37 +105,6 @@ for bk, ch, vs, pa, pb, exp_a, exp_b in SWAPS:
                      (b["strongs_base"], b["strongs"], b["is_pn"], a["id"]))
         conn.execute("UPDATE words SET strongs_base=?, strongs=?, is_pn=? WHERE id=?",
                      (a["strongs_base"], a["strongs"], a["is_pn"], b["id"]))
-        print("  AFTER:")
-        show("A", row_at(v["id"], pa))
-        show("B", row_at(v["id"], pb))
-    changed += 1
-
-for bk, ch, vs, pa, pb, lumped, eng_a, head_a, eng_b, head_b in SPLITS:
-    v = conn.execute("SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
-                     (bk, ch, vs)).fetchone()
-    if not v:
-        print(f"!! {bk} {ch}:{vs} not found — skipped")
-        continue
-    a, b = row_at(v["id"], pa), row_at(v["id"], pb)
-    if not a or not b:
-        print(f"!! {bk} {ch}:{vs} missing pos {pa}/{pb} — skipped")
-        continue
-    # Guard: only split when the lumped text is still sitting on pos_a.
-    if (a["english"] or "") != lumped:
-        print(f"\n{bk} {ch}:{vs}  already split (or unexpected) — skipped")
-        show("A", a)
-        show("B", b)
-        skipped += 1
-        continue
-    print(f"\n{bk} {ch}:{vs}  (split {lumped!r} -> pos {pa}={eng_a!r} | pos {pb}={eng_b!r})")
-    print("  BEFORE:")
-    show("A", a)
-    show("B", b)
-    if APPLY:
-        conn.execute("UPDATE words SET english=?, english_head=? WHERE id=?",
-                     (eng_a, head_a, a["id"]))
-        conn.execute("UPDATE words SET english=?, english_head=? WHERE id=?",
-                     (eng_b, head_b, b["id"]))
         print("  AFTER:")
         show("A", row_at(v["id"], pa))
         show("B", row_at(v["id"], pb))
