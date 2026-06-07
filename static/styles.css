@@ -282,8 +282,8 @@ input { font-family: inherit; }
   color: var(--accent);
   font-weight: 600;
   background: var(--accent-soft);
-  border-radius: 10px;
-  padding: 1px 8px;
+  border-radius: 5px;
+  padding: 0 4px;
 }
 .lexicon-dist-count { color: var(--ink-3); font-size: 11px; font-family: var(--f-mono); margin-left: 3px; }
 .lexicon-dist-item.selected .lexicon-dist-count { color: var(--accent); }
@@ -1114,6 +1114,18 @@ input { font-family: inherit; }
 /* cited highlight — shared by lib-word and corpus results */
 .lib-word.cited { background: var(--gold-soft); border-radius: 5px; }
 .lib-word.cited:hover { background: oklch(0.88 0.06 75); }
+/* In the Search/Lexicon result rows, hug the word instead of filling the whole
+   cell (the cell reserves space above for the order number, which made the
+   highlight look oversized). */
+.corpus-text .lib-word.cited { background: none; }
+.corpus-text .lib-word.cited .lib-iw-english {
+  background: var(--gold-soft);
+  border-radius: 4px;
+  padding: 0 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.corpus-text .lib-word.cited:hover .lib-iw-english { background: oklch(0.88 0.06 75); }
 .word-badge {
   position: absolute;
   bottom: calc(100% + 4px);
