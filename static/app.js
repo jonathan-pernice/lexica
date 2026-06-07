@@ -2433,7 +2433,7 @@ function LibNavPanel({
     "aria-label": "Close"
   }, "\u2715")), /*#__PURE__*/React.createElement("div", {
     className: "nav-scroll"
-  }, nonCanon && nonCanonGroup, groups.map(g => /*#__PURE__*/React.createElement("div", {
+  }, nonCanon && nonCanonGroup, !nonCanon && groups.map(g => /*#__PURE__*/React.createElement("div", {
     className: "nav-group",
     key: g.key
   }, /*#__PURE__*/React.createElement("div", {
@@ -2722,6 +2722,21 @@ function LibraryView({
   const selectBook = b => {
     setSelBook(b);
     setCorpus("bible");
+  };
+  // ABP / KJV always select a Bible edition — and clicking either while a
+  // non-canonical text is open is the quick way back to the Bible.
+  const pickBible = edition => {
+    setCorpus("bible");
+    setTranslation(edition);
+    onTranslationChange?.(edition);
+    if (selBook && selChapter > selBook.chapters) setSelChapter(selBook.chapters);
+  };
+  // Parallel is its own toggle: on shows two columns (Bible ABP|KJV, or a
+  // non-canonical text's Greek|English); off returns to the single view.
+  const toggleParallel = () => {
+    const next = translation === "parallel" ? "abp" : "parallel";
+    setTranslation(next);
+    onTranslationChange?.(next);
   };
   const showStrongs = libOptions.showStrongs || false;
   const showInterlinear = libOptions.showInterlinear || false;
@@ -3404,28 +3419,20 @@ function LibraryView({
   }, "Edition"), /*#__PURE__*/React.createElement("div", {
     className: "mseg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (translation === "abp" ? " on" : ""),
-    onClick: () => {
-      setTranslation("abp");
-      onTranslationChange?.("abp");
-    }
-  }, nonCanon ? "Greek" : "ABP"), /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (translation === "kjv" ? " on" : ""),
-    disabled: !!nonCanon,
-    style: nonCanon ? {
-      opacity: 0.35
-    } : undefined,
-    onClick: () => {
-      if (nonCanon) return;
-      setTranslation("kjv");
-      onTranslationChange?.("kjv");
-    }
-  }, "KJV"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (corpus === "bible" && translation === "abp" ? " on" : ""),
+    onClick: () => pickBible("abp")
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (corpus === "bible" && translation === "kjv" ? " on" : ""),
+    onClick: () => pickBible("kjv")
+  }, "KJV"))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Compare"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (translation === "parallel" ? " on" : ""),
-    onClick: () => {
-      setTranslation("parallel");
-      onTranslationChange?.("parallel");
-    }
+    onClick: toggleParallel
   }, "Parallel"))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3552,30 +3559,15 @@ function LibraryView({
   }, "\u203A")), /*#__PURE__*/React.createElement("div", {
     className: "seg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (translation === "abp" ? " on" : ""),
-    onClick: () => {
-      setTranslation("abp");
-      onTranslationChange?.("abp");
-    }
-  }, nonCanon ? "Greek" : "ABP"), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (translation === "kjv" ? " on" : ""),
-    disabled: !!nonCanon,
-    style: nonCanon ? {
-      opacity: 0.35,
-      cursor: "default"
-    } : undefined,
-    onClick: () => {
-      if (nonCanon) return;
-      setTranslation("kjv");
-      onTranslationChange?.("kjv");
-    }
-  }, "KJV"), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (translation === "parallel" ? " on" : ""),
-    onClick: () => {
-      setTranslation("parallel");
-      onTranslationChange?.("parallel");
-    }
-  }, "Parallel")), /*#__PURE__*/React.createElement("span", {
+    className: "seg-b" + (corpus === "bible" && translation === "abp" ? " on" : ""),
+    onClick: () => pickBible("abp")
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (corpus === "bible" && translation === "kjv" ? " on" : ""),
+    onClick: () => pickBible("kjv")
+  }, "KJV")), /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle" + (translation === "parallel" ? " on" : ""),
+    onClick: toggleParallel
+  }, "Parallel"), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("button", {

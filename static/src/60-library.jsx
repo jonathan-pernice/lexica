@@ -193,7 +193,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
       </div>
       <div className="nav-scroll">
         {nonCanon && nonCanonGroup}
-        {groups.map(g => (
+        {!nonCanon && groups.map(g => (
           <div className="nav-group" key={g.key}>
             <div className="nav-div">
               <span className="nav-div-t">{g.t}</span>
@@ -424,6 +424,21 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const selectBook = (b) => {
     setSelBook(b);
     setCorpus("bible");
+  };
+  // ABP / KJV always select a Bible edition — and clicking either while a
+  // non-canonical text is open is the quick way back to the Bible.
+  const pickBible = (edition) => {
+    setCorpus("bible");
+    setTranslation(edition);
+    onTranslationChange?.(edition);
+    if (selBook && selChapter > selBook.chapters) setSelChapter(selBook.chapters);
+  };
+  // Parallel is its own toggle: on shows two columns (Bible ABP|KJV, or a
+  // non-canonical text's Greek|English); off returns to the single view.
+  const toggleParallel = () => {
+    const next = translation === "parallel" ? "abp" : "parallel";
+    setTranslation(next);
+    onTranslationChange?.(next);
   };
   const showStrongs     = libOptions.showStrongs     || false;
   const showInterlinear = libOptions.showInterlinear || false;
@@ -966,9 +981,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             <div className="mode-sec">
               <div className="mode-lbl">Edition</div>
               <div className="mseg">
-                <button className={"mseg-b"+(translation==="abp"?" on":"")} onClick={()=>{setTranslation("abp");onTranslationChange?.("abp");}}>{nonCanon ? "Greek" : "ABP"}</button>
-                <button className={"mseg-b"+(translation==="kjv"?" on":"")} disabled={!!nonCanon} style={nonCanon?{opacity:0.35}:undefined} onClick={()=>{ if(nonCanon) return; setTranslation("kjv");onTranslationChange?.("kjv");}}>KJV</button>
-                <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={()=>{setTranslation("parallel");onTranslationChange?.("parallel");}}>Parallel</button>
+                <button className={"mseg-b"+(corpus==="bible"&&translation==="abp"?" on":"")} onClick={()=>pickBible("abp")}>ABP</button>
+                <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
+              </div>
+            </div>
+            <div className="mode-sec">
+              <div className="mode-lbl">Compare</div>
+              <div className="mseg">
+                <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={toggleParallel}>Parallel</button>
               </div>
             </div>
             <div className="mode-sec">
@@ -1049,10 +1069,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               >›</button>
             </div>
             <div className="seg">
-              <button className={"seg-b" + (translation === "abp" ? " on" : "")} onClick={() => { setTranslation("abp"); onTranslationChange?.("abp"); }}>{nonCanon ? "Greek" : "ABP"}</button>
-              <button className={"seg-b" + (translation === "kjv" ? " on" : "")} disabled={!!nonCanon} style={nonCanon ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => { if (nonCanon) return; setTranslation("kjv"); onTranslationChange?.("kjv"); }}>KJV</button>
-              <button className={"seg-b" + (translation === "parallel" ? " on" : "")} onClick={() => { setTranslation("parallel"); onTranslationChange?.("parallel"); }}>Parallel</button>
+              <button className={"seg-b" + (corpus === "bible" && translation === "abp" ? " on" : "")} onClick={() => pickBible("abp")}>ABP</button>
+              <button className={"seg-b" + (corpus === "bible" && translation === "kjv" ? " on" : "")} onClick={() => pickBible("kjv")}>KJV</button>
             </div>
+            <button className={"lib-toggle" + (translation === "parallel" ? " on" : "")} onClick={toggleParallel}>Parallel</button>
             <span className="lib-bar-sep" aria-hidden="true"/>
             <button className={"lib-toggle" + (showStrongs ? " on" : "")} onClick={() => setOpt("showStrongs", !showStrongs)}>Strong's</button>
             <button className={"lib-toggle" + (showInterlinear ? " on" : "")} onClick={() => setOpt("showInterlinear", !showInterlinear)}>Interlinear</button>
