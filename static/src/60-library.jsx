@@ -476,6 +476,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       is_function: false,
       is_pn: !!w.is_pn,
       pn_type: w.pn_type || null,
+      pn_types: w.pn_types || null,
       };
     };
 
