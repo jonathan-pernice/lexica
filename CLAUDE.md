@@ -8,8 +8,9 @@ Lexica is a Flask-based Greek and Hebrew Bible word study app. ABP (Apostolic Bi
 CORRECT over conserving tool calls. The notes below are about staying focused and
 keeping context sharp, NOT about rationing usage.)
 - Target the specific function/section relevant to the task — for focus, not frugality
-- Prefer not to read all of app.py / app.jsx in one shot (they're huge — it dilutes
-  context); read the relevant region(s), but read as many as correctness needs
+- app.py and the frontend are now split into modules (app.py → core.py + ai.py +
+  views_*.py; the old app.jsx → static/src/*.jsx). Read the relevant module/region, not
+  everything — for focus, but read as many as correctness needs
 - Read as much as you need to get it right — do not starve a task of context to save calls
 - Do not attempt to access bible.db directly
 - Make minimal changes — do not refactor unrelated code
@@ -46,21 +47,28 @@ Pick effort by task TYPE. When in doubt, lean higher — the plan affords it.
 - Database is NOT in git (too large) — managed directly on PythonAnywhere
 
 ## Frontend build step (added 2026-06-06)
-- `static/app.jsx` is the SOURCE. `static/app.js` is the COMPILED output that the
-  browser actually loads (index.html points at `app.js`). The compiled `app.js` IS
-  committed to git; `node_modules/` is git-ignored.
-- After ANY edit to `static/app.jsx` you MUST rebuild before committing:
-  `npm run build` (runs Babel: jsx -> static/app.js). One-time setup: `npm install`.
+- The SOURCE is `static/src/*.jsx` — per-view files, concatenated (filename order;
+  numeric prefixes set it) into ONE compilation unit. `static/app.js` is the COMPILED
+  output the browser loads (index.html points at `app.js`). The compiled `app.js` IS
+  committed to git; `node_modules/` is git-ignored. (Phase 4, 2026-06-06: the old
+  3,461-line `static/app.jsx` monolith was split into `static/src/` — see the file
+  headers there for what each holds. Same split spirit as the app.py blueprints.)
+- After ANY edit to a `static/src/*.jsx` file you MUST rebuild before committing:
+  `npm run build` (runs `scripts/build-frontend.js`: concat src -> Babel -> static/app.js).
+  One-time setup: `npm install`. Commit BOTH the .jsx source AND the rebuilt app.js.
 - The build runs LOCALLY (Node is on the dev machine, not needed on PA). PA deploy is
   unchanged — it just `git pull`s the already-compiled app.js.
-- Why: in-browser Babel was recompiling 3,461 lines of JSX on every page load
-  (~2.5s render delay; server TTFB was only 96ms). Precompiling + production React
+- Why concat-then-compile (not `babel <dir>`): one unit emits Babel's spread helper
+  once and reproduces the old single-file output exactly (the src files joined by "\n"
+  reconstruct the original app.jsx).
+- Why the build step at all: in-browser Babel was recompiling all the JSX on every page
+  load (~2.5s render delay; server TTFB was only 96ms). Precompiling + production React
   builds removes that tax. Babel-standalone and dev React were dropped from index.html.
 
 ## Stack
 - Backend: Flask (Python), SQLite
-- Frontend: React 18 (production UMD), JSX precompiled via Babel CLI to static/app.js
-  (build step — see "Frontend build step" above), HTML/CSS
+- Frontend: React 18 (production UMD), JSX in static/src/*.jsx precompiled via Babel to
+  static/app.js (build step — see "Frontend build step" above), HTML/CSS
 - Deployed: PythonAnywhere ($10 Dev tier)
 - Version control: GitHub (repo: jonathan-pernice/lexica)
 
@@ -73,9 +81,10 @@ app.py            # Flask app, all routes
 templates/
 index.html      # single page app
 static/
-app.jsx          # all frontend logic
+src/             # frontend SOURCE — per-view *.jsx (00-core … 90-app)
+app.js           # COMPILED bundle the browser loads (built from src/, committed)
 styles.css       # all styles
-scripts/          # one-time import/migration scripts (not needed for runtime)
+scripts/          # build-frontend.js + one-time import/migration scripts
 
 ## Database Tables
 - `verses` — ABP verse text
@@ -114,7 +123,7 @@ scripts/          # one-time import/migration scripts (not needed for runtime)
 
 ## Book Abbreviations
 - ABP verses table uses: Mar (Mark), Joh (John), Php (Philippians), Jas (James), Heb (Hebrews)
-- NT_BOOKS, BOOK_ORDER, BOOK_LABELS in app.jsx all use these abbreviations
+- NT_BOOKS, BOOK_ORDER, BOOK_LABELS in static/src/00-core.jsx all use these abbreviations
 - _KJV_BOOK_ID in app.py matches the same set
 
 ## Responsive Breakpoints

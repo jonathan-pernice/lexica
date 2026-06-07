@@ -119,11 +119,24 @@ every step gated by local `--compare` 0 diffs + the app still booting.
 - Why: half of "the jumble"; done after 1+2 so we file away clean code.
 - Risk: low logic risk but wide — snapshots + local boot verify every step.
 
-## Phase 4 — Split `app.jsx` + fix detail-panel state  *(backlog #4)*
+## Phase 4 — Split `app.jsx` + fix detail-panel state  *(backlog #4)* — ✅ DONE 2026-06-06 (pushed; deploy pending)
 3,461-line file → per-view files (build step makes this clean). `DetailPanel`'s tangle of flags
 → one computed `{hero, sections[]}` descriptor, rendered dumbly.
+- [x] **4.1 — split** (commit 2246bda): `static/app.jsx` → 10 files in `static/src/`
+  (00-core, 10-icons, 20-shared-components, 30-detail-panel, 40-crossref-panel,
+  50-corpus-results, 60-library, 70-search, 80-lexicon, 90-app). Build is now
+  `npm run build` → `scripts/build-frontend.js` (Node): concat src/*.jsx (filename order)
+  into ONE unit → Babel → static/app.js. Concat-before-compile emits the spread helper once
+  and rebuilt app.js BYTE-IDENTICAL to committed (one stray CRLF-in-comment → LF). Old
+  app.jsx removed. Verified visually: Genesis 1 identical, word click → panel ok.
+- [x] **4.2 — DetailPanel descriptor** (commit 79170d1): render from `hero` (resolved fields)
+  + ordered `sections[]` (→ `sections.map(renderSection)`) + `useKjvText`, all computed once.
+  JSX bodies verbatim; hooks/effects byte-identical (lines 1-230 unchanged). Verified visually
+  (no frontend diff-gate): θεός (person+morph+LSJ-suppressed+occ+verse), ποιέω (LSJ+tabs+AI),
+  bârâ/KJV (RTL hero+BDB+kjvOcc+KJV verse), Eden (Hebrew-PN place: name hero + metaV place map
+  + AI desc + BDB stacked), Lexicon search, Library prose. No console/key warnings.
 - Why: the other half of the jumble; several past UI bugs lived here.
-- Risk: medium (UI) — screenshots + click-through verify.
+- Risk: medium (UI) — screenshots + click-through verified.
 
 ## Phase 5 — Perf polish (the remaining ~748ms first paint)
 - [ ] Defer non-critical startup fetches; lazy-load Leaflet (maps only).
