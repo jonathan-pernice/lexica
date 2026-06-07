@@ -88,11 +88,19 @@ function extractProperName(gloss) {
 // ============================================================
 // DATA SHAPING
 // ============================================================
+// ---- Canonical Strong's-number handling (single source of truth) --------
+// strongsBare: drop any G/H prefix, keep dotted variants. "G4151"->"4151",
+//   "1510.7.3"->"1510.7.3", "H7307"->"7307".
+// strongsTag: display form. "*"/empty -> "PN"; preserves an explicit H prefix;
+//   bare numbers above the Greek max (5624) read as Hebrew.
+function strongsBare(snum) {
+  return String(snum || "").replace(/^[GH]/i, "");
+}
 function strongsTag(snum) {
   if (!snum || snum === "*") return "PN";
   const s = String(snum);
   const hasH = /^H/i.test(s);
-  const bare = s.replace(/^[GH]/i, "");
+  const bare = strongsBare(s);
   const n = parseInt(bare, 10);
   if (hasH) return `H${bare}`;
   return `${!isNaN(n) && n > 5624 ? "H" : "G"}${bare}`;
@@ -1045,7 +1053,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
                   <span className="iw-translit">{w.translit || ""}</span>
                   <span className="iw-english">{w.english || "—"}</span>
                   {(w.strongs || w.strongs_base) && w.strongs_base !== "*" && (
-                    <span className="iw-strongs">{(w.strongs && w.strongs !== '*') ? 'G' + w.strongs : w.strongs_base}</span>
+                    <span className="iw-strongs">{strongsTag((w.strongs && w.strongs !== '*') ? w.strongs : w.strongs_base)}</span>
                   )}
                 </div>
               ))}
@@ -1300,7 +1308,7 @@ function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, 
                 ...(isPN ? { isPN: true, pnName: label } : {}),
               });
             const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
-            const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
+            const bareNum = strongsBare(w.strongs_base);
             const isCited = clickable && citedStrongs != null && citedStrongs.size > 0 &&
               (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum));
             // Multi-word gloss with italic_words: split into separate chips (mirrors library)
@@ -3162,10 +3170,11 @@ function App() {
     const s = new Set();
     for (const p of primaryStrongs) {
       if (p.strongs_base) {
-        s.add(p.strongs_base);                            // as-is (e.g. "4151" or "G4151")
-        s.add(p.strongs_base.replace(/^[GH]/i, ""));     // bare (e.g. "4151")
-        s.add(`G${p.strongs_base.replace(/^[GH]/i, "")}`); // G-prefixed
-        s.add(`H${p.strongs_base.replace(/^[GH]/i, "")}`); // H-prefixed
+        const bare = strongsBare(p.strongs_base);
+        s.add(p.strongs_base);   // as-is (e.g. "4151" or "G4151")
+        s.add(bare);             // bare (e.g. "4151")
+        s.add(`G${bare}`);       // G-prefixed
+        s.add(`H${bare}`);       // H-prefixed
       }
     }
     return s.size > 0 ? s : null;
