@@ -24,6 +24,8 @@
   --accent-soft: color-mix(in oklab, var(--navy-2) 10%, var(--paper));
   --gold: oklch(0.58 0.09 75);
   --gold-soft: oklch(0.93 0.04 75);
+  --cited: oklch(0.90 0.055 165);        /* focused-word highlight — sage, distinct from gold */
+  --cited-strong: oklch(0.84 0.075 165); /* same, on hover */
 
   --shadow-sm: 0 1px 0 rgba(20, 20, 30, 0.04), 0 1px 2px rgba(20, 20, 30, 0.04);
   --shadow-md: 0 2px 4px rgba(20, 20, 30, 0.05), 0 8px 24px -8px rgba(20, 20, 30, 0.10);
@@ -1106,8 +1108,8 @@ input { font-family: inherit; }
   display: inline;
 }
 /* cited highlight — shared by lib-word and corpus results */
-.lib-word.cited { background: var(--gold-soft); border-radius: 5px; }
-.lib-word.cited:hover { background: oklch(0.88 0.06 75); }
+.lib-word.cited { background: var(--cited); border-radius: 5px; }
+.lib-word.cited:hover { background: var(--cited-strong); }
 .word-badge {
   position: absolute;
   bottom: calc(100% + 4px);
