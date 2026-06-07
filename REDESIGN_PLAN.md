@@ -35,14 +35,20 @@ Refactoring ~7,000 lines with no tests + deploy-and-eyeball is how regressions s
   → `.venv\Scripts\python scripts/snapshot_endpoints.py --base http://127.0.0.1:5000 --compare`
   → 0 diffs → push → deploy → `--compare` against live to confirm.
 
-## Phase 1 — Centralize Strong's handling  *(backlog #1 — the headline)*
+## Phase 1 — Centralize Strong's handling  *(backlog #1 — the headline)* — ✅ DONE (local; awaiting deploy)
 The fragile pattern behind 4+ past bugs: `SUBSTR(strongs_base, 2)` joins + hardcoded `G{...}`.
-- [ ] One canonical Strong's module (backend + frontend): parse/format + a real JOIN KEY.
-- [ ] Replace every `SUBSTR(strongs_base,2)` join (chapter_text, kjv_chapter, lexicon_*, metav).
-- [ ] Replace hardcoded `G{w.strongs || w.strongs_base}` spots; enforce one `strongsTag()`.
-- [ ] First code-level tests around the module.
+- [x] Real JOIN KEY: added indexed `lexicon.strongs_g` (= 'G'||strongs) via _migrate_db (idempotent).
+- [x] Replaced all 13 real `SUBSTR(...,2)` joins (ABP + KJV families) with `l.strongs_g = w.strongs_base`
+  / `lex.strongs_g = ks.strongs_id`. Structurally immune to the digit-shave (592k) AND H→G bugs.
+  The 3 copies inside the AI system prompt LEFT AS-IS (still valid; changing them alters AI output +
+  busts the prompt cache, unverifiable locally without a key — separate follow-up).
+- [x] Frontend: added `strongsBare()`, routed the 3 rogue `G${...}` spots through it / `strongsTag()`.
+- [x] Test: `tests/test_strongs_join.py` (in-memory sqlite, no DB dep) locks the invariant + documents
+  both old bugs. Passes.
+- [x] Verified: local `--compare` 28/28 byte-identical (incl. new /api/search + /api/lexicon/english).
 - Why: highest bug-prevention value; also lets the lexicon join use an index.
-- Risk: medium (data-read paths) — Phase-0 snapshots make it safe.
+- Risk: medium (data-read paths) — Phase-0 snapshots made it safe. **Deploy note:** migration runs at
+  PA startup (touch wsgi) BEFORE any query, so no missing-column window.
 
 ## Phase 2 — DRY word serialization  *(backlog #3)*
 `/api/chapter` vs `/api/verse-words` drifted (the `is_pn` bug). Frontend mirrors it.

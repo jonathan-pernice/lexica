@@ -46,6 +46,9 @@ ENDPOINTS = [
     "/api/verse-words/Joh/1/1",
     "/api/verse-words/Eze/31/9",     # the ζηλόω/G2206 canary from the strongs_base saga
     "/api/kjv/verse_words/Gen/1/1",
+    "/api/search?q=spirit&phrase=0",        # exercises the search() lexicon joins (1429/1453/1474, 1366)
+    "/api/search?q=G4151&phrase=0",
+    "/api/lexicon/english?q=spirit&corpus=ABP",  # exercises lexicon_english joins (2090, 2115)
     "/api/lexicon/lookup?q=G4151",
     "/api/lexicon/lookup?q=spirit",
     "/api/lexicon/profile/G4151",
