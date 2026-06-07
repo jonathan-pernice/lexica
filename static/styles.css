@@ -1670,8 +1670,6 @@ input { font-family: inherit; }
   margin: 0;
 }
 .lib-did-chips { margin-top: 4px; }
-.lib-did-word .lib-iw-greek { font-size: 1.05em; }
-.lib-did-word .lib-iw-english { font-size: 0.72em; color: var(--ink-3); }
 
 /* Bracket group wrapper — inline-flex so [ words ] stay on one visual unit */
 .lib-bracket-group {

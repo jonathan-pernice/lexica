@@ -3293,15 +3293,22 @@ function LibraryView({
         pn_type: null,
         pn_types: null
       };
+      const label = w.english || "";
+      if (!label) return null;
       return /*#__PURE__*/React.createElement("span", {
         key: key,
-        className: "lib-word lib-did-word" + (clickable ? " lib-word-clickable" : ""),
+        className: "lib-word" + (clickable ? " lib-word-clickable" : ""),
         onClick: clickable ? () => onWordClick(entry) : undefined
-      }, /*#__PURE__*/React.createElement("span", {
+      }, showInterlinear && (w.lemma ? /*#__PURE__*/React.createElement("span", {
         className: "lib-iw-greek"
-      }, w.greek), /*#__PURE__*/React.createElement("span", {
+      }, w.lemma) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek",
+        style: {
+          visibility: "hidden"
+        }
+      }, "x")), /*#__PURE__*/React.createElement("span", {
         className: "lib-iw-english"
-      }, w.english), showStrongs && (w.strongs ? /*#__PURE__*/React.createElement("span", {
+      }, label), showStrongs && (w.strongs ? /*#__PURE__*/React.createElement("span", {
         className: "lib-iw-strongs"
       }, "G" + w.strongs) : /*#__PURE__*/React.createElement("span", {
         className: "lib-iw-strongs",

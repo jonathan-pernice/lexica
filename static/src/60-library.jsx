@@ -884,12 +884,16 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         definition: "", derivation: "", is_function: false,
         is_pn: false, pn_type: null, pn_types: null,
       };
+      const label = w.english || "";
+      if (!label) return null;
       return (
         <span key={key}
-          className={"lib-word lib-did-word" + (clickable ? " lib-word-clickable" : "")}
+          className={"lib-word" + (clickable ? " lib-word-clickable" : "")}
           onClick={clickable ? () => onWordClick(entry) : undefined}>
-          <span className="lib-iw-greek">{w.greek}</span>
-          <span className="lib-iw-english">{w.english}</span>
+          {showInterlinear && (w.lemma
+            ? <span className="lib-iw-greek">{w.lemma}</span>
+            : <span className="lib-iw-greek" style={{ visibility: "hidden" }}>x</span>)}
+          <span className="lib-iw-english">{label}</span>
           {showStrongs && (w.strongs
             ? <span className="lib-iw-strongs">{"G" + w.strongs}</span>
             : <span className="lib-iw-strongs" style={{ visibility: "hidden" }}>G0</span>)}
