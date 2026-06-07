@@ -133,6 +133,38 @@ if verse_spec:
               f"  brk={r['bracket_id']}{ital}")
     sys.exit(0)
 
+if opt("--swaps"):
+    # Hunt the 1Sa 5:2 signature: the article ὁ/G3588 carries a CONTENT word as
+    # its English while a neighbour (a real content Greek word) carries only a
+    # bare connector ("of", "the"). That means the two English words were swapped
+    # between the noun and its article.
+    CONNECTORS = {'of', 'the', 'of the', 'a', 'an', 'to', 'in', 'by', 'with',
+                  'for', 'from', "'s", 's'}
+    art_rows = suspect_rows("G3588")  # article rows holding a content word
+    swaps = []
+    for r in art_rows:
+        for dp in (-1, 1):
+            n = conn.execute(
+                """SELECT position, english, english_head, strongs_base
+                   FROM words WHERE verse_id=? AND position=?""",
+                (r["verse_id"], r["position"] + dp),
+            ).fetchone()
+            if not n or not n["strongs_base"] or not n["strongs_base"].startswith("G"):
+                continue
+            if n["strongs_base"] == "G3588":
+                continue
+            neng = (n["english"] or "").strip().lower().strip(".,;:")
+            if neng in CONNECTORS:
+                swaps.append((r, n))
+                break
+    print(f"Article (G3588) <-> noun English swaps: {len(swaps)} of "
+          f"{len(art_rows)} content-headed article rows  [DB: {DB}]\n")
+    for r, n in swaps[: int(opt('--limit', '40'))]:
+        ref = book_ref(r["verse_id"])
+        print(f"  {ref:<12} article eng={r['english']!r:<14} "
+              f"<-> {n['strongs_base']} {lemma_for(n['strongs_base']):<10} eng={n['english']!r}")
+    sys.exit(0)
+
 if opt("--scope"):
     print(f"Suspect (content-word gloss) rows per common function word — {DB}\n")
     rep = []
