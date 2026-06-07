@@ -6,6 +6,8 @@ stack), the book list with chapter counts, and the full chapter render (with
 pericope headings + proper-noun typing). Word dicts are built via the shared
 core._serialize_word_core so chapter_text / verse_words can't drift.
 """
+import re
+
 from flask import Blueprint, jsonify
 
 from core import db, _serialize_word_core, _FUNCTION_STRONGS
@@ -94,27 +96,36 @@ def books_list():
     return jsonify([{"abbrev": r["abbrev"], "name": r["name"], "chapters": r["chapters"]} for r in rows])
 
 
-@bp.route("/api/didache/chapter/<int:chapter>")
-def didache_chapter(chapter):
-    """Serve one Didache chapter in the same shape the Library reader consumes,
-    plus a readable-English line per verse. The Didache lives in its OWN two
-    tables (didache_words / didache_verses) created by load_didache.py — it is
-    walled off from the Bible's words/verses and from search + lexicon counts.
-    Degrades quietly (empty list) until the loader has been run on PA."""
+# Non-canonical texts (Didache, etc.) each live in their OWN two tables,
+# `<book>_words` / `<book>_verses`, created by scripts/didache_proof/load_extra.py.
+# They are walled off from the Bible's words/verses and from search + lexicon counts.
+_EXTRA_BOOK_RE = re.compile(r"^[a-z0-9_]+$")   # table-name safe; blocks anything odd
+
+
+@bp.route("/api/extra/<book>/chapter/<int:chapter>")
+def extra_chapter(book, chapter):
+    """Serve one chapter of a non-canonical text in the shape the Library reader
+    consumes, plus a readable-English line per verse. Degrades quietly (empty
+    list) if the text's tables haven't been loaded on PA yet."""
+    if not _EXTRA_BOOK_RE.match(book):
+        return jsonify([])
+    wtable, vtable = f"{book}_words", f"{book}_verses"
     conn = db()
     try:
-        if not conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='didache_words'"
-        ).fetchone():
+        have = {r["name"] for r in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name IN (?, ?)",
+            (wtable, vtable)
+        ).fetchall()}
+        if wtable not in have:
             return jsonify([])
         wrows = conn.execute(
-            "SELECT verse, position, greek, lemma, strongs, gloss FROM didache_words "
+            f"SELECT verse, position, greek, lemma, strongs, gloss FROM {wtable} "
             "WHERE chapter=? ORDER BY verse, position", (chapter,)
         ).fetchall()
         vrows = conn.execute(
-            "SELECT verse, english FROM didache_verses WHERE chapter=? ORDER BY verse",
+            f"SELECT verse, english FROM {vtable} WHERE chapter=? ORDER BY verse",
             (chapter,)
-        ).fetchall()
+        ).fetchall() if vtable in have else []
     finally:
         conn.close()
     english = {r["verse"]: r["english"] for r in vrows}

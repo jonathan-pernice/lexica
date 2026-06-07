@@ -80,40 +80,37 @@ already builds them. (Strong's numbers are already hidden on AI results — that
 
 ---
 
-## Didache — add to Library (CODE DONE 2026-06-07; needs PA load + deploy)
+## Non-canonical texts (Didache live) — generic "extra texts" plumbing DONE 2026-06-07
 
-Adding the Didache (early-church text) as a **non-canonical corpus inside the Library tab** — reached
-via an "Other" pick, reusing the existing reader, walled off from Bible search and word counts. ABP
-stays the anchor.
+The Library can now carry non-canonical texts (Didache first) as their own picks, reached via an
+"Other" menu, walled off from Bible search and word counts. ABP stays the anchor. The plumbing is
+GENERIC: adding a future text = tag it, drop two json files, add one line to `NONCANON`, load.
 
-**DONE + pushed (all in `scripts/didache_proof/`):**
-- Whole Didache (16 ch) tagged: each Greek word → dictionary form → Strong's → gloss. Greek =
-  Tauber's corrected Lake text (CC-BY-SA). Per-chapter files + combined `didache_tagged_full.json`
-  (2199 words, 2147 linked to Strong's, 52 genuinely non-biblical, **zero bad numbers** — all
-  verified against the live lexicon by `check_didache_tags.py`, read-only).
-- `load_didache.py` — loader that creates TWO NEW tables only (`didache_words`, `didache_verses`),
-  never touches words/verses/lexicon, safe to re-run.
-- `build_proof.py` + `didache_ch1_proof.html` — standalone proof page (reading + interlinear).
-- **`didache_english.json`** — our OWN plain English for all 16 ch (title 0.1 → 16.8, 101 verses).
-  Copyright-clean; verified to cover every tagged verse.
+**How a text lives:** its own two tables `<book>_words` / `<book>_verses` (never touches the Bible's
+tables). Web route `GET /api/extra/<book>/chapter/<n>` reads those. Loader `scripts/load_extra.py
+<db> <book> <tagged.json> <english.json>` builds them; safe to re-run.
 
-**CODE DONE (this session) — not live until loaded on PA:**
-- Backend: `GET /api/didache/chapter/<n>` in `views_library.py` — serves a chapter in the reader's
-  shape + a readable-English line per verse. Degrades to empty if the tables aren't loaded yet (safe
-  to deploy before the load).
-- Frontend (`static/src/60-library.jsx` + `api.didacheChapter` in `00-core.jsx`, styles in
-  `styles.css`, rebuilt into `app.js`): an **"Other ▾"** popup after the font-size picker (desktop)
-  / "Other texts" row in the mobile sheet, listing non-canonical texts via a `NONCANON` list (grows
-  easily). Pick Didache → reader swaps to it, chapter nav 1–16. Each verse shows the readable English
-  with Greek chips beneath in natural order; word click → the shared word-study sidebar. Picking
-  ABP/KJV/Parallel or any book returns to the Bible.
+**Didache data (all in `scripts/didache_proof/`):**
+- 16 ch tagged: each Greek word → dictionary form → Strong's → gloss (Tauber's corrected Lake text,
+  CC-BY-SA). `didache_tagged_full.json` (2199 words, 2147 Strong's-linked, 52 non-biblical, zero bad
+  numbers — `check_didache_tags.py`, read-only).
+- `didache_english.json` — our OWN plain English, all 16 ch (0.1 → 16.8, 101 verses), copyright-clean.
+- `load_didache.py` — thin wrapper around `load_extra.py` for the Didache (command unchanged).
+- `build_proof.py` + `didache_ch1_proof.html` — original standalone proof page.
 
-**REMAINING — on PA (user runs):**
+**Frontend (`static/src/60-library.jsx` + `api.extraChapter` in `00-core.jsx`):**
+- `corpus` ("bible" | a `NONCANON` id) is now SEPARATE from `translation` (the abp/kjv/parallel
+  layout). "Other ▾" popup (desktop) / "Other texts" sheet row (mobile) + a top-of-nav "Non-canonical"
+  group pick the text; picking a Bible book returns to the Bible.
+- Reading a non-canonical text: the **Greek interlinear is the normal view** (mirrors ABP — the
+  Greek/ABP button). **Parallel** shows Greek interlinear | our readable English, same two-column
+  layout as Bible parallel. KJV is disabled there (no KJV for these texts). No bracket/ordering
+  machinery; chips stay in natural Greek order; word click → the shared word-study sidebar.
+
+**REMAINING — on PA (user runs):** tables already loaded earlier, so just deploy:
 1. `git pull`
-2. `python3 scripts/didache_proof/load_didache.py bible.db`  (expect ~2199 words / 101 verses)
-3. `touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
-- Design notes: NO brackets/ordering machinery (Didache chips stay in natural Greek order; the
-  English column carries readability). Decisions confirmed with user this session.
+2. `touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
+(If ever reloading: `python3 scripts/didache_proof/load_didache.py bible.db` → ~2199 words / 101 verses.)
 
 ## Bigger features (someday / ideas)
 

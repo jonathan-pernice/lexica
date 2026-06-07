@@ -1660,8 +1660,7 @@ input { font-family: inherit; }
 .lib-other-item:hover { background: var(--bg-sunk); }
 .lib-other-item.on { color: var(--accent); font-weight: 500; }
 
-/* ----- Didache reader: readable English line + Greek chips beneath ----- */
-.lib-did-content { display: block; }
+/* ----- Non-canonical reader: readable English (parallel right column) ----- */
 .lib-did-eng {
   font-family: var(--f-serif);
   font-size: 1em;
@@ -1669,7 +1668,6 @@ input { font-family: inherit; }
   line-height: 1.7;
   margin: 0;
 }
-.lib-did-chips { margin-top: 4px; }
 
 /* Bracket group wrapper — inline-flex so [ words ] stay on one visual unit */
 .lib-bracket-group {
