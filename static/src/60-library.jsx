@@ -153,12 +153,46 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
     return out;
   }, [filtered]);
 
+  const nonCanonGroup = (nonCanonList && nonCanonList.length > 0) ? (
+    <div className="nav-group">
+      <div className="nav-div">
+        <span className="nav-div-t">Other</span>
+        <span className="nav-div-n">Non-canonical</span>
+      </div>
+      {nonCanonList.map(t => {
+        const active = !!nonCanon && nonCanon.id === t.id;
+        return (
+          <div key={t.id} ref={active ? navBookRef : null}>
+            <button
+              className={"nav-book" + (active ? " on" : "")}
+              onClick={() => { onPickNonCanon(t); if (isOverlay) onClose(); }}
+            >
+              <span className="nav-book-name">{t.name}</span>
+            </button>
+            {active && (
+              <div className="nav-chips">
+                {Array.from({ length: t.chapters }, (_, i) => i + 1).map(n => (
+                  <button
+                    key={n}
+                    className={"ch-chip" + (n === selChapter ? " on" : "")}
+                    onClick={() => setSelChapter(n)}
+                  >{n}</button>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  ) : null;
+
   return (
     <nav className={"nav" + (isOverlay ? " nav-overlay" : "")} aria-label="Books">
       <div className="nav-top">
         {isOverlay && <button className="nav-x" onClick={onClose} aria-label="Close">✕</button>}
       </div>
       <div className="nav-scroll">
+        {nonCanon && nonCanonGroup}
         {groups.map(g => (
           <div className="nav-group" key={g.key}>
             <div className="nav-div">
@@ -191,38 +225,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
             })}
           </div>
         ))}
-        {nonCanonList && nonCanonList.length > 0 && (
-          <div className="nav-group">
-            <div className="nav-div">
-              <span className="nav-div-t">Other</span>
-              <span className="nav-div-n">Non-canonical</span>
-            </div>
-            {nonCanonList.map(t => {
-              const active = !!nonCanon && nonCanon.id === t.id;
-              return (
-                <div key={t.id}>
-                  <button
-                    className={"nav-book" + (active ? " on" : "")}
-                    onClick={() => { onPickNonCanon(t); if (isOverlay) onClose(); }}
-                  >
-                    <span className="nav-book-name">{t.name}</span>
-                  </button>
-                  {active && (
-                    <div className="nav-chips">
-                      {Array.from({ length: t.chapters }, (_, i) => i + 1).map(n => (
-                        <button
-                          key={n}
-                          className={"ch-chip" + (n === selChapter ? " on" : "")}
-                          onClick={() => setSelChapter(n)}
-                        >{n}</button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+        {!nonCanon && nonCanonGroup}
       </div>
     </nav>
   );
@@ -323,6 +326,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       navBookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }, [nav?.book, selBook?.abbrev]);
+
+  // When a non-canonical text is opened, its nav group moves to the top — bring it into view.
+  useEffect(() => {
+    if (!nonCanon || !navBookRef.current) return;
+    requestAnimationFrame(() => {
+      navBookRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    });
+  }, [nonCanon?.id]);
   const navVisible = !isMobile;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);

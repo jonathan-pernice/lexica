@@ -2391,6 +2391,37 @@ function LibNavPanel({
     }
     return out;
   }, [filtered]);
+  const nonCanonGroup = nonCanonList && nonCanonList.length > 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "nav-group"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "nav-div"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "nav-div-t"
+  }, "Other"), /*#__PURE__*/React.createElement("span", {
+    className: "nav-div-n"
+  }, "Non-canonical")), nonCanonList.map(t => {
+    const active = !!nonCanon && nonCanon.id === t.id;
+    return /*#__PURE__*/React.createElement("div", {
+      key: t.id,
+      ref: active ? navBookRef : null
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "nav-book" + (active ? " on" : ""),
+      onClick: () => {
+        onPickNonCanon(t);
+        if (isOverlay) onClose();
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "nav-book-name"
+    }, t.name)), active && /*#__PURE__*/React.createElement("div", {
+      className: "nav-chips"
+    }, Array.from({
+      length: t.chapters
+    }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
+      key: n,
+      className: "ch-chip" + (n === selChapter ? " on" : ""),
+      onClick: () => setSelChapter(n)
+    }, n))));
+  })) : null;
   return /*#__PURE__*/React.createElement("nav", {
     className: "nav" + (isOverlay ? " nav-overlay" : ""),
     "aria-label": "Books"
@@ -2402,7 +2433,7 @@ function LibNavPanel({
     "aria-label": "Close"
   }, "\u2715")), /*#__PURE__*/React.createElement("div", {
     className: "nav-scroll"
-  }, groups.map(g => /*#__PURE__*/React.createElement("div", {
+  }, nonCanon && nonCanonGroup, groups.map(g => /*#__PURE__*/React.createElement("div", {
     className: "nav-group",
     key: g.key
   }, /*#__PURE__*/React.createElement("div", {
@@ -2434,36 +2465,7 @@ function LibNavPanel({
       className: "ch-chip" + (n === selChapter ? " on" : ""),
       onClick: () => setSelChapter(n)
     }, n))));
-  }))), nonCanonList && nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "nav-group"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "nav-div"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "nav-div-t"
-  }, "Other"), /*#__PURE__*/React.createElement("span", {
-    className: "nav-div-n"
-  }, "Non-canonical")), nonCanonList.map(t => {
-    const active = !!nonCanon && nonCanon.id === t.id;
-    return /*#__PURE__*/React.createElement("div", {
-      key: t.id
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "nav-book" + (active ? " on" : ""),
-      onClick: () => {
-        onPickNonCanon(t);
-        if (isOverlay) onClose();
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "nav-book-name"
-    }, t.name)), active && /*#__PURE__*/React.createElement("div", {
-      className: "nav-chips"
-    }, Array.from({
-      length: t.chapters
-    }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
-      key: n,
-      className: "ch-chip" + (n === selChapter ? " on" : ""),
-      onClick: () => setSelChapter(n)
-    }, n))));
-  }))));
+  }))), !nonCanon && nonCanonGroup));
 }
 
 // ============================================================
@@ -2591,6 +2593,17 @@ function LibraryView({
       });
     });
   }, [nav?.book, selBook?.abbrev]);
+
+  // When a non-canonical text is opened, its nav group moves to the top — bring it into view.
+  useEffect(() => {
+    if (!nonCanon || !navBookRef.current) return;
+    requestAnimationFrame(() => {
+      navBookRef.current?.scrollIntoView({
+        behavior: "auto",
+        block: "start"
+      });
+    });
+  }, [nonCanon?.id]);
   const navVisible = !isMobile;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
