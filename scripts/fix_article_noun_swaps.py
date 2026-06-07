@@ -26,11 +26,16 @@ import sys
 DB = next((a for a in sys.argv[1:] if not a.startswith("--")), "bible.db")
 APPLY = "--apply" in sys.argv
 
-# (book, chapter, verse, positionA, positionB) — swap the Greek tag between them.
+# (book, chapter, verse, posA, posB, expect_A, expect_B) — swap the Greek tag
+# between the two positions, but ONLY when each position still carries its
+# broken-state Strong's (expect_A on posA, expect_B on posB). After the swap the
+# guard no longer matches, so re-running is a no-op; a fresh words rebuild puts
+# the broken state back, so this re-applies. That makes it safe in the repair
+# chain (idempotent — never undoes a correct verse).
 SWAPS = [
-    ("1Sa", 5, 2, 6, 7),
-    ("Rom", 8, 34, 15, 16),
-    ("Act", 19, 4, 20, 21),
+    ("1Sa", 5, 2, 6, 7, "G2316", "G3588"),
+    ("Rom", 8, 34, 15, 16, "G2316", "G3588"),
+    ("Act", 19, 4, 20, 21, "G3588", "*"),
 ]
 
 conn = sqlite3.connect(DB)
@@ -59,7 +64,8 @@ def show(tag, r):
 
 
 changed = 0
-for bk, ch, vs, pa, pb in SWAPS:
+skipped = 0
+for bk, ch, vs, pa, pb, exp_a, exp_b in SWAPS:
     v = conn.execute("SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
                      (bk, ch, vs)).fetchone()
     if not v:
@@ -68,6 +74,13 @@ for bk, ch, vs, pa, pb in SWAPS:
     a, b = row_at(v["id"], pa), row_at(v["id"], pb)
     if not a or not b:
         print(f"!! {bk} {ch}:{vs} missing pos {pa}/{pb} — skipped")
+        continue
+    # Idempotency guard: only act on the known broken arrangement.
+    if (a["strongs_base"] or "") != exp_a or (b["strongs_base"] or "") != exp_b:
+        print(f"\n{bk} {ch}:{vs}  already correct (or unexpected) — skipped")
+        show("A", a)
+        show("B", b)
+        skipped += 1
         continue
     print(f"\n{bk} {ch}:{vs}  (swap Greek tag pos {pa} <-> pos {pb})")
     print("  BEFORE:")
@@ -85,7 +98,8 @@ for bk, ch, vs, pa, pb in SWAPS:
 
 if APPLY:
     conn.commit()
-    print(f"\nAPPLIED to {changed} verse(s).")
+    print(f"\nAPPLIED to {changed} verse(s); {skipped} already-correct skipped.")
 else:
-    print(f"\nDRY RUN — {changed} verse(s) would change. Re-run with --apply to write.")
+    print(f"\nDRY RUN — {changed} verse(s) would change; {skipped} already correct. "
+          f"Re-run with --apply to write.")
 conn.close()

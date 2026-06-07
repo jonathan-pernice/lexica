@@ -287,10 +287,13 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    `fix_g1473_gloss bible.db --apply` (note: this one needs `--apply`) →
    `fix_lord_subject` (dual-ordering pilot #1) →
    `fix_funcword_subject bible.db --include-idioms --include-bracketed` (dual-ordering #2 rounds
-   1+2+3; both run LAST so they see clean data + bracket_punct has already run on source brackets).
+   1+2+3; both run LAST so they see clean data + bracket_punct has already run on source brackets) →
+   `fix_article_noun_swaps bible.db --apply` (3 tag-swaps where a real word's Strong's landed on the
+   article ὁ/G3588: 1Sa 5:2 + Rom 8:34 "God"↔θεός, Act 19:4 "Jesus the"↔PN; idempotent, broken-state
+   guarded — swaps only what a rebuild re-broke; needs `--apply`).
    Sanity counts: bracket_punct ~331v, subject_reorder 20, supplied_attach 5, g1473 ~1724,
    lord_subject ~795, funcword_subject ~108 (21 nouns + 75 idiom + 12 plural/in-bracket; without the
-   flags it's just the 21). After lord_subject, verify `audit_lord_strongs.py bible.db` shows
+   flags it's just the 21), article_noun_swaps 3. After lord_subject, verify `audit_lord_strongs.py bible.db` shows
    WRONG-SLOT REPAIRABLE = 0 (was ~795). After funcword_subject, `audit_funcword_wrongslot.py bible.db
    --preps` REPAIRABLE-NOUN drops to ~0 (only the REPAIRABLE-OTHER adj/particle gray zone remains by
    design). The in-bracket relocations carry greek_pos → audit_bracket_order stays at baseline.
