@@ -318,6 +318,10 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    unchanged); only scripts/_gen_split_candidates.py runs it with carry=True to
    REGENERATE the json (then keeps only provably-clean results). Regenerate the json
    after a rebuild, then apply.
+   Then `fix_lord_oath bible.db --apply` — repairs the 29 "As the LORD lives" oath
+   verses (chay-YHWH) where the reorder put "As" on κύριος/G2962 and "the LORD
+   lives" on ζάω/G2198. Moves "the LORD" onto κύριος (→ "As the LORD" | "lives,").
+   Detects the pattern in-DB (no list), pinned to it, safe to re-run.
 5. Gap-fixers (clear the standard post-rebuild health warnings; `--dry-run` first):
    `dedup_words` (exact-dup rows) → `fix_greek_pos_gaps` (bracketed NULL greek_pos).
 6. Invariant (MUST be 0): `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'`
