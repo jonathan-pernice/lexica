@@ -174,6 +174,22 @@ if opt("--swaps"):
         ref = book_ref(r["verse_id"])
         print(f"  {ref:<12} article eng={r['english']!r:<14} "
               f"<-> {n['strongs_base']} {lemma_for(n['strongs_base']):<10} eng={n['english']!r}")
+    if opt("--dump"):
+        seen = set()
+        for r, n in swaps:
+            vid = r["verse_id"]
+            if vid in seen:
+                continue
+            seen.add(vid)
+            rows = conn.execute(
+                """SELECT position, strongs_base, english, english_head, italic, is_pn
+                   FROM words WHERE verse_id=? ORDER BY position""", (vid,)).fetchall()
+            print(f"\n--- {book_ref(vid)} ---")
+            for w in rows:
+                lem = lemma_for(w["strongs_base"])
+                tag = (" PN" if w["is_pn"] else "") + (" IT" if w["italic"] else "")
+                print(f"  {w['position']:>3} {w['strongs_base'] or '-':<7} {lem:<11} "
+                      f"eng={w['english']!r:<24} head={w['english_head']!r}{tag}")
     sys.exit(0)
 
 if opt("--scope"):
