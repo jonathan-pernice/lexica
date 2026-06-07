@@ -322,6 +322,9 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    verses (chay-YHWH) where the reorder put "As" on κύριος/G2962 and "the LORD
    lives" on ζάω/G2198. Moves "the LORD" onto κύριος (→ "As the LORD" | "lives,").
    Detects the pattern in-DB (no list), pinned to it, safe to re-run.
+   Then `fix_kyrios_mistags bible.db --apply` — 3 stray κύριος/G2962 source mistags:
+   Dan 4:19 "and" → καί/G2532; "of Cyrus" (Dan 11:1, Ezr 5:13) → H3566 proper noun
+   (Κύρου looks like κυρίου). Pinned, safe to re-run.
 5. Gap-fixers (clear the standard post-rebuild health warnings; `--dry-run` first):
    `dedup_words` (exact-dup rows) → `fix_greek_pos_gaps` (bracketed NULL greek_pos).
 6. Invariant (MUST be 0): `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'`
