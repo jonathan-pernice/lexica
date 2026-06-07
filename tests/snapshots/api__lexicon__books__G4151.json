@@ -1,0 +1,346 @@
+{
+  "books": [
+    {
+      "book": "Act",
+      "count": 70,
+      "name": "Acts",
+      "testament": "NT"
+    },
+    {
+      "book": "1Co",
+      "count": 41,
+      "name": "1 Corinthians",
+      "testament": "NT"
+    },
+    {
+      "book": "Isa",
+      "count": 40,
+      "name": "Isaiah",
+      "testament": "OT"
+    },
+    {
+      "book": "Eze",
+      "count": 38,
+      "name": "Ezekiel",
+      "testament": "OT"
+    },
+    {
+      "book": "Luk",
+      "count": 38,
+      "name": "Luke",
+      "testament": "NT"
+    },
+    {
+      "book": "Rom",
+      "count": 35,
+      "name": "Romans",
+      "testament": "NT"
+    },
+    {
+      "book": "Psa",
+      "count": 31,
+      "name": "Psalms",
+      "testament": "OT"
+    },
+    {
+      "book": "Joh",
+      "count": 24,
+      "name": "John",
+      "testament": "NT"
+    },
+    {
+      "book": "Rev",
+      "count": 24,
+      "name": "Revelation",
+      "testament": "NT"
+    },
+    {
+      "book": "Mar",
+      "count": 23,
+      "name": "Mark",
+      "testament": "NT"
+    },
+    {
+      "book": "Ecc",
+      "count": 21,
+      "name": "Ecclesiastes",
+      "testament": "OT"
+    },
+    {
+      "book": "Job",
+      "count": 21,
+      "name": "Job",
+      "testament": "OT"
+    },
+    {
+      "book": "Mat",
+      "count": 19,
+      "name": "Matthew",
+      "testament": "NT"
+    },
+    {
+      "book": "Gal",
+      "count": 18,
+      "name": "Galatians",
+      "testament": "NT"
+    },
+    {
+      "book": "2Co",
+      "count": 17,
+      "name": "2 Corinthians",
+      "testament": "NT"
+    },
+    {
+      "book": "1Sa",
+      "count": 15,
+      "name": "1 Samuel",
+      "testament": "OT"
+    },
+    {
+      "book": "Eph",
+      "count": 15,
+      "name": "Ephesians",
+      "testament": "NT"
+    },
+    {
+      "book": "Num",
+      "count": 14,
+      "name": "Numbers",
+      "testament": "OT"
+    },
+    {
+      "book": "1Jn",
+      "count": 13,
+      "name": "1 John",
+      "testament": "NT"
+    },
+    {
+      "book": "1Ki",
+      "count": 12,
+      "name": "1 Kings",
+      "testament": "OT"
+    },
+    {
+      "book": "Dan",
+      "count": 12,
+      "name": "Daniel",
+      "testament": "OT"
+    },
+    {
+      "book": "Heb",
+      "count": 12,
+      "name": "Hebrews",
+      "testament": "NT"
+    },
+    {
+      "book": "Jdg",
+      "count": 10,
+      "name": "Judges",
+      "testament": "OT"
+    },
+    {
+      "book": "1Pe",
+      "count": 9,
+      "name": "1 Peter",
+      "testament": "NT"
+    },
+    {
+      "book": "2Ch",
+      "count": 9,
+      "name": "2 Chronicles",
+      "testament": "OT"
+    },
+    {
+      "book": "Gen",
+      "count": 7,
+      "name": "Genesis",
+      "testament": "OT"
+    },
+    {
+      "book": "Zec",
+      "count": 7,
+      "name": "Zechariah",
+      "testament": "OT"
+    },
+    {
+      "book": "Jer",
+      "count": 6,
+      "name": "Jeremiah",
+      "testament": "OT"
+    },
+    {
+      "book": "1Th",
+      "count": 5,
+      "name": "1 Thessalonians",
+      "testament": "NT"
+    },
+    {
+      "book": "2Ki",
+      "count": 5,
+      "name": "2 Kings",
+      "testament": "OT"
+    },
+    {
+      "book": "Exo",
+      "count": 5,
+      "name": "Exodus",
+      "testament": "OT"
+    },
+    {
+      "book": "1Ch",
+      "count": 4,
+      "name": "1 Chronicles",
+      "testament": "OT"
+    },
+    {
+      "book": "1Ti",
+      "count": 4,
+      "name": "1 Timothy",
+      "testament": "NT"
+    },
+    {
+      "book": "Hag",
+      "count": 4,
+      "name": "Haggai",
+      "testament": "OT"
+    },
+    {
+      "book": "Hos",
+      "count": 4,
+      "name": "Hosea",
+      "testament": "OT"
+    },
+    {
+      "book": "Php",
+      "count": 4,
+      "name": "Philippians",
+      "testament": "NT"
+    },
+    {
+      "book": "2Sa",
+      "count": 3,
+      "name": "2 Samuel",
+      "testament": "OT"
+    },
+    {
+      "book": "2Th",
+      "count": 3,
+      "name": "2 Thessalonians",
+      "testament": "NT"
+    },
+    {
+      "book": "2Ti",
+      "count": 3,
+      "name": "2 Timothy",
+      "testament": "NT"
+    },
+    {
+      "book": "Mal",
+      "count": 3,
+      "name": "Malachi",
+      "testament": "OT"
+    },
+    {
+      "book": "Mic",
+      "count": 3,
+      "name": "Micah",
+      "testament": "OT"
+    },
+    {
+      "book": "Col",
+      "count": 2,
+      "name": "Colossians",
+      "testament": "NT"
+    },
+    {
+      "book": "Deu",
+      "count": 2,
+      "name": "Deuteronomy",
+      "testament": "OT"
+    },
+    {
+      "book": "Ezr",
+      "count": 2,
+      "name": "Ezra",
+      "testament": "OT"
+    },
+    {
+      "book": "Hab",
+      "count": 2,
+      "name": "Habakkuk",
+      "testament": "OT"
+    },
+    {
+      "book": "Jas",
+      "count": 2,
+      "name": "James",
+      "testament": "NT"
+    },
+    {
+      "book": "Joe",
+      "count": 2,
+      "name": "Joel",
+      "testament": "OT"
+    },
+    {
+      "book": "Jon",
+      "count": 2,
+      "name": "Jonah",
+      "testament": "OT"
+    },
+    {
+      "book": "Jud",
+      "count": 2,
+      "name": "Jude",
+      "testament": "NT"
+    },
+    {
+      "book": "Neh",
+      "count": 2,
+      "name": "Nehemiah",
+      "testament": "OT"
+    },
+    {
+      "book": "2Pe",
+      "count": 1,
+      "name": "2 Peter",
+      "testament": "NT"
+    },
+    {
+      "book": "Amo",
+      "count": 1,
+      "name": "Amos",
+      "testament": "OT"
+    },
+    {
+      "book": "Jos",
+      "count": 1,
+      "name": "Joshua",
+      "testament": "OT"
+    },
+    {
+      "book": "Lam",
+      "count": 1,
+      "name": "Lamentations",
+      "testament": "OT"
+    },
+    {
+      "book": "Phm",
+      "count": 1,
+      "name": "Philemon",
+      "testament": "NT"
+    },
+    {
+      "book": "Pro",
+      "count": 1,
+      "name": "Proverbs",
+      "testament": "OT"
+    },
+    {
+      "book": "Tit",
+      "count": 1,
+      "name": "Titus",
+      "testament": "NT"
+    }
+  ]
+}

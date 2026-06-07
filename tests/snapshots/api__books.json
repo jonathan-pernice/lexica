@@ -1,0 +1,332 @@
+[
+  {
+    "abbrev": "Gen",
+    "chapters": 50,
+    "name": "Genesis"
+  },
+  {
+    "abbrev": "Exo",
+    "chapters": 40,
+    "name": "Exodus"
+  },
+  {
+    "abbrev": "Lev",
+    "chapters": 27,
+    "name": "Leviticus"
+  },
+  {
+    "abbrev": "Num",
+    "chapters": 36,
+    "name": "Numbers"
+  },
+  {
+    "abbrev": "Deu",
+    "chapters": 34,
+    "name": "Deuteronomy"
+  },
+  {
+    "abbrev": "Jos",
+    "chapters": 24,
+    "name": "Joshua"
+  },
+  {
+    "abbrev": "Jdg",
+    "chapters": 21,
+    "name": "Judges"
+  },
+  {
+    "abbrev": "Rth",
+    "chapters": 4,
+    "name": "Ruth"
+  },
+  {
+    "abbrev": "1Sa",
+    "chapters": 31,
+    "name": "1 Samuel"
+  },
+  {
+    "abbrev": "2Sa",
+    "chapters": 24,
+    "name": "2 Samuel"
+  },
+  {
+    "abbrev": "1Ki",
+    "chapters": 22,
+    "name": "1 Kings"
+  },
+  {
+    "abbrev": "2Ki",
+    "chapters": 25,
+    "name": "2 Kings"
+  },
+  {
+    "abbrev": "1Ch",
+    "chapters": 29,
+    "name": "1 Chronicles"
+  },
+  {
+    "abbrev": "2Ch",
+    "chapters": 36,
+    "name": "2 Chronicles"
+  },
+  {
+    "abbrev": "Ezr",
+    "chapters": 10,
+    "name": "Ezra"
+  },
+  {
+    "abbrev": "Neh",
+    "chapters": 13,
+    "name": "Nehemiah"
+  },
+  {
+    "abbrev": "Est",
+    "chapters": 10,
+    "name": "Esther"
+  },
+  {
+    "abbrev": "Job",
+    "chapters": 42,
+    "name": "Job"
+  },
+  {
+    "abbrev": "Psa",
+    "chapters": 150,
+    "name": "Psalms"
+  },
+  {
+    "abbrev": "Pro",
+    "chapters": 31,
+    "name": "Proverbs"
+  },
+  {
+    "abbrev": "Ecc",
+    "chapters": 12,
+    "name": "Ecclesiastes"
+  },
+  {
+    "abbrev": "Son",
+    "chapters": 8,
+    "name": "Song of Solomon"
+  },
+  {
+    "abbrev": "Isa",
+    "chapters": 66,
+    "name": "Isaiah"
+  },
+  {
+    "abbrev": "Jer",
+    "chapters": 52,
+    "name": "Jeremiah"
+  },
+  {
+    "abbrev": "Lam",
+    "chapters": 5,
+    "name": "Lamentations"
+  },
+  {
+    "abbrev": "Eze",
+    "chapters": 48,
+    "name": "Ezekiel"
+  },
+  {
+    "abbrev": "Dan",
+    "chapters": 12,
+    "name": "Daniel"
+  },
+  {
+    "abbrev": "Hos",
+    "chapters": 14,
+    "name": "Hosea"
+  },
+  {
+    "abbrev": "Joe",
+    "chapters": 3,
+    "name": "Joel"
+  },
+  {
+    "abbrev": "Amo",
+    "chapters": 9,
+    "name": "Amos"
+  },
+  {
+    "abbrev": "Oba",
+    "chapters": 1,
+    "name": "Obadiah"
+  },
+  {
+    "abbrev": "Jon",
+    "chapters": 4,
+    "name": "Jonah"
+  },
+  {
+    "abbrev": "Mic",
+    "chapters": 7,
+    "name": "Micah"
+  },
+  {
+    "abbrev": "Nah",
+    "chapters": 3,
+    "name": "Nahum"
+  },
+  {
+    "abbrev": "Hab",
+    "chapters": 3,
+    "name": "Habakkuk"
+  },
+  {
+    "abbrev": "Zep",
+    "chapters": 3,
+    "name": "Zephaniah"
+  },
+  {
+    "abbrev": "Hag",
+    "chapters": 2,
+    "name": "Haggai"
+  },
+  {
+    "abbrev": "Zec",
+    "chapters": 14,
+    "name": "Zechariah"
+  },
+  {
+    "abbrev": "Mal",
+    "chapters": 4,
+    "name": "Malachi"
+  },
+  {
+    "abbrev": "Mat",
+    "chapters": 28,
+    "name": "Matthew"
+  },
+  {
+    "abbrev": "Mar",
+    "chapters": 16,
+    "name": "Mark"
+  },
+  {
+    "abbrev": "Luk",
+    "chapters": 24,
+    "name": "Luke"
+  },
+  {
+    "abbrev": "Joh",
+    "chapters": 21,
+    "name": "John"
+  },
+  {
+    "abbrev": "Act",
+    "chapters": 28,
+    "name": "Acts"
+  },
+  {
+    "abbrev": "Rom",
+    "chapters": 16,
+    "name": "Romans"
+  },
+  {
+    "abbrev": "1Co",
+    "chapters": 16,
+    "name": "1 Corinthians"
+  },
+  {
+    "abbrev": "2Co",
+    "chapters": 13,
+    "name": "2 Corinthians"
+  },
+  {
+    "abbrev": "Gal",
+    "chapters": 6,
+    "name": "Galatians"
+  },
+  {
+    "abbrev": "Eph",
+    "chapters": 6,
+    "name": "Ephesians"
+  },
+  {
+    "abbrev": "Php",
+    "chapters": 4,
+    "name": "Philippians"
+  },
+  {
+    "abbrev": "Col",
+    "chapters": 4,
+    "name": "Colossians"
+  },
+  {
+    "abbrev": "1Th",
+    "chapters": 5,
+    "name": "1 Thessalonians"
+  },
+  {
+    "abbrev": "2Th",
+    "chapters": 3,
+    "name": "2 Thessalonians"
+  },
+  {
+    "abbrev": "1Ti",
+    "chapters": 6,
+    "name": "1 Timothy"
+  },
+  {
+    "abbrev": "2Ti",
+    "chapters": 4,
+    "name": "2 Timothy"
+  },
+  {
+    "abbrev": "Tit",
+    "chapters": 3,
+    "name": "Titus"
+  },
+  {
+    "abbrev": "Phm",
+    "chapters": 1,
+    "name": "Philemon"
+  },
+  {
+    "abbrev": "Heb",
+    "chapters": 12,
+    "name": "Hebrews"
+  },
+  {
+    "abbrev": "Jas",
+    "chapters": 5,
+    "name": "James"
+  },
+  {
+    "abbrev": "1Pe",
+    "chapters": 5,
+    "name": "1 Peter"
+  },
+  {
+    "abbrev": "2Pe",
+    "chapters": 3,
+    "name": "2 Peter"
+  },
+  {
+    "abbrev": "1Jn",
+    "chapters": 5,
+    "name": "1 John"
+  },
+  {
+    "abbrev": "2Jn",
+    "chapters": 1,
+    "name": "2 John"
+  },
+  {
+    "abbrev": "3Jn",
+    "chapters": 1,
+    "name": "3 John"
+  },
+  {
+    "abbrev": "Jud",
+    "chapters": 1,
+    "name": "Jude"
+  },
+  {
+    "abbrev": "Rev",
+    "chapters": 22,
+    "name": "Revelation"
+  }
+]

@@ -1,0 +1,105 @@
+[
+  {
+    "italic": false,
+    "lemma": "",
+    "punc": "",
+    "strongs_ids": [],
+    "word": "In",
+    "word_id": 1,
+    "xlit": ""
+  },
+  {
+    "italic": false,
+    "lemma": "",
+    "punc": "",
+    "strongs_ids": [],
+    "word": "the",
+    "word_id": 2,
+    "xlit": ""
+  },
+  {
+    "italic": false,
+    "lemma": "רֵאשִׁית",
+    "punc": "",
+    "strongs_ids": [
+      "H7225"
+    ],
+    "word": "beginning",
+    "word_id": 3,
+    "xlit": "rêʼshîyth"
+  },
+  {
+    "italic": false,
+    "lemma": "אֱלֹהִים",
+    "punc": "",
+    "strongs_ids": [
+      "H430"
+    ],
+    "word": "God",
+    "word_id": 4,
+    "xlit": "ʼĕlôhîym"
+  },
+  {
+    "italic": false,
+    "lemma": "בָּרָא",
+    "punc": "",
+    "strongs_ids": [
+      "H1254",
+      "H853"
+    ],
+    "word": "created",
+    "word_id": 5,
+    "xlit": "ʼêth"
+  },
+  {
+    "italic": false,
+    "lemma": "",
+    "punc": "",
+    "strongs_ids": [],
+    "word": "the",
+    "word_id": 6,
+    "xlit": ""
+  },
+  {
+    "italic": false,
+    "lemma": "שָׁמַיִם",
+    "punc": "",
+    "strongs_ids": [
+      "H8064"
+    ],
+    "word": "heaven",
+    "word_id": 7,
+    "xlit": "shâmayim"
+  },
+  {
+    "italic": false,
+    "lemma": "אֵת",
+    "punc": "",
+    "strongs_ids": [
+      "H853"
+    ],
+    "word": "and",
+    "word_id": 8,
+    "xlit": "ʼêth"
+  },
+  {
+    "italic": false,
+    "lemma": "",
+    "punc": "",
+    "strongs_ids": [],
+    "word": "the",
+    "word_id": 9,
+    "xlit": ""
+  },
+  {
+    "italic": false,
+    "lemma": "אֶרֶץ",
+    "punc": ".",
+    "strongs_ids": [
+      "H776"
+    ],
+    "word": "earth",
+    "word_id": 10,
+    "xlit": "ʼerets"
+  }
+]

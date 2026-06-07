@@ -1,0 +1,8851 @@
+[
+  {
+    "heading": "The Creation",
+    "verse": 1,
+    "verse_text": "In the beginning God created the heaven and the earth.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "In",
+        "word_id": 1,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "the",
+        "word_id": 2,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רֵאשִׁית",
+        "punc": "",
+        "strongs_ids": [
+          "H7225"
+        ],
+        "verse_pos": 2,
+        "word": "beginning",
+        "word_id": 3,
+        "xlit": "rêʼshîyth"
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 3,
+        "word": "God",
+        "word_id": 4,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "בָּרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H1254",
+          "H853"
+        ],
+        "verse_pos": 4,
+        "word": "created",
+        "word_id": 5,
+        "xlit": "ʼêth"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "the",
+        "word_id": 6,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 6,
+        "word": "heaven",
+        "word_id": 7,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "אֵת",
+        "punc": "",
+        "strongs_ids": [
+          "H853"
+        ],
+        "verse_pos": 7,
+        "word": "and",
+        "word_id": 8,
+        "xlit": "ʼêth"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "the",
+        "word_id": 9,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ".",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 9,
+        "word": "earth",
+        "word_id": 10,
+        "xlit": "ʼerets"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 2,
+    "verse_text": "And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 11,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "the",
+        "word_id": 12,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 2,
+        "word": "earth",
+        "word_id": 13,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "הָיָה",
+        "punc": "",
+        "strongs_ids": [
+          "H1961"
+        ],
+        "verse_pos": 3,
+        "word": "was",
+        "word_id": 14,
+        "xlit": "hâyâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "without",
+        "word_id": 15,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "תֹּהוּ",
+        "punc": ",",
+        "strongs_ids": [
+          "H8414"
+        ],
+        "verse_pos": 5,
+        "word": "form",
+        "word_id": 16,
+        "xlit": "tôhûw"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "and",
+        "word_id": 17,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בֹּהוּ",
+        "punc": ";",
+        "strongs_ids": [
+          "H922"
+        ],
+        "verse_pos": 7,
+        "word": "void",
+        "word_id": 18,
+        "xlit": "bôhûw"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "and",
+        "word_id": 19,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חֹשֶׁךְ",
+        "punc": "",
+        "strongs_ids": [
+          "H2822"
+        ],
+        "verse_pos": 9,
+        "word": "darkness",
+        "word_id": 20,
+        "xlit": "chôshek"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "was",
+        "word_id": 21,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "upon",
+        "word_id": 22,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "the",
+        "word_id": 23,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "פָּנִים",
+        "punc": "",
+        "strongs_ids": [
+          "H6440"
+        ],
+        "verse_pos": 13,
+        "word": "face",
+        "word_id": 24,
+        "xlit": "pânîym"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "of",
+        "word_id": 25,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "the",
+        "word_id": 26,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "תְּהוֹם",
+        "punc": ".",
+        "strongs_ids": [
+          "H8415"
+        ],
+        "verse_pos": 16,
+        "word": "deep",
+        "word_id": 27,
+        "xlit": "tᵉhôwm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "And",
+        "word_id": 28,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "the",
+        "word_id": 29,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רוּחַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7307"
+        ],
+        "verse_pos": 19,
+        "word": "Spirit",
+        "word_id": 30,
+        "xlit": "rûwach"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "of",
+        "word_id": 31,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 21,
+        "word": "God",
+        "word_id": 32,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָחַף",
+        "punc": "",
+        "strongs_ids": [
+          "H7363"
+        ],
+        "verse_pos": 22,
+        "word": "moved",
+        "word_id": 33,
+        "xlit": "râchaph"
+      },
+      {
+        "italic": false,
+        "lemma": "עַל",
+        "punc": "",
+        "strongs_ids": [
+          "H5921"
+        ],
+        "verse_pos": 23,
+        "word": "upon",
+        "word_id": 34,
+        "xlit": "ʻal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "the",
+        "word_id": 35,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "פָּנִים",
+        "punc": "",
+        "strongs_ids": [
+          "H6440"
+        ],
+        "verse_pos": 25,
+        "word": "face",
+        "word_id": 36,
+        "xlit": "pânîym"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "of",
+        "word_id": 37,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "the",
+        "word_id": 38,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": ".",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 28,
+        "word": "waters",
+        "word_id": 39,
+        "xlit": "mayim"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 3,
+    "verse_text": "And God said, Let there be light: and there was light.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 40,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 41,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 42,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 43,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "there",
+        "word_id": 44,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "הָיָה",
+        "punc": "",
+        "strongs_ids": [
+          "H1961"
+        ],
+        "verse_pos": 5,
+        "word": "be",
+        "word_id": 45,
+        "xlit": "hâyâh"
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": ":",
+        "strongs_ids": [
+          "H216"
+        ],
+        "verse_pos": 6,
+        "word": "light",
+        "word_id": 46,
+        "xlit": "ʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "and",
+        "word_id": 47,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "there",
+        "word_id": 48,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "was",
+        "word_id": 49,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": ".",
+        "strongs_ids": [
+          "H216"
+        ],
+        "verse_pos": 10,
+        "word": "light",
+        "word_id": 50,
+        "xlit": "ʼôwr"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 4,
+    "verse_text": "And God saw the light, that it was good: and God divided the light from the darkness.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 51,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 52,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7200",
+          "H853"
+        ],
+        "verse_pos": 2,
+        "word": "saw",
+        "word_id": 53,
+        "xlit": "ʼêth"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "the",
+        "word_id": 54,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": ",",
+        "strongs_ids": [
+          "H216"
+        ],
+        "verse_pos": 4,
+        "word": "light",
+        "word_id": 55,
+        "xlit": "ʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "כִּי",
+        "punc": "",
+        "strongs_ids": [
+          "H3588"
+        ],
+        "verse_pos": 5,
+        "word": "that",
+        "word_id": 56,
+        "xlit": "kîy"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "it",
+        "word_id": 57,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "was",
+        "word_id": 58,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "טוֹב",
+        "punc": ":",
+        "strongs_ids": [
+          "H2896"
+        ],
+        "verse_pos": 8,
+        "word": "good",
+        "word_id": 59,
+        "xlit": "ṭôwb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "and",
+        "word_id": 60,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 10,
+        "word": "God",
+        "word_id": 61,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": true,
+        "lemma": "בָּדַל",
+        "punc": "",
+        "strongs_ids": [
+          "H914",
+          "H996"
+        ],
+        "verse_pos": 11,
+        "word": "divided",
+        "word_id": 62,
+        "xlit": "bêyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "the",
+        "word_id": 63,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H216"
+        ],
+        "verse_pos": 13,
+        "word": "light",
+        "word_id": 64,
+        "xlit": "ʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "בֵּין",
+        "punc": "",
+        "strongs_ids": [
+          "H996"
+        ],
+        "verse_pos": 14,
+        "word": "from",
+        "word_id": 65,
+        "xlit": "bêyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "the",
+        "word_id": 66,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חֹשֶׁךְ",
+        "punc": ".",
+        "strongs_ids": [
+          "H2822"
+        ],
+        "verse_pos": 16,
+        "word": "darkness",
+        "word_id": 67,
+        "xlit": "chôshek"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 5,
+    "verse_text": "And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 68,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 69,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "קָרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H7121"
+        ],
+        "verse_pos": 2,
+        "word": "called",
+        "word_id": 70,
+        "xlit": "qârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "the",
+        "word_id": 71,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H216"
+        ],
+        "verse_pos": 4,
+        "word": "light",
+        "word_id": 72,
+        "xlit": "ʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ",",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 5,
+        "word": "Day",
+        "word_id": 73,
+        "xlit": "yôwm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "and",
+        "word_id": 74,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 75,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חֹשֶׁךְ",
+        "punc": "",
+        "strongs_ids": [
+          "H2822"
+        ],
+        "verse_pos": 8,
+        "word": "darkness",
+        "word_id": 76,
+        "xlit": "chôshek"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "he",
+        "word_id": 77,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "קָרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H7121"
+        ],
+        "verse_pos": 10,
+        "word": "called",
+        "word_id": 78,
+        "xlit": "qârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "לַיִל",
+        "punc": ".",
+        "strongs_ids": [
+          "H3915"
+        ],
+        "verse_pos": 11,
+        "word": "Night",
+        "word_id": 79,
+        "xlit": "layil"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "And",
+        "word_id": 80,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "the",
+        "word_id": 81,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶרֶב",
+        "punc": "",
+        "strongs_ids": [
+          "H6153"
+        ],
+        "verse_pos": 14,
+        "word": "evening",
+        "word_id": 82,
+        "xlit": "ʻereb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "and",
+        "word_id": 83,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "the",
+        "word_id": 84,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בֹּקֶר",
+        "punc": "",
+        "strongs_ids": [
+          "H1242"
+        ],
+        "verse_pos": 17,
+        "word": "morning",
+        "word_id": 85,
+        "xlit": "bôqer"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "were",
+        "word_id": 86,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "the",
+        "word_id": 87,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶחָד",
+        "punc": "",
+        "strongs_ids": [
+          "H259"
+        ],
+        "verse_pos": 20,
+        "word": "first",
+        "word_id": 88,
+        "xlit": "ʼechâd"
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ".",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 21,
+        "word": "day",
+        "word_id": 89,
+        "xlit": "yôwm"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 6,
+    "verse_text": "And God said, Let there be a firmament in the midst of the waters, and let it divide the waters from the waters.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 90,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 91,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 92,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 93,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "there",
+        "word_id": 94,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "be",
+        "word_id": 95,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "a",
+        "word_id": 96,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 7,
+        "word": "firmament",
+        "word_id": 97,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "in",
+        "word_id": 98,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "the",
+        "word_id": 99,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "תָּוֶךְ",
+        "punc": "",
+        "strongs_ids": [
+          "H8432"
+        ],
+        "verse_pos": 10,
+        "word": "midst",
+        "word_id": 100,
+        "xlit": "tâvek"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "of",
+        "word_id": 101,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "the",
+        "word_id": 102,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": ",",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 13,
+        "word": "waters",
+        "word_id": 103,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "and",
+        "word_id": 104,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "let",
+        "word_id": 105,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "it",
+        "word_id": 106,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בָּדַל",
+        "punc": "",
+        "strongs_ids": [
+          "H914"
+        ],
+        "verse_pos": 17,
+        "word": "divide",
+        "word_id": 107,
+        "xlit": "bâdal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "the",
+        "word_id": 108,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 19,
+        "word": "waters",
+        "word_id": 109,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "from",
+        "word_id": 110,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "the",
+        "word_id": 111,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": ".",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 22,
+        "word": "waters",
+        "word_id": 112,
+        "xlit": "mayim"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 7,
+    "verse_text": "And God made the firmament, and divided the waters which were under the firmament from the waters which were above the firmament: and it was so.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 113,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 114,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "עָשָׂה",
+        "punc": "",
+        "strongs_ids": [
+          "H6213"
+        ],
+        "verse_pos": 2,
+        "word": "made",
+        "word_id": 115,
+        "xlit": "ʻâsâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "the",
+        "word_id": 116,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": ",",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 4,
+        "word": "firmament",
+        "word_id": 117,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "and",
+        "word_id": 118,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בָּדַל",
+        "punc": "",
+        "strongs_ids": [
+          "H914"
+        ],
+        "verse_pos": 6,
+        "word": "divided",
+        "word_id": 119,
+        "xlit": "bâdal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 120,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 8,
+        "word": "waters",
+        "word_id": 121,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "אֲשֶׁר",
+        "punc": "",
+        "strongs_ids": [
+          "H834"
+        ],
+        "verse_pos": 9,
+        "word": "which",
+        "word_id": 122,
+        "xlit": "ʼăsher"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "were",
+        "word_id": 123,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "תַּחַת",
+        "punc": "",
+        "strongs_ids": [
+          "H8478"
+        ],
+        "verse_pos": 11,
+        "word": "under",
+        "word_id": 124,
+        "xlit": "tachath"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "the",
+        "word_id": 125,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 13,
+        "word": "firmament",
+        "word_id": 126,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "from",
+        "word_id": 127,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "the",
+        "word_id": 128,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 16,
+        "word": "waters",
+        "word_id": 129,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "אֲשֶׁר",
+        "punc": "",
+        "strongs_ids": [
+          "H834"
+        ],
+        "verse_pos": 17,
+        "word": "which",
+        "word_id": 130,
+        "xlit": "ʼăsher"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "were",
+        "word_id": 131,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עַל",
+        "punc": "",
+        "strongs_ids": [
+          "H5921"
+        ],
+        "verse_pos": 19,
+        "word": "above",
+        "word_id": 132,
+        "xlit": "ʻal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "the",
+        "word_id": 133,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": ":",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 21,
+        "word": "firmament",
+        "word_id": 134,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "and",
+        "word_id": 135,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "it",
+        "word_id": 136,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "was",
+        "word_id": 137,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "כֵּן",
+        "punc": ".",
+        "strongs_ids": [
+          "H3651"
+        ],
+        "verse_pos": 25,
+        "word": "so",
+        "word_id": 138,
+        "xlit": "kên"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 8,
+    "verse_text": "And God called the firmament Heaven. And the evening and the morning were the second day.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 139,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 140,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "קָרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H7121"
+        ],
+        "verse_pos": 2,
+        "word": "called",
+        "word_id": 141,
+        "xlit": "qârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "the",
+        "word_id": 142,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 4,
+        "word": "firmament",
+        "word_id": 143,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": ".",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 5,
+        "word": "Heaven",
+        "word_id": 144,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "And",
+        "word_id": 145,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 146,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶרֶב",
+        "punc": "",
+        "strongs_ids": [
+          "H6153"
+        ],
+        "verse_pos": 8,
+        "word": "evening",
+        "word_id": 147,
+        "xlit": "ʻereb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "and",
+        "word_id": 148,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "the",
+        "word_id": 149,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בֹּקֶר",
+        "punc": "",
+        "strongs_ids": [
+          "H1242"
+        ],
+        "verse_pos": 11,
+        "word": "morning",
+        "word_id": 150,
+        "xlit": "bôqer"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "were",
+        "word_id": 151,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "the",
+        "word_id": 152,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שֵׁנִי",
+        "punc": "",
+        "strongs_ids": [
+          "H8145"
+        ],
+        "verse_pos": 14,
+        "word": "second",
+        "word_id": 153,
+        "xlit": "shênîy"
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ".",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 15,
+        "word": "day",
+        "word_id": 154,
+        "xlit": "yôwm"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 9,
+    "verse_text": "And God said, Let the waters under the heaven be gathered together unto one place, and let the dry land appear: and it was so.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 155,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 156,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 157,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 158,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 159,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 5,
+        "word": "waters",
+        "word_id": 160,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "under",
+        "word_id": 161,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 162,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 8,
+        "word": "heaven",
+        "word_id": 163,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "be",
+        "word_id": 164,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "gathered",
+        "word_id": 165,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "קָוָה",
+        "punc": "",
+        "strongs_ids": [
+          "H6960"
+        ],
+        "verse_pos": 11,
+        "word": "together",
+        "word_id": 166,
+        "xlit": "qâvâh"
+      },
+      {
+        "italic": false,
+        "lemma": "אֵל",
+        "punc": "",
+        "strongs_ids": [
+          "H413"
+        ],
+        "verse_pos": 12,
+        "word": "unto",
+        "word_id": 167,
+        "xlit": "ʼêl"
+      },
+      {
+        "italic": false,
+        "lemma": "אֶחָד",
+        "punc": "",
+        "strongs_ids": [
+          "H259"
+        ],
+        "verse_pos": 13,
+        "word": "one",
+        "word_id": 168,
+        "xlit": "ʼechâd"
+      },
+      {
+        "italic": false,
+        "lemma": "מָקוֹם",
+        "punc": ",",
+        "strongs_ids": [
+          "H4725"
+        ],
+        "verse_pos": 14,
+        "word": "place",
+        "word_id": 169,
+        "xlit": "mâqôwm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "and",
+        "word_id": 170,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "let",
+        "word_id": 171,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "the",
+        "word_id": 172,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יַבָּשָׁה",
+        "punc": "",
+        "strongs_ids": [
+          "H3004"
+        ],
+        "verse_pos": 18,
+        "word": "dry",
+        "word_id": 173,
+        "xlit": "yabbâshâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "land",
+        "word_id": 174,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": ":",
+        "strongs_ids": [
+          "H7200"
+        ],
+        "verse_pos": 20,
+        "word": "appear",
+        "word_id": 175,
+        "xlit": "râʼâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "and",
+        "word_id": 176,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "it",
+        "word_id": 177,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "was",
+        "word_id": 178,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ".",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "so",
+        "word_id": 179,
+        "xlit": ""
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 10,
+    "verse_text": "And God called the dry land Earth; and the gathering together of the waters called he Seas: and God saw that it was good.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 180,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 181,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "קָרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H7121"
+        ],
+        "verse_pos": 2,
+        "word": "called",
+        "word_id": 182,
+        "xlit": "qârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "the",
+        "word_id": 183,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יַבָּשָׁה",
+        "punc": "",
+        "strongs_ids": [
+          "H3004"
+        ],
+        "verse_pos": 4,
+        "word": "dry",
+        "word_id": 184,
+        "xlit": "yabbâshâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "land",
+        "word_id": 185,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ";",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 6,
+        "word": "Earth",
+        "word_id": 186,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "and",
+        "word_id": 187,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "the",
+        "word_id": 188,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "gathering",
+        "word_id": 189,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִקְוֶה",
+        "punc": "",
+        "strongs_ids": [
+          "H4723"
+        ],
+        "verse_pos": 10,
+        "word": "together",
+        "word_id": 190,
+        "xlit": "miqveh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "of",
+        "word_id": 191,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "the",
+        "word_id": 192,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 13,
+        "word": "waters",
+        "word_id": 193,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "קָרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H7121"
+        ],
+        "verse_pos": 14,
+        "word": "called",
+        "word_id": 194,
+        "xlit": "qârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "he",
+        "word_id": 195,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יָם",
+        "punc": ":",
+        "strongs_ids": [
+          "H3220"
+        ],
+        "verse_pos": 16,
+        "word": "Seas",
+        "word_id": 196,
+        "xlit": "yâm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "and",
+        "word_id": 197,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 18,
+        "word": "God",
+        "word_id": 198,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7200"
+        ],
+        "verse_pos": 19,
+        "word": "saw",
+        "word_id": 199,
+        "xlit": "râʼâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "that",
+        "word_id": 200,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "it",
+        "word_id": 201,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "was",
+        "word_id": 202,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "טוֹב",
+        "punc": ".",
+        "strongs_ids": [
+          "H2896"
+        ],
+        "verse_pos": 23,
+        "word": "good",
+        "word_id": 203,
+        "xlit": "ṭôwb"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 11,
+    "verse_text": "And God said, Let the earth bring forth grass, the herb yielding seed, and the fruit tree yielding fruit after his kind, whose seed is in itself, upon the earth: and it was so.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 204,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 205,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 206,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 207,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 208,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 5,
+        "word": "earth",
+        "word_id": 209,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "bring",
+        "word_id": 210,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "דָּשָׁא",
+        "punc": "",
+        "strongs_ids": [
+          "H1876"
+        ],
+        "verse_pos": 7,
+        "word": "forth",
+        "word_id": 211,
+        "xlit": "dâshâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "דֶּשֶׁא",
+        "punc": ",",
+        "strongs_ids": [
+          "H1877"
+        ],
+        "verse_pos": 8,
+        "word": "grass",
+        "word_id": 212,
+        "xlit": "desheʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "the",
+        "word_id": 213,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶשֶׂב",
+        "punc": "",
+        "strongs_ids": [
+          "H6212"
+        ],
+        "verse_pos": 10,
+        "word": "herb",
+        "word_id": 214,
+        "xlit": "ʻeseb"
+      },
+      {
+        "italic": false,
+        "lemma": "זָרַע",
+        "punc": "",
+        "strongs_ids": [
+          "H2232"
+        ],
+        "verse_pos": 11,
+        "word": "yielding",
+        "word_id": 215,
+        "xlit": "zâraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "זֶרַע",
+        "punc": ",",
+        "strongs_ids": [
+          "H2233"
+        ],
+        "verse_pos": 12,
+        "word": "seed",
+        "word_id": 216,
+        "xlit": "zeraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "and",
+        "word_id": 217,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "the",
+        "word_id": 218,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "פְּרִי",
+        "punc": "",
+        "strongs_ids": [
+          "H6529"
+        ],
+        "verse_pos": 15,
+        "word": "fruit",
+        "word_id": 219,
+        "xlit": "pᵉrîy"
+      },
+      {
+        "italic": false,
+        "lemma": "עֵץ",
+        "punc": "",
+        "strongs_ids": [
+          "H6086"
+        ],
+        "verse_pos": 16,
+        "word": "tree",
+        "word_id": 220,
+        "xlit": "ʻêts"
+      },
+      {
+        "italic": false,
+        "lemma": "עָשָׂה",
+        "punc": "",
+        "strongs_ids": [
+          "H6213"
+        ],
+        "verse_pos": 17,
+        "word": "yielding",
+        "word_id": 221,
+        "xlit": "ʻâsâh"
+      },
+      {
+        "italic": false,
+        "lemma": "פְּרִי",
+        "punc": "",
+        "strongs_ids": [
+          "H6529"
+        ],
+        "verse_pos": 18,
+        "word": "fruit",
+        "word_id": 222,
+        "xlit": "pᵉrîy"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "after",
+        "word_id": 223,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "his",
+        "word_id": 224,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "מִין",
+        "punc": ",",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 21,
+        "word": "kind",
+        "word_id": 225,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "אֲשֶׁר",
+        "punc": "",
+        "strongs_ids": [
+          "H834"
+        ],
+        "verse_pos": 22,
+        "word": "whose",
+        "word_id": 226,
+        "xlit": "ʼăsher"
+      },
+      {
+        "italic": false,
+        "lemma": "זֶרַע",
+        "punc": "",
+        "strongs_ids": [
+          "H2233"
+        ],
+        "verse_pos": 23,
+        "word": "seed",
+        "word_id": 227,
+        "xlit": "zeraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "is",
+        "word_id": 228,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 25,
+        "word": "in",
+        "word_id": 229,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ",",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "itself",
+        "word_id": 230,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "upon",
+        "word_id": 231,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 28,
+        "word": "the",
+        "word_id": 232,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ":",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 29,
+        "word": "earth",
+        "word_id": 233,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "and",
+        "word_id": 234,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 31,
+        "word": "it",
+        "word_id": 235,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 32,
+        "word": "was",
+        "word_id": 236,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ".",
+        "strongs_ids": [],
+        "verse_pos": 33,
+        "word": "so",
+        "word_id": 237,
+        "xlit": ""
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 12,
+    "verse_text": "And the earth brought forth grass, and herb yielding seed after his kind, and the tree yielding fruit, whose seed was in itself, after his kind: and God saw that it was good.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 238,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "the",
+        "word_id": 239,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 2,
+        "word": "earth",
+        "word_id": 240,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "brought",
+        "word_id": 241,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יָצָא",
+        "punc": "",
+        "strongs_ids": [
+          "H3318"
+        ],
+        "verse_pos": 4,
+        "word": "forth",
+        "word_id": 242,
+        "xlit": "yâtsâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "דֶּשֶׁא",
+        "punc": ",",
+        "strongs_ids": [
+          "H1877"
+        ],
+        "verse_pos": 5,
+        "word": "grass",
+        "word_id": 243,
+        "xlit": "desheʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "and",
+        "word_id": 244,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶשֶׂב",
+        "punc": "",
+        "strongs_ids": [
+          "H6212"
+        ],
+        "verse_pos": 7,
+        "word": "herb",
+        "word_id": 245,
+        "xlit": "ʻeseb"
+      },
+      {
+        "italic": false,
+        "lemma": "זָרַע",
+        "punc": "",
+        "strongs_ids": [
+          "H2232"
+        ],
+        "verse_pos": 8,
+        "word": "yielding",
+        "word_id": 246,
+        "xlit": "zâraʻ"
+      },
+      {
+        "italic": true,
+        "lemma": "זֶרַע",
+        "punc": "",
+        "strongs_ids": [
+          "H2233"
+        ],
+        "verse_pos": 9,
+        "word": "seed",
+        "word_id": 247,
+        "xlit": "zeraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "after",
+        "word_id": 248,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "his",
+        "word_id": 249,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ",",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 12,
+        "word": "kind",
+        "word_id": 250,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "and",
+        "word_id": 251,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "the",
+        "word_id": 252,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֵץ",
+        "punc": "",
+        "strongs_ids": [
+          "H6086"
+        ],
+        "verse_pos": 15,
+        "word": "tree",
+        "word_id": 253,
+        "xlit": "ʻêts"
+      },
+      {
+        "italic": false,
+        "lemma": "עָשָׂה",
+        "punc": "",
+        "strongs_ids": [
+          "H6213"
+        ],
+        "verse_pos": 16,
+        "word": "yielding",
+        "word_id": 254,
+        "xlit": "ʻâsâh"
+      },
+      {
+        "italic": false,
+        "lemma": "פְּרִי",
+        "punc": ",",
+        "strongs_ids": [
+          "H6529"
+        ],
+        "verse_pos": 17,
+        "word": "fruit",
+        "word_id": 255,
+        "xlit": "pᵉrîy"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "whose",
+        "word_id": 256,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "זֶרַע",
+        "punc": "",
+        "strongs_ids": [
+          "H2233"
+        ],
+        "verse_pos": 19,
+        "word": "seed",
+        "word_id": 257,
+        "xlit": "zeraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "was",
+        "word_id": 258,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "in",
+        "word_id": 259,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ",",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "itself",
+        "word_id": 260,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "after",
+        "word_id": 261,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "his",
+        "word_id": 262,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ":",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 25,
+        "word": "kind",
+        "word_id": 263,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "and",
+        "word_id": 264,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 27,
+        "word": "God",
+        "word_id": 265,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7200"
+        ],
+        "verse_pos": 28,
+        "word": "saw",
+        "word_id": 266,
+        "xlit": "râʼâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 29,
+        "word": "that",
+        "word_id": 267,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "it",
+        "word_id": 268,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 31,
+        "word": "was",
+        "word_id": 269,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "טוֹב",
+        "punc": ".",
+        "strongs_ids": [
+          "H2896"
+        ],
+        "verse_pos": 32,
+        "word": "good",
+        "word_id": 270,
+        "xlit": "ṭôwb"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 13,
+    "verse_text": "And the evening and the morning were the third day.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 271,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "the",
+        "word_id": 272,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶרֶב",
+        "punc": "",
+        "strongs_ids": [
+          "H6153"
+        ],
+        "verse_pos": 2,
+        "word": "evening",
+        "word_id": 273,
+        "xlit": "ʻereb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "and",
+        "word_id": 274,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 275,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בֹּקֶר",
+        "punc": "",
+        "strongs_ids": [
+          "H1242"
+        ],
+        "verse_pos": 5,
+        "word": "morning",
+        "word_id": 276,
+        "xlit": "bôqer"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "were",
+        "word_id": 277,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 278,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שְׁלִישִׁי",
+        "punc": "",
+        "strongs_ids": [
+          "H7992"
+        ],
+        "verse_pos": 8,
+        "word": "third",
+        "word_id": 279,
+        "xlit": "shᵉlîyshîy"
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ".",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 9,
+        "word": "day",
+        "word_id": 280,
+        "xlit": "yôwm"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 14,
+    "verse_text": "And God said, Let there be lights in the firmament of the heaven to divide the day from the night; and let them be for signs, and for seasons, and for days, and years:",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 281,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 282,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 283,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 284,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "there",
+        "word_id": 285,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "be",
+        "word_id": 286,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מָאוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H3974"
+        ],
+        "verse_pos": 6,
+        "word": "lights",
+        "word_id": 287,
+        "xlit": "mâʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "in",
+        "word_id": 288,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "the",
+        "word_id": 289,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 9,
+        "word": "firmament",
+        "word_id": 290,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "of",
+        "word_id": 291,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "the",
+        "word_id": 292,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 12,
+        "word": "heaven",
+        "word_id": 293,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "to",
+        "word_id": 294,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בָּדַל",
+        "punc": "",
+        "strongs_ids": [
+          "H914"
+        ],
+        "verse_pos": 14,
+        "word": "divide",
+        "word_id": 295,
+        "xlit": "bâdal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "the",
+        "word_id": 296,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": "",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 16,
+        "word": "day",
+        "word_id": 297,
+        "xlit": "yôwm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "from",
+        "word_id": 298,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "the",
+        "word_id": 299,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "לַיִל",
+        "punc": ";",
+        "strongs_ids": [
+          "H3915"
+        ],
+        "verse_pos": 19,
+        "word": "night",
+        "word_id": 300,
+        "xlit": "layil"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "and",
+        "word_id": 301,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "let",
+        "word_id": 302,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "them",
+        "word_id": 303,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "be",
+        "word_id": 304,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "for",
+        "word_id": 305,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹת",
+        "punc": ",",
+        "strongs_ids": [
+          "H226"
+        ],
+        "verse_pos": 25,
+        "word": "signs",
+        "word_id": 306,
+        "xlit": "ʼôwth"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "and",
+        "word_id": 307,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "for",
+        "word_id": 308,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מוֹעֵד",
+        "punc": ",",
+        "strongs_ids": [
+          "H4150"
+        ],
+        "verse_pos": 28,
+        "word": "seasons",
+        "word_id": 309,
+        "xlit": "môwʻêd"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 29,
+        "word": "and",
+        "word_id": 310,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "for",
+        "word_id": 311,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ",",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 31,
+        "word": "days",
+        "word_id": 312,
+        "xlit": "yôwm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 32,
+        "word": "and",
+        "word_id": 313,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁנֶה",
+        "punc": ":",
+        "strongs_ids": [
+          "H8141"
+        ],
+        "verse_pos": 33,
+        "word": "years",
+        "word_id": 314,
+        "xlit": "shâneh"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 15,
+    "verse_text": "And let them be for lights in the firmament of the heaven to give light upon the earth: and it was so.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 315,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "let",
+        "word_id": 316,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 2,
+        "word": "them",
+        "word_id": 317,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "be",
+        "word_id": 318,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "for",
+        "word_id": 319,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מָאוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H3974"
+        ],
+        "verse_pos": 5,
+        "word": "lights",
+        "word_id": 320,
+        "xlit": "mâʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "in",
+        "word_id": 321,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 322,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 8,
+        "word": "firmament",
+        "word_id": 323,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "of",
+        "word_id": 324,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "the",
+        "word_id": 325,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 11,
+        "word": "heaven",
+        "word_id": 326,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "to",
+        "word_id": 327,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "give",
+        "word_id": 328,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H215"
+        ],
+        "verse_pos": 14,
+        "word": "light",
+        "word_id": 329,
+        "xlit": "ʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "upon",
+        "word_id": 330,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "the",
+        "word_id": 331,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ":",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 17,
+        "word": "earth",
+        "word_id": 332,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "and",
+        "word_id": 333,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "it",
+        "word_id": 334,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "was",
+        "word_id": 335,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ".",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "so",
+        "word_id": 336,
+        "xlit": ""
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 16,
+    "verse_text": "And God made two great lights; the greater light to rule the day, and the lesser light to rule the night: he made the stars also.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 337,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 338,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "עָשָׂה",
+        "punc": "",
+        "strongs_ids": [
+          "H6213"
+        ],
+        "verse_pos": 2,
+        "word": "made",
+        "word_id": 339,
+        "xlit": "ʻâsâh"
+      },
+      {
+        "italic": false,
+        "lemma": "שְׁנַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H8147"
+        ],
+        "verse_pos": 3,
+        "word": "two",
+        "word_id": 340,
+        "xlit": "shᵉnayim"
+      },
+      {
+        "italic": false,
+        "lemma": "גָּדוֹל",
+        "punc": "",
+        "strongs_ids": [
+          "H1419"
+        ],
+        "verse_pos": 4,
+        "word": "great",
+        "word_id": 341,
+        "xlit": "gâdôwl"
+      },
+      {
+        "italic": false,
+        "lemma": "מָאוֹר",
+        "punc": ";",
+        "strongs_ids": [
+          "H3974"
+        ],
+        "verse_pos": 5,
+        "word": "lights",
+        "word_id": 342,
+        "xlit": "mâʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "the",
+        "word_id": 343,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "גָּדוֹל",
+        "punc": "",
+        "strongs_ids": [
+          "H1419"
+        ],
+        "verse_pos": 7,
+        "word": "greater",
+        "word_id": 344,
+        "xlit": "gâdôwl"
+      },
+      {
+        "italic": false,
+        "lemma": "מָאוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H3974"
+        ],
+        "verse_pos": 8,
+        "word": "light",
+        "word_id": 345,
+        "xlit": "mâʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "to",
+        "word_id": 346,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מֶמְשָׁלָה",
+        "punc": "",
+        "strongs_ids": [
+          "H4475"
+        ],
+        "verse_pos": 10,
+        "word": "rule",
+        "word_id": 347,
+        "xlit": "memshâlâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "the",
+        "word_id": 348,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ",",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 12,
+        "word": "day",
+        "word_id": 349,
+        "xlit": "yôwm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "and",
+        "word_id": 350,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "the",
+        "word_id": 351,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "קָטָן",
+        "punc": "",
+        "strongs_ids": [
+          "H6996"
+        ],
+        "verse_pos": 15,
+        "word": "lesser",
+        "word_id": 352,
+        "xlit": "qâṭân"
+      },
+      {
+        "italic": false,
+        "lemma": "מָאוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H3974"
+        ],
+        "verse_pos": 16,
+        "word": "light",
+        "word_id": 353,
+        "xlit": "mâʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "to",
+        "word_id": 354,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מֶמְשָׁלָה",
+        "punc": "",
+        "strongs_ids": [
+          "H4475"
+        ],
+        "verse_pos": 18,
+        "word": "rule",
+        "word_id": 355,
+        "xlit": "memshâlâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "the",
+        "word_id": 356,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "לַיִל",
+        "punc": ":",
+        "strongs_ids": [
+          "H3915"
+        ],
+        "verse_pos": 20,
+        "word": "night",
+        "word_id": 357,
+        "xlit": "layil"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "he",
+        "word_id": 358,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "made",
+        "word_id": 359,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "the",
+        "word_id": 360,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "כּוֹכָב",
+        "punc": "",
+        "strongs_ids": [
+          "H3556"
+        ],
+        "verse_pos": 24,
+        "word": "stars",
+        "word_id": 361,
+        "xlit": "kôwkâb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ".",
+        "strongs_ids": [],
+        "verse_pos": 25,
+        "word": "also",
+        "word_id": 362,
+        "xlit": ""
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 17,
+    "verse_text": "And God set them in the firmament of the heaven to give light upon the earth,",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 363,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 364,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "נָתַן",
+        "punc": "",
+        "strongs_ids": [
+          "H5414"
+        ],
+        "verse_pos": 2,
+        "word": "set",
+        "word_id": 365,
+        "xlit": "nâthan"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "them",
+        "word_id": 366,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "in",
+        "word_id": 367,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "the",
+        "word_id": 368,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 6,
+        "word": "firmament",
+        "word_id": 369,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "of",
+        "word_id": 370,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "the",
+        "word_id": 371,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 9,
+        "word": "heaven",
+        "word_id": 372,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "to",
+        "word_id": 373,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "give",
+        "word_id": 374,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H215"
+        ],
+        "verse_pos": 12,
+        "word": "light",
+        "word_id": 375,
+        "xlit": "ʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "upon",
+        "word_id": 376,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "the",
+        "word_id": 377,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 15,
+        "word": "earth",
+        "word_id": 378,
+        "xlit": "ʼerets"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 18,
+    "verse_text": "And to rule over the day and over the night, and to divide the light from the darkness: and God saw that it was good.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 379,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "to",
+        "word_id": 380,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מָשַׁל",
+        "punc": "",
+        "strongs_ids": [
+          "H4910"
+        ],
+        "verse_pos": 2,
+        "word": "rule",
+        "word_id": 381,
+        "xlit": "mâshal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "over",
+        "word_id": 382,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 383,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": "",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 5,
+        "word": "day",
+        "word_id": 384,
+        "xlit": "yôwm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "and",
+        "word_id": 385,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "over",
+        "word_id": 386,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "the",
+        "word_id": 387,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "לַיִל",
+        "punc": ",",
+        "strongs_ids": [
+          "H3915"
+        ],
+        "verse_pos": 9,
+        "word": "night",
+        "word_id": 388,
+        "xlit": "layil"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "and",
+        "word_id": 389,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "to",
+        "word_id": 390,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בָּדַל",
+        "punc": "",
+        "strongs_ids": [
+          "H914"
+        ],
+        "verse_pos": 12,
+        "word": "divide",
+        "word_id": 391,
+        "xlit": "bâdal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "the",
+        "word_id": 392,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אוֹר",
+        "punc": "",
+        "strongs_ids": [
+          "H216"
+        ],
+        "verse_pos": 14,
+        "word": "light",
+        "word_id": 393,
+        "xlit": "ʼôwr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "from",
+        "word_id": 394,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "the",
+        "word_id": 395,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חֹשֶׁךְ",
+        "punc": ":",
+        "strongs_ids": [
+          "H2822"
+        ],
+        "verse_pos": 17,
+        "word": "darkness",
+        "word_id": 396,
+        "xlit": "chôshek"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "and",
+        "word_id": 397,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 19,
+        "word": "God",
+        "word_id": 398,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7200"
+        ],
+        "verse_pos": 20,
+        "word": "saw",
+        "word_id": 399,
+        "xlit": "râʼâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "that",
+        "word_id": 400,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "it",
+        "word_id": 401,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "was",
+        "word_id": 402,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "טוֹב",
+        "punc": ".",
+        "strongs_ids": [
+          "H2896"
+        ],
+        "verse_pos": 24,
+        "word": "good",
+        "word_id": 403,
+        "xlit": "ṭôwb"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 19,
+    "verse_text": "And the evening and the morning were the fourth day.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 404,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "the",
+        "word_id": 405,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶרֶב",
+        "punc": "",
+        "strongs_ids": [
+          "H6153"
+        ],
+        "verse_pos": 2,
+        "word": "evening",
+        "word_id": 406,
+        "xlit": "ʻereb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "and",
+        "word_id": 407,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 408,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בֹּקֶר",
+        "punc": "",
+        "strongs_ids": [
+          "H1242"
+        ],
+        "verse_pos": 5,
+        "word": "morning",
+        "word_id": 409,
+        "xlit": "bôqer"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "were",
+        "word_id": 410,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 411,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רְבִיעִי",
+        "punc": "",
+        "strongs_ids": [
+          "H7243"
+        ],
+        "verse_pos": 8,
+        "word": "fourth",
+        "word_id": 412,
+        "xlit": "rᵉbîyʻîy"
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ".",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 9,
+        "word": "day",
+        "word_id": 413,
+        "xlit": "yôwm"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 20,
+    "verse_text": "And God said, Let the waters bring forth abundantly the moving creature that hath life, and fowl that may fly above the earth in the open firmament of heaven.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 414,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 415,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 416,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 417,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 418,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 5,
+        "word": "waters",
+        "word_id": 419,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "bring",
+        "word_id": 420,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "forth",
+        "word_id": 421,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁרַץ",
+        "punc": "",
+        "strongs_ids": [
+          "H8317"
+        ],
+        "verse_pos": 8,
+        "word": "abundantly",
+        "word_id": 422,
+        "xlit": "shârats"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "the",
+        "word_id": 423,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "moving",
+        "word_id": 424,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שֶׁרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H8318"
+        ],
+        "verse_pos": 11,
+        "word": "creature",
+        "word_id": 425,
+        "xlit": "sherets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "that",
+        "word_id": 426,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "נֶפֶשׁ",
+        "punc": "",
+        "strongs_ids": [
+          "H5315"
+        ],
+        "verse_pos": 13,
+        "word": "hath",
+        "word_id": 427,
+        "xlit": "nephesh"
+      },
+      {
+        "italic": false,
+        "lemma": "חַי",
+        "punc": ",",
+        "strongs_ids": [
+          "H2416"
+        ],
+        "verse_pos": 14,
+        "word": "life",
+        "word_id": 428,
+        "xlit": "chay"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "and",
+        "word_id": 429,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עוֹף",
+        "punc": "",
+        "strongs_ids": [
+          "H5775"
+        ],
+        "verse_pos": 16,
+        "word": "fowl",
+        "word_id": 430,
+        "xlit": "ʻôwph"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "that",
+        "word_id": 431,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "may",
+        "word_id": 432,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עוּף",
+        "punc": "",
+        "strongs_ids": [
+          "H5774"
+        ],
+        "verse_pos": 19,
+        "word": "fly",
+        "word_id": 433,
+        "xlit": "ʻûwph"
+      },
+      {
+        "italic": false,
+        "lemma": "עַל",
+        "punc": "",
+        "strongs_ids": [
+          "H5921"
+        ],
+        "verse_pos": 20,
+        "word": "above",
+        "word_id": 434,
+        "xlit": "ʻal"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "the",
+        "word_id": 435,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 22,
+        "word": "earth",
+        "word_id": 436,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "in",
+        "word_id": 437,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "the",
+        "word_id": 438,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "פָּנִים",
+        "punc": "",
+        "strongs_ids": [
+          "H6440"
+        ],
+        "verse_pos": 25,
+        "word": "open",
+        "word_id": 439,
+        "xlit": "pânîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָקִיעַ",
+        "punc": "",
+        "strongs_ids": [
+          "H7549"
+        ],
+        "verse_pos": 26,
+        "word": "firmament",
+        "word_id": 440,
+        "xlit": "râqîyaʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "of",
+        "word_id": 441,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": ".",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 28,
+        "word": "heaven",
+        "word_id": 442,
+        "xlit": "shâmayim"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 21,
+    "verse_text": "And God created great whales, and every living creature that moveth, which the waters brought forth abundantly, after their kind, and every winged fowl after his kind: and God saw that it was good.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 443,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 444,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "בָּרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H1254"
+        ],
+        "verse_pos": 2,
+        "word": "created",
+        "word_id": 445,
+        "xlit": "bârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "גָּדוֹל",
+        "punc": "",
+        "strongs_ids": [
+          "H1419"
+        ],
+        "verse_pos": 3,
+        "word": "great",
+        "word_id": 446,
+        "xlit": "gâdôwl"
+      },
+      {
+        "italic": false,
+        "lemma": "תַּנִּין",
+        "punc": ",",
+        "strongs_ids": [
+          "H8577"
+        ],
+        "verse_pos": 4,
+        "word": "whales",
+        "word_id": 447,
+        "xlit": "tannîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "and",
+        "word_id": 448,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "every",
+        "word_id": 449,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חַי",
+        "punc": "",
+        "strongs_ids": [
+          "H2416"
+        ],
+        "verse_pos": 7,
+        "word": "living",
+        "word_id": 450,
+        "xlit": "chay"
+      },
+      {
+        "italic": false,
+        "lemma": "נֶפֶשׁ",
+        "punc": "",
+        "strongs_ids": [
+          "H5315"
+        ],
+        "verse_pos": 8,
+        "word": "creature",
+        "word_id": 451,
+        "xlit": "nephesh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "that",
+        "word_id": 452,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָמַשׂ",
+        "punc": ",",
+        "strongs_ids": [
+          "H7430"
+        ],
+        "verse_pos": 10,
+        "word": "moveth",
+        "word_id": 453,
+        "xlit": "râmas"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "which",
+        "word_id": 454,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "the",
+        "word_id": 455,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 13,
+        "word": "waters",
+        "word_id": 456,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "brought",
+        "word_id": 457,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "forth",
+        "word_id": 458,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁרַץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H8317"
+        ],
+        "verse_pos": 16,
+        "word": "abundantly",
+        "word_id": 459,
+        "xlit": "shârats"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "after",
+        "word_id": 460,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "their",
+        "word_id": 461,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ",",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 19,
+        "word": "kind",
+        "word_id": 462,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "and",
+        "word_id": 463,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "every",
+        "word_id": 464,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "כָּנָף",
+        "punc": "",
+        "strongs_ids": [
+          "H3671"
+        ],
+        "verse_pos": 22,
+        "word": "winged",
+        "word_id": 465,
+        "xlit": "kânâph"
+      },
+      {
+        "italic": false,
+        "lemma": "עוֹף",
+        "punc": "",
+        "strongs_ids": [
+          "H5775"
+        ],
+        "verse_pos": 23,
+        "word": "fowl",
+        "word_id": 466,
+        "xlit": "ʻôwph"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "after",
+        "word_id": 467,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 25,
+        "word": "his",
+        "word_id": 468,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ":",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 26,
+        "word": "kind",
+        "word_id": 469,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "and",
+        "word_id": 470,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 28,
+        "word": "God",
+        "word_id": 471,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7200"
+        ],
+        "verse_pos": 29,
+        "word": "saw",
+        "word_id": 472,
+        "xlit": "râʼâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "that",
+        "word_id": 473,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 31,
+        "word": "it",
+        "word_id": 474,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 32,
+        "word": "was",
+        "word_id": 475,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "טוֹב",
+        "punc": ".",
+        "strongs_ids": [
+          "H2896"
+        ],
+        "verse_pos": 33,
+        "word": "good",
+        "word_id": 476,
+        "xlit": "ṭôwb"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 22,
+    "verse_text": "And God blessed them, saying, Be fruitful, and multiply, and fill the waters in the seas, and let fowl multiply in the earth.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 477,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 478,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "בָרַךְ",
+        "punc": "",
+        "strongs_ids": [
+          "H1288"
+        ],
+        "verse_pos": 2,
+        "word": "blessed",
+        "word_id": 479,
+        "xlit": "bârak"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ",",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "them",
+        "word_id": 480,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 4,
+        "word": "saying",
+        "word_id": 481,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "Be",
+        "word_id": 482,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "פָּרָה",
+        "punc": ",",
+        "strongs_ids": [
+          "H6509"
+        ],
+        "verse_pos": 6,
+        "word": "fruitful",
+        "word_id": 483,
+        "xlit": "pârâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "and",
+        "word_id": 484,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָבָה",
+        "punc": ",",
+        "strongs_ids": [
+          "H7235"
+        ],
+        "verse_pos": 8,
+        "word": "multiply",
+        "word_id": 485,
+        "xlit": "râbâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "and",
+        "word_id": 486,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מָלֵא",
+        "punc": "",
+        "strongs_ids": [
+          "H4390"
+        ],
+        "verse_pos": 10,
+        "word": "fill",
+        "word_id": 487,
+        "xlit": "mâlêʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "the",
+        "word_id": 488,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מַיִם",
+        "punc": "",
+        "strongs_ids": [
+          "H4325"
+        ],
+        "verse_pos": 12,
+        "word": "waters",
+        "word_id": 489,
+        "xlit": "mayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "in",
+        "word_id": 490,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "the",
+        "word_id": 491,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יָם",
+        "punc": ",",
+        "strongs_ids": [
+          "H3220"
+        ],
+        "verse_pos": 15,
+        "word": "seas",
+        "word_id": 492,
+        "xlit": "yâm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "and",
+        "word_id": 493,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "let",
+        "word_id": 494,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עוֹף",
+        "punc": "",
+        "strongs_ids": [
+          "H5775"
+        ],
+        "verse_pos": 18,
+        "word": "fowl",
+        "word_id": 495,
+        "xlit": "ʻôwph"
+      },
+      {
+        "italic": false,
+        "lemma": "רָבָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7235"
+        ],
+        "verse_pos": 19,
+        "word": "multiply",
+        "word_id": 496,
+        "xlit": "râbâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "in",
+        "word_id": 497,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "the",
+        "word_id": 498,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ".",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 22,
+        "word": "earth",
+        "word_id": 499,
+        "xlit": "ʼerets"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 23,
+    "verse_text": "And the evening and the morning were the fifth day.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 500,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "the",
+        "word_id": 501,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶרֶב",
+        "punc": "",
+        "strongs_ids": [
+          "H6153"
+        ],
+        "verse_pos": 2,
+        "word": "evening",
+        "word_id": 502,
+        "xlit": "ʻereb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "and",
+        "word_id": 503,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 504,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בֹּקֶר",
+        "punc": "",
+        "strongs_ids": [
+          "H1242"
+        ],
+        "verse_pos": 5,
+        "word": "morning",
+        "word_id": 505,
+        "xlit": "bôqer"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "were",
+        "word_id": 506,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "the",
+        "word_id": 507,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חֲמִישִׁי",
+        "punc": "",
+        "strongs_ids": [
+          "H2549"
+        ],
+        "verse_pos": 8,
+        "word": "fifth",
+        "word_id": 508,
+        "xlit": "chămîyshîy"
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ".",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 9,
+        "word": "day",
+        "word_id": 509,
+        "xlit": "yôwm"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 24,
+    "verse_text": "And God said, Let the earth bring forth the living creature after his kind, cattle, and creeping thing, and beast of the earth after his kind: and it was so.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 510,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 511,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 512,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 513,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "the",
+        "word_id": 514,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 5,
+        "word": "earth",
+        "word_id": 515,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "bring",
+        "word_id": 516,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יָצָא",
+        "punc": "",
+        "strongs_ids": [
+          "H3318"
+        ],
+        "verse_pos": 7,
+        "word": "forth",
+        "word_id": 517,
+        "xlit": "yâtsâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "the",
+        "word_id": 518,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חַי",
+        "punc": "",
+        "strongs_ids": [
+          "H2416"
+        ],
+        "verse_pos": 9,
+        "word": "living",
+        "word_id": 519,
+        "xlit": "chay"
+      },
+      {
+        "italic": false,
+        "lemma": "נֶפֶשׁ",
+        "punc": "",
+        "strongs_ids": [
+          "H5315"
+        ],
+        "verse_pos": 10,
+        "word": "creature",
+        "word_id": 520,
+        "xlit": "nephesh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "after",
+        "word_id": 521,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "his",
+        "word_id": 522,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ",",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 13,
+        "word": "kind",
+        "word_id": 523,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "בְּהֵמָה",
+        "punc": ",",
+        "strongs_ids": [
+          "H929"
+        ],
+        "verse_pos": 14,
+        "word": "cattle",
+        "word_id": 524,
+        "xlit": "bᵉhêmâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "and",
+        "word_id": 525,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "creeping",
+        "word_id": 526,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רֶמֶשׂ",
+        "punc": ",",
+        "strongs_ids": [
+          "H7431"
+        ],
+        "verse_pos": 17,
+        "word": "thing",
+        "word_id": 527,
+        "xlit": "remes"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "and",
+        "word_id": 528,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חַי",
+        "punc": "",
+        "strongs_ids": [
+          "H2416"
+        ],
+        "verse_pos": 19,
+        "word": "beast",
+        "word_id": 529,
+        "xlit": "chay"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "of",
+        "word_id": 530,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "the",
+        "word_id": 531,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 22,
+        "word": "earth",
+        "word_id": 532,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "after",
+        "word_id": 533,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "his",
+        "word_id": 534,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ":",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 25,
+        "word": "kind",
+        "word_id": 535,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "and",
+        "word_id": 536,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "it",
+        "word_id": 537,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 28,
+        "word": "was",
+        "word_id": 538,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ".",
+        "strongs_ids": [],
+        "verse_pos": 29,
+        "word": "so",
+        "word_id": 539,
+        "xlit": ""
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 25,
+    "verse_text": "And God made the beast of the earth after his kind, and cattle after their kind, and every thing that creepeth upon the earth after his kind: and God saw that it was good.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 540,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 541,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "עָשָׂה",
+        "punc": "",
+        "strongs_ids": [
+          "H6213"
+        ],
+        "verse_pos": 2,
+        "word": "made",
+        "word_id": 542,
+        "xlit": "ʻâsâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "the",
+        "word_id": 543,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חַי",
+        "punc": "",
+        "strongs_ids": [
+          "H2416"
+        ],
+        "verse_pos": 4,
+        "word": "beast",
+        "word_id": 544,
+        "xlit": "chay"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "of",
+        "word_id": 545,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "the",
+        "word_id": 546,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": "",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 7,
+        "word": "earth",
+        "word_id": 547,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "after",
+        "word_id": 548,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "his",
+        "word_id": 549,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ",",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 10,
+        "word": "kind",
+        "word_id": 550,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "and",
+        "word_id": 551,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בְּהֵמָה",
+        "punc": "",
+        "strongs_ids": [
+          "H929"
+        ],
+        "verse_pos": 12,
+        "word": "cattle",
+        "word_id": 552,
+        "xlit": "bᵉhêmâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "after",
+        "word_id": 553,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "their",
+        "word_id": 554,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ",",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 15,
+        "word": "kind",
+        "word_id": 555,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "and",
+        "word_id": 556,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "every",
+        "word_id": 557,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "thing",
+        "word_id": 558,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "that",
+        "word_id": 559,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רֶמֶשׂ",
+        "punc": "",
+        "strongs_ids": [
+          "H7431"
+        ],
+        "verse_pos": 20,
+        "word": "creepeth",
+        "word_id": 560,
+        "xlit": "remes"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "upon",
+        "word_id": 561,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "the",
+        "word_id": 562,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֲדָמָה",
+        "punc": "",
+        "strongs_ids": [
+          "H127"
+        ],
+        "verse_pos": 23,
+        "word": "earth",
+        "word_id": 563,
+        "xlit": "ʼădâmâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "after",
+        "word_id": 564,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 25,
+        "word": "his",
+        "word_id": 565,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מִין",
+        "punc": ":",
+        "strongs_ids": [
+          "H4327"
+        ],
+        "verse_pos": 26,
+        "word": "kind",
+        "word_id": 566,
+        "xlit": "mîyn"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "and",
+        "word_id": 567,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 28,
+        "word": "God",
+        "word_id": 568,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7200"
+        ],
+        "verse_pos": 29,
+        "word": "saw",
+        "word_id": 569,
+        "xlit": "râʼâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "that",
+        "word_id": 570,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 31,
+        "word": "it",
+        "word_id": 571,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 32,
+        "word": "was",
+        "word_id": 572,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "טוֹב",
+        "punc": ".",
+        "strongs_ids": [
+          "H2896"
+        ],
+        "verse_pos": 33,
+        "word": "good",
+        "word_id": 573,
+        "xlit": "ṭôwb"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 26,
+    "verse_text": "And God said, Let us make man in our image, after our likeness: and let them have dominion over the fish of the sea, and over the fowl of the air, and over the cattle, and over all the earth, and over every creeping thing that creepeth upon the earth.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 574,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 575,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 576,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "Let",
+        "word_id": 577,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "us",
+        "word_id": 578,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עָשָׂה",
+        "punc": "",
+        "strongs_ids": [
+          "H6213"
+        ],
+        "verse_pos": 5,
+        "word": "make",
+        "word_id": 579,
+        "xlit": "ʻâsâh"
+      },
+      {
+        "italic": false,
+        "lemma": "אָדָם",
+        "punc": "",
+        "strongs_ids": [
+          "H120"
+        ],
+        "verse_pos": 6,
+        "word": "man",
+        "word_id": 580,
+        "xlit": "ʼâdâm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "in",
+        "word_id": 581,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "our",
+        "word_id": 582,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "צֶלֶם",
+        "punc": ",",
+        "strongs_ids": [
+          "H6754"
+        ],
+        "verse_pos": 9,
+        "word": "image",
+        "word_id": 583,
+        "xlit": "tselem"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "after",
+        "word_id": 584,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "our",
+        "word_id": 585,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "דְּמוּת",
+        "punc": ":",
+        "strongs_ids": [
+          "H1823"
+        ],
+        "verse_pos": 12,
+        "word": "likeness",
+        "word_id": 586,
+        "xlit": "dᵉmûwth"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "and",
+        "word_id": 587,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "let",
+        "word_id": 588,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "them",
+        "word_id": 589,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "have",
+        "word_id": 590,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָדָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7287"
+        ],
+        "verse_pos": 17,
+        "word": "dominion",
+        "word_id": 591,
+        "xlit": "râdâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "over",
+        "word_id": 592,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "the",
+        "word_id": 593,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "דָּגָה",
+        "punc": "",
+        "strongs_ids": [
+          "H1710"
+        ],
+        "verse_pos": 20,
+        "word": "fish",
+        "word_id": 594,
+        "xlit": "dâgâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "of",
+        "word_id": 595,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "the",
+        "word_id": 596,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יָם",
+        "punc": ",",
+        "strongs_ids": [
+          "H3220"
+        ],
+        "verse_pos": 23,
+        "word": "sea",
+        "word_id": 597,
+        "xlit": "yâm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "and",
+        "word_id": 598,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 25,
+        "word": "over",
+        "word_id": 599,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "the",
+        "word_id": 600,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עוֹף",
+        "punc": "",
+        "strongs_ids": [
+          "H5775"
+        ],
+        "verse_pos": 27,
+        "word": "fowl",
+        "word_id": 601,
+        "xlit": "ʻôwph"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 28,
+        "word": "of",
+        "word_id": 602,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 29,
+        "word": "the",
+        "word_id": 603,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": ",",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 30,
+        "word": "air",
+        "word_id": 604,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 31,
+        "word": "and",
+        "word_id": 605,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 32,
+        "word": "over",
+        "word_id": 606,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 33,
+        "word": "the",
+        "word_id": 607,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בְּהֵמָה",
+        "punc": ",",
+        "strongs_ids": [
+          "H929"
+        ],
+        "verse_pos": 34,
+        "word": "cattle",
+        "word_id": 608,
+        "xlit": "bᵉhêmâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 35,
+        "word": "and",
+        "word_id": 609,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 36,
+        "word": "over",
+        "word_id": 610,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 37,
+        "word": "all",
+        "word_id": 611,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 38,
+        "word": "the",
+        "word_id": 612,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 39,
+        "word": "earth",
+        "word_id": 613,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 40,
+        "word": "and",
+        "word_id": 614,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 41,
+        "word": "over",
+        "word_id": 615,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 42,
+        "word": "every",
+        "word_id": 616,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 43,
+        "word": "creeping",
+        "word_id": 617,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רֶמֶשׂ",
+        "punc": "",
+        "strongs_ids": [
+          "H7431"
+        ],
+        "verse_pos": 44,
+        "word": "thing",
+        "word_id": 618,
+        "xlit": "remes"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 45,
+        "word": "that",
+        "word_id": 619,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָמַשׂ",
+        "punc": "",
+        "strongs_ids": [
+          "H7430"
+        ],
+        "verse_pos": 46,
+        "word": "creepeth",
+        "word_id": 620,
+        "xlit": "râmas"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 47,
+        "word": "upon",
+        "word_id": 621,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 48,
+        "word": "the",
+        "word_id": 622,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ".",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 49,
+        "word": "earth",
+        "word_id": 623,
+        "xlit": "ʼerets"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 27,
+    "verse_text": "So God created man in his own image, in the image of God created he him; male and female created he them.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "So",
+        "word_id": 624,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 625,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "בָּרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H1254"
+        ],
+        "verse_pos": 2,
+        "word": "created",
+        "word_id": 626,
+        "xlit": "bârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "אָדָם",
+        "punc": "",
+        "strongs_ids": [
+          "H120"
+        ],
+        "verse_pos": 3,
+        "word": "man",
+        "word_id": 627,
+        "xlit": "ʼâdâm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "in",
+        "word_id": 628,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "his",
+        "word_id": 629,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "own",
+        "word_id": 630,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "צֶלֶם",
+        "punc": ",",
+        "strongs_ids": [
+          "H6754"
+        ],
+        "verse_pos": 7,
+        "word": "image",
+        "word_id": 631,
+        "xlit": "tselem"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "in",
+        "word_id": 632,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "the",
+        "word_id": 633,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "צֶלֶם",
+        "punc": "",
+        "strongs_ids": [
+          "H6754"
+        ],
+        "verse_pos": 10,
+        "word": "image",
+        "word_id": 634,
+        "xlit": "tselem"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "of",
+        "word_id": 635,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 12,
+        "word": "God",
+        "word_id": 636,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "בָּרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H1254"
+        ],
+        "verse_pos": 13,
+        "word": "created",
+        "word_id": 637,
+        "xlit": "bârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "he",
+        "word_id": 638,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ";",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "him",
+        "word_id": 639,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "זָכָר",
+        "punc": "",
+        "strongs_ids": [
+          "H2145"
+        ],
+        "verse_pos": 16,
+        "word": "male",
+        "word_id": 640,
+        "xlit": "zâkâr"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "and",
+        "word_id": 641,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "נְקֵבָה",
+        "punc": "",
+        "strongs_ids": [
+          "H5347"
+        ],
+        "verse_pos": 18,
+        "word": "female",
+        "word_id": 642,
+        "xlit": "nᵉqêbâh"
+      },
+      {
+        "italic": false,
+        "lemma": "בָּרָא",
+        "punc": "",
+        "strongs_ids": [
+          "H1254"
+        ],
+        "verse_pos": 19,
+        "word": "created",
+        "word_id": 643,
+        "xlit": "bârâʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "he",
+        "word_id": 644,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ".",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "them",
+        "word_id": 645,
+        "xlit": ""
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 28,
+    "verse_text": "And God blessed them, and God said unto them, Be fruitful, and multiply, and replenish the earth, and subdue it: and have dominion over the fish of the sea, and over the fowl of the air, and over every living thing that moveth upon the earth.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 646,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 647,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "בָרַךְ",
+        "punc": "",
+        "strongs_ids": [
+          "H1288"
+        ],
+        "verse_pos": 2,
+        "word": "blessed",
+        "word_id": 648,
+        "xlit": "bârak"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ",",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "them",
+        "word_id": 649,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "and",
+        "word_id": 650,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 5,
+        "word": "God",
+        "word_id": 651,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": "",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 6,
+        "word": "said",
+        "word_id": 652,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "unto",
+        "word_id": 653,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ",",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "them",
+        "word_id": 654,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "Be",
+        "word_id": 655,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "פָּרָה",
+        "punc": ",",
+        "strongs_ids": [
+          "H6509"
+        ],
+        "verse_pos": 10,
+        "word": "fruitful",
+        "word_id": 656,
+        "xlit": "pârâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "and",
+        "word_id": 657,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָבָה",
+        "punc": ",",
+        "strongs_ids": [
+          "H7235"
+        ],
+        "verse_pos": 12,
+        "word": "multiply",
+        "word_id": 658,
+        "xlit": "râbâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "and",
+        "word_id": 659,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מָלֵא",
+        "punc": "",
+        "strongs_ids": [
+          "H4390"
+        ],
+        "verse_pos": 14,
+        "word": "replenish",
+        "word_id": 660,
+        "xlit": "mâlêʼ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "the",
+        "word_id": 661,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 16,
+        "word": "earth",
+        "word_id": 662,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "and",
+        "word_id": 663,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "subdue",
+        "word_id": 664,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "כָּבַשׁ",
+        "punc": ":",
+        "strongs_ids": [
+          "H3533"
+        ],
+        "verse_pos": 19,
+        "word": "it",
+        "word_id": 665,
+        "xlit": "kâbash"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "and",
+        "word_id": 666,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "have",
+        "word_id": 667,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָדָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7287"
+        ],
+        "verse_pos": 22,
+        "word": "dominion",
+        "word_id": 668,
+        "xlit": "râdâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "over",
+        "word_id": 669,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "the",
+        "word_id": 670,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "דָּגָה",
+        "punc": "",
+        "strongs_ids": [
+          "H1710"
+        ],
+        "verse_pos": 25,
+        "word": "fish",
+        "word_id": 671,
+        "xlit": "dâgâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "of",
+        "word_id": 672,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "the",
+        "word_id": 673,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "יָם",
+        "punc": ",",
+        "strongs_ids": [
+          "H3220"
+        ],
+        "verse_pos": 28,
+        "word": "sea",
+        "word_id": 674,
+        "xlit": "yâm"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 29,
+        "word": "and",
+        "word_id": 675,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "over",
+        "word_id": 676,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 31,
+        "word": "the",
+        "word_id": 677,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עוֹף",
+        "punc": "",
+        "strongs_ids": [
+          "H5775"
+        ],
+        "verse_pos": 32,
+        "word": "fowl",
+        "word_id": 678,
+        "xlit": "ʻôwph"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 33,
+        "word": "of",
+        "word_id": 679,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 34,
+        "word": "the",
+        "word_id": 680,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": ",",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 35,
+        "word": "air",
+        "word_id": 681,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 36,
+        "word": "and",
+        "word_id": 682,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 37,
+        "word": "over",
+        "word_id": 683,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 38,
+        "word": "every",
+        "word_id": 684,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 39,
+        "word": "living",
+        "word_id": 685,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חַי",
+        "punc": "",
+        "strongs_ids": [
+          "H2416"
+        ],
+        "verse_pos": 40,
+        "word": "thing",
+        "word_id": 686,
+        "xlit": "chay"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 41,
+        "word": "that",
+        "word_id": 687,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָמַשׂ",
+        "punc": "",
+        "strongs_ids": [
+          "H7430"
+        ],
+        "verse_pos": 42,
+        "word": "moveth",
+        "word_id": 688,
+        "xlit": "râmas"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 43,
+        "word": "upon",
+        "word_id": 689,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 44,
+        "word": "the",
+        "word_id": 690,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ".",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 45,
+        "word": "earth",
+        "word_id": 691,
+        "xlit": "ʼerets"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 29,
+    "verse_text": "And God said, Behold, I have given you every herb bearing seed, which is upon the face of all the earth, and every tree, in the which is the fruit of a tree yielding seed; to you it shall be for meat.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 692,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 693,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "אָמַר",
+        "punc": ",",
+        "strongs_ids": [
+          "H559"
+        ],
+        "verse_pos": 2,
+        "word": "said",
+        "word_id": 694,
+        "xlit": "ʼâmar"
+      },
+      {
+        "italic": false,
+        "lemma": "הִנֵּה",
+        "punc": ",",
+        "strongs_ids": [
+          "H2009"
+        ],
+        "verse_pos": 3,
+        "word": "Behold",
+        "word_id": 695,
+        "xlit": "hinnêh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "I",
+        "word_id": 696,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "have",
+        "word_id": 697,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "נָתַן",
+        "punc": "",
+        "strongs_ids": [
+          "H5414"
+        ],
+        "verse_pos": 6,
+        "word": "given",
+        "word_id": 698,
+        "xlit": "nâthan"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "you",
+        "word_id": 699,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "every",
+        "word_id": 700,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶשֶׂב",
+        "punc": "",
+        "strongs_ids": [
+          "H6212"
+        ],
+        "verse_pos": 9,
+        "word": "herb",
+        "word_id": 701,
+        "xlit": "ʻeseb"
+      },
+      {
+        "italic": false,
+        "lemma": "זָרַע",
+        "punc": "",
+        "strongs_ids": [
+          "H2232"
+        ],
+        "verse_pos": 10,
+        "word": "bearing",
+        "word_id": 702,
+        "xlit": "zâraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "זֶרַע",
+        "punc": ",",
+        "strongs_ids": [
+          "H2233"
+        ],
+        "verse_pos": 11,
+        "word": "seed",
+        "word_id": 703,
+        "xlit": "zeraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "which",
+        "word_id": 704,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 13,
+        "word": "is",
+        "word_id": 705,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "upon",
+        "word_id": 706,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "the",
+        "word_id": 707,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "פָּנִים",
+        "punc": "",
+        "strongs_ids": [
+          "H6440"
+        ],
+        "verse_pos": 16,
+        "word": "face",
+        "word_id": 708,
+        "xlit": "pânîym"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "of",
+        "word_id": 709,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "all",
+        "word_id": 710,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "the",
+        "word_id": 711,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "אֶרֶץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 20,
+        "word": "earth",
+        "word_id": 712,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "and",
+        "word_id": 713,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "every",
+        "word_id": 714,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֵץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H6086"
+        ],
+        "verse_pos": 23,
+        "word": "tree",
+        "word_id": 715,
+        "xlit": "ʻêts"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "in",
+        "word_id": 716,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 25,
+        "word": "the",
+        "word_id": 717,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 26,
+        "word": "which",
+        "word_id": 718,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "is",
+        "word_id": 719,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 28,
+        "word": "the",
+        "word_id": 720,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "פְּרִי",
+        "punc": "",
+        "strongs_ids": [
+          "H6529"
+        ],
+        "verse_pos": 29,
+        "word": "fruit",
+        "word_id": 721,
+        "xlit": "pᵉrîy"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "of",
+        "word_id": 722,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 31,
+        "word": "a",
+        "word_id": 723,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֵץ",
+        "punc": "",
+        "strongs_ids": [
+          "H6086"
+        ],
+        "verse_pos": 32,
+        "word": "tree",
+        "word_id": 724,
+        "xlit": "ʻêts"
+      },
+      {
+        "italic": false,
+        "lemma": "זָרַע",
+        "punc": "",
+        "strongs_ids": [
+          "H2232"
+        ],
+        "verse_pos": 33,
+        "word": "yielding",
+        "word_id": 725,
+        "xlit": "zâraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "זֶרַע",
+        "punc": ";",
+        "strongs_ids": [
+          "H2233"
+        ],
+        "verse_pos": 34,
+        "word": "seed",
+        "word_id": 726,
+        "xlit": "zeraʻ"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 35,
+        "word": "to",
+        "word_id": 727,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 36,
+        "word": "you",
+        "word_id": 728,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 37,
+        "word": "it",
+        "word_id": 729,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 38,
+        "word": "shall",
+        "word_id": 730,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "הָיָה",
+        "punc": "",
+        "strongs_ids": [
+          "H1961"
+        ],
+        "verse_pos": 39,
+        "word": "be",
+        "word_id": 731,
+        "xlit": "hâyâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 40,
+        "word": "for",
+        "word_id": 732,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אׇכְלָה",
+        "punc": ".",
+        "strongs_ids": [
+          "H402"
+        ],
+        "verse_pos": 41,
+        "word": "meat",
+        "word_id": 733,
+        "xlit": "ʼoklâh"
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 30,
+    "verse_text": "And to every beast of the earth, and to every fowl of the air, and to every thing that creepeth upon the earth, wherein there is life, I have given every green herb for meat: and it was so.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 734,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 1,
+        "word": "to",
+        "word_id": 735,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 2,
+        "word": "every",
+        "word_id": 736,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "חַי",
+        "punc": "",
+        "strongs_ids": [
+          "H2416"
+        ],
+        "verse_pos": 3,
+        "word": "beast",
+        "word_id": 737,
+        "xlit": "chay"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "of",
+        "word_id": 738,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 5,
+        "word": "the",
+        "word_id": 739,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 6,
+        "word": "earth",
+        "word_id": 740,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "and",
+        "word_id": 741,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 8,
+        "word": "to",
+        "word_id": 742,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "every",
+        "word_id": 743,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עוֹף",
+        "punc": "",
+        "strongs_ids": [
+          "H5775"
+        ],
+        "verse_pos": 10,
+        "word": "fowl",
+        "word_id": 744,
+        "xlit": "ʻôwph"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "of",
+        "word_id": 745,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "the",
+        "word_id": 746,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שָׁמַיִם",
+        "punc": ",",
+        "strongs_ids": [
+          "H8064"
+        ],
+        "verse_pos": 13,
+        "word": "air",
+        "word_id": 747,
+        "xlit": "shâmayim"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 14,
+        "word": "and",
+        "word_id": 748,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "to",
+        "word_id": 749,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "every",
+        "word_id": 750,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 17,
+        "word": "thing",
+        "word_id": 751,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "that",
+        "word_id": 752,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "רָמַשׂ",
+        "punc": "",
+        "strongs_ids": [
+          "H7430"
+        ],
+        "verse_pos": 19,
+        "word": "creepeth",
+        "word_id": 753,
+        "xlit": "râmas"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 20,
+        "word": "upon",
+        "word_id": 754,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "the",
+        "word_id": 755,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֶרֶץ",
+        "punc": ",",
+        "strongs_ids": [
+          "H776"
+        ],
+        "verse_pos": 22,
+        "word": "earth",
+        "word_id": 756,
+        "xlit": "ʼerets"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 23,
+        "word": "wherein",
+        "word_id": 757,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 24,
+        "word": "there",
+        "word_id": 758,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 25,
+        "word": "is",
+        "word_id": 759,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "נֶפֶשׁ",
+        "punc": ",",
+        "strongs_ids": [
+          "H2416",
+          "H5315"
+        ],
+        "verse_pos": 26,
+        "word": "life",
+        "word_id": 760,
+        "xlit": "nephesh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 27,
+        "word": "I",
+        "word_id": 761,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 28,
+        "word": "have",
+        "word_id": 762,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 29,
+        "word": "given",
+        "word_id": 763,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 30,
+        "word": "every",
+        "word_id": 764,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "יֶרֶק",
+        "punc": "",
+        "strongs_ids": [
+          "H3418"
+        ],
+        "verse_pos": 31,
+        "word": "green",
+        "word_id": 765,
+        "xlit": "yereq"
+      },
+      {
+        "italic": false,
+        "lemma": "עֶשֶׂב",
+        "punc": "",
+        "strongs_ids": [
+          "H6212"
+        ],
+        "verse_pos": 32,
+        "word": "herb",
+        "word_id": 766,
+        "xlit": "ʻeseb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 33,
+        "word": "for",
+        "word_id": 767,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "אׇכְלָה",
+        "punc": ":",
+        "strongs_ids": [
+          "H402"
+        ],
+        "verse_pos": 34,
+        "word": "meat",
+        "word_id": 768,
+        "xlit": "ʼoklâh"
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 35,
+        "word": "and",
+        "word_id": 769,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 36,
+        "word": "it",
+        "word_id": 770,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 37,
+        "word": "was",
+        "word_id": 771,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ".",
+        "strongs_ids": [],
+        "verse_pos": 38,
+        "word": "so",
+        "word_id": 772,
+        "xlit": ""
+      }
+    ]
+  },
+  {
+    "heading": null,
+    "verse": 31,
+    "verse_text": "And God saw every thing that he had made, and, behold, it was very good. And the evening and the morning were the sixth day.",
+    "words": [
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 0,
+        "word": "And",
+        "word_id": 773,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֱלֹהִים",
+        "punc": "",
+        "strongs_ids": [
+          "H430"
+        ],
+        "verse_pos": 1,
+        "word": "God",
+        "word_id": 774,
+        "xlit": "ʼĕlôhîym"
+      },
+      {
+        "italic": false,
+        "lemma": "רָאָה",
+        "punc": "",
+        "strongs_ids": [
+          "H7200"
+        ],
+        "verse_pos": 2,
+        "word": "saw",
+        "word_id": 775,
+        "xlit": "râʼâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 3,
+        "word": "every",
+        "word_id": 776,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 4,
+        "word": "thing",
+        "word_id": 777,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "אֲשֶׁר",
+        "punc": "",
+        "strongs_ids": [
+          "H834"
+        ],
+        "verse_pos": 5,
+        "word": "that",
+        "word_id": 778,
+        "xlit": "ʼăsher"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 6,
+        "word": "he",
+        "word_id": 779,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 7,
+        "word": "had",
+        "word_id": 780,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עָשָׂה",
+        "punc": ",",
+        "strongs_ids": [
+          "H6213"
+        ],
+        "verse_pos": 8,
+        "word": "made",
+        "word_id": 781,
+        "xlit": "ʻâsâh"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ",",
+        "strongs_ids": [],
+        "verse_pos": 9,
+        "word": "and",
+        "word_id": 782,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": ",",
+        "strongs_ids": [],
+        "verse_pos": 10,
+        "word": "behold",
+        "word_id": 783,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 11,
+        "word": "it",
+        "word_id": 784,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 12,
+        "word": "was",
+        "word_id": 785,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "מְאֹד",
+        "punc": "",
+        "strongs_ids": [
+          "H3966"
+        ],
+        "verse_pos": 13,
+        "word": "very",
+        "word_id": 786,
+        "xlit": "mᵉʼôd"
+      },
+      {
+        "italic": false,
+        "lemma": "טוֹב",
+        "punc": ".",
+        "strongs_ids": [
+          "H2896"
+        ],
+        "verse_pos": 14,
+        "word": "good",
+        "word_id": 787,
+        "xlit": "ṭôwb"
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 15,
+        "word": "And",
+        "word_id": 788,
+        "xlit": ""
+      },
+      {
+        "italic": true,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 16,
+        "word": "the",
+        "word_id": 789,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "עֶרֶב",
+        "punc": "",
+        "strongs_ids": [
+          "H6153"
+        ],
+        "verse_pos": 17,
+        "word": "evening",
+        "word_id": 790,
+        "xlit": "ʻereb"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 18,
+        "word": "and",
+        "word_id": 791,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 19,
+        "word": "the",
+        "word_id": 792,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "בֹּקֶר",
+        "punc": "",
+        "strongs_ids": [
+          "H1242"
+        ],
+        "verse_pos": 20,
+        "word": "morning",
+        "word_id": 793,
+        "xlit": "bôqer"
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 21,
+        "word": "were",
+        "word_id": 794,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "",
+        "punc": "",
+        "strongs_ids": [],
+        "verse_pos": 22,
+        "word": "the",
+        "word_id": 795,
+        "xlit": ""
+      },
+      {
+        "italic": false,
+        "lemma": "שִׁשִּׁי",
+        "punc": "",
+        "strongs_ids": [
+          "H8345"
+        ],
+        "verse_pos": 23,
+        "word": "sixth",
+        "word_id": 796,
+        "xlit": "shishshîy"
+      },
+      {
+        "italic": false,
+        "lemma": "יוֹם",
+        "punc": ".",
+        "strongs_ids": [
+          "H3117"
+        ],
+        "verse_pos": 24,
+        "word": "day",
+        "word_id": 797,
+        "xlit": "yôwm"
+      }
+    ]
+  }
+]

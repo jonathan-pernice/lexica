@@ -1,0 +1,39 @@
+{
+  "birth_place": "Eden",
+  "birth_year": "3941 BC",
+  "death_place": "East of Eden",
+  "death_year": "3011 BC",
+  "gender": "M",
+  "groups": [
+    "Genealogy of Jesus"
+  ],
+  "name": "Adam",
+  "person_id": 78,
+  "relationships": [
+    {
+      "id": 13,
+      "name": "Abel",
+      "type": "father"
+    },
+    {
+      "id": 533,
+      "name": "Cain",
+      "type": "father"
+    },
+    {
+      "id": 2504,
+      "name": "Seth",
+      "type": "father"
+    },
+    {
+      "id": 1231,
+      "name": "Eve",
+      "type": "spouseOrConcubine"
+    },
+    {
+      "id": 1324,
+      "name": "God",
+      "type": "child"
+    }
+  ]
+}
