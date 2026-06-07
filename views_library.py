@@ -169,6 +169,27 @@ def extra_chapter(book, chapter):
     ])
 
 
+@bp.route("/api/extra/<book>/strongs-count/<strongs>")
+def extra_strongs_count(book, strongs):
+    """How many times a Strong's number appears within one non-canonical text
+    (e.g. the Didache). `strongs` is the G-prefixed form, matching the stored value."""
+    if not _EXTRA_BOOK_RE.match(book):
+        return jsonify({"count": 0})
+    wtable = f"{book}_words"
+    conn = db()
+    try:
+        if not conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (wtable,)
+        ).fetchone():
+            return jsonify({"count": 0})
+        n = conn.execute(
+            f"SELECT count(*) FROM {wtable} WHERE strongs=?", (strongs,)
+        ).fetchone()[0]
+    finally:
+        conn.close()
+    return jsonify({"count": n})
+
+
 @bp.route("/api/chapter/<book>/<int:chapter>")
 def chapter_text(book, chapter):
     conn = db()
