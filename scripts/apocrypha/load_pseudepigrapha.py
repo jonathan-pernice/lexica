@@ -24,6 +24,9 @@ import load_extra  # noqa: E402
 
 BOOKS = [
     "jubilees",
+    "enoch2",     # 2 Enoch (Slavonic, Morfill) -- 68 chapters
+    "baruch2",    # 2 Baruch (Syriac Apocalypse, Charles) -- 85 chapters
+    "apocabr",    # Apocalypse of Abraham (translation 1) -- 32 chapters
 ]
 
 

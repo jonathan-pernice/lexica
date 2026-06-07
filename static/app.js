@@ -2941,10 +2941,31 @@ const NONCANON = [
   englishOnly: true,
   group: "Pseudepigrapha"
 }, {
+  id: "enoch2",
+  name: "2 Enoch",
+  abbr: "2En",
+  chapters: 68,
+  englishOnly: true,
+  group: "Pseudepigrapha"
+}, {
   id: "jubilees",
   name: "Jubilees",
   abbr: "Jub",
   chapters: 50,
+  englishOnly: true,
+  group: "Pseudepigrapha"
+}, {
+  id: "baruch2",
+  name: "2 Baruch",
+  abbr: "2Bar",
+  chapters: 85,
+  englishOnly: true,
+  group: "Pseudepigrapha"
+}, {
+  id: "apocabr",
+  name: "Apocalypse of Abraham",
+  abbr: "ApAb",
+  chapters: 32,
   englishOnly: true,
   group: "Pseudepigrapha"
 },
