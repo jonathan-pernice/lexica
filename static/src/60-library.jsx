@@ -297,6 +297,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     if (b) {
       setSelBook(b);
       setSelChapter(nav.chapter || 1);
+      if (nav.translation) { setTranslation(nav.translation); onTranslationChange?.(nav.translation); }
     }
   }, [nav, books]);
 

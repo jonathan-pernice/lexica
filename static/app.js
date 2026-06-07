@@ -2560,6 +2560,10 @@ function LibraryView({
     if (b) {
       setSelBook(b);
       setSelChapter(nav.chapter || 1);
+      if (nav.translation) {
+        setTranslation(nav.translation);
+        onTranslationChange?.(nav.translation);
+      }
     }
   }, [nav, books]);
   useEffect(() => {
@@ -4203,7 +4207,7 @@ function LexiconView({
     className: "lib-iw-english"
   }, w.w, w.punc || ""))) : v.text), onNavigateToLibrary && /*#__PURE__*/React.createElement("button", {
     className: "lexicon-verse-lib-link",
-    onClick: () => onNavigateToLibrary(selectedBook, v.chapter, v.verse)
+    onClick: () => onNavigateToLibrary(selectedBook, v.chapter, v.verse, profileCorpus)
   }, "Read \u2192"))))));
 }
 
@@ -4435,13 +4439,14 @@ function App() {
       handleNavChange("search");
       setQ2(q);
     },
-    onNavigateToLibrary: (book, chapter, verse) => {
+    onNavigateToLibrary: (book, chapter, verse, corpus) => {
       searchScrollRef.current = window.scrollY;
       setLibNav({
         book,
         chapter,
         highlight: verse,
-        scroll: true
+        scroll: true,
+        translation: corpus === "kjv" ? "kjv" : "abp"
       });
       setLibEverVisited(true);
       setMainView("library");

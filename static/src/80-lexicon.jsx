@@ -410,7 +410,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
                           : v.text}
                       </span>
                       {onNavigateToLibrary && (
-                        <button className="lexicon-verse-lib-link" onClick={() => onNavigateToLibrary(selectedBook, v.chapter, v.verse)}>
+                        <button className="lexicon-verse-lib-link" onClick={() => onNavigateToLibrary(selectedBook, v.chapter, v.verse, profileCorpus)}>
                           Read →
                         </button>
                       )}
