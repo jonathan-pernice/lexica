@@ -660,7 +660,11 @@ input { font-family: inherit; }
   position: fixed;
   left: 0; right: 0;
   bottom: calc(58px + env(safe-area-inset-bottom, 0px));
-  max-height: 80vh;
+  /* Rise no further than the bottom of the top menu (.mobile-tabs, 56px):
+     full height = viewport − top menu − bottom anchor (58px). */
+  max-height: calc(100vh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  overscroll-behavior: contain;
   background: var(--paper);
   border-top-left-radius: 18px;
   border-top-right-radius: 18px;
@@ -668,7 +672,10 @@ input { font-family: inherit; }
   display: flex; flex-direction: column;
   box-shadow: 0 -20px 60px rgba(15, 23, 42, 0.25);
   animation: slide-up 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
 }
+.detail-sheet .detail-body,
+.detail-sheet .xref-body { overscroll-behavior: contain; }
 @keyframes slide-up {
   from { transform: translateY(40px); opacity: 0.5; }
   to { transform: translateY(0); opacity: 1; }

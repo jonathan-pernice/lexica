@@ -505,16 +505,62 @@ function LsjSummary({ data, loading }) {
   return <p className="lsj-synthesis">{data.summary}</p>;
 }
 
+// Google-Maps-style bottom-sheet dismissal: drag the WHOLE card down to close,
+// but only when the inner scroll area is already at the top — otherwise the body
+// scrolls normally. Uses native non-passive listeners so we can block page scroll
+// / pull-to-refresh while dragging (React's touch props are passive and can't).
 function useSwipeToDismiss(onClose) {
-  const [dragY, setDragY] = React.useState(0);
-  const startY = React.useRef(0);
-  const onTouchStart = (e) => { startY.current = e.touches[0].clientY; setDragY(0); };
-  const onTouchMove  = (e) => { const d = Math.max(0, e.touches[0].clientY - startY.current); setDragY(d); };
-  const onTouchEnd   = ()  => { if (dragY > 80) onClose(); setDragY(0); };
-  return {
-    handleProps: { onTouchStart, onTouchMove, onTouchEnd },
-    sheetStyle:  dragY > 0 ? { transform: `translateY(${dragY}px)`, transition: 'none' } : {}
-  };
+  const sheetRef = React.useRef(null);
+  const scrollRef = React.useRef(null);
+  const closeRef = React.useRef(onClose);
+  closeRef.current = onClose;
+
+  React.useEffect(() => {
+    const el = sheetRef.current;
+    if (!el) return;
+    let startY = 0, dragY = 0, active = false;
+    const SNAP = 'transform 0.25s cubic-bezier(0.2,0.8,0.2,1)';
+
+    const atTop = () => { const sc = scrollRef.current; return !sc || sc.scrollTop <= 0; };
+    const onStart = (e) => {
+      active = atTop();              // only arm the drag if the body is scrolled to the top
+      startY = e.touches[0].clientY;
+      dragY = 0;
+    };
+    const onMove = (e) => {
+      if (!active) return;
+      const d = e.touches[0].clientY - startY;
+      if (d <= 0 || !atTop()) {       // pulling up, or body got scrolled → hand back to native scroll
+        if (dragY) { el.style.transition = ''; el.style.transform = ''; dragY = 0; }
+        active = false;
+        return;
+      }
+      dragY = d;
+      el.style.transition = 'none';
+      el.style.transform = `translateY(${d}px)`;
+      if (e.cancelable) e.preventDefault();   // stop the page scrolling / pull-to-refresh
+    };
+    const onEnd = () => {
+      if (!active) return;
+      active = false;
+      if (dragY > 90) { closeRef.current?.(); return; }
+      if (dragY) { el.style.transition = SNAP; el.style.transform = ''; }
+      dragY = 0;
+    };
+
+    el.addEventListener('touchstart', onStart, { passive: true });
+    el.addEventListener('touchmove', onMove, { passive: false });
+    el.addEventListener('touchend', onEnd, { passive: true });
+    el.addEventListener('touchcancel', onEnd, { passive: true });
+    return () => {
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+      el.removeEventListener('touchcancel', onEnd);
+    };
+  }, []);
+
+  return { sheetRef, scrollRef };
 }
 
 // ============================================================
@@ -776,11 +822,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
 
   const barWidth = Math.min(100, (occurrences / Math.max(1, totalResults)) * 100);
   const morphLine = (entry.greek && !isHebrew) ? decodeMorph(entry.morph, entry.greek) : "";
-  const { handleProps, sheetStyle } = useSwipeToDismiss(onClose);
+  const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
 
   return (
-    <aside className={"detail " + (isMobile ? "detail-sheet" : "detail-side")} style={isMobile ? sheetStyle : {}} role="dialog" aria-label="Lexicon detail">
-      {isMobile && <div className="sheet-drag-zone" aria-hidden="true" {...handleProps}><div className="sheet-handle"></div></div>}
+    <aside ref={isMobile ? sheetRef : null} className={"detail " + (isMobile ? "detail-sheet" : "detail-side")} role="dialog" aria-label="Lexicon detail">
+      {isMobile && <div className="sheet-drag-zone" aria-hidden="true"><div className="sheet-handle"></div></div>}
       <div className="detail-head">
         <div className="detail-head-l">
           <span className="card-badge solid">{entry.strongs}</span>
@@ -791,7 +837,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         </button>
       </div>
 
-      <div className="detail-body">
+      <div className="detail-body" ref={isMobile ? scrollRef : null}>
         <div className={"detail-hero" + (isPN && !entry.greek && !isHebrew ? " no-gloss" : "")}>
           <div className={"detail-greek" + (isHebrew ? " detail-greek--he" : "")}
                dir={isHebrew ? "rtl" : undefined}>
@@ -1080,11 +1126,11 @@ function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation, onA
   const verseText = (ref) => showAbp ? (abpTexts[ref.ref] || ref.kjv_text) : ref.kjv_text;
 
   const sourceRef = `${source.book} ${source.chapter}:${source.verse}`;
-  const { handleProps: swipeProps, sheetStyle: xrefSheetStyle } = useSwipeToDismiss(onClose);
+  const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
 
   return (
-    <aside className={"xref-panel " + (isMobile ? "detail-sheet" : "detail-side")} style={isMobile ? xrefSheetStyle : {}} role="dialog" aria-label="Related Passages">
-      {isMobile && <div className="sheet-drag-zone" aria-hidden="true" {...swipeProps}><div className="sheet-handle"></div></div>}
+    <aside ref={isMobile ? sheetRef : null} className={"xref-panel " + (isMobile ? "detail-sheet" : "detail-side")} role="dialog" aria-label="Related Passages">
+      {isMobile && <div className="sheet-drag-zone" aria-hidden="true"><div className="sheet-handle"></div></div>}
       <div className="detail-head">
         <div className="detail-head-l">
           <span className="detail-pos">{sourceRef}</span>
@@ -1092,7 +1138,7 @@ function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation, onA
         </div>
         <button className="detail-close" onClick={onClose} aria-label="Close">✕</button>
       </div>
-      <div className="xref-body">
+      <div className="xref-body" ref={isMobile ? scrollRef : null}>
         <h3 className="xref-title">Related Passages</h3>
         {loading ? (
           <p className="xref-synthesis-loading">Selecting relevant passages…</p>
