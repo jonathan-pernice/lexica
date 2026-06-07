@@ -1121,14 +1121,22 @@ function DetailPanel({
       const personOk = !pd.error && (pd.birth_year || pd.death_year || pd.relationships?.length >= 2);
       if (personOk) setMetavPersonData(pd);
       if (!ld.error) setMetavPlaceData(ld);
-      // Default tab (only matters when BOTH person+place exist). Default to Person
-      // and flip to Place ONLY when the word's own (prefixed) strongs matches the
-      // place's strongs_g — a genuinely distinct place id. pn_type is NOT trusted:
-      // tipnr.strongs is a PK, so a name sharing one strongs for person AND place
-      // (e.g. Adam H121) stores whichever type was inserted last ('place' for Adam),
-      // which would wrongly default person-names to Place.
-      const placeStrongsMatch = !ld.error && !!ld.strongs_g && !!entry.strongs_base && ld.strongs_g.split(/[^GH0-9.]+/i).map(s => s.toUpperCase()).includes(entry.strongs_base.toUpperCase());
-      setMetavTab(placeStrongsMatch ? "place" : "person");
+      // Default tab (only matters when BOTH person+place exist). Prefer the
+      // word's OWN proper-noun type from tipnr — pn_types is a SET ('person',
+      // 'place', or 'person,place'; backlog #5 fix). A clean SINGLE type is
+      // authoritative. When tipnr is ambiguous (a strongs shared by a person AND
+      // a place → 'person,place', which strongs alone can't disambiguate) or
+      // absent (pn_types null: pre-reimport, or a non-Library entry), fall back to
+      // the strongs_g heuristic — flip to Place only when the place's own (G-)
+      // strongs matches the clicked word's strongs_base. (Legacy pn_type is NOT
+      // used: tipnr.strongs was a PK so it stored whichever type imported last.)
+      const pnTypes = (entry.pn_types || "").toLowerCase().split(",").map(s => s.trim()).filter(Boolean);
+      let tab;
+      if (pnTypes.length === 1 && pnTypes[0] === "person") tab = "person";else if (pnTypes.length === 1 && pnTypes[0] === "place") tab = "place";else {
+        const placeStrongsMatch = !ld.error && !!ld.strongs_g && !!entry.strongs_base && ld.strongs_g.split(/[^GH0-9.]+/i).map(s => s.toUpperCase()).includes(entry.strongs_base.toUpperCase());
+        tab = placeStrongsMatch ? "place" : "person";
+      }
+      setMetavTab(tab);
       setMetavLoading(false);
     }).catch(() => {
       if (!cancelled) setMetavLoading(false);
@@ -2752,7 +2760,8 @@ function LibraryView({
         derivation: "",
         is_function: false,
         is_pn: !!w.is_pn,
-        pn_type: w.pn_type || null
+        pn_type: w.pn_type || null,
+        pn_types: w.pn_types || null
       };
     };
     const chipLabel = w => {
