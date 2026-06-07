@@ -905,6 +905,28 @@ function useSwipeToDismiss(onClose) {
 // ============================================================
 // LEAFLET MINI-MAP
 // ============================================================
+// Leaflet (CSS+JS) is loaded ON DEMAND — the map only ever appears inside the
+// metaV place card, so keeping it out of index.html keeps it off the critical
+// path for every page load. Loaded once, cached on window.L for later opens.
+let _leafletPromise = null;
+function loadLeaflet() {
+  if (window.L) return Promise.resolve(window.L);
+  if (_leafletPromise) return _leafletPromise;
+  _leafletPromise = new Promise((resolve, reject) => {
+    const css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    css.crossOrigin = "";
+    document.head.appendChild(css);
+    const js = document.createElement("script");
+    js.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    js.crossOrigin = "";
+    js.onload = () => resolve(window.L);
+    js.onerror = reject;
+    document.head.appendChild(js);
+  });
+  return _leafletPromise;
+}
 function LeafletMap({
   lat,
   lon,
@@ -912,8 +934,21 @@ function LeafletMap({
 }) {
   const mapRef = React.useRef(null);
   const instanceRef = React.useRef(null);
+  const [ready, setReady] = React.useState(!!window.L);
+
+  // Kick off the lazy load on first mount (no-op if Leaflet is already present).
   React.useEffect(() => {
-    if (!mapRef.current || !window.L) return;
+    if (window.L) return;
+    let cancelled = false;
+    loadLeaflet().then(() => {
+      if (!cancelled) setReady(true);
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  React.useEffect(() => {
+    if (!ready || !mapRef.current || !window.L) return;
     if (instanceRef.current) {
       instanceRef.current.remove();
       instanceRef.current = null;
@@ -936,7 +971,7 @@ function LeafletMap({
         instanceRef.current = null;
       }
     };
-  }, [lat, lon, name]);
+  }, [ready, lat, lon, name]);
   return /*#__PURE__*/React.createElement("div", {
     ref: mapRef,
     className: "metav-leaflet-map"
