@@ -107,10 +107,9 @@ tables). Web route `GET /api/extra/<book>/chapter/<n>` reads those. Loader `scri
   layout as Bible parallel. KJV is disabled there (no KJV for these texts). No bracket/ordering
   machinery; chips stay in natural Greek order; word click → the shared word-study sidebar.
 
-**REMAINING — on PA (user runs):** the verses table gained a `heading` column, so a reload is needed:
-1. `git pull`
-2. `python3 scripts/didache_proof/load_didache.py bible.db`  (~2199 words / 101 verses, 11 headings)
-3. `touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
+**DONE on PA 2026-06-07** — reloaded with the `heading` column (`load_didache.py`,
+~2199 words / 101 verses / 11 headings). Headings live. The 6 chapters with no heading
+(0, 2-4, 10, 12) are intentional — they continue the section a prior chapter started.
 
 **Future (when more non-canonical books exist): wire them into the Lexicon + Search tabs.**
 The word panel already shows an "In the Didache" count, but it isn't clickable and the Lexicon/Search
@@ -130,7 +129,10 @@ interlinear — only ~ch 1-32 survives in Greek (Akhmim papyrus), so this is tex
   `load_enoch.py` (thin wrapper over `load_extra.py`).
 - Reader stays in **Prose** via the `englishOnly:true` flag on the `NONCANON` entry (chip/parallel
   views would be blank with no Greek). Drop the flag once a tagged Greek file is added for ch 1-32.
-- Load on PA: `python3 scripts/enoch/load_enoch.py bible.db` then touch wsgi.
+- **DONE + LIVE on PA 2026-06-07** (`load_enoch.py`, 0 words / 1063 verses / 93 headings).
+  80 of 108 chapters have a heading; the 28 without continue an earlier section (expected).
+- Reader locks to Prose for englishOnly texts; Strong's / Interlinear / Parallel / Chip are
+  grayed out (desktop bar + mobile sheet). Mobile pill shows the `abbr` ("1En" / "Did").
 
 ### Lessons from Didache → Enoch (baked into the tooling)
 
