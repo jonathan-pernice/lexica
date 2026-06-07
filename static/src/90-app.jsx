@@ -182,9 +182,9 @@ function App() {
         <div style={{ display: mainView === "lexicon" ? undefined : "none" }}>
           <LexiconView
             onNavigateToSearch={(q) => { handleNavChange("search"); setQ2(q); }}
-            onNavigateToLibrary={(book, chapter, verse) => {
+            onNavigateToLibrary={(book, chapter, verse, corpus) => {
               searchScrollRef.current = window.scrollY;
-              setLibNav({ book, chapter, highlight: verse, scroll: true });
+              setLibNav({ book, chapter, highlight: verse, scroll: true, translation: corpus === "kjv" ? "kjv" : "abp" });
               setLibEverVisited(true);
               setMainView("library");
             }}
