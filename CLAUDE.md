@@ -41,6 +41,10 @@ Pick effort by task TYPE. When in doubt, lean higher — the plan affords it.
 
 ## Working style (not hard caps — 20x plan, optimize for correctness)
 - Show code before changing it (ALWAYS — every mode, no exceptions)
+- WORD-ORDER / Strong's-order / proper-noun-slot swaps: confirm the layout against
+  the SOURCE (eSword/ABP) ONLY — NEVER guess "what eSword probably shows." If the
+  source isn't in front of you, ask the user to check. Read-only dry-run is the
+  source of truth before any --apply. (2026-06-07 Act 19:4 lesson.)
 - Prefer focused reads over broad scans — for context quality, not call-rationing
 - No artificial tool-call or file-count ceiling; use what the task genuinely needs.
   For diagnosis, that may be many reads — that's expected and fine.
