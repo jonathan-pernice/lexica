@@ -1,7 +1,72 @@
 // ============================================================
+// SUMMARY PANEL — Library right-pane DEFAULT (desktop only)
+// ------------------------------------------------------------
+// Resting content of the right sidebar when no word/verse is selected: a short
+// Berean book blurb + a pericope-aware chapter summary for whatever the reader is
+// on. Reuses the .detail-side shell so its width matches the word-study panel
+// exactly. A word click (DetailPanel) or verse-# click (CrossRefPanel) replaces
+// it; closing those returns here. Never shown on mobile.
+// ============================================================
+function SummaryPanel({ book, chapter, bookLabel }) {
+  // Remembers fetched summaries across remounts (the panel unmounts whenever a
+  // word/verse takes over the slot) so re-opening the same chapter is instant
+  // instead of flashing the loading line again.
+  const key = book + "/" + chapter;
+  const [data, setData] = useState(() => SummaryPanel._cache[key] || null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!book || !chapter) return;
+    const cached = SummaryPanel._cache[key];
+    if (cached) { setData(cached); setLoading(false); return; }
+    let cancelled = false;
+    setLoading(true);
+    setData(null);
+    api.summary(book, chapter)
+      .then(d => { if (!cancelled) { SummaryPanel._cache[key] = d || {}; setData(d || {}); setLoading(false); } })
+      .catch(() => { if (!cancelled) { setData({}); setLoading(false); } });
+    return () => { cancelled = true; };
+  }, [book, chapter]);
+
+  const bookText = data && data.book_summary;
+  const chapText = data && data.chapter_summary;
+  const nothing = !loading && !bookText && !chapText;
+
+  return (
+    <aside className="detail detail-side summary-side" role="complementary" aria-label="Reading overview">
+      <div className="detail-head">
+        <div className="detail-head-l">
+          <span className="detail-pos">{(bookLabel || book)}{chapter ? " " + chapter : ""}</span>
+        </div>
+      </div>
+      <div className="detail-body">
+        {loading && <div className="summary-loading">Reading the chapter…</div>}
+        {!loading && bookText && (
+          <div className="detail-section">
+            <div className="detail-h">About</div>
+            <p className="detail-p">{bookText}</p>
+          </div>
+        )}
+        {!loading && chapText && (
+          <div className="detail-section last">
+            <div className="detail-h">This chapter</div>
+            <p className="detail-p">{chapText}</p>
+          </div>
+        )}
+        {nothing && (
+          <div className="summary-loading">No overview available for this passage.</div>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+SummaryPanel._cache = {};
+
+// ============================================================
 // DETAIL PANEL — SIDEBAR / BOTTOM SHEET
 // ============================================================
-function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch, onReadInContext, onNameSearch, onNavigateToLexicon }) {
+function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch, onReadInContext, onNameSearch, onNavigateToLexicon, overviewBack }) {
   const [verseText, setVerseText] = useState("");
   const [verseLoading, setVerseLoading] = useState(false);
   const [abpCount, setAbpCount] = useState(null);
@@ -540,9 +605,13 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <span className="card-badge solid">{entry.strongs}</span>
           <span className="detail-pos">{BOOK_LABELS[entry.book] || entry.book}</span>
         </div>
-        <button className="detail-close" onClick={onClose} aria-label="Close">
-          <Icon.Close/>
-        </button>
+        {overviewBack && !isMobile ? (
+          <button className="detail-back" onClick={onClose} aria-label="Back to overview">‹ Overview</button>
+        ) : (
+          <button className="detail-close" onClick={onClose} aria-label="Close">
+            <Icon.Close/>
+          </button>
+        )}
       </div>
 
       <div className="detail-body" ref={isMobile ? scrollRef : null}>

@@ -150,6 +150,7 @@ from views_kjv import bp as kjv_bp
 from views_lexicon import bp as lexicon_bp
 from views_library import bp as library_bp
 from views_search import bp as search_bp
+from views_summary import bp as summary_bp
 from ai import bp as ai_bp, _load_ai_cache_from_db
 
 app = Flask(__name__)
@@ -171,6 +172,7 @@ app.register_blueprint(kjv_bp)
 app.register_blueprint(lexicon_bp)
 app.register_blueprint(library_bp)
 app.register_blueprint(search_bp)
+app.register_blueprint(summary_bp)
 app.register_blueprint(ai_bp)
 
 

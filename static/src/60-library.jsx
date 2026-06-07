@@ -131,8 +131,9 @@ const _BOOK_DIV = {
   Jud:"General Epistles",Rev:"Apocalyptic",
 };
 
-function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon }) {
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible }) {
   const [query, setQuery] = useState("");
+  const [otherOpen, setOtherOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -153,36 +154,26 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
     return out;
   }, [filtered]);
 
-  const nonCanonGroup = (nonCanonList && nonCanonList.length > 0) ? (
+  // When a non-canonical text is active, the nav shows that text's chapter chips
+  // (picking WHICH non-canon text happens via the "Other" menu in the source bar).
+  const nonCanonActive = nonCanon ? (
     <div className="nav-group">
       <div className="nav-div">
         <span className="nav-div-t">Other</span>
-        <span className="nav-div-n">Non-canonical</span>
+        <span className="nav-div-n">{nonCanon.name}</span>
       </div>
-      {nonCanonList.map(t => {
-        const active = !!nonCanon && nonCanon.id === t.id;
-        return (
-          <div key={t.id} ref={active ? navBookRef : null}>
+      <div ref={navBookRef}>
+        <button className="nav-book on"><span className="nav-book-name">{nonCanon.name}</span></button>
+        <div className="nav-chips">
+          {Array.from({ length: nonCanon.chapters }, (_, i) => i + 1).map(n => (
             <button
-              className={"nav-book" + (active ? " on" : "")}
-              onClick={() => { onPickNonCanon(t); if (isOverlay) onClose(); }}
-            >
-              <span className="nav-book-name">{t.name}</span>
-            </button>
-            {active && (
-              <div className="nav-chips">
-                {Array.from({ length: t.chapters }, (_, i) => i + 1).map(n => (
-                  <button
-                    key={n}
-                    className={"ch-chip" + (n === selChapter ? " on" : "")}
-                    onClick={() => setSelChapter(n)}
-                  >{n}</button>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })}
+              key={n}
+              className={"ch-chip" + (n === selChapter ? " on" : "")}
+              onClick={() => setSelChapter(n)}
+            >{n}</button>
+          ))}
+        </div>
+      </div>
     </div>
   ) : null;
 
@@ -191,8 +182,35 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
       <div className="nav-top">
         {isOverlay && <button className="nav-x" onClick={onClose} aria-label="Close">✕</button>}
       </div>
+      {/* Text-source picker — ABP / KJV + non-canonical "Other" menu */}
+      <div className="nav-source">
+        <div className="seg nav-source-seg">
+          <button className={"seg-b" + (!nonCanon && translation === "abp" ? " on" : "")} onClick={() => pickBible("abp")}>ABP</button>
+          <button className={"seg-b" + (!nonCanon && translation === "kjv" ? " on" : "")} onClick={() => pickBible("kjv")}>KJV</button>
+        </div>
+        {nonCanonList && nonCanonList.length > 0 && (
+          <div className="lib-other-wrap nav-other-wrap">
+            <button className={"nav-other-btn" + (nonCanon ? " on" : "")} onClick={() => setOtherOpen(o => !o)} aria-expanded={otherOpen}>
+              {nonCanon ? nonCanon.name : "Other"} ▾
+            </button>
+            {otherOpen && (
+              <>
+                <div className="lib-other-scrim" onClick={() => setOtherOpen(false)} />
+                <div className="lib-other-menu">
+                  <div className="lib-other-head">Non-canonical</div>
+                  {nonCanonList.map(t => (
+                    <button key={t.id}
+                      className={"lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : "")}
+                      onClick={() => { onPickNonCanon(t); setOtherOpen(false); if (isOverlay) onClose(); }}>{t.name}</button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
       <div className="nav-scroll">
-        {nonCanon && nonCanonGroup}
+        {nonCanon && nonCanonActive}
         {!nonCanon && groups.map(g => (
           <div className="nav-group" key={g.key}>
             <div className="nav-div">
@@ -225,7 +243,6 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
             })}
           </div>
         ))}
-        {!nonCanon && nonCanonGroup}
       </div>
     </nav>
   );
@@ -390,7 +407,7 @@ const NONCANON = [
 // ============================================================
 // LIBRARY VIEW
 // ============================================================
-function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTranslationChange, isMobile }) {
+function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTranslationChange, isMobile, showSummary }) {
   const [books, setBooks] = useState([]);
   const [selBook, setSelBook] = useState(null);
   const [selChapter, setSelChapter] = useState(1);
@@ -411,6 +428,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [didVerses, setDidVerses] = useState([]);
   const [didLoading, setDidLoading] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
+  const [fontOpen, setFontOpen] = useState(false);
   const nonCanon = NONCANON.find(t => t.id === corpus) || null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
@@ -1085,6 +1103,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           nonCanon={nonCanon}
           nonCanonList={NONCANON}
           onPickNonCanon={pickNonCanon}
+          translation={translation}
+          corpus={corpus}
+          pickBible={pickBible}
         />
       )}
       {!navVisible && mobileNavOpen && (
@@ -1124,19 +1145,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
                 aria-label="Previous chapter"
               >‹</button>
-              <span className="ch-lbl">
-                Ch <input
-                  className="lib-chap-input"
-                  type="number"
-                  min={1}
-                  max={maxChap}
-                  value={selChapter}
-                  onChange={e => {
-                    const v = parseInt(e.target.value);
-                    if (v >= 1 && v <= maxChap) setSelChapter(v);
-                  }}
-                /> <span className="ch-of">/ {maxChap}</span>
-              </span>
+              <span className="ch-lbl ch-cur" title="Current chapter — pick any chapter from the book list at left">{selChapter}</span>
               <button
                 className="ch-nav"
                 disabled={selChapter >= maxChap}
@@ -1144,14 +1153,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 aria-label="Next chapter"
               >›</button>
             </div>
-            <div className="seg">
-              <button className={"seg-b" + (corpus === "bible" && translation === "abp" ? " on" : "")} onClick={() => pickBible("abp")}>ABP</button>
-              <button className={"seg-b" + (corpus === "bible" && translation === "kjv" ? " on" : "")} onClick={() => pickBible("kjv")}>KJV</button>
-            </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
-            <button className={"lib-toggle" + (showStrongs ? " on" : "")} disabled={proseLocked} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showStrongs", !showStrongs)}>Strong's</button>
-            <button className={"lib-toggle" + (showInterlinear ? " on" : "")} disabled={proseLocked} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}>Interlinear</button>
-            <button className={"lib-toggle" + (translation === "parallel" ? " on" : "")} disabled={proseLocked} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && toggleParallel()}>Parallel</button>
+            <button className={"lib-toggle lib-toggle-icon" + (showStrongs ? " on" : "")} disabled={proseLocked} title="Strong's numbers" aria-label="Strong's numbers" aria-pressed={showStrongs} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showStrongs", !showStrongs)}><Icon.Hash/></button>
+            <button className={"lib-toggle lib-toggle-icon" + (showInterlinear ? " on" : "")} disabled={proseLocked} title="Interlinear" aria-label="Interlinear" aria-pressed={showInterlinear} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}><Icon.Interlinear/></button>
+            <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} disabled={proseLocked} title="Parallel (ABP + KJV)" aria-label="Parallel" aria-pressed={translation === "parallel"} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && toggleParallel()}><Icon.Columns/></button>
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg">
               <button
@@ -1168,26 +1173,17 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               >Prose</button>
             </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
-            <div className="seg">
-              <button className="seg-b" onClick={() => changeFontSize(-1)}>A−</button>
-              <span className="font-size-lbl">{libFontSize}</span>
-              <button className="seg-b" onClick={() => changeFontSize(+1)}>A+</button>
-            </div>
-            <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="lib-other-wrap">
-              <button className={"lib-toggle" + (nonCanon ? " on" : "")} onClick={() => setOtherOpen(o => !o)}>
-                {nonCanon ? nonCanon.name : "Other"} ▾
-              </button>
-              {otherOpen && (
+              <button className="lib-toggle lib-font-btn" onClick={() => setFontOpen(o => !o)} title="Text size" aria-label="Text size">Aa ▾</button>
+              {fontOpen && (
                 <>
-                  <div className="lib-other-scrim" onClick={() => setOtherOpen(false)} />
-                  <div className="lib-other-menu">
-                    <div className="lib-other-head">Non-canonical</div>
-                    {NONCANON.map(t => (
-                      <button key={t.id}
-                        className={"lib-other-item" + (corpus === t.id ? " on" : "")}
-                        onClick={() => pickNonCanon(t)}>{t.name}</button>
-                    ))}
+                  <div className="lib-other-scrim" onClick={() => setFontOpen(false)} />
+                  <div className="lib-other-menu lib-font-menu">
+                    <div className="seg">
+                      <button className="seg-b" onClick={() => changeFontSize(-1)}>A−</button>
+                      <span className="font-size-lbl">{libFontSize}</span>
+                      <button className="seg-b" onClick={() => changeFontSize(+1)}>A+</button>
+                    </div>
                   </div>
                 </>
               )}
@@ -1328,6 +1324,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         )}
       </div>
       </div>
+      {showSummary && (selBook || nonCanon) && (
+        <SummaryPanel
+          book={nonCanon ? nonCanon.id : selBook.abbrev}
+          chapter={selChapter}
+          bookLabel={nonCanon ? nonCanon.name : (BOOK_LABELS[selBook.abbrev] || selBook.abbrev)}
+        />
+      )}
     </div>
   );
 }

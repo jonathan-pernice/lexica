@@ -159,8 +159,14 @@ function App() {
 
   const searchLabel = q2.trim();
 
+  // Desktop Library: when nothing is selected, the right panel rests on the
+  // book/chapter overview (SummaryPanel). It fills the same slot the word-study
+  // and xref panels use, so `has-detail` stays on and the reading column keeps
+  // its condensed (three-column) measure. Mobile never shows the summary.
+  const showLibSummary = !isMobile && mainView === "library" && !activeEntry && !libCrossRef;
+
   return (
-    <div className={"app view-" + mainView + " " + ((activeEntry || libCrossRef) ? "has-detail" : "")}>
+    <div className={"app view-" + mainView + " " + ((activeEntry || libCrossRef || showLibSummary) ? "has-detail" : "")}>
       <Header activeView={mainView} onNavChange={handleNavChange}/>
       {isMobile && mainView !== "library" && (
         <div className="mobile-brand-bar">
@@ -175,7 +181,7 @@ function App() {
       <main className="main">
         {libEverVisited && (
           <div style={{ display: mainView === "library" ? undefined : "none" }}>
-            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onTranslationChange={setLibTranslation} isMobile={isMobile} />
+            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onTranslationChange={setLibTranslation} isMobile={isMobile} showSummary={showLibSummary} />
           </div>
         )}
         {mainView === "about" && <AboutView />}
@@ -290,6 +296,7 @@ function App() {
           totalResults={allResults.length}
                     onNavigateToLexicon={handleNavigateToLexicon}
           onReadInContext={handleReadInContext}
+          overviewBack={mainView === "library"}
         />
       )}
 
@@ -319,6 +326,7 @@ function App() {
           }}
           onAiSearch={(q) => { setLibCrossRef(null); handleAiSearch(q); }}
           isMobile={false}
+          overviewBack={true}
         />
       )}
       {libCrossRef && isMobile && (
