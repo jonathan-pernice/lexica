@@ -412,6 +412,7 @@ const NONCANON = [
   // file is added (e.g. 1 Enoch ch 1–32 from the Akhmim papyrus).
   { id: "didache", name: "Didache", abbr: "Did", chapters: 16, group: "Early Church" },
   { id: "enoch", name: "1 Enoch", abbr: "1En", chapters: 108, englishOnly: true, group: "Pseudepigrapha" },
+  { id: "jubilees", name: "Jubilees", abbr: "Jub", chapters: 50, englishOnly: true, group: "Pseudepigrapha" },
 
   // Septuagint Apocrypha — Brenton's 1851 public-domain English LXX (ebible.org USFM),
   // verse-perfect. English-only; the Greek isn't Strong's-tagged so no interlinear.
