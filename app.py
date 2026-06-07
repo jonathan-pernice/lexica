@@ -467,7 +467,7 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
                   COALESCE(w.italic_words, '') AS italic_words,
                   l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
            FROM words w
-           LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+           LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base
            WHERE w.verse_id = ?
              AND w.english IS NOT NULL AND w.english != ''
              AND w.strongs_base != '*'
@@ -1221,6 +1221,17 @@ def _migrate_db():
             CREATE INDEX IF NOT EXISTS idx_ai_cache_ver ON ai_search_cache(ver_key);
         """)
         conn.commit()
+        # Indexed join key for the lexicon: strongs_g = 'G'||strongs (e.g. 'G4151').
+        # Replaces the fragile SUBSTR(strongs_base,2) joins with equality on a real,
+        # indexable key that can NEVER shave a digit off a bare number (the 592k
+        # break) and inherently won't match a Hebrew H-number. Idempotent.
+        try:
+            conn.execute("ALTER TABLE lexicon ADD COLUMN strongs_g TEXT")
+            conn.execute("UPDATE lexicon SET strongs_g = 'G' || strongs")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_lexicon_strongs_g ON lexicon(strongs_g)")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # already migrated
         # The deployed DB already has kjv_* location/strongs_id indexes (created
         # directly on PA, not in git). Two were genuinely missing and made every
         # KJV/English match a scan: kjv_strongs.word_id (the join key into
@@ -1363,7 +1374,7 @@ def _kjv_word_search(conn, word, out_rows, out_groupings):
         FROM kjv_words kw
         JOIN kjv_strongs ks ON ks.word_id = kw.word_id
         LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
-        LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+        LEFT JOIN lexicon lex ON lex.strongs_g = ks.strongs_id
         WHERE kw.word = ? COLLATE NOCASE
         GROUP BY kw.book_id, kw.chapter, kw.verse_num, ks.strongs_id
         ORDER BY kw.book_id, kw.chapter, kw.verse_num
@@ -1426,7 +1437,7 @@ def search():
                        l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
                 FROM words w
                 JOIN verses v ON w.verse_id = v.id
-                LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+                LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base
                 WHERE ({col} = ? OR {col} = ? OR {col} = ?)
                   AND w.english IS NOT NULL AND w.english != ''
                   AND w.strongs_base != '*'
@@ -1450,7 +1461,7 @@ def search():
                            l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
                     FROM words w
                     JOIN verses v ON w.verse_id = v.id
-                    LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+                    LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base
                     WHERE (word_boundary(w.english, ?)
                            OR word_boundary(strip_accents(l.translit), ?))
                       AND w.english IS NOT NULL AND w.english != ''
@@ -1471,7 +1482,7 @@ def search():
                            l.lemma, l.translit, l.strongs_def, l.kjv_def, l.derivation
                     FROM words w
                     JOIN verses v ON w.verse_id = v.id
-                    LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+                    LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base
                     WHERE (w.english_head = ? COLLATE NOCASE
                            OR w.english = ? COLLATE NOCASE
                            OR word_boundary(strip_accents(l.translit), ?)
@@ -1680,7 +1691,7 @@ def verse_words(book, chapter, verse):
                       l.lemma, l.translit, l.kjv_def, l.strongs_def, l.derivation,
                       t.entity_type AS pn_type
                FROM words w
-               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2) AND w.strongs_base LIKE 'G%'
+               LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base
                LEFT JOIN tipnr t ON t.strongs = w.strongs_base
                WHERE w.verse_id = ?
                ORDER BY w.position""",
@@ -2087,7 +2098,7 @@ def lexicon_english():
                        l.lemma AS lemma, l.translit AS translit,
                        COUNT(*) AS cnt
                 FROM words w
-                LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)
+                LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base
                 {_abp_join}
                 WHERE w.english_head = ? COLLATE NOCASE
                   AND w.strongs_base IS NOT NULL
@@ -2112,7 +2123,7 @@ def lexicon_english():
                        COUNT(*) AS cnt
                 FROM kjv_words kw
                 JOIN kjv_strongs ks ON ks.word_id = kw.word_id
-                LEFT JOIN lexicon l ON l.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+                LEFT JOIN lexicon l ON l.strongs_g = ks.strongs_id
                 LEFT JOIN bdb b ON b.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
                 WHERE kw.word = ? COLLATE NOCASE
                   AND (kw.italic IS NULL OR kw.italic = 0)
@@ -2459,7 +2470,7 @@ def chapter_text(book, chapter):
                       p.heading
                FROM verses v
                JOIN words w ON w.verse_id = v.id
-               LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2) AND w.strongs_base LIKE 'G%'
+               LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base
                LEFT JOIN tipnr t ON t.strongs = w.strongs_base
                LEFT JOIN pericopes p ON p.book = v.book AND p.chapter = v.chapter AND p.verse = v.verse
                WHERE v.book = ? AND v.chapter = ?
@@ -2544,7 +2555,7 @@ def kjv_chapter(book, chapter):
             LEFT JOIN kjv_verses kv ON kv.book_id = kw.book_id
                 AND kv.chapter = kw.chapter AND kv.verse_num = kw.verse_num
             LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
-            LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+            LEFT JOIN lexicon lex ON lex.strongs_g = ks.strongs_id
             WHERE kw.book_id = ? AND kw.chapter = ?
             GROUP BY kw.word_id, kw.verse_num, kw.verse_pos, kw.word, kw.italic, kw.punc, kv.verse_text
             ORDER BY kw.verse_num, kw.verse_pos
@@ -2610,7 +2621,7 @@ def kjv_verse_words(book, chapter, verse_num):
             FROM kjv_words kw
             LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
             LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
-            LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+            LEFT JOIN lexicon lex ON lex.strongs_g = ks.strongs_id
             WHERE kw.book_id = ? AND kw.chapter = ? AND kw.verse_num = ?
             GROUP BY kw.word_id, kw.verse_pos, kw.word, kw.italic, kw.punc
             ORDER BY kw.verse_pos
@@ -2654,7 +2665,7 @@ def kjv_verse_words_batch():
                 FROM kjv_words kw
                 LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
                 LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
-                LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+                LEFT JOIN lexicon lex ON lex.strongs_g = ks.strongs_id
                 WHERE kw.book_id = ? AND kw.chapter = ? AND kw.verse_num = ?
                 GROUP BY kw.word_id, kw.verse_pos, kw.word, kw.italic, kw.punc
                 ORDER BY kw.verse_pos
@@ -2980,7 +2991,7 @@ def kjv_strongs_search(strongs_id):
             FROM kjv_strongs ks
             JOIN kjv_words kw ON kw.word_id = ks.word_id
             LEFT JOIN bdb ON bdb.strongs_id = ks.strongs_id AND ks.strongs_id LIKE 'H%'
-            LEFT JOIN lexicon lex ON lex.strongs = SUBSTR(ks.strongs_id, 2) AND ks.strongs_id LIKE 'G%'
+            LEFT JOIN lexicon lex ON lex.strongs_g = ks.strongs_id
             WHERE ks.strongs_id = ?
             GROUP BY kw.book_id, kw.chapter, kw.verse_num, kw.word
             ORDER BY kw.book_id, kw.chapter, kw.verse_num
