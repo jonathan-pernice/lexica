@@ -181,6 +181,14 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
 
   const _isGreekHebrew = (s) => /[Ͱ-Ͽἀ-῿֐-׿]/.test(s);
 
+  // Light up every form of the focused word's Strong's in the verse list.
+  const citedStrongs = useMemo(() => {
+    if (!profile?.strongs) return new Set();
+    const tag = profile.strongs;
+    const base = tag.split(".")[0];
+    return new Set([tag, base, base.replace(/^[GH]/i, "")]);
+  }, [profile?.strongs]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const q = query.trim();
@@ -398,23 +406,19 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
               {verseList && verseList.map((v, i) => (
                 v.error
                   ? <div key={i} className="lexicon-verse-loading" style={{color:"red"}}>{v.error}</div>
-                  : <div key={i} className="lexicon-verse-row">
-                      <span className="lexicon-verse-ref">{selectedBook} {v.chapter}:{v.verse}</span>
-                      <span className="lexicon-verse-text lib-verse-chips">
-                        {v.words
-                          ? v.words.map((w, wi) => (
-                              <span key={wi} className={"lib-word" + (w.h ? " cited" : "") + (w.i ? " lib-abp-italic" : "")}>
-                                <span className="lib-iw-english">{w.w}{w.punc || ""}</span>
-                              </span>
-                            ))
-                          : v.text}
-                      </span>
-                      {onNavigateToLibrary && (
-                        <button className="lexicon-verse-lib-link" onClick={() => onNavigateToLibrary(selectedBook, v.chapter, v.verse, profileCorpus)}>
-                          Read →
-                        </button>
-                      )}
-                    </div>
+                  : <VerseRow
+                      key={`${selectedBook}-${v.chapter}-${v.verse}`}
+                      book={selectedBook}
+                      chapter={v.chapter}
+                      verse={v.verse}
+                      label={`${selectedBook} ${v.chapter}:${v.verse}`}
+                      allResults={[]}
+                      onWordClick={onWordClick}
+                      onReadInContext={onNavigateToLibrary ? (b, c, vv) => onNavigateToLibrary(b, c, vv, profileCorpus) : undefined}
+                      textMode={profileCorpus === "kjv" ? "kjv" : "greek"}
+                      primaryStrongs={null}
+                      citedStrongs={citedStrongs}
+                    />
               ))}
             </div>
           )}

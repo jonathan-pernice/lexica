@@ -1075,39 +1075,35 @@ input { font-family: inherit; }
 .corpus-group-body { display: flex; flex-direction: column; }
 
 
+/* One flowing line: ref first, passage right after, wrapped lines fall back
+   under the ref. Compact vertical rhythm. */
 .corpus-verse {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 10px 16px;
+  display: block;
+  padding: 5px 14px;
   border-bottom: 1px solid var(--rule);
+  line-height: 1.4;
 }
 .corpus-verse:last-child { border-bottom: 0; }
 
 .corpus-ref {
+  display: inline-block;
   font-family: var(--f-mono);
   font-size: 10.5px;
   color: var(--gold);
   background: var(--gold-soft);
-  padding: 3px 8px;
+  padding: 1px 6px;
   border-radius: 4px;
   white-space: nowrap;
-  flex-shrink: 0;
   letter-spacing: 0.04em;
-  align-self: flex-start;
-  margin-top: 6px;
+  margin-right: 4px;
+  vertical-align: baseline;
   border: none;
   cursor: pointer;
   transition: opacity 0.12s;
 }
 .corpus-ref:hover { opacity: 0.75; }
 .corpus-text {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 0;
-  line-height: 1;
-  flex: 1;
+  display: inline;
 }
 /* cited highlight — shared by lib-word and corpus results */
 .lib-word.cited { background: var(--gold-soft); border-radius: 5px; }

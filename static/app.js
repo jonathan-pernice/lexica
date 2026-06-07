@@ -1779,9 +1779,10 @@ function corpusWordLabel(w) {
 }
 
 // ============================================================
-// CORPUS SEARCH — VERSE ROW
+// SHARED VERSE ROW — used by both Search (CorpusGroup) and the Lexicon tab.
+// Lazy-loads its own words; highlights any word whose Strong's is in citedStrongs.
 // ============================================================
-function CorpusVerseRow({
+function VerseRow({
   book,
   chapter,
   verse,
@@ -2018,7 +2019,7 @@ function CorpusGroup({
     className: "corpus-chevron " + (open ? "open" : "")
   })), open && /*#__PURE__*/React.createElement("div", {
     className: "corpus-group-body"
-  }, verses.map(v => /*#__PURE__*/React.createElement(CorpusVerseRow, {
+  }, verses.map(v => /*#__PURE__*/React.createElement(VerseRow, {
     key: `${v.book}-${v.chapter}-${v.verse}`,
     book: v.book,
     chapter: v.chapter,
@@ -3965,6 +3966,14 @@ function LexiconView({
     if (selectedBook) await fetchVerses(selectedBook, next);
   };
   const _isGreekHebrew = s => /[Ͱ-Ͽἀ-῿֐-׿]/.test(s);
+
+  // Light up every form of the focused word's Strong's in the verse list.
+  const citedStrongs = useMemo(() => {
+    if (!profile?.strongs) return new Set();
+    const tag = profile.strongs;
+    const base = tag.split(".")[0];
+    return new Set([tag, base, base.replace(/^[GH]/i, "")]);
+  }, [profile?.strongs]);
   const handleSubmit = async e => {
     e.preventDefault();
     const q = query.trim();
@@ -4193,22 +4202,19 @@ function LexiconView({
     style: {
       color: "red"
     }
-  }, v.error) : /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "lexicon-verse-row"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lexicon-verse-ref"
-  }, selectedBook, " ", v.chapter, ":", v.verse), /*#__PURE__*/React.createElement("span", {
-    className: "lexicon-verse-text lib-verse-chips"
-  }, v.words ? v.words.map((w, wi) => /*#__PURE__*/React.createElement("span", {
-    key: wi,
-    className: "lib-word" + (w.h ? " cited" : "") + (w.i ? " lib-abp-italic" : "")
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lib-iw-english"
-  }, w.w, w.punc || ""))) : v.text), onNavigateToLibrary && /*#__PURE__*/React.createElement("button", {
-    className: "lexicon-verse-lib-link",
-    onClick: () => onNavigateToLibrary(selectedBook, v.chapter, v.verse, profileCorpus)
-  }, "Read \u2192"))))));
+  }, v.error) : /*#__PURE__*/React.createElement(VerseRow, {
+    key: `${selectedBook}-${v.chapter}-${v.verse}`,
+    book: selectedBook,
+    chapter: v.chapter,
+    verse: v.verse,
+    label: `${selectedBook} ${v.chapter}:${v.verse}`,
+    allResults: [],
+    onWordClick: onWordClick,
+    onReadInContext: onNavigateToLibrary ? (b, c, vv) => onNavigateToLibrary(b, c, vv, profileCorpus) : undefined,
+    textMode: profileCorpus === "kjv" ? "kjv" : "greek",
+    primaryStrongs: null,
+    citedStrongs: citedStrongs
+  })))));
 }
 
 // ============================================================

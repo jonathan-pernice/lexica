@@ -11,9 +11,10 @@ function corpusWordLabel(w) {
 }
 
 // ============================================================
-// CORPUS SEARCH — VERSE ROW
+// SHARED VERSE ROW — used by both Search (CorpusGroup) and the Lexicon tab.
+// Lazy-loads its own words; highlights any word whose Strong's is in citedStrongs.
 // ============================================================
-function CorpusVerseRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
+function VerseRow({ book, chapter, verse, label, allResults, onWordClick, onReadInContext, textMode, primaryStrongs, citedStrongs, kjvCache }) {
   const [words, setWords] = useState(null);
   const [kjvText, setKjvText] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -201,7 +202,7 @@ function CorpusGroup({ label, verses, allResults, onWordClick, onReadInContext, 
       {open && (
         <div className="corpus-group-body">
           {verses.map(v => (
-            <CorpusVerseRow
+            <VerseRow
               key={`${v.book}-${v.chapter}-${v.verse}`}
               book={v.book}
               chapter={v.chapter}
