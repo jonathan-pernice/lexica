@@ -274,7 +274,7 @@ input { font-family: inherit; }
 .lexicon-dist-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .lexicon-testament-toggle { display: flex; gap: 2px; background: var(--rule); border-radius: 6px; padding: 2px; }
 .lexicon-dist-list { font-size: 14px; line-height: 2; color: var(--ink-2); }
-.lexicon-dist-item { display: inline; background: none; border: none; padding: 0; margin: 0; font: inherit; color: var(--ink); cursor: pointer; }
+.lexicon-dist-item { display: inline; background: none; border: none; padding: 0; margin: 0; font: inherit; line-height: 1.3; color: var(--ink); cursor: pointer; }
 @media (hover: hover) { .lexicon-dist-item:hover { color: var(--accent); } }
 .lexicon-dist-item.selected {
   color: var(--accent);
