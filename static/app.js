@@ -1080,7 +1080,7 @@ function SummaryPanel({
   }, /*#__PURE__*/React.createElement("div", {
     className: "detail-head-l"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "detail-pos"
+    className: "detail-pos summary-pos"
   }, bookLabel || book, chapter ? " " + chapter : ""))), /*#__PURE__*/React.createElement("div", {
     className: "detail-body"
   }, loading && /*#__PURE__*/React.createElement("div", {

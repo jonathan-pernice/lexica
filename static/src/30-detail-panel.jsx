@@ -36,7 +36,7 @@ function SummaryPanel({ book, chapter, bookLabel }) {
     <aside className="detail detail-side summary-side" role="complementary" aria-label="Reading overview">
       <div className="detail-head">
         <div className="detail-head-l">
-          <span className="detail-pos">{(bookLabel || book)}{chapter ? " " + chapter : ""}</span>
+          <span className="detail-pos summary-pos">{(bookLabel || book)}{chapter ? " " + chapter : ""}</span>
         </div>
       </div>
       <div className="detail-body">
