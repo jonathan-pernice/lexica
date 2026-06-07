@@ -407,6 +407,13 @@ def lexicon_profile(strongs):
         # Content words keep everything — a rare rendering there is meaningful.
         if is_func:
             items = [(g, c) for g, c in items if c > 1]
+        else:
+            # Content word: a one-off rendering that is ITSELF nothing but a
+            # filler word ("and", "of") comes from a mis-tagged row with no
+            # content English for the cleaner to fall back to. Drop those
+            # singletons; a real one-off content rendering is still kept.
+            _filler = _GLOSS_FUNC | _GLOSS_STRONG | _GLOSS_WEAK
+            items = [(g, c) for g, c in items if not (c == 1 and g in _filler)]
         glosses = [{"gloss": g, "count": c} for g, c in items]
         # Which corpora actually have this strongs (so the UI can gray unavailable
         # toggles). Checks real data — so backfilled proper-noun Hebrew (which DO
