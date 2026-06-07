@@ -147,7 +147,7 @@ input { font-family: inherit; }
   box-shadow: var(--shadow-sm);
   padding: 14px 16px;
 }
-.lexicon-view { max-width: 760px; margin: 48px auto; padding: 0 24px; }
+.lexicon-view { max-width: 760px; margin: 0 auto; padding: 36px 28px 80px 28px; }
 .lexicon-search-form { display: flex; gap: 8px; }
 .lexicon-search-input {
   flex: 1;
