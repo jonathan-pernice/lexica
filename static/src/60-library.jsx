@@ -131,7 +131,7 @@ const _BOOK_DIV = {
   Jud:"General Epistles",Rev:"Apocalyptic",
 };
 
-function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef }) {
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon }) {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -166,7 +166,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
               <span className="nav-div-n">{g.div}</span>
             </div>
             {g.books.map(b => {
-              const active = selBook && b.abbrev === selBook.abbrev;
+              const active = !nonCanon && selBook && b.abbrev === selBook.abbrev;
               return (
                 <div key={b.abbrev} ref={active ? navBookRef : null}>
                   <button
@@ -191,6 +191,38 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
             })}
           </div>
         ))}
+        {nonCanonList && nonCanonList.length > 0 && (
+          <div className="nav-group">
+            <div className="nav-div">
+              <span className="nav-div-t">Other</span>
+              <span className="nav-div-n">Non-canonical</span>
+            </div>
+            {nonCanonList.map(t => {
+              const active = !!nonCanon && nonCanon.id === t.id;
+              return (
+                <div key={t.id}>
+                  <button
+                    className={"nav-book" + (active ? " on" : "")}
+                    onClick={() => { onPickNonCanon(t); if (isOverlay) onClose(); }}
+                  >
+                    <span className="nav-book-name">{t.name}</span>
+                  </button>
+                  {active && (
+                    <div className="nav-chips">
+                      {Array.from({ length: t.chapters }, (_, i) => i + 1).map(n => (
+                        <button
+                          key={n}
+                          className={"ch-chip" + (n === selChapter ? " on" : "")}
+                          onClick={() => setSelChapter(n)}
+                        >{n}</button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </nav>
   );
@@ -889,6 +921,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           selChapter={selChapter}
           setSelChapter={setSelChapter}
           navBookRef={navBookRef}
+          nonCanon={nonCanon}
+          nonCanonList={NONCANON}
+          onPickNonCanon={pickNonCanon}
         />
       )}
       {!navVisible && mobileNavOpen && (

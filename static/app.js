@@ -2360,7 +2360,10 @@ function LibNavPanel({
   setSelChapter,
   isOverlay,
   onClose,
-  navBookRef
+  navBookRef,
+  nonCanon,
+  nonCanonList,
+  onPickNonCanon
 }) {
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
@@ -2409,7 +2412,7 @@ function LibNavPanel({
   }, g.t), /*#__PURE__*/React.createElement("span", {
     className: "nav-div-n"
   }, g.div)), g.books.map(b => {
-    const active = selBook && b.abbrev === selBook.abbrev;
+    const active = !nonCanon && selBook && b.abbrev === selBook.abbrev;
     return /*#__PURE__*/React.createElement("div", {
       key: b.abbrev,
       ref: active ? navBookRef : null
@@ -2431,7 +2434,36 @@ function LibNavPanel({
       className: "ch-chip" + (n === selChapter ? " on" : ""),
       onClick: () => setSelChapter(n)
     }, n))));
-  })))));
+  }))), nonCanonList && nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "nav-group"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "nav-div"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "nav-div-t"
+  }, "Other"), /*#__PURE__*/React.createElement("span", {
+    className: "nav-div-n"
+  }, "Non-canonical")), nonCanonList.map(t => {
+    const active = !!nonCanon && nonCanon.id === t.id;
+    return /*#__PURE__*/React.createElement("div", {
+      key: t.id
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "nav-book" + (active ? " on" : ""),
+      onClick: () => {
+        onPickNonCanon(t);
+        if (isOverlay) onClose();
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "nav-book-name"
+    }, t.name)), active && /*#__PURE__*/React.createElement("div", {
+      className: "nav-chips"
+    }, Array.from({
+      length: t.chapters
+    }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
+      key: n,
+      className: "ch-chip" + (n === selChapter ? " on" : ""),
+      onClick: () => setSelChapter(n)
+    }, n))));
+  }))));
 }
 
 // ============================================================
@@ -3299,7 +3331,10 @@ function LibraryView({
     setSelBook: selectBook,
     selChapter: selChapter,
     setSelChapter: setSelChapter,
-    navBookRef: navBookRef
+    navBookRef: navBookRef,
+    nonCanon: nonCanon,
+    nonCanonList: NONCANON,
+    onPickNonCanon: pickNonCanon
   }), !navVisible && mobileNavOpen && /*#__PURE__*/React.createElement(MobileBookPicker, {
     books: books,
     selBook: selBook,
