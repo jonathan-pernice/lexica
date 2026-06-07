@@ -1227,6 +1227,341 @@ function DetailPanel({
     sheetRef,
     scrollRef
   } = useSwipeToDismiss(onClose);
+
+  // --------------------------------------------------------------------------
+  // Panel descriptor — resolve the isPN / isHebrew / metavType tangle into ONE
+  // place: a `hero` block and an ordered `sections` list. The return below is
+  // dumb: it renders `hero`, then `sections.map(renderSection)` — no decisions.
+  // --------------------------------------------------------------------------
+  const properName = extractProperName(entry.gloss);
+  const nameOrGloss = isPN || metavData ? properName : entry.gloss;
+  const trimTail = s => stripArticles(s?.replace(/[.,;:!?—-]+$/, "").trim());
+  // Hebrew words show their gloss inline next to the transliteration; everything
+  // else shows it on its own line. This boolean gates which (and the standalone).
+  const heroHasHeGloss = !!(isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss);
+  const hero = {
+    he: isHebrew,
+    noGloss: isPN && !entry.greek && !isHebrew,
+    script: isHebrew ? bdbEntry?.lemma || entry.gloss : entry.greek || nameOrGloss,
+    translit: isHebrew ? bdbEntry?.xlit : entry.translit,
+    inlineGloss: trimTail(nameOrGloss),
+    standaloneGloss: trimTail(isPN || metavData ? properName : entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss),
+    morph: morphLine
+  };
+
+  // Verse + place sections show KJV text (not ABP) for Hebrew / KJV-mode / place words.
+  const useKjvText = entry.isKjv || isHebrew || metavType === "place" && !isPN;
+
+  // Ordered list of stacked sections. BDB and LSJ are mutually exclusive (Hebrew
+  // gets BDB; everything else may get LSJ) — same either/or as the old ternary.
+  const sections = [];
+  if (metavLoading || metavPersonData || metavPlaceData) sections.push("metav");
+  if (aiDescription || aiDescLoading) sections.push("aidesc");
+  if (isHebrewWord) sections.push("bdb");else if ((!isPN || metavType === "place" && metavData?.strongs_g?.length > 0) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0)) sections.push("lsj");
+  if (!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0) sections.push("abpOcc");
+  if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
+  if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
+  if (isHebrew && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
+  if (entry.derivation) sections.push("derivation");
+  if (entry.book) sections.push("verse");
+  if (occurrences > 0 || totalResults > 0) sections.push("frequency");
+  const renderSection = id => {
+    switch (id) {
+      case "metav":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "metav",
+          className: "sec"
+        }, metavLoading ? /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def lsj-def--loading"
+        }, "Looking up\u2026") : /*#__PURE__*/React.createElement(React.Fragment, null, metavHasBoth && /*#__PURE__*/React.createElement("div", {
+          className: "metav-type-tabs"
+        }, /*#__PURE__*/React.createElement("button", {
+          className: "metav-type-tab" + (metavTab === "person" ? " on" : ""),
+          onClick: () => setMetavTab("person")
+        }, "Person"), /*#__PURE__*/React.createElement("button", {
+          className: "metav-type-tab" + (metavTab === "place" ? " on" : ""),
+          onClick: () => setMetavTab("place")
+        }, "Place")), metavType === "person" && metavData ? /*#__PURE__*/React.createElement("div", {
+          className: "metav-person"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, isGentilic ? "People / Clan" : "Biblical Person"), /*#__PURE__*/React.createElement("span", {
+          className: "lsj-badge lsj-badge--gold"
+        }, "metaV")), /*#__PURE__*/React.createElement("div", {
+          className: "metav-meta"
+        }, metavData.gender && /*#__PURE__*/React.createElement("span", {
+          className: "metav-tag"
+        }, metavData.gender === "M" ? "Male" : "Female"), metavData.groups.filter(g => g.startsWith("Tribe")).map(g => /*#__PURE__*/React.createElement("span", {
+          key: g,
+          className: "metav-tag"
+        }, g)), metavData.groups.includes("Genealogy of Jesus") && /*#__PURE__*/React.createElement("span", {
+          className: "metav-tag metav-tag-gold"
+        }, "Genealogy of Jesus")), (metavData.birth_year || metavData.death_year) && /*#__PURE__*/React.createElement("p", {
+          className: "detail-p detail-p--meta",
+          style: {
+            fontSize: "13px"
+          }
+        }, metavData.birth_year && /*#__PURE__*/React.createElement("span", null, "Born: ", metavData.birth_year, metavData.birth_place ? `, ${metavData.birth_place}` : ""), metavData.birth_year && metavData.death_year && " · ", metavData.death_year && /*#__PURE__*/React.createElement("span", null, "Died: ", metavData.death_year, metavData.death_place ? `, ${metavData.death_place}` : "")), metavData.relationships.length > 0 && /*#__PURE__*/React.createElement("div", {
+          className: "metav-rels"
+        }, [{
+          types: ["child"],
+          label: "Parent"
+        }, {
+          types: ["father", "mother"],
+          label: "Children"
+        }, {
+          types: ["spouseOrConcubine"],
+          label: "Spouse"
+        }, {
+          types: ["sibling", "halfSiblingSameFather", "halfSiblingSameMother"],
+          label: "Siblings"
+        }].map(({
+          types,
+          label
+        }) => {
+          const matching = metavData.relationships.filter(r => types.includes(r.type));
+          if (!matching.length) return null;
+          return /*#__PURE__*/React.createElement("div", {
+            key: label,
+            className: "metav-rel-row"
+          }, /*#__PURE__*/React.createElement("span", {
+            className: "metav-rel-label"
+          }, label), /*#__PURE__*/React.createElement("span", {
+            className: "metav-rel-names"
+          }, matching.slice(0, 5).map(r => r.name).join(", "), matching.length > 5 ? ` +${matching.length - 5}` : ""));
+        }))) : metavType === "place" && metavData ? /*#__PURE__*/React.createElement("div", {
+          className: "metav-place"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, isGentilic ? "Homeland" : "Biblical Place"), /*#__PURE__*/React.createElement("span", {
+          className: "lsj-badge lsj-badge--gold"
+        }, "metaV")), metavData.comment && /*#__PURE__*/React.createElement("p", {
+          className: "detail-p detail-p--meta"
+        }, metavData.comment), metavData.lat && metavData.lon ? /*#__PURE__*/React.createElement(LeafletMap, {
+          lat: metavData.lat,
+          lon: metavData.lon,
+          name: metavData.name
+        }) : /*#__PURE__*/React.createElement("p", {
+          className: "detail-p detail-p--meta",
+          style: {
+            color: "var(--ink-4)",
+            fontStyle: "italic"
+          }
+        }, "Location unknown")) : null));
+      case "aidesc":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "aidesc",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, metavType === "place" ? "Biblical Place" : "Biblical Reference"), /*#__PURE__*/React.createElement("span", {
+          className: "lsj-badge lsj-badge--accent"
+        }, "AI")), aiDescLoading ? /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def lsj-def--loading"
+        }, "Looking up\u2026") : /*#__PURE__*/React.createElement("p", {
+          className: "detail-p detail-p--meta"
+        }, aiDescription));
+      case "bdb":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "bdb",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "Brown-Driver-Briggs"), /*#__PURE__*/React.createElement("span", {
+          className: "bdb-badge"
+        }, "BDB")), bdbLoading ? /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def lsj-def--loading"
+        }, "Loading\u2026") : bdbEntry ? /*#__PURE__*/React.createElement("div", {
+          className: "bdb-body"
+        }, bdbEntry.pronounce && /*#__PURE__*/React.createElement("div", {
+          className: "bdb-xlit"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "bdb-pronounce"
+        }, bdbEntry.pronounce)), bdbEntry.part_of_speech && /*#__PURE__*/React.createElement("span", {
+          className: "bdb-pos-badge"
+        }, bdbEntry.part_of_speech), bdbEntry.description && /*#__PURE__*/React.createElement("p", {
+          className: "detail-p detail-p--meta"
+        }, bdbEntry.description)) : /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def lsj-def--loading"
+        }, "Not found in BDB."));
+      case "lsj":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "lsj",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "lsj-head"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, lsjEntry && lsjEntry.source === "abp_ext" ? /*#__PURE__*/React.createElement(React.Fragment, null, "ABP Extended", /*#__PURE__*/React.createElement("span", {
+          className: "abp-badge"
+        }, "ABP EXT")) : /*#__PURE__*/React.createElement(React.Fragment, null, "Liddell-Scott-Jones", /*#__PURE__*/React.createElement("span", {
+          className: "lsj-badge"
+        }, "LSJ")))), lsjEntry && /*#__PURE__*/React.createElement("div", {
+          className: "lsj-tabs"
+        }, /*#__PURE__*/React.createElement("button", {
+          className: "lsj-tab " + (lsjTab === "def" ? "on" : ""),
+          onClick: () => setLsjTab("def")
+        }, "Definition"), /*#__PURE__*/React.createElement("button", {
+          className: "lsj-tab " + (lsjTab === "full" ? "on" : ""),
+          onClick: () => setLsjTab("full")
+        }, lsjEntry.source === "abp_ext" ? "Full ABP" : "Full LSJ"))), lsjLoading ? /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def lsj-def--loading"
+        }, "Loading\u2026") : lsjEntry ? lsjTab === "def" ? lsjEntry.source === "strongs" ? /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def",
+          dangerouslySetInnerHTML: {
+            __html: lsjEntry.def_html
+          }
+        }) : /*#__PURE__*/React.createElement(LsjSummary, {
+          data: lsjSummary,
+          loading: lsjSummaryLoading
+        }) : /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def",
+          dangerouslySetInnerHTML: {
+            __html: lsjEntry.def_html
+          }
+        }) : /*#__PURE__*/React.createElement("div", {
+          className: "lsj-def lsj-def--loading"
+        }, "Not found."));
+      case "abpOcc":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "abpOcc",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
+          className: "occ-link",
+          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)
+        }, /*#__PURE__*/React.createElement("b", null, abpCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
+      case "kjvOcc":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "kjvOcc",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
+          className: "occ-link",
+          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
+        }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
+      case "pnOcc":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "pnOcc",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
+          className: "occ-link",
+          onClick: () => onNameSearch(extractProperName(entry.gloss))
+        }, /*#__PURE__*/React.createElement("b", null, pnCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
+      case "hebrewKjvOcc":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "hebrewKjvOcc",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
+          className: "occ-link",
+          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
+        }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
+      case "derivation":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "derivation",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "Derivation")), /*#__PURE__*/React.createElement("p", {
+          className: "detail-p"
+        }, entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) => /^G\d[\d.]*/i.test(part) ? /*#__PURE__*/React.createElement("button", {
+          key: i,
+          className: "link-btn link-btn--strong",
+          onClick: () => onNavigateToLexicon?.(part)
+        }, part) : part)));
+      case "verse":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "verse",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "Verse \u2014 ", entry.ref), /*#__PURE__*/React.createElement("span", {
+          className: "sec-meta"
+        }, useKjvText ? "KJV" : "LXX (ABP English)")), /*#__PURE__*/React.createElement("blockquote", {
+          className: "dverse"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "dverse-n"
+        }, entry.verse), useKjvText ? kjvVerseText || "—" : verseLoading ? "Loading…" : verseText || "—"), showInterlinear && /*#__PURE__*/React.createElement("div", {
+          className: "interlinear"
+        }, !interlinearWords ? /*#__PURE__*/React.createElement("span", {
+          style: {
+            color: "var(--ink-4)",
+            fontSize: "13px"
+          }
+        }, "Loading\u2026") : interlinearWords.map((w, i) => /*#__PURE__*/React.createElement("div", {
+          key: i,
+          className: "iword"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "iw-greek"
+        }, w.lemma || "—"), /*#__PURE__*/React.createElement("span", {
+          className: "iw-translit"
+        }, w.translit || ""), /*#__PURE__*/React.createElement("span", {
+          className: "iw-english"
+        }, w.english || "—"), (w.strongs || w.strongs_base) && w.strongs_base !== "*" && /*#__PURE__*/React.createElement("span", {
+          className: "iw-strongs"
+        }, strongsTag(w.strongs && w.strongs !== '*' ? w.strongs : w.strongs_base))))), /*#__PURE__*/React.createElement("div", {
+          className: "dverse-tools"
+        }, /*#__PURE__*/React.createElement("button", {
+          className: "link-btn",
+          onClick: () => onReadInContext && onReadInContext(entry.book, entry.chapter, entry.verse)
+        }, "Read in context ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)), /*#__PURE__*/React.createElement("span", {
+          className: "dot"
+        }, "\xB7"), /*#__PURE__*/React.createElement("button", {
+          className: "link-btn" + (showInterlinear ? " link-btn-on" : ""),
+          onClick: () => setShowInterlinear(v => !v)
+        }, "Interlinear")));
+      case "frequency":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "frequency",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "Frequency")), /*#__PURE__*/React.createElement("div", {
+          className: "freq"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "freq-bar"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "freq-fill",
+          style: {
+            width: barWidth + "%"
+          }
+        })), /*#__PURE__*/React.createElement("div", {
+          className: "freq-meta"
+        }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("b", null, occurrences), "\xD7 in current results"))));
+      default:
+        return null;
+    }
+  };
   return /*#__PURE__*/React.createElement("aside", {
     ref: isMobile ? sheetRef : null,
     className: "detail " + (isMobile ? "detail-sheet" : "detail-side"),
@@ -1253,281 +1588,23 @@ function DetailPanel({
     className: "detail-body",
     ref: isMobile ? scrollRef : null
   }, /*#__PURE__*/React.createElement("div", {
-    className: "detail-hero" + (isPN && !entry.greek && !isHebrew ? " no-gloss" : "")
+    className: "detail-hero" + (hero.noGloss ? " no-gloss" : "")
   }, /*#__PURE__*/React.createElement("div", {
-    className: "detail-greek" + (isHebrew ? " detail-greek--he" : ""),
-    dir: isHebrew ? "rtl" : undefined
-  }, isHebrew ? bdbEntry?.lemma || entry.gloss : entry.greek || (isPN || metavData ? extractProperName(entry.gloss) : entry.gloss)), /*#__PURE__*/React.createElement("div", {
-    className: "detail-translit-row" + (isHebrew ? " detail-translit-row-he" : "")
+    className: "detail-greek" + (hero.he ? " detail-greek--he" : ""),
+    dir: hero.he ? "rtl" : undefined
+  }, hero.script), /*#__PURE__*/React.createElement("div", {
+    className: "detail-translit-row" + (hero.he ? " detail-translit-row-he" : "")
   }, /*#__PURE__*/React.createElement("span", {
     className: "detail-translit"
-  }, isHebrew ? bdbEntry?.xlit : entry.translit), isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+  }, hero.translit), heroHasHeGloss && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
     className: "detail-sep"
   }, "\xB7"), /*#__PURE__*/React.createElement("span", {
     className: "detail-gloss"
-  }, stripArticles((isPN || metavData ? extractProperName(entry.gloss) : entry.gloss)?.replace(/[.,;:!?—-]+$/, "").trim())))), !(isPN && !entry.greek && !isHebrew) && !(isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss) && /*#__PURE__*/React.createElement("div", {
+  }, hero.inlineGloss))), !hero.noGloss && !heroHasHeGloss && /*#__PURE__*/React.createElement("div", {
     className: "detail-gloss"
-  }, stripArticles((isPN || metavData ? extractProperName(entry.gloss) : entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss)?.replace(/[.,;:!?—-]+$/, "").trim())), morphLine && /*#__PURE__*/React.createElement("div", {
+  }, hero.standaloneGloss), hero.morph && /*#__PURE__*/React.createElement("div", {
     className: "detail-morph"
-  }, morphLine)), (metavLoading || metavPersonData || metavPlaceData) && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, metavLoading ? /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def lsj-def--loading"
-  }, "Looking up\u2026") : /*#__PURE__*/React.createElement(React.Fragment, null, metavHasBoth && /*#__PURE__*/React.createElement("div", {
-    className: "metav-type-tabs"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "metav-type-tab" + (metavTab === "person" ? " on" : ""),
-    onClick: () => setMetavTab("person")
-  }, "Person"), /*#__PURE__*/React.createElement("button", {
-    className: "metav-type-tab" + (metavTab === "place" ? " on" : ""),
-    onClick: () => setMetavTab("place")
-  }, "Place")), metavType === "person" && metavData ? /*#__PURE__*/React.createElement("div", {
-    className: "metav-person"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, isGentilic ? "People / Clan" : "Biblical Person"), /*#__PURE__*/React.createElement("span", {
-    className: "lsj-badge lsj-badge--gold"
-  }, "metaV")), /*#__PURE__*/React.createElement("div", {
-    className: "metav-meta"
-  }, metavData.gender && /*#__PURE__*/React.createElement("span", {
-    className: "metav-tag"
-  }, metavData.gender === "M" ? "Male" : "Female"), metavData.groups.filter(g => g.startsWith("Tribe")).map(g => /*#__PURE__*/React.createElement("span", {
-    key: g,
-    className: "metav-tag"
-  }, g)), metavData.groups.includes("Genealogy of Jesus") && /*#__PURE__*/React.createElement("span", {
-    className: "metav-tag metav-tag-gold"
-  }, "Genealogy of Jesus")), (metavData.birth_year || metavData.death_year) && /*#__PURE__*/React.createElement("p", {
-    className: "detail-p detail-p--meta",
-    style: {
-      fontSize: "13px"
-    }
-  }, metavData.birth_year && /*#__PURE__*/React.createElement("span", null, "Born: ", metavData.birth_year, metavData.birth_place ? `, ${metavData.birth_place}` : ""), metavData.birth_year && metavData.death_year && " · ", metavData.death_year && /*#__PURE__*/React.createElement("span", null, "Died: ", metavData.death_year, metavData.death_place ? `, ${metavData.death_place}` : "")), metavData.relationships.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "metav-rels"
-  }, [{
-    types: ["child"],
-    label: "Parent"
-  }, {
-    types: ["father", "mother"],
-    label: "Children"
-  }, {
-    types: ["spouseOrConcubine"],
-    label: "Spouse"
-  }, {
-    types: ["sibling", "halfSiblingSameFather", "halfSiblingSameMother"],
-    label: "Siblings"
-  }].map(({
-    types,
-    label
-  }) => {
-    const matching = metavData.relationships.filter(r => types.includes(r.type));
-    if (!matching.length) return null;
-    return /*#__PURE__*/React.createElement("div", {
-      key: label,
-      className: "metav-rel-row"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "metav-rel-label"
-    }, label), /*#__PURE__*/React.createElement("span", {
-      className: "metav-rel-names"
-    }, matching.slice(0, 5).map(r => r.name).join(", "), matching.length > 5 ? ` +${matching.length - 5}` : ""));
-  }))) : metavType === "place" && metavData ? /*#__PURE__*/React.createElement("div", {
-    className: "metav-place"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, isGentilic ? "Homeland" : "Biblical Place"), /*#__PURE__*/React.createElement("span", {
-    className: "lsj-badge lsj-badge--gold"
-  }, "metaV")), metavData.comment && /*#__PURE__*/React.createElement("p", {
-    className: "detail-p detail-p--meta"
-  }, metavData.comment), metavData.lat && metavData.lon ? /*#__PURE__*/React.createElement(LeafletMap, {
-    lat: metavData.lat,
-    lon: metavData.lon,
-    name: metavData.name
-  }) : /*#__PURE__*/React.createElement("p", {
-    className: "detail-p detail-p--meta",
-    style: {
-      color: "var(--ink-4)",
-      fontStyle: "italic"
-    }
-  }, "Location unknown")) : null)), (aiDescription || aiDescLoading) && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, metavType === "place" ? "Biblical Place" : "Biblical Reference"), /*#__PURE__*/React.createElement("span", {
-    className: "lsj-badge lsj-badge--accent"
-  }, "AI")), aiDescLoading ? /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def lsj-def--loading"
-  }, "Looking up\u2026") : /*#__PURE__*/React.createElement("p", {
-    className: "detail-p detail-p--meta"
-  }, aiDescription)), isHebrewWord ? /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "Brown-Driver-Briggs"), /*#__PURE__*/React.createElement("span", {
-    className: "bdb-badge"
-  }, "BDB")), bdbLoading ? /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def lsj-def--loading"
-  }, "Loading\u2026") : bdbEntry ? /*#__PURE__*/React.createElement("div", {
-    className: "bdb-body"
-  }, bdbEntry.pronounce && /*#__PURE__*/React.createElement("div", {
-    className: "bdb-xlit"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "bdb-pronounce"
-  }, bdbEntry.pronounce)), bdbEntry.part_of_speech && /*#__PURE__*/React.createElement("span", {
-    className: "bdb-pos-badge"
-  }, bdbEntry.part_of_speech), bdbEntry.description && /*#__PURE__*/React.createElement("p", {
-    className: "detail-p detail-p--meta"
-  }, bdbEntry.description)) : /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def lsj-def--loading"
-  }, "Not found in BDB.")) : (!isPN || metavType === "place" && metavData?.strongs_g?.length > 0) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0) && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsj-head"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, lsjEntry && lsjEntry.source === "abp_ext" ? /*#__PURE__*/React.createElement(React.Fragment, null, "ABP Extended", /*#__PURE__*/React.createElement("span", {
-    className: "abp-badge"
-  }, "ABP EXT")) : /*#__PURE__*/React.createElement(React.Fragment, null, "Liddell-Scott-Jones", /*#__PURE__*/React.createElement("span", {
-    className: "lsj-badge"
-  }, "LSJ")))), lsjEntry && /*#__PURE__*/React.createElement("div", {
-    className: "lsj-tabs"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "lsj-tab " + (lsjTab === "def" ? "on" : ""),
-    onClick: () => setLsjTab("def")
-  }, "Definition"), /*#__PURE__*/React.createElement("button", {
-    className: "lsj-tab " + (lsjTab === "full" ? "on" : ""),
-    onClick: () => setLsjTab("full")
-  }, lsjEntry.source === "abp_ext" ? "Full ABP" : "Full LSJ"))), lsjLoading ? /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def lsj-def--loading"
-  }, "Loading\u2026") : lsjEntry ? lsjTab === "def" ? lsjEntry.source === "strongs" ? /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def",
-    dangerouslySetInnerHTML: {
-      __html: lsjEntry.def_html
-    }
-  }) : /*#__PURE__*/React.createElement(LsjSummary, {
-    data: lsjSummary,
-    loading: lsjSummaryLoading
-  }) : /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def",
-    dangerouslySetInnerHTML: {
-      __html: lsjEntry.def_html
-    }
-  }) : /*#__PURE__*/React.createElement("div", {
-    className: "lsj-def lsj-def--loading"
-  }, "Not found.")), !isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0 && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
-    className: "occ-link",
-    onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)
-  }, /*#__PURE__*/React.createElement("b", null, abpCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0 && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
-    className: "occ-link",
-    onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
-  }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), !entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
-    className: "occ-link",
-    onClick: () => onNameSearch(extractProperName(entry.gloss))
-  }, /*#__PURE__*/React.createElement("b", null, pnCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), isHebrew && kjvCount !== null && kjvCount > 0 && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
-    className: "occ-link",
-    onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
-  }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), entry.derivation && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "Derivation")), /*#__PURE__*/React.createElement("p", {
-    className: "detail-p"
-  }, entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) => /^G\d[\d.]*/i.test(part) ? /*#__PURE__*/React.createElement("button", {
-    key: i,
-    className: "link-btn link-btn--strong",
-    onClick: () => onNavigateToLexicon?.(part)
-  }, part) : part))), entry.book && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "Verse \u2014 ", entry.ref), /*#__PURE__*/React.createElement("span", {
-    className: "sec-meta"
-  }, entry.isKjv || isHebrew || metavType === "place" && !isPN ? "KJV" : "LXX (ABP English)")), /*#__PURE__*/React.createElement("blockquote", {
-    className: "dverse"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "dverse-n"
-  }, entry.verse), entry.isKjv || isHebrew || metavType === "place" && !isPN ? kjvVerseText || "—" : verseLoading ? "Loading…" : verseText || "—"), showInterlinear && /*#__PURE__*/React.createElement("div", {
-    className: "interlinear"
-  }, !interlinearWords ? /*#__PURE__*/React.createElement("span", {
-    style: {
-      color: "var(--ink-4)",
-      fontSize: "13px"
-    }
-  }, "Loading\u2026") : interlinearWords.map((w, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "iword"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "iw-greek"
-  }, w.lemma || "—"), /*#__PURE__*/React.createElement("span", {
-    className: "iw-translit"
-  }, w.translit || ""), /*#__PURE__*/React.createElement("span", {
-    className: "iw-english"
-  }, w.english || "—"), (w.strongs || w.strongs_base) && w.strongs_base !== "*" && /*#__PURE__*/React.createElement("span", {
-    className: "iw-strongs"
-  }, strongsTag(w.strongs && w.strongs !== '*' ? w.strongs : w.strongs_base))))), /*#__PURE__*/React.createElement("div", {
-    className: "dverse-tools"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "link-btn",
-    onClick: () => onReadInContext && onReadInContext(entry.book, entry.chapter, entry.verse)
-  }, "Read in context ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)), /*#__PURE__*/React.createElement("span", {
-    className: "dot"
-  }, "\xB7"), /*#__PURE__*/React.createElement("button", {
-    className: "link-btn" + (showInterlinear ? " link-btn-on" : ""),
-    onClick: () => setShowInterlinear(v => !v)
-  }, "Interlinear"))), (occurrences > 0 || totalResults > 0) && /*#__PURE__*/React.createElement("section", {
-    className: "sec"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "sec-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "sec-t"
-  }, "Frequency")), /*#__PURE__*/React.createElement("div", {
-    className: "freq"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "freq-bar"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "freq-fill",
-    style: {
-      width: barWidth + "%"
-    }
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "freq-meta"
-  }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("b", null, occurrences), "\xD7 in current results"))))));
+  }, hero.morph)), sections.map(renderSection)));
 }
 
 // ============================================================
