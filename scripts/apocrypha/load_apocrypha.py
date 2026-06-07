@@ -24,7 +24,7 @@ BOOKS = [
     "esdras1", "tobit", "judith", "esther_gk",
     "maccabees1", "maccabees2", "maccabees3", "maccabees4",
     "wisdom", "sirach", "baruch", "epjeremiah",
-    "susanna", "bel", "daniel_gk", "manasseh",
+    "susanna", "bel", "manasseh",
 ]
 
 

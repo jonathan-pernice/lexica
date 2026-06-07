@@ -191,7 +191,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
         {nonCanonList && nonCanonList.length > 0 && (
           <div className="lib-other-wrap nav-other-wrap">
             <button className={"nav-other-btn" + (nonCanon ? " on" : "")} onClick={() => setOtherOpen(o => !o)} aria-expanded={otherOpen}>
-              {nonCanon ? nonCanon.name : "Other"} ▾
+              {nonCanon ? (nonCanon.abbr || nonCanon.name) : "Other"} ▾
             </button>
             {otherOpen && (
               <>
@@ -430,7 +430,6 @@ const NONCANON = [
   { id: "epjeremiah", name: "Letter of Jeremiah",  abbr: "EpJer", chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
   { id: "susanna",    name: "Susanna",             abbr: "Sus",   chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
   { id: "bel",        name: "Bel and the Dragon",  abbr: "Bel",   chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
-  { id: "daniel_gk",  name: "Daniel (Greek)",      abbr: "DaG",   chapters: 12, englishOnly: true, group: "Septuagint Apocrypha" },
   { id: "manasseh",   name: "Prayer of Manasseh",  abbr: "PrMan", chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
 ];
 

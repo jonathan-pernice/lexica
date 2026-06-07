@@ -2621,7 +2621,7 @@ function LibNavPanel({
     className: "nav-other-btn" + (nonCanon ? " on" : ""),
     onClick: () => setOtherOpen(o => !o),
     "aria-expanded": otherOpen
-  }, nonCanon ? nonCanon.name : "Other", " \u25BE"), otherOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, nonCanon ? nonCanon.abbr || nonCanon.name : "Other", " \u25BE"), otherOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "lib-other-scrim",
     onClick: () => setOtherOpen(false)
   }), /*#__PURE__*/React.createElement("div", {
@@ -3042,13 +3042,6 @@ const NONCANON = [
   name: "Bel and the Dragon",
   abbr: "Bel",
   chapters: 1,
-  englishOnly: true,
-  group: "Septuagint Apocrypha"
-}, {
-  id: "daniel_gk",
-  name: "Daniel (Greek)",
-  abbr: "DaG",
-  chapters: 12,
   englishOnly: true,
   group: "Septuagint Apocrypha"
 }, {
