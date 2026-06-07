@@ -4,7 +4,7 @@
   "private": true,
   "description": "Build tooling for Lexica's frontend (compiles static/app.jsx -> static/app.js).",
   "scripts": {
-    "build": "babel static/app.jsx --out-file static/app.js"
+    "build": "node scripts/build-frontend.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.24.0",
