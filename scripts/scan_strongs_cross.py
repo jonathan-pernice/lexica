@@ -8,14 +8,24 @@ tacked on the end ("of God  G3588 G2316"); our build sometimes paired them
 backwards, so the noun's English ("God") landed on the FUNCTION word (the article
 G3588) and the connector ("of") landed on the real noun (θεός / G2316).
 
-High-precision fingerprint (so the count is trustworthy):
-  A = a function-word slot (article G3588 or a preposition) whose English is a
-      bare CONTENT noun (no leading "the/a/your…", head is a real noun)
-  B = the ADJACENT slot, a real content Greek/Hebrew word, whose English is only
-      a CONNECTOR ("of", "the", "in"…)
-  AND B's own dictionary meaning CONTAINS A's noun — i.e. the noun on A provably
-      belongs to B's Greek word. That last test is what makes a hit a real cross,
-      not legitimate "the things / of the LORD" lumping.
+Fingerprint of one flip:
+  A = a slot showing a bare CONTENT word (no leading "the/a/your…", head is a real
+      word) whose dictionary meaning is FOUND IN
+  B = an ADJACENT slot that itself shows only a CONNECTOR ("of", "the", "in"…).
+      i.e. A's word provably belongs to B — they are crossed.
+
+Coverage note: A is checked on EVERY slot, not just function words (the old version
+only anchored on the article/preposition). In practice the real flip ONLY happens
+when A is a function word — so the report is split:
+  FUNCTION-anchor = the article/preposition family. These are the genuine flips;
+      the build now auto-corrects them (build_words_from_abp._fix_backwards_pairing),
+      so a clean rebuilt db reads 0 here.
+  OTHER = content<->content. Anchoring everywhere keeps the net complete, but these
+      are almost all FALSE positives — legitimate verb+preposition pairs like
+      "went forth / unto" the dictionary test happens to match. Review-only.
+
+To check the SOURCE directly (before any rebuild), see preview_split.py --scan,
+which runs the real chopper over the ABP text and counts the same flips.
 
 Usage:
   python3 scripts/scan_strongs_cross.py bible.db
@@ -103,44 +113,79 @@ def def_has(head, base):
     return head in d or singular(head) in d
 
 
-def neighbour(verse_id, position, delta):
-    return conn.execute(
-        "SELECT position, english, english_head, strongs_base FROM words "
-        "WHERE verse_id=? AND position=?", (verse_id, position + delta)).fetchone()
+# Widened scan: anchor on EVERY word, not just function words. The flip signature
+# is the same either way — a slot showing a real content word whose meaning belongs
+# to an ADJACENT slot that itself shows only a connector — so checking all slots
+# catches content<->content flips too, not just the article/preposition cases. We
+# fetch every word once, grouped by verse, and look at neighbours in memory (no
+# per-row DB round-trip), then split the report into FUNCTION-anchor hits (the
+# actionable article/preposition family, already auto-fixed at build) and OTHER
+# hits (content<->content — review candidates).
+from collections import defaultdict
 
-
-rows = conn.execute(
+rows_all = conn.execute(
     "SELECT w.verse_id, w.position, w.english, w.english_head, w.strongs_base, "
     "       v.book, v.chapter, v.verse "
     "FROM words w JOIN verses v ON v.id = w.verse_id "
-    f"WHERE w.strongs_base IN ({','.join('?' * len(FUNCTION))}) "
-    "  AND w.english_head IS NOT NULL AND w.english_head != '' "
-    "ORDER BY v.book, v.chapter, v.verse, w.position", tuple(FUNCTION)).fetchall()
+    "WHERE w.english_head IS NOT NULL AND w.english_head != '' "
+    "ORDER BY v.book, v.chapter, v.verse, w.position").fetchall()
 
-hits = []
-for r in rows:
-    head = bare(r["english_head"])
-    if not head or head in SKIP_HEADS:
-        continue
-    if first_word(r["english"]) in DET:      # substantival "the X" = legit
-        continue
-    for delta in (1, -1):
-        nb = neighbour(r["verse_id"], r["position"], delta)
-        if not nb or not nb["strongs_base"]:
-            continue
-        sb = nb["strongs_base"]
-        if sb in FUNCTION or sb in ("*", ""):
-            continue
-        neng = (nb["english"] or "").strip().lower().strip(".,;:")
-        if neng in CONNECTORS and def_has(head, sb):
-            hits.append((r, nb))
-            break
+by_verse = defaultdict(dict)            # verse_id -> {position: row}
+order = []
+for r in rows_all:
+    if r["verse_id"] not in by_verse:
+        order.append(r["verse_id"])
+    by_verse[r["verse_id"]][r["position"]] = r
 
-print(f"Parser number-reversal crosses: {len(hits)}  [DB: {DB}]")
-print("(function word showing a real noun, neighbour showing the connector,\n"
-      " confirmed by the neighbour's dictionary meaning)\n")
-for r, nb in hits[:LIMIT]:
-    ref = f"{r['book']} {r['chapter']}:{r['verse']}"
-    print(f"  {ref:<12} pos{r['position']:>3} {r['strongs_base']:<6} eng={r['english']!r:<14} "
-          f"<-> pos{nb['position']:>3} {nb['strongs_base']:<6} eng={nb['english']!r}")
+hits = []                               # (anchor_row, neighbour_row, is_function)
+seen = set()                            # (verse_id, lo_pos, hi_pos) — dedupe pair
+for vid in order:
+    slots = by_verse[vid]
+    for pos, r in slots.items():
+        sb = r["strongs_base"]
+        if not sb or sb in ("*", ""):
+            continue
+        head = bare(r["english_head"])
+        if not head or head in SKIP_HEADS:
+            continue
+        if first_word(r["english"]) in DET:      # substantival "the X" = legit
+            continue
+        for delta in (1, -1):
+            nb = slots.get(pos + delta)
+            if not nb or not nb["strongs_base"]:
+                continue
+            nsb = nb["strongs_base"]
+            if nsb in ("*", ""):
+                continue
+            neng = (nb["english"] or "").strip().lower().strip(".,;:")
+            if neng in CONNECTORS and def_has(head, nsb):
+                key = (vid, min(pos, nb["position"]), max(pos, nb["position"]))
+                if key in seen:
+                    break
+                seen.add(key)
+                hits.append((r, nb, sb in FUNCTION))
+                break
+
+func_hits = [h for h in hits if h[2]]
+other_hits = [h for h in hits if not h[2]]
+
+print(f"Number-reversal crosses: {len(hits)}  "
+      f"(function-anchor {len(func_hits)}, other {len(other_hits)})  [DB: {DB}]")
+print("(a slot showing a real word whose meaning belongs to its neighbour, the\n"
+      " neighbour showing only a connector — confirmed by the dictionary)\n")
+
+
+def _show(group, label):
+    if not group:
+        return
+    print(f"-- {label} ({len(group)}) --")
+    for r, nb, _ in group[:LIMIT]:
+        ref = f"{r['book']} {r['chapter']}:{r['verse']}"
+        print(f"  {ref:<12} pos{r['position']:>3} {r['strongs_base']:<6} eng={r['english']!r:<14} "
+              f"<-> pos{nb['position']:>3} {nb['strongs_base']:<6} eng={nb['english']!r}")
+    print()
+
+
+_show(func_hits, "FUNCTION-anchor (article/preposition family; auto-fixed at build)")
+_show(other_hits, "OTHER (content<->content; review candidates)")
 conn.close()

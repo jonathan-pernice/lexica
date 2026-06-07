@@ -345,6 +345,97 @@ def _split_compounds(rows: list, lex: dict) -> None:
     rows.sort(key=lambda r: r[0])
 
 
+# ── Backwards-pairing correction (number-reversal repair) ──────────────────────
+# ABP writes a multi-word gloss with its Greek numbers tacked on the end
+# ("of God  G3588 G2316"). _split_compounds hands the words to the empty slots by
+# lexicon evidence, and for a [connector + content-noun] lump on a FUNCTION word
+# (article ὁ/G3588 or a preposition) it can pair them BACKWARDS — the noun's tag
+# landing on the function word and the connector's on the real noun (1Sa 5:2,
+# Rom 8:34, the "a <noun>" prep cases). The English reads fine; only the
+# clickable Strong's tag under each word ends up on the wrong slot.
+#
+# This pass corrects exactly that fingerprint — the same one scan_strongs_cross.py
+# detects — by swapping the two slots' Greek identity (strongs, strongs_base,
+# morph, lemma). It REPLACES the per-verse fix_article_noun_swaps.py band-aid:
+# evidence-driven, no hardcoded verse list, re-applies on every rebuild. English
+# text and word positions are untouched, so the verse reads identically.
+_ARTICLE_FW   = "3588"
+_PREP_FW = frozenset({
+    "1722", "1519", "1537", "575", "4314", "1909", "2596", "3326", "1223",
+    "5259", "5228", "3844", "4012", "1799", "1715", "3694", "561", "1726",
+    "630", "3936",
+})
+_FUNCTION_FW  = frozenset({_ARTICLE_FW}) | _PREP_FW
+_CONNECTOR_FW = frozenset({
+    "of", "the", "a", "an", "to", "in", "by", "with", "for", "from", "at", "on",
+    "into", "unto", "upon", "over", "under", "through", "s",
+})
+_SKIP_HEAD_FW = frozenset({
+    "the", "a", "an", "this", "that", "these", "those", "of", "in", "by", "to",
+    "with", "for", "from", "at", "on", "into", "unto", "and", "or", "not",
+    "he", "she", "it", "they", "we", "i", "you", "me", "him", "her", "them",
+    "us", "one", "ones", "thing", "things", "who", "which", "what", "both",
+    "all", "any", "some", "each", "every", "other", "same", "is", "are", "was",
+    "were", "be", "been", "being", "because", "therefore", "so", "then", "lest",
+    "though", "while", "when", "where", "why", "how", "as", "than", "if",
+})
+_DET_FW = frozenset({
+    "the", "a", "an", "this", "that", "these", "those", "my", "your", "his",
+    "her", "our", "their", "its", "all", "of", "some", "any", "each", "every",
+    "no", "which", "what", "one", "ones",
+})
+
+
+def _bare_fw(s):
+    return re.sub(r"[^\w]", "", s or "").lower()
+
+
+def _singular_fw(w):
+    if len(w) > 4 and w.endswith("ies"):
+        return w[:-3] + "y"
+    if len(w) > 3 and w.endswith("s") and not w.endswith("ss"):
+        return w[:-1]
+    return w
+
+
+def _fix_backwards_pairing(rows: list, lex: dict) -> None:
+    """Swap the Greek tag on the two slots of a backwards number-pairing (see note
+    above). Acts only on the high-precision fingerprint: a function-word slot
+    (article/prep) carrying a real content noun whose meaning is found in an
+    ADJACENT content slot that itself shows only a connector. Touches strongs,
+    strongs_base, morph, lemma — never english/position — so the verse reads the
+    same; only the tag under each word is corrected."""
+    by_pos = {r[0]: i for i, r in enumerate(rows)}
+    for idx, r in enumerate(rows):
+        pos, eng, head, sbase = r[0], r[1], r[2], r[4]
+        if sbase not in _FUNCTION_FW or not head:
+            continue
+        h = _bare_fw(head)
+        if not h or h in _SKIP_HEAD_FW:
+            continue
+        toks = (eng or "").split()
+        if toks and _bare_fw(toks[0]) in _DET_FW:        # substantival "the X" = legit
+            continue
+        for delta in (1, -1):
+            nidx = by_pos.get(pos + delta)
+            if nidx is None:
+                continue
+            nb  = rows[nidx]
+            nsb = nb[4]
+            if not nsb or nsb in _FUNCTION_FW or nsb in ("*", ""):
+                continue
+            neng = (nb[1] or "").strip().lower().strip(".,;:")
+            d    = lex.get(nsb, set())
+            if neng in _CONNECTOR_FW and (h in d or _singular_fw(h) in d):
+                a, b = rows[idx], rows[nidx]
+                # swap Greek identity (strongs=3, sbase=4, morph=11, lemma=12)
+                rows[idx]  = (a[0], a[1], a[2], b[3], b[4], a[5], a[6], a[7],
+                              a[8], a[9], a[10], b[11], b[12])
+                rows[nidx] = (b[0], b[1], b[2], a[3], a[4], b[5], b[6], b[7],
+                              b[8], b[9], b[10], a[11], a[12])
+                break
+
+
 # ── Bracket sorting ───────────────────────────────────────────────────────────
 
 def _sort_brackets(rows: list) -> None:
@@ -555,6 +646,7 @@ def build_verse_words(abp_words: list, bh_rows: list, lex: dict = None) -> list:
     _redistribute_pronoun_compounds(rows)
     if lex:
         _split_compounds(rows, lex)
+        _fix_backwards_pairing(rows, lex)
 
     # Strip temporary abp_pos (idx 10); keep morph (11) + lemma (12) as the last two columns.
     return [r[:10] + (r[11], r[12]) for r in rows]

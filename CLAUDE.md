@@ -288,13 +288,15 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    `fix_lord_subject` (dual-ordering pilot #1) →
    `fix_funcword_subject bible.db --include-idioms --include-bracketed` (dual-ordering #2 rounds
    1+2+3; both run LAST so they see clean data + bracket_punct has already run on source brackets) →
-   `fix_article_noun_swaps bible.db --apply` (8 tag-swaps where the splitter paired a multi-word gloss
-   with its trailing numbers backwards: God↔θεός 1Sa 5:2/Rom 8:34, "Jesus the"↔PN Act 19:4, + 5 "a
-   <noun>" prep cases 1Pe 5:12/2Co 8:10/Eph 3:3/Mat 26:44/Zec 8:13. Found by scan_strongs_cross.py,
-   each confirmed vs ABP source; idempotent, broken-state guarded; needs `--apply`).
+   `fix_article_noun_swaps bible.db --apply` (NOW Act 19:4 ONLY — the 7 number-reversal verses it used
+   to patch (God↔θεός 1Sa 5:2/Rom 8:34 + 5 "a <noun>" prep cases 1Pe 5:12/2Co 8:10/Eph 3:3/Mat 26:44/
+   Zec 8:13) are SELF-CORRECTED at build by `_fix_backwards_pairing()` in build_words_from_abp.py —
+   an evidence-driven pass over the scan_strongs_cross fingerprint, validated to touch exactly those 7
+   corpus-wide and nothing else. The remaining Act 19:4 "Jesus the" is a Problem-2 case (reversed
+   Greek/English order, proper-noun `*` slot) the build pass skips on purpose; needs `--apply`).
    Sanity counts: bracket_punct ~331v, subject_reorder 20, supplied_attach 5, g1473 ~1724,
    lord_subject ~795, funcword_subject ~108 (21 nouns + 75 idiom + 12 plural/in-bracket; without the
-   flags it's just the 21), article_noun_swaps 8. After lord_subject, verify `audit_lord_strongs.py bible.db` shows
+   flags it's just the 21), article_noun_swaps 1 (Act 19:4). After lord_subject, verify `audit_lord_strongs.py bible.db` shows
    WRONG-SLOT REPAIRABLE = 0 (was ~795). After funcword_subject, `audit_funcword_wrongslot.py bible.db
    --preps` REPAIRABLE-NOUN drops to ~0 (only the REPAIRABLE-OTHER adj/particle gray zone remains by
    design). The in-bracket relocations carry greek_pos → audit_bracket_order stays at baseline.
