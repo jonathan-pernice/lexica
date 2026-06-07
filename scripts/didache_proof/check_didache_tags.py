@@ -41,14 +41,25 @@ def main():
     conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     cur = conn.cursor()
 
-    ok, misses, bad_number, lemma_flags = [], [], [], []
+    # build {normalized lemma -> strongs_g} so we can tell whether a word I
+    # marked "no-Strong's" actually DOES have an entry (a recoverable miss).
+    lex_by_lemma = {}
+    for sg, lem in cur.execute("SELECT strongs_g, lemma FROM lexicon").fetchall():
+        if lem:
+            lex_by_lemma.setdefault(strip_accents(lem), sg)
+
+    ok, misses, bad_number, lemma_flags, recoverable = [], [], [], [], []
 
     for w in words:
         ref, greek = w.get("ref", "?"), w.get("greek", "?")
         strongs, my_lemma = w.get("strongs"), w.get("lemma", "")
 
         if not strongs:                       # I marked it as no-Strong's
-            misses.append((ref, greek, my_lemma))
+            hit = lex_by_lemma.get(strip_accents(my_lemma))
+            if hit:                           # ...but the lemma IS in the lexicon
+                recoverable.append((ref, greek, my_lemma, hit))
+            else:
+                misses.append((ref, greek, my_lemma))
             continue
 
         row = cur.execute(
@@ -72,8 +83,14 @@ def main():
     print(f"  total words      : {total}")
     print(f"  confirmed OK     : {len(ok)}  ({round(len(ok)/total*100)}%)")
     print(f"  no-Strong's (ok) : {len(misses)}")
+    print(f"  recoverable      : {len(recoverable)}   <- I can add a number")
     print(f"  BAD number       : {len(bad_number)}   <- fix these")
     print(f"  lemma mismatch   : {len(lemma_flags)}   <- review these")
+
+    if recoverable:
+        print("\n-- recoverable (I marked no-Strong's, but the lemma IS in your lexicon) --")
+        for ref, gk, lem, sg in recoverable:
+            print(f"   {ref:>5}  {gk:<16} {lem:<14} -> {sg}")
 
     if bad_number:
         print("\n-- BAD Strong's numbers (not in your lexicon) --")
