@@ -108,8 +108,13 @@ every step gated by local `--compare` 0 diffs + the app still booting.
    _FUNCTION_STRONGS set). app.py imports from core; `_build_function_strongs_cache` now mutates the
    set IN PLACE (clear+update). Booted + 28/28 byte-identical. (Startup fns _migrate_db /
    _build_function_strongs_cache / _load_ai_cache_from_db kept in app.py — only primitives moved.)
-2. [ ] Extract leaf domains first (least entangled → confidence): **metav → crossref → lsj/bdb → kjv →
-   lexicon → library → search → ai**. One blueprint per commit, `--compare` each. (Not started.)
+2. [x] **DONE 2026-06-06** — Extracted all 8 leaf-first domains, one blueprint per commit, local
+   `--compare` 28/28 after each: **metav → crossref → lsj/bdb → kjv → lexicon → library → search → ai**
+   (commits cb98724 → 473fb1d). `core.py` also gained the shared `_KJV_BOOK_ID/_REV` + `_ai_cache`.
+   `app.py` is now a ~260-line thin shell (was 3,577): imports core, registers the 8 blueprints, runs
+   the 3 startup steps, keeps index + asset processor + 429 handler. The function-word classifier stays
+   in app.py (startup-populates core._FUNCTION_STRONGS in place). Dead code (`_enrich_*`, `_SectionParser`,
+   `_hebrew_search`) moved with its domain per plan. Pushed to origin; **awaiting PA deploy + live --compare**.
 - Est: ~8–10 small verified commits; a focused session.
 - Why: half of "the jumble"; done after 1+2 so we file away clean code.
 - Risk: low logic risk but wide — snapshots + local boot verify every step.
