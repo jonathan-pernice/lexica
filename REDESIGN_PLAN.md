@@ -64,11 +64,50 @@ The fragile pattern behind 4+ past bugs: `SUBSTR(strongs_base, 2)` joins + hardc
 - Why: pairs with Phase 1 (same paths); kills a bug class.
 - Risk: low (byte-identical).
 
-## Phase 3 — Split `app.py` into modules
-3,660-line monolith → domain modules/blueprints (library, lexicon, search/ai, metav, crossref,
-kjv) over a shared `db` + `strongs` core. **Pure move, no behavior change.**
+## Phase 3 — Split `app.py` into modules  *(DESIGNED 2026-06-06, not yet executed)*
+3,660-line monolith → domain modules over a shared core. **Pure move, no behavior change** —
+every step gated by local `--compare` 0 diffs + the app still booting.
+
+### Approach: Flask Blueprints + a shared `core.py`
+- `core.py` — app-independent shared layer: `db()`, `db_ro()`, `_migrate_db()`, `_strip_accents`,
+  `_word_boundary_match`, `_strongs_num`, `_serialize_word_core`, `_clean_gloss`, the `_anthropic`
+  client, `_FUNCTION_STRONGS` (+ builder), and `limiter = Limiter(... )` created WITHOUT an app
+  (wired later via `limiter.init_app(app)`). No imports of any view module → no circular imports.
+- One module per domain, each a `Blueprint` (`@bp.route`, `@limiter.limit` import limiter from core):
+  - `views_library.py` — chapter_text, verse_text, verse_words, books_list
+  - `views_kjv.py` — kjv_* routes + `_kjv_strongs_search`, `_kjv_word_search`
+  - `views_lexicon.py` — lexicon_* + `_normalize_gloss` (+ `_hebrew_search`*)
+  - `views_lsj.py` — lsj_lookup, lsj_summary, bdb_lookup + LSJ helpers (`_resolve_lsj_xref`,
+    `_SectionParser`, `_format_lsj_context`, `_is_lsj_*`, `_lsj_concept_lookup`)
+  - `views_search.py` — search()  (*shares `_hebrew_search`/`_kjv_strongs_search` → put shared
+    search helpers in core or a small `search_util.py`)
+  - `views_crossref.py` — cross_references_route, cross_ref_synthesis, cross_refs_curated
+  - `views_metav.py` — metav_*, pn_count, strongs_count_route
+  - `ai.py` — ai_search + `_get_ai_system`, `_curate_primary_verses`, `_enrich_*`,
+    `_normalize_union_sql`, the AI cache (`_ai_cache`, load/persist/ver), `_AI_SYSTEM_TMPL`,
+    `_CURATION_SYSTEM`, `_extract_proper_nouns`
+- `app.py` becomes a THIN entry: `from core import ...`; `app = Flask(__name__)`;
+  `limiter.init_app(app)`; register all blueprints; run startup (`_migrate_db()`,
+  `_build_function_strongs_cache()`, `_load_ai_cache_from_db()`); keep index route + asset
+  context_processor + 429 handler. **PA wsgi is UNCHANGED** — `app` is still importable from app.py.
+
+### Gotchas to handle (these are the real risk, not the moving)
+1. **`_FUNCTION_STRONGS` is REASSIGNED at startup** (`global _FUNCTION_STRONGS; ... = func`, line ~1010).
+   After a split, `from core import _FUNCTION_STRONGS` binds the empty set at import time and never sees
+   the reassignment → function-word filtering silently breaks across search/lexicon. FIX: mutate in
+   place (`_FUNCTION_STRONGS.clear(); _FUNCTION_STRONGS.update(func)`). (`_ai_cache` is already
+   in-place-mutated, so it's fine.) The snapshot loop WOULD catch this (search results would differ).
+2. **Startup order** — migrate/build-cache/load-cache must run in app.py AFTER blueprints register.
+3. **limiter** decoupled from app (init_app) so view modules can import it without importing app.
+4. **Shared helpers** used by 2 domains (`_hebrew_search`, `_kjv_strongs_search`) → live in core/shared.
+5. The 3 leftover `SUBSTR` examples in the AI prompt move with `ai.py` (still the Phase-1 follow-up).
+
+### Execution order (incremental — commit + `--compare` 0-diff after EACH)
+1. Create `core.py`, move the shared layer, app.py imports it (incl. the `_FUNCTION_STRONGS` in-place fix). Boot + 28/28.
+2. Extract leaf domains first (least entangled → confidence): **metav → crossref → lsj/bdb → kjv → lexicon → library → search → ai**. One blueprint per commit, `--compare` each.
+- Est: ~8–10 small verified commits; a focused session.
 - Why: half of "the jumble"; done after 1+2 so we file away clean code.
-- Risk: low logic risk but wide — snapshots verify.
+- Risk: low logic risk but wide — snapshots + local boot verify every step.
 
 ## Phase 4 — Split `app.jsx` + fix detail-panel state  *(backlog #4)*
 3,461-line file → per-view files (build step makes this clean). `DetailPanel`'s tangle of flags
