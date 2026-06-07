@@ -65,9 +65,20 @@ def _normalize_gloss(raw, is_func=False):
             if w in _GLOSS_WEAK:
                 return w
         return words[0]
-    while len(words) > 1 and words[0] in _GLOSS_FUNC:
+    # Content word: trim connector/copula/pronoun/article words off BOTH ends so
+    # an ABP lump like "God so" / "God and the" / "God, and" collapses to the
+    # content head ("god"). _GLOSS_FUNC alone missed adverb/conjunction trailers
+    # ("so", "then", "yet"), which then won the "last word" tie-break and leaked
+    # as bogus renderings (Luk 12:28 "God so" -> "so"). Punctuation is stripped
+    # per-token so a mid-phrase comma ("God, and") can't survive either.
+    drop = _GLOSS_FUNC | _GLOSS_STRONG | _GLOSS_WEAK
+    words = [w.strip(".,;:!?'\"") for w in words]
+    words = [w for w in words if w]
+    if not words:
+        return ''
+    while len(words) > 1 and words[0] in drop:
         words.pop(0)
-    while len(words) > 1 and words[-1] in _GLOSS_FUNC:
+    while len(words) > 1 and words[-1] in drop:
         words.pop()
     if len(words) > 1:
         words = [words[-1]]
