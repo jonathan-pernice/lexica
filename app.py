@@ -238,6 +238,22 @@ def _migrate_db():
             conn.commit()
         except sqlite3.OperationalError:
             pass  # already migrated
+        # Phase 6 (backlog #5): tipnr.strongs is a PRIMARY KEY, so a name that is
+        # BOTH a person AND a place under one Strong's number (e.g. Adam H121)
+        # collapsed to whichever row imported LAST → entity_type/pn_type lied.
+        # The fix keeps a type-SET per strongs in a new `entity_types` column
+        # (e.g. 'person,place'). ONE row per strongs is preserved so the
+        # `LEFT JOIN tipnr ON t.strongs = w.strongs_base` stays 1:1 (a composite
+        # key would multiply word rows). This ALTER only makes the column EXIST so
+        # the deployed code can SELECT it BEFORE import_tipnr.py is re-run on PA —
+        # it stays NULL until then, so the frontend falls back to the old heuristic
+        # and the deploy order is safe. Re-running import_tipnr.py populates it.
+        # Additive + idempotent; never touches the words table / is_pn.
+        try:
+            conn.execute("ALTER TABLE tipnr ADD COLUMN entity_types TEXT")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass  # column already exists, or tipnr not present yet
         # The deployed DB already has kjv_* location/strongs_id indexes (created
         # directly on PA, not in git). Two were genuinely missing and made every
         # KJV/English match a scan: kjv_strongs.word_id (the join key into
