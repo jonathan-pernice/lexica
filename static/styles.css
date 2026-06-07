@@ -280,8 +280,8 @@ input { font-family: inherit; }
   color: var(--accent);
   font-weight: 600;
   background: var(--accent-soft);
-  border-radius: 5px;
-  padding: 0 4px;
+  border-radius: 4px;
+  padding: 0 2px;
 }
 .lexicon-dist-count { color: var(--ink-3); font-size: 11px; font-family: var(--f-mono); margin-left: 3px; }
 .lexicon-dist-item.selected .lexicon-dist-count { color: var(--accent); }
