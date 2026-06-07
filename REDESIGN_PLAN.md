@@ -138,11 +138,30 @@ every step gated by local `--compare` 0 diffs + the app still booting.
 - Why: the other half of the jumble; several past UI bugs lived here.
 - Risk: medium (UI) — screenshots + click-through verified.
 
-## Phase 5 — Perf polish (the remaining ~748ms first paint)
-- [ ] Defer non-critical startup fetches; lazy-load Leaflet (maps only).
-- [ ] Stop `LexiconView`/`Search` doing work on load (mounted hidden today).
-- [ ] Optional: self-host React to drop the unpkg dependency.
-- Risk: low, frontend-only.
+## Phase 5 — Perf polish (the remaining ~748ms first paint) — ✅ DONE 2026-06-06 (pushed; deploy pending)
+Measured first (Chrome DevTools trace, local app serving committed app.js). The
+cache-independent finding: the first-paint critical path had **7 render-blocking
+requests, 4 of them cross-origin unpkg** (leaflet.js, leaflet.css, react,
+react-dom). Locally those are warm/fast (~25ms each) so warm-local LCP barely
+moves (chapter render dominates); the real cold-visitor cost is the cross-origin
+handshakes + Leaflet parse — that's the bulk of the live ~748ms render delay.
+- [x] **Defer non-critical startup fetches — ALREADY SATISFIED (confirmed by trace).** The
+  only mount fetches are `/api/books` + `/api/chapter/Gen/1` (LibraryView) — exactly the
+  default view. Nothing else fires; no deferral needed.
+- [x] **Lazy-load Leaflet** (commit 0a804d2): removed leaflet.css/js from `<head>`; added
+  `loadLeaflet()` in `static/src/20-shared-components.jsx` that injects them on first
+  `LeafletMap` mount (cached on `window.L`). Verified: absent on load, loads on first place
+  card (Eden), map renders with tiles + marker.
+- [x] **Self-host React/ReactDOM** (commit 2c0c26c): vendored React 18.3.1 prod UMD into
+  `static/` (SHA-384 verified identical to the old unpkg SRI), loaded same-origin via
+  `asset_url`. Critical path no longer touches unpkg at all. Verified: app mounts, panels work.
+- [x] **`LexiconView`/`Search` on load — measured cheap, intentionally NOT changed.** Both
+  mount hidden but run ZERO fetches on mount (effects all guarded) and render trivial empty
+  states; the expensive views (CorpusResults, DetailPanel) aren't mounted at start. Lazy-mounting
+  would risk the state-survival caveat (CLAUDE.md) for negligible gain. Left as-is by design.
+- Verified: local snapshot 28/28; visual click-through (Eden place card map, θεός LSJ panel) clean,
+  no new console errors (the H5731 LSJ 404 is pre-existing Hebrew-PN BDB-fallback behavior).
+- Risk: low, frontend-only. **Next: re-trace LIVE cold after deploy to prove the delta.**
 
 ## Phase 6 — Schema + tests  *(backlog #5, #6)*
 - [ ] Fix `tipnr.strongs` PK collision (person+place sharing one number → composite key/type-set).
