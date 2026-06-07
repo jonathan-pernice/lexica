@@ -2623,17 +2623,21 @@ function ModesSheet({
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
   }, "Text"), /*#__PURE__*/React.createElement("div", {
-    className: "mseg"
+    className: "text-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mseg text-ed"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (corpus === "bible" && translation === "abp" ? " on" : ""),
     onClick: () => pickBible("abp")
   }, "ABP"), /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (corpus === "bible" && translation === "kjv" ? " on" : ""),
     onClick: () => pickBible("kjv")
-  }, "KJV"), /*#__PURE__*/React.createElement("button", {
+  }, "KJV")), /*#__PURE__*/React.createElement("div", {
+    className: "mseg text-par"
+  }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (translation === "parallel" ? " on" : ""),
     onClick: toggleParallel
-  }, "Parallel")), nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "Parallel"))), nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "other-acc"
   }, /*#__PURE__*/React.createElement("button", {
     className: "other-acc-head",

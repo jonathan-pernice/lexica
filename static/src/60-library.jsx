@@ -305,10 +305,14 @@ function ModesSheet({
         <div className="msheet-body" ref={scrollRef}>
           <div className="mode-sec">
             <div className="mode-lbl">Text</div>
-            <div className="mseg">
-              <button className={"mseg-b"+(corpus==="bible"&&translation==="abp"?" on":"")} onClick={()=>pickBible("abp")}>ABP</button>
-              <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
-              <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={toggleParallel}>Parallel</button>
+            <div className="text-row">
+              <div className="mseg text-ed">
+                <button className={"mseg-b"+(corpus==="bible"&&translation==="abp"?" on":"")} onClick={()=>pickBible("abp")}>ABP</button>
+                <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
+              </div>
+              <div className="mseg text-par">
+                <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={toggleParallel}>Parallel</button>
+              </div>
             </div>
             {nonCanonList.length > 0 && (
               <div className="other-acc">
