@@ -114,6 +114,11 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 - `kjv_strongs` — KJV word → Strong's number mapping
 - `bdb` — Brown-Driver-Briggs Hebrew lexicon (H-numbers)
 - `pericopes` — section headings (book, chapter, verse, heading); populated from bh_scrape.db.bh_headings; display wiring pending
+- `<book>_words` / `<book>_verses` — non-canonical texts (Didache, 1 Enoch), each in its OWN
+  two tables, walled off from the Bible's tables and from search/word counts. Built by
+  `scripts/load_extra.py`; served by `/api/extra/<book>/chapter/<n>`. English-only texts (no
+  Greek) load with an empty words table. See TODO.md "Non-canonical texts" + memory
+  `project_noncanonical_texts`.
 
 ## Key Design Decisions
 - ABP is the primary text — all word study anchored in ABP interlinear
