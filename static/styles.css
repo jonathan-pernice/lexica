@@ -286,7 +286,6 @@ input { font-family: inherit; }
 @media (hover: hover) { .lexicon-dist-item:hover { color: var(--accent); } }
 .lexicon-dist-item.selected {
   color: var(--accent);
-  font-weight: 600;
   background: var(--accent-soft);
   border-radius: 4px;
   padding: 0 2px;
