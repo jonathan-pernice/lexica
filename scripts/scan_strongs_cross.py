@@ -56,6 +56,10 @@ SKIP_HEADS = {
     "us", "one", "ones", "thing", "things", "who", "which", "what", "both",
     "all", "any", "some", "each", "every", "other", "same", "is", "are", "was",
     "were", "be", "been", "being",
+    # conjunctions/adverbs that are valid renderings of a preposition (διά
+    # "because of", ὅτι "for") — not real nouns, so drop those false positives.
+    "because", "therefore", "so", "then", "lest", "though", "while", "when",
+    "where", "why", "how", "as", "than", "if",
 }
 DET = {"the", "a", "an", "this", "that", "these", "those", "my", "your", "his",
        "her", "our", "their", "its", "all", "of", "some", "any", "each",
@@ -137,6 +141,6 @@ print("(function word showing a real noun, neighbour showing the connector,\n"
       " confirmed by the neighbour's dictionary meaning)\n")
 for r, nb in hits[:LIMIT]:
     ref = f"{r['book']} {r['chapter']}:{r['verse']}"
-    print(f"  {ref:<12} {r['strongs_base']:<6} eng={r['english']!r:<14} "
-          f"<-> {nb['strongs_base']:<6} eng={nb['english']!r}")
+    print(f"  {ref:<12} pos{r['position']:>3} {r['strongs_base']:<6} eng={r['english']!r:<14} "
+          f"<-> pos{nb['position']:>3} {nb['strongs_base']:<6} eng={nb['english']!r}")
 conn.close()
