@@ -1893,6 +1893,9 @@ input { font-family: inherit; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 8px 18px 4px;
 }
+.text-row { display: flex; gap: 10px; }
+.text-row .text-ed { flex: 2 1 0; min-width: 0; }
+.text-row .text-par { flex: 1 1 0; min-width: 0; }
 .other-acc { margin-top: 8px; border: 1px solid var(--rule); border-radius: 11px; overflow: hidden; }
 .other-acc-head {
   width: 100%; display: flex; align-items: center; justify-content: space-between;
