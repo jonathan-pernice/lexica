@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """
-fix_article_noun_swaps.py — repair 3 verses where a real word's Greek tag landed
-on the article ὁ/G3588 (and vice-versa), so clicking the word showed "the".
+fix_article_noun_swaps.py — repair 8 verses where the build's word-splitter paired
+a multi-word gloss with its trailing Greek numbers BACKWARDS, so a real word's tag
+landed on a function word (the article ὁ/G3588 or a preposition) and vice-versa.
+ABP source is correct in every case; only our parse flipped it. Found by
+scan_strongs_cross.py; each confirmed against the ABP source text.
 
 Each fix swaps ONLY the Greek identity (strongs_base, strongs, is_pn) between two
 positions in one verse. The English text stays exactly where it is, so the verse
 reads identically — only the tag under each word is corrected.
 
-  1Sa 5:2   pos6<->pos7   "of"/"God"    ("God" -> θεός instead of the article)
-  Rom 8:34  pos15<->pos16 "of"/"God"    (same)
-  Act 19:4  pos20<->pos21 "Jesus the"   (eSword keeps "Jesus the" but the proper-
-                                         noun marker G* sits on the empty slot;
-                                         swap so "Jesus the" carries the PN and
-                                         the empty slot takes the article G3588.
-                                         Reads "Jesus the Christ" — unchanged.)
+  1Sa 5:2   "of"/"God"    ("God" -> θεός instead of the article)
+  Rom 8:34  "of"/"God"    (same)
+  Act 19:4  "Jesus the"   (eSword keeps "Jesus the"; swap so it carries the PN and
+                           the empty slot takes the article G3588 — reads the same)
+  1Pe 5:12  "a little"    ("little" -> ὀλίγος instead of διά)
+  2Co 8:10  "a year ago"  ("year ago" -> πέρυσι instead of ἀπό)
+  Eph 3:3   "a little"    ("little" -> ὀλίγος instead of ἐν)
+  Mat 26:44 "a third time"("third time" -> τρίτος instead of ἐκ)
+  Zec 8:13  "a blessing"  ("blessing" -> εὐλογία instead of ἐν)
 
 Dry-run by default (prints before/after). Add --apply to write.
 Usage:
@@ -33,9 +38,18 @@ APPLY = "--apply" in sys.argv
 # the broken state back, so this re-applies. That makes it safe in the repair
 # chain (idempotent — never undoes a correct verse).
 SWAPS = [
+    # article ὁ/G3588 <-> noun ("of God", "Jesus the")
     ("1Sa", 5, 2, 6, 7, "G2316", "G3588"),
     ("Rom", 8, 34, 15, 16, "G2316", "G3588"),
     ("Act", 19, 4, 20, 21, "G3588", "*"),
+    # preposition <-> noun: source "a <noun> Gprep Gnoun" parsed backwards, so the
+    # noun's English ("little"/"blessing"…) landed on the preposition and "a" on
+    # the noun. Found by scan_strongs_cross.py; each confirmed against ABP source.
+    ("1Pe", 5, 12, 9, 8, "G1223", "G3641"),   # "little"  <-> ὀλίγος
+    ("2Co", 8, 10, 20, 19, "G575", "G4070"),  # "year ago" <-> πέρυσι
+    ("Eph", 3, 3, 10, 9, "G1722", "G3641"),   # "little"  <-> ὀλίγος
+    ("Mat", 26, 44, 7, 6, "G1537", "G5154"),  # "third time" <-> τρίτος
+    ("Zec", 8, 13, 22, 21, "G1722", "G2129"), # "blessing" <-> εὐλογία
 ]
 
 conn = sqlite3.connect(DB)
