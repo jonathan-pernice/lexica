@@ -124,11 +124,15 @@ def kjv_verse_words(book, chapter, verse_num):
 @bp.route("/api/kjv/verse_words_batch", methods=["POST"])
 def kjv_verse_words_batch():
     """Batch fetch KJV verse words for multiple verses at once."""
-    refs = request.json or []  # [{book, chapter, verse}, ...]
+    refs = request.get_json(silent=True) or []  # [{book, chapter, verse}, ...]
+    if not isinstance(refs, list):
+        return jsonify({})
     conn = db_ro()
     result = {}
     try:
         for ref in refs[:30]:  # cap at 30
+            if not isinstance(ref, dict):
+                continue
             book = ref.get("book", "")
             chapter = ref.get("chapter", 0)
             verse_num = ref.get("verse", 0)
