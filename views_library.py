@@ -141,14 +141,9 @@ def extra_chapter(book, chapter):
     english = {r["verse"]: r["english"] for r in vrows}
     headings = {r["verse"]: r["heading"] for r in vrows} if has_heading else {}
     verses: dict[int, list] = {}
-    order: list[int] = []
     for r in wrows:
-        vn = r["verse"]
-        if vn not in verses:
-            verses[vn] = []
-            order.append(vn)
         sg = r["strongs"] or ""                          # "G1322" or ""
-        verses[vn].append({
+        verses.setdefault(r["verse"], []).append({
             "position":     r["position"],
             "english":      r["gloss"],                  # per-word gloss (interlinear)
             "english_head": None,
@@ -163,9 +158,12 @@ def extra_chapter(book, chapter):
             "is_pn":        0,
             "morph":        None,
         })
+    # Verse list = every verse that has Greek words OR readable English, so an
+    # English-only text (no words loaded, e.g. 1 Enoch) still serves prose + headings.
+    all_vns = sorted(set(verses) | set(english))
     return jsonify([
-        {"verse": v, "heading": headings.get(v), "english": english.get(v, ""), "words": verses[v]}
-        for v in order
+        {"verse": v, "heading": headings.get(v), "english": english.get(v, ""), "words": verses.get(v, [])}
+        for v in all_vns
     ])
 
 

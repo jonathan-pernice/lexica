@@ -119,6 +119,40 @@ word appears, teach those tabs about the `<book>_words` tables — best done onc
 "non-canonical corpus" option rather than per book.
 `code: views_lexicon.py + LexiconView (80-lexicon.jsx); views_search.py + Search (70-search.jsx)`
 
+### 1 Enoch (English-only) — added 2026-06-07, English-only
+
+Second non-canonical text. R.H. Charles' 1917 translation (public domain, pre-1929), pulled verbatim
+from Wikisource's transcription. 108 chapters / 1063 verses / 93 section headings. NO Greek
+interlinear — only ~ch 1-32 survives in Greek (Akhmim papyrus), so this is text-only for now;
+`enoch_tagged_full.json` is empty `[]` and `enoch_words` loads empty.
+- Data + scripts in `scripts/enoch/`: `fetch_charles.py` (caches Wikisource wikitext → raw/),
+  `parse_charles.py` (cache → `enoch_english.json` + `enoch_headings.json`, both regenerable),
+  `load_enoch.py` (thin wrapper over `load_extra.py`).
+- Reader stays in **Prose** via the `englishOnly:true` flag on the `NONCANON` entry (chip/parallel
+  views would be blank with no Greek). Drop the flag once a tagged Greek file is added for ch 1-32.
+- Load on PA: `python3 scripts/enoch/load_enoch.py bible.db` then touch wsgi.
+
+### Lessons from Didache → Enoch (baked into the tooling)
+
+1. **The extra-text reader now serves text-only books.** The endpoint built its verse list ONLY from
+   the words table, so an English-only text returned nothing. Fixed in `views_library.py`: the list is
+   now every verse that has words OR English. Didache output unchanged.
+2. **`englishOnly` flag** on a `NONCANON` entry forces Prose so the reader doesn't open on an empty
+   interlinear. Set it for any future text loaded without an original-language tagging.
+3. **Harvest headings from the source, don't hand-write them.** Didache headings were written by us;
+   for a sourced text like Charles, its own `=== … ===` section titles are pulled in automatically
+   (`harvest_headings` in parse_charles.py) — faster and more faithful.
+
+### KNOWN GAP — Hebrew/Aramaic interlinear for a non-canonical text
+
+The extra-text **interlinear** is hard-wired to Greek: the endpoint joins `lexicon` on a G-number
+(`l.strongs_g = w.strongs`), and the reader's word click routes to LSJ. English-only loads are
+language-agnostic (Enoch's source is Ge'ez and it loaded fine — we only store English + headings),
+so the source language ONLY matters if we want a word-by-word original. For a Hebrew interlinear
+(e.g. Ben Sira/Sirach, which has real Hebrew; or Jubilees' Qumran Hebrew fragments) we'd need: BDB
+join on H-numbers in `/api/extra`, BDB/Hebrew routing + right-to-left chips in the reader. Not urgent
+— no Hebrew non-canonical is queued, and any of them can ship English-only today.
+
 ## Bigger features (someday / ideas)
 
 ### Advanced desktop workspace
