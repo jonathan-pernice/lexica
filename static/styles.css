@@ -186,10 +186,16 @@ input { font-family: inherit; }
   cursor: pointer;
   text-align: left;
 }
-.lexicon-match-row:hover { background: var(--gold-soft); border-color: var(--gold); }
-.lexicon-match-strongs { font-size: 12px; color: var(--gold); font-weight: 600; }
-.lexicon-match-lemma { font-size: 15px; color: var(--ink); font-family: var(--f-serif); }
-.lexicon-match-translit { font-size: 13px; color: var(--ink-2); font-style: italic; }
+.lexicon-match-row:hover { background: var(--bg-sunk); border-color: var(--rule-2); }
+.lexicon-match-strongs {
+  font-family: var(--f-mono);
+  font-size: 11px; font-weight: 500;
+  color: var(--accent); background: var(--accent-soft);
+  padding: 2px 7px; border-radius: 4px; letter-spacing: 0.02em;
+  justify-self: start;
+}
+.lexicon-match-lemma { font-size: 15px; color: var(--ink); font-family: var(--f-greek); }
+.lexicon-match-translit { font-size: 13px; color: var(--ink-2); font-style: italic; font-family: var(--f-serif); }
 .lexicon-match-gloss { font-size: 13px; color: var(--ink-2); }
 
 /* Compact results list — one scannable row per strongs, glosses live in profile */
@@ -203,7 +209,7 @@ input { font-family: inherit; }
 }
 .lexicon-result-row:first-of-type { border-top: 1px solid var(--rule); }
 .lexicon-result-row:hover { background: var(--bg-sunk); }
-.lexicon-result-row .lexicon-match-strongs { min-width: 46px; flex-shrink: 0; }
+.lexicon-result-row .lexicon-match-strongs { flex-shrink: 0; }
 .lexicon-result-row .lexicon-match-lemma { flex-shrink: 0; }
 .lexicon-result-row .lexicon-match-translit { flex-shrink: 0; }
 .lexicon-result-preview {
@@ -242,8 +248,8 @@ input { font-family: inherit; }
 }
 .lexicon-back-btn { background: none; border: none; cursor: pointer; font-size: 18px; line-height: 1; color: var(--ink-3); padding: 0; margin-right: 2px; align-self: center; }
 .lexicon-back-btn:hover { color: var(--ink); }
-.lexicon-lemma { font-size: 20px; font-family: var(--f-serif); color: var(--ink); }
-.lexicon-translit { font-size: 15px; font-style: italic; color: var(--ink-2); }
+.lexicon-lemma { font-size: 20px; font-family: var(--f-greek); color: var(--ink); }
+.lexicon-translit { font-size: 15px; font-style: italic; font-family: var(--f-serif); color: var(--ink-2); }
 .lexicon-strongs-tag {
   font-family: var(--f-mono);
   font-size: 11px; font-weight: 500; color: #fff;
@@ -268,7 +274,7 @@ input { font-family: inherit; }
 .lexicon-def-section { margin-bottom: 20px; }
 .lexicon-def-toggle { background: none; border: none; cursor: pointer; font-size: 12px; color: var(--ink-3); padding: 0; letter-spacing: .03em; }
 .lexicon-def-toggle:hover { color: var(--ink-2); }
-.lexicon-def-src { display: inline-block; margin-left: 6px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.04em; color: var(--gold); background: var(--gold-soft); padding: 1px 6px; border-radius: 10px; vertical-align: middle; }
+.lexicon-def-src { display: inline-block; margin-left: 6px; font-family: var(--f-mono); font-size: 9.5px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink-3); background: var(--bg-sunk); padding: 1px 6px; border-radius: 4px; vertical-align: middle; }
 .lexicon-definition { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin: 8px 0 0; }
 
 /* Distribution */
