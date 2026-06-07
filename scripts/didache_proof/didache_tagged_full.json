@@ -53,7 +53,7 @@
 "greek": "ἔθνεσιν",
 "lemma": "ἔθνος",
 "strongs": "G1484",
-"gloss": "nations"
+"gloss": "nations."
 },
 {
 "ref": "1.1",
@@ -74,7 +74,7 @@
 "greek": "εἰσί",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "are"
+"gloss": "are,"
 },
 {
 "ref": "1.1",
@@ -123,7 +123,7 @@
 "greek": "θανάτου",
 "lemma": "θάνατος",
 "strongs": "G2288",
-"gloss": "death"
+"gloss": "death,"
 },
 {
 "ref": "1.1",
@@ -172,7 +172,7 @@
 "greek": "ὁδῶν",
 "lemma": "ὁδός",
 "strongs": "G3598",
-"gloss": "ways"
+"gloss": "ways."
 },
 {
 "ref": "1.2",
@@ -228,7 +228,7 @@
 "greek": "αὕτη",
 "lemma": "οὗτος",
 "strongs": "G3778",
-"gloss": "this"
+"gloss": "this;"
 },
 {
 "ref": "1.2",
@@ -277,7 +277,7 @@
 "greek": "σε",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "you"
+"gloss": "you,"
 },
 {
 "ref": "1.2",
@@ -319,7 +319,7 @@
 "greek": "σεαυτόν",
 "lemma": "σεαυτοῦ",
 "strongs": "G4572",
-"gloss": "yourself"
+"gloss": "yourself;"
 },
 {
 "ref": "1.2",
@@ -375,7 +375,7 @@
 "greek": "σοι",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "to you"
+"gloss": "to you,"
 },
 {
 "ref": "1.2",
@@ -410,7 +410,7 @@
 "greek": "ποίει",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "do"
+"gloss": "do."
 },
 {
 "ref": "1.3",
@@ -466,7 +466,7 @@
 "greek": "αὕτη",
 "lemma": "οὗτος",
 "strongs": "G3778",
-"gloss": "this"
+"gloss": "this;"
 },
 {
 "ref": "1.3",
@@ -536,7 +536,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "of you"
+"gloss": "of you,"
 },
 {
 "ref": "1.3",
@@ -578,7 +578,7 @@
 "greek": "ὑμᾶς",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "you"
+"gloss": "you;"
 },
 {
 "ref": "1.3",
@@ -599,7 +599,7 @@
 "greek": "χάρις",
 "lemma": "χάρις",
 "strongs": "G5485",
-"gloss": "credit"
+"gloss": "credit,"
 },
 {
 "ref": "1.3",
@@ -634,7 +634,7 @@
 "greek": "ὑμᾶς",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "you"
+"gloss": "you?"
 },
 {
 "ref": "1.3",
@@ -683,7 +683,7 @@
 "greek": "ποιοῦσιν",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "do"
+"gloss": "do?"
 },
 {
 "ref": "1.3",
@@ -725,7 +725,7 @@
 "greek": "ὑμᾶς",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "you"
+"gloss": "you,"
 },
 {
 "ref": "1.3",
@@ -753,7 +753,7 @@
 "greek": "ἐχθρόν",
 "lemma": "ἐχθρός",
 "strongs": "G2190",
-"gloss": "enemy"
+"gloss": "enemy."
 },
 {
 "ref": "1.4",
@@ -795,7 +795,7 @@
 "greek": "ἐπιθυμιῶν",
 "lemma": "ἐπιθυμία",
 "strongs": "G1939",
-"gloss": "desires"
+"gloss": "desires;"
 },
 {
 "ref": "1.4",
@@ -858,7 +858,7 @@
 "greek": "σιαγόνα",
 "lemma": "σιαγών",
 "strongs": "G4600",
-"gloss": "cheek"
+"gloss": "cheek,"
 },
 {
 "ref": "1.4",
@@ -893,7 +893,7 @@
 "greek": "ἄλλην",
 "lemma": "ἄλλος",
 "strongs": "G243",
-"gloss": "other"
+"gloss": "other,"
 },
 {
 "ref": "1.4",
@@ -914,7 +914,7 @@
 "greek": "τέλειος",
 "lemma": "τέλειος",
 "strongs": "G5046",
-"gloss": "perfect"
+"gloss": "perfect;"
 },
 {
 "ref": "1.4",
@@ -956,7 +956,7 @@
 "greek": "ἕν",
 "lemma": "εἷς",
 "strongs": "G1520",
-"gloss": "one"
+"gloss": "one,"
 },
 {
 "ref": "1.4",
@@ -984,7 +984,7 @@
 "greek": "δύο",
 "lemma": "δύο",
 "strongs": "G1417",
-"gloss": "two"
+"gloss": "two;"
 },
 {
 "ref": "1.4",
@@ -1026,7 +1026,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "1.4",
@@ -1061,7 +1061,7 @@
 "greek": "χιτῶνα",
 "lemma": "χιτών",
 "strongs": "G5509",
-"gloss": "tunic"
+"gloss": "tunic;"
 },
 {
 "ref": "1.4",
@@ -1110,7 +1110,7 @@
 "greek": "σόν",
 "lemma": "σός",
 "strongs": "G4674",
-"gloss": "what is yours"
+"gloss": "what is yours,"
 },
 {
 "ref": "1.4",
@@ -1124,7 +1124,7 @@
 "greek": "ἀπαίτει",
 "lemma": "ἀπαιτέω",
 "strongs": "G523",
-"gloss": "demand back"
+"gloss": "demand back;"
 },
 {
 "ref": "1.4",
@@ -1145,7 +1145,7 @@
 "greek": "δύνασαι",
 "lemma": "δύναμαι",
 "strongs": "G1410",
-"gloss": "you are able"
+"gloss": "you are able."
 },
 {
 "ref": "1.5",
@@ -1201,7 +1201,7 @@
 "greek": "ἀπαίτει",
 "lemma": "ἀπαιτέω",
 "strongs": "G523",
-"gloss": "demand back"
+"gloss": "demand back;"
 },
 {
 "ref": "1.5",
@@ -1271,7 +1271,7 @@
 "greek": "χαρισμάτων",
 "lemma": "χάρισμα",
 "strongs": "G5486",
-"gloss": "gifts"
+"gloss": "gifts."
 },
 {
 "ref": "1.5",
@@ -1313,7 +1313,7 @@
 "greek": "ἐντολήν",
 "lemma": "ἐντολή",
 "strongs": "G1785",
-"gloss": "commandment"
+"gloss": "commandment;"
 },
 {
 "ref": "1.5",
@@ -1334,7 +1334,7 @@
 "greek": "ἐστιν",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "is"
+"gloss": "is."
 },
 {
 "ref": "1.5",
@@ -1355,7 +1355,7 @@
 "greek": "λαμβάνοντι",
 "lemma": "λαμβάνω",
 "strongs": "G2983",
-"gloss": "one receiving"
+"gloss": "one receiving;"
 },
 {
 "ref": "1.5",
@@ -1404,7 +1404,7 @@
 "greek": "τις",
 "lemma": "τις",
 "strongs": "G5100",
-"gloss": "someone"
+"gloss": "someone,"
 },
 {
 "ref": "1.5",
@@ -1418,7 +1418,7 @@
 "greek": "ἔσται",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "will be"
+"gloss": "will be;"
 },
 {
 "ref": "1.5",
@@ -1467,7 +1467,7 @@
 "greek": "δίκην",
 "lemma": "δίκη",
 "strongs": "G1349",
-"gloss": "penalty"
+"gloss": "penalty,"
 },
 {
 "ref": "1.5",
@@ -1502,7 +1502,7 @@
 "greek": "τί",
 "lemma": "τίς",
 "strongs": "G5101",
-"gloss": "what"
+"gloss": "what;"
 },
 {
 "ref": "1.5",
@@ -1558,7 +1558,7 @@
 "greek": "ἔπραξε",
 "lemma": "πράσσω",
 "strongs": "G4238",
-"gloss": "he did"
+"gloss": "he did,"
 },
 {
 "ref": "1.5",
@@ -1586,7 +1586,7 @@
 "greek": "ἐκεῖθεν",
 "lemma": "ἐκεῖθεν",
 "strongs": "G1564",
-"gloss": "from there"
+"gloss": "from there,"
 },
 {
 "ref": "1.5",
@@ -1628,7 +1628,7 @@
 "greek": "κοδράντην",
 "lemma": "κοδράντης",
 "strongs": "G2835",
-"gloss": "penny"
+"gloss": "penny."
 },
 {
 "ref": "1.6",
@@ -1670,7 +1670,7 @@
 "greek": "εἴρηται",
 "lemma": "ἐρέω",
 "strongs": "G2046",
-"gloss": "it has been said"
+"gloss": "it has been said;"
 },
 {
 "ref": "1.6",
@@ -1726,7 +1726,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "1.6",
@@ -1747,7 +1747,7 @@
 "greek": "γνῷς",
 "lemma": "γινώσκω",
 "strongs": "G1097",
-"gloss": "you know"
+"gloss": "you know,"
 },
 {
 "ref": "1.6",
@@ -1761,7 +1761,7 @@
 "greek": "δῷς",
 "lemma": "δίδωμι",
 "strongs": "G1325",
-"gloss": "you should give"
+"gloss": "you should give."
 },
 {
 "ref": "2.1",
@@ -1796,7 +1796,7 @@
 "greek": "διδαχῆς",
 "lemma": "διδαχή",
 "strongs": "G1322",
-"gloss": "teaching"
+"gloss": "teaching;"
 },
 {
 "ref": "2.2",
@@ -1810,7 +1810,7 @@
 "greek": "φονεύσεις",
 "lemma": "φονεύω",
 "strongs": "G5407",
-"gloss": "you shall murder"
+"gloss": "you shall murder,"
 },
 {
 "ref": "2.2",
@@ -1824,7 +1824,7 @@
 "greek": "μοιχεύσεις",
 "lemma": "μοιχεύω",
 "strongs": "G3431",
-"gloss": "you shall commit adultery"
+"gloss": "you shall commit adultery,"
 },
 {
 "ref": "2.2",
@@ -1838,7 +1838,7 @@
 "greek": "παιδοφθορήσεις",
 "lemma": "παιδοφθορέω",
 "strongs": null,
-"gloss": "you shall corrupt boys"
+"gloss": "you shall corrupt boys,"
 },
 {
 "ref": "2.2",
@@ -1852,7 +1852,7 @@
 "greek": "πορνεύσεις",
 "lemma": "πορνεύω",
 "strongs": "G4203",
-"gloss": "you shall fornicate"
+"gloss": "you shall fornicate,"
 },
 {
 "ref": "2.2",
@@ -1866,7 +1866,7 @@
 "greek": "κλέψεις",
 "lemma": "κλέπτω",
 "strongs": "G2813",
-"gloss": "you shall steal"
+"gloss": "you shall steal,"
 },
 {
 "ref": "2.2",
@@ -1880,7 +1880,7 @@
 "greek": "μαγεύσεις",
 "lemma": "μαγεύω",
 "strongs": "G3096",
-"gloss": "you shall practice magic"
+"gloss": "you shall practice magic,"
 },
 {
 "ref": "2.2",
@@ -1894,7 +1894,7 @@
 "greek": "φαρμακεύσεις",
 "lemma": "φαρμακεύω",
 "strongs": null,
-"gloss": "you shall practice sorcery"
+"gloss": "you shall practice sorcery,"
 },
 {
 "ref": "2.2",
@@ -1929,7 +1929,7 @@
 "greek": "φθορᾷ",
 "lemma": "φθορά",
 "strongs": "G5356",
-"gloss": "abortion"
+"gloss": "abortion,"
 },
 {
 "ref": "2.2",
@@ -1950,7 +1950,7 @@
 "greek": "ἀποκτενεῖς",
 "lemma": "ἀποκτείνω",
 "strongs": "G615",
-"gloss": "you shall kill"
+"gloss": "you shall kill,"
 },
 {
 "ref": "2.2",
@@ -1985,7 +1985,7 @@
 "greek": "πλησίον",
 "lemma": "πλησίον",
 "strongs": "G4139",
-"gloss": "neighbor"
+"gloss": "neighbor."
 },
 {
 "ref": "2.3",
@@ -1999,7 +1999,7 @@
 "greek": "ἐπιορκήσεις",
 "lemma": "ἐπιορκέω",
 "strongs": "G1964",
-"gloss": "you shall swear falsely"
+"gloss": "you shall swear falsely,"
 },
 {
 "ref": "2.3",
@@ -2013,7 +2013,7 @@
 "greek": "ψευδομαρτυρήσεις",
 "lemma": "ψευδομαρτυρέω",
 "strongs": "G5576",
-"gloss": "you shall bear false witness"
+"gloss": "you shall bear false witness,"
 },
 {
 "ref": "2.3",
@@ -2027,7 +2027,7 @@
 "greek": "κακολογήσεις",
 "lemma": "κακολογέω",
 "strongs": "G2551",
-"gloss": "you shall speak evil"
+"gloss": "you shall speak evil,"
 },
 {
 "ref": "2.3",
@@ -2041,7 +2041,7 @@
 "greek": "μνησικακήσεις",
 "lemma": "μνησικακέω",
 "strongs": null,
-"gloss": "you shall bear malice"
+"gloss": "you shall bear malice."
 },
 {
 "ref": "2.4",
@@ -2076,7 +2076,7 @@
 "greek": "δίγλωσσος",
 "lemma": "δίγλωσσος",
 "strongs": null,
-"gloss": "double-tongued"
+"gloss": "double-tongued;"
 },
 {
 "ref": "2.4",
@@ -2111,7 +2111,7 @@
 "greek": "διγλωσσία",
 "lemma": "διγλωσσία",
 "strongs": null,
-"gloss": "double-tonguedness"
+"gloss": "double-tonguedness."
 },
 {
 "ref": "2.5",
@@ -2153,7 +2153,7 @@
 "greek": "ψευδής",
 "lemma": "ψευδής",
 "strongs": "G5571",
-"gloss": "false"
+"gloss": "false,"
 },
 {
 "ref": "2.5",
@@ -2167,7 +2167,7 @@
 "greek": "κενός",
 "lemma": "κενός",
 "strongs": "G2756",
-"gloss": "empty"
+"gloss": "empty,"
 },
 {
 "ref": "2.5",
@@ -2188,7 +2188,7 @@
 "greek": "πράξει",
 "lemma": "πρᾶξις",
 "strongs": "G4234",
-"gloss": "with deed"
+"gloss": "with deed."
 },
 {
 "ref": "2.6",
@@ -2265,7 +2265,7 @@
 "greek": "ὑπερήφανος",
 "lemma": "ὑπερήφανος",
 "strongs": "G5244",
-"gloss": "proud"
+"gloss": "proud."
 },
 {
 "ref": "2.6",
@@ -2321,7 +2321,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your."
 },
 {
 "ref": "2.7",
@@ -2349,7 +2349,7 @@
 "greek": "ἄνθρωπον",
 "lemma": "ἄνθρωπος",
 "strongs": "G444",
-"gloss": "man"
+"gloss": "man,"
 },
 {
 "ref": "2.7",
@@ -2377,7 +2377,7 @@
 "greek": "ἐλέγξεις",
 "lemma": "ἐλέγχω",
 "strongs": "G1651",
-"gloss": "you shall reprove"
+"gloss": "you shall reprove,"
 },
 {
 "ref": "2.7",
@@ -2405,7 +2405,7 @@
 "greek": "προσεύξῃ",
 "lemma": "προσεύχομαι",
 "strongs": "G4336",
-"gloss": "you shall pray"
+"gloss": "you shall pray,"
 },
 {
 "ref": "2.7",
@@ -2454,7 +2454,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your."
 },
 {
 "ref": "3.1",
@@ -2468,7 +2468,7 @@
 "greek": "μου",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "my"
+"gloss": "my,"
 },
 {
 "ref": "3.1",
@@ -2531,7 +2531,7 @@
 "greek": "αὐτοῦ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "of it"
+"gloss": "of it."
 },
 {
 "ref": "3.2",
@@ -2552,7 +2552,7 @@
 "greek": "ὀργίλος",
 "lemma": "ὀργίλος",
 "strongs": "G3711",
-"gloss": "prone to anger"
+"gloss": "prone to anger,"
 },
 {
 "ref": "3.2",
@@ -2601,7 +2601,7 @@
 "greek": "φόνον",
 "lemma": "φόνος",
 "strongs": "G5408",
-"gloss": "murder"
+"gloss": "murder,"
 },
 {
 "ref": "3.2",
@@ -2643,7 +2643,7 @@
 "greek": "θυμικός",
 "lemma": "θυμικός",
 "strongs": null,
-"gloss": "hot-tempered"
+"gloss": "hot-tempered;"
 },
 {
 "ref": "3.2",
@@ -2685,7 +2685,7 @@
 "greek": "γεννῶνται",
 "lemma": "γεννάω",
 "strongs": "G1080",
-"gloss": "are born"
+"gloss": "are born."
 },
 {
 "ref": "3.3",
@@ -2699,7 +2699,7 @@
 "greek": "μου",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "my"
+"gloss": "my,"
 },
 {
 "ref": "3.3",
@@ -2720,7 +2720,7 @@
 "greek": "ἐπιθυμητής",
 "lemma": "ἐπιθυμητής",
 "strongs": "G1938",
-"gloss": "a luster"
+"gloss": "a luster,"
 },
 {
 "ref": "3.3",
@@ -2769,7 +2769,7 @@
 "greek": "πορνείαν",
 "lemma": "πορνεία",
 "strongs": "G4202",
-"gloss": "fornication"
+"gloss": "fornication,"
 },
 {
 "ref": "3.3",
@@ -2797,7 +2797,7 @@
 "greek": "ὑψηλόφθαλμος",
 "lemma": "ὑψηλόφθαλμος",
 "strongs": null,
-"gloss": "lustful-eyed"
+"gloss": "lustful-eyed;"
 },
 {
 "ref": "3.3",
@@ -2839,7 +2839,7 @@
 "greek": "γεννῶνται",
 "lemma": "γεννάω",
 "strongs": "G1080",
-"gloss": "are born"
+"gloss": "are born."
 },
 {
 "ref": "3.4",
@@ -2853,7 +2853,7 @@
 "greek": "μου",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "my"
+"gloss": "my,"
 },
 {
 "ref": "3.4",
@@ -2874,7 +2874,7 @@
 "greek": "οἰωνοσκόπος",
 "lemma": "οἰωνοσκόπος",
 "strongs": null,
-"gloss": "augur"
+"gloss": "augur,"
 },
 {
 "ref": "3.4",
@@ -2909,7 +2909,7 @@
 "greek": "εἰδωλολατρίαν",
 "lemma": "εἰδωλολατρεία",
 "strongs": "G1495",
-"gloss": "idolatry"
+"gloss": "idolatry,"
 },
 {
 "ref": "3.4",
@@ -2951,7 +2951,7 @@
 "greek": "περικαθαίρων",
 "lemma": "περικαθαίρω",
 "strongs": null,
-"gloss": "performing purifications"
+"gloss": "performing purifications,"
 },
 {
 "ref": "3.4",
@@ -2979,7 +2979,7 @@
 "greek": "βλέπειν",
 "lemma": "βλέπω",
 "strongs": "G991",
-"gloss": "to see"
+"gloss": "to see;"
 },
 {
 "ref": "3.4",
@@ -3021,7 +3021,7 @@
 "greek": "γεννᾶται",
 "lemma": "γεννάω",
 "strongs": "G1080",
-"gloss": "is born"
+"gloss": "is born."
 },
 {
 "ref": "3.5",
@@ -3035,7 +3035,7 @@
 "greek": "μου",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "my"
+"gloss": "my,"
 },
 {
 "ref": "3.5",
@@ -3056,7 +3056,7 @@
 "greek": "ψεύστης",
 "lemma": "ψεύστης",
 "strongs": "G5583",
-"gloss": "liar"
+"gloss": "liar,"
 },
 {
 "ref": "3.5",
@@ -3105,7 +3105,7 @@
 "greek": "κλοπήν",
 "lemma": "κλοπή",
 "strongs": "G2829",
-"gloss": "theft"
+"gloss": "theft,"
 },
 {
 "ref": "3.5",
@@ -3133,7 +3133,7 @@
 "greek": "κενόδοξος",
 "lemma": "κενόδοξος",
 "strongs": "G2755",
-"gloss": "vainglorious"
+"gloss": "vainglorious;"
 },
 {
 "ref": "3.5",
@@ -3175,7 +3175,7 @@
 "greek": "γεννῶνται",
 "lemma": "γεννάω",
 "strongs": "G1080",
-"gloss": "are born"
+"gloss": "are born."
 },
 {
 "ref": "3.6",
@@ -3189,7 +3189,7 @@
 "greek": "μου",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "my"
+"gloss": "my,"
 },
 {
 "ref": "3.6",
@@ -3210,7 +3210,7 @@
 "greek": "γόγγυσος",
 "lemma": "γόγγυσος",
 "strongs": null,
-"gloss": "grumbler"
+"gloss": "grumbler,"
 },
 {
 "ref": "3.6",
@@ -3245,7 +3245,7 @@
 "greek": "βλασφημίαν",
 "lemma": "βλασφημία",
 "strongs": "G988",
-"gloss": "blasphemy"
+"gloss": "blasphemy,"
 },
 {
 "ref": "3.6",
@@ -3273,7 +3273,7 @@
 "greek": "πονηρόφρων",
 "lemma": "πονηρόφρων",
 "strongs": null,
-"gloss": "evil-minded"
+"gloss": "evil-minded;"
 },
 {
 "ref": "3.6",
@@ -3315,7 +3315,7 @@
 "greek": "γεννῶνται",
 "lemma": "γεννάω",
 "strongs": "G1080",
-"gloss": "are born"
+"gloss": "are born."
 },
 {
 "ref": "3.7",
@@ -3336,7 +3336,7 @@
 "greek": "πραΰς",
 "lemma": "πραΰς",
 "strongs": "G4239",
-"gloss": "gentle"
+"gloss": "gentle,"
 },
 {
 "ref": "3.7",
@@ -3378,7 +3378,7 @@
 "greek": "γῆν",
 "lemma": "γῆ",
 "strongs": "G1093",
-"gloss": "earth"
+"gloss": "earth."
 },
 {
 "ref": "3.8",
@@ -3490,7 +3490,7 @@
 "greek": "παντός",
 "lemma": "πᾶς",
 "strongs": "G3956",
-"gloss": "all"
+"gloss": "all,"
 },
 {
 "ref": "3.8",
@@ -3504,7 +3504,7 @@
 "greek": "ἤκουσας",
 "lemma": "ἀκούω",
 "strongs": "G191",
-"gloss": "you heard"
+"gloss": "you heard."
 },
 {
 "ref": "3.9",
@@ -3567,7 +3567,7 @@
 "greek": "θράσος",
 "lemma": "θράσος",
 "strongs": null,
-"gloss": "over-confidence"
+"gloss": "over-confidence."
 },
 {
 "ref": "3.9",
@@ -3616,7 +3616,7 @@
 "greek": "ὑψηλῶν",
 "lemma": "ὑψηλός",
 "strongs": "G5308",
-"gloss": "the lofty"
+"gloss": "the lofty,"
 },
 {
 "ref": "3.9",
@@ -3658,7 +3658,7 @@
 "greek": "ἀναστραφήσῃ",
 "lemma": "ἀναστρέφω",
 "strongs": "G390",
-"gloss": "you shall associate"
+"gloss": "you shall associate."
 },
 {
 "ref": "3.10",
@@ -3707,7 +3707,7 @@
 "greek": "προσδέξῃ",
 "lemma": "προσδέχομαι",
 "strongs": "G4327",
-"gloss": "you shall accept"
+"gloss": "you shall accept,"
 },
 {
 "ref": "3.10",
@@ -3749,7 +3749,7 @@
 "greek": "γίνεται",
 "lemma": "γίνομαι",
 "strongs": "G1096",
-"gloss": "happens"
+"gloss": "happens."
 },
 {
 "ref": "4.1",
@@ -3763,7 +3763,7 @@
 "greek": "μου",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "my"
+"gloss": "my,"
 },
 {
 "ref": "4.1",
@@ -3840,7 +3840,7 @@
 "greek": "ἡμέρας",
 "lemma": "ἡμέρα",
 "strongs": "G2250",
-"gloss": "day"
+"gloss": "day,"
 },
 {
 "ref": "4.1",
@@ -3875,7 +3875,7 @@
 "greek": "κύριον",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord;"
 },
 {
 "ref": "4.1",
@@ -3910,7 +3910,7 @@
 "greek": "λαλεῖται",
 "lemma": "λαλέω",
 "strongs": "G2980",
-"gloss": "is spoken"
+"gloss": "is spoken,"
 },
 {
 "ref": "4.1",
@@ -3931,7 +3931,7 @@
 "greek": "ἐστιν",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "is"
+"gloss": "is."
 },
 {
 "ref": "4.2",
@@ -3987,7 +3987,7 @@
 "greek": "ἁγίων",
 "lemma": "ἅγιος",
 "strongs": "G40",
-"gloss": "saints"
+"gloss": "saints,"
 },
 {
 "ref": "4.2",
@@ -4022,7 +4022,7 @@
 "greek": "αὐτῶν",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "of them"
+"gloss": "of them."
 },
 {
 "ref": "4.3",
@@ -4043,7 +4043,7 @@
 "greek": "σχίσμα",
 "lemma": "σχίσμα",
 "strongs": "G4978",
-"gloss": "division"
+"gloss": "division,"
 },
 {
 "ref": "4.3",
@@ -4064,7 +4064,7 @@
 "greek": "μαχομένους",
 "lemma": "μάχομαι",
 "strongs": "G3164",
-"gloss": "those fighting"
+"gloss": "those fighting;"
 },
 {
 "ref": "4.3",
@@ -4078,7 +4078,7 @@
 "greek": "δικαίως",
 "lemma": "δικαίως",
 "strongs": "G1346",
-"gloss": "justly"
+"gloss": "justly,"
 },
 {
 "ref": "4.3",
@@ -4120,7 +4120,7 @@
 "greek": "παραπτώμασιν",
 "lemma": "παράπτωμα",
 "strongs": "G3900",
-"gloss": "transgressions"
+"gloss": "transgressions."
 },
 {
 "ref": "4.4",
@@ -4134,7 +4134,7 @@
 "greek": "διψυχήσεις",
 "lemma": "διψυχέω",
 "strongs": null,
-"gloss": "you shall be double-minded"
+"gloss": "you shall be double-minded,"
 },
 {
 "ref": "4.4",
@@ -4162,7 +4162,7 @@
 "greek": "οὔ",
 "lemma": "οὐ",
 "strongs": "G3756",
-"gloss": "not"
+"gloss": "not."
 },
 {
 "ref": "4.5",
@@ -4225,7 +4225,7 @@
 "greek": "χεῖρας",
 "lemma": "χείρ",
 "strongs": "G5495",
-"gloss": "hands"
+"gloss": "hands,"
 },
 {
 "ref": "4.5",
@@ -4260,7 +4260,7 @@
 "greek": "συσπῶν",
 "lemma": "συσπάω",
 "strongs": null,
-"gloss": "drawing back"
+"gloss": "drawing back."
 },
 {
 "ref": "4.6",
@@ -4302,7 +4302,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "4.6",
@@ -4330,7 +4330,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your."
 },
 {
 "ref": "4.7",
@@ -4372,7 +4372,7 @@
 "greek": "γογγύσεις",
 "lemma": "γογγύζω",
 "strongs": "G1111",
-"gloss": "you shall grumble"
+"gloss": "you shall grumble;"
 },
 {
 "ref": "4.7",
@@ -4386,7 +4386,7 @@
 "greek": "γάρ",
 "lemma": "γάρ",
 "strongs": "G1063",
-"gloss": "for"
+"gloss": "for,"
 },
 {
 "ref": "4.7",
@@ -4435,7 +4435,7 @@
 "greek": "ἀνταποδότης",
 "lemma": "ἀνταποδότης",
 "strongs": null,
-"gloss": "repayer"
+"gloss": "repayer."
 },
 {
 "ref": "4.8",
@@ -4463,7 +4463,7 @@
 "greek": "ἐνδεόμενον",
 "lemma": "ἐνδέομαι",
 "strongs": null,
-"gloss": "one in need"
+"gloss": "one in need,"
 },
 {
 "ref": "4.8",
@@ -4540,7 +4540,7 @@
 "greek": "εἶναι",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "to be"
+"gloss": "to be;"
 },
 {
 "ref": "4.8",
@@ -4589,7 +4589,7 @@
 "greek": "ἐστε",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "you are"
+"gloss": "you are,"
 },
 {
 "ref": "4.8",
@@ -4624,7 +4624,7 @@
 "greek": "θνητοῖς",
 "lemma": "θνητός",
 "strongs": "G2349",
-"gloss": "mortal things"
+"gloss": "mortal things?"
 },
 {
 "ref": "4.9",
@@ -4722,7 +4722,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "4.9",
@@ -4778,7 +4778,7 @@
 "greek": "θεοῦ",
 "lemma": "θεός",
 "strongs": "G2316",
-"gloss": "God"
+"gloss": "God."
 },
 {
 "ref": "4.10",
@@ -4820,7 +4820,7 @@
 "greek": "παιδίσκῃ",
 "lemma": "παιδίσκη",
 "strongs": "G3814",
-"gloss": "maidservant"
+"gloss": "maidservant,"
 },
 {
 "ref": "4.10",
@@ -4862,7 +4862,7 @@
 "greek": "ἐλπίζουσιν",
 "lemma": "ἐλπίζω",
 "strongs": "G1679",
-"gloss": "hope"
+"gloss": "hope,"
 },
 {
 "ref": "4.10",
@@ -4883,7 +4883,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "4.10",
@@ -4939,7 +4939,7 @@
 "greek": "θεόν",
 "lemma": "θεός",
 "strongs": "G2316",
-"gloss": "God"
+"gloss": "God;"
 },
 {
 "ref": "4.10",
@@ -4981,7 +4981,7 @@
 "greek": "καλέσαι",
 "lemma": "καλέω",
 "strongs": "G2564",
-"gloss": "to call"
+"gloss": "to call,"
 },
 {
 "ref": "4.10",
@@ -5023,7 +5023,7 @@
 "greek": "ἡτοίμασεν",
 "lemma": "ἑτοιμάζω",
 "strongs": "G2090",
-"gloss": "has prepared"
+"gloss": "has prepared."
 },
 {
 "ref": "4.11",
@@ -5128,7 +5128,7 @@
 "greek": "φόβῳ",
 "lemma": "φόβος",
 "strongs": "G5401",
-"gloss": "fear"
+"gloss": "fear."
 },
 {
 "ref": "4.12",
@@ -5198,7 +5198,7 @@
 "greek": "κυρίῳ",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord."
 },
 {
 "ref": "4.13",
@@ -5233,7 +5233,7 @@
 "greek": "κυρίου",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "of the Lord"
+"gloss": "of the Lord,"
 },
 {
 "ref": "4.13",
@@ -5261,7 +5261,7 @@
 "greek": "παρέλαβες",
 "lemma": "παραλαμβάνω",
 "strongs": "G3880",
-"gloss": "you received"
+"gloss": "you received,"
 },
 {
 "ref": "4.13",
@@ -5289,7 +5289,7 @@
 "greek": "ἀφαιρῶν",
 "lemma": "ἀφαιρέω",
 "strongs": "G851",
-"gloss": "taking away"
+"gloss": "taking away."
 },
 {
 "ref": "4.14",
@@ -5331,7 +5331,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "4.14",
@@ -5394,7 +5394,7 @@
 "greek": "πονηρᾷ",
 "lemma": "πονηρός",
 "strongs": "G4190",
-"gloss": "evil"
+"gloss": "evil;"
 },
 {
 "ref": "4.14",
@@ -5436,7 +5436,7 @@
 "greek": "ζωῆς",
 "lemma": "ζωή",
 "strongs": "G2222",
-"gloss": "life"
+"gloss": "life."
 },
 {
 "ref": "5.1",
@@ -5485,7 +5485,7 @@
 "greek": "αὕτη",
 "lemma": "οὗτος",
 "strongs": "G3778",
-"gloss": "this"
+"gloss": "this;"
 },
 {
 "ref": "5.1",
@@ -5534,161 +5534,161 @@
 "greek": "μεστή",
 "lemma": "μεστός",
 "strongs": "G3324",
-"gloss": "full"
+"gloss": "full;"
 },
 {
 "ref": "5.1",
 "greek": "φόνοι",
 "lemma": "φόνος",
 "strongs": "G5408",
-"gloss": "murders"
+"gloss": "murders,"
 },
 {
 "ref": "5.1",
 "greek": "μοιχεῖαι",
 "lemma": "μοιχεία",
 "strongs": "G3430",
-"gloss": "adulteries"
+"gloss": "adulteries,"
 },
 {
 "ref": "5.1",
 "greek": "ἐπιθυμίαι",
 "lemma": "ἐπιθυμία",
 "strongs": "G1939",
-"gloss": "lusts"
+"gloss": "lusts,"
 },
 {
 "ref": "5.1",
 "greek": "πορνεῖαι",
 "lemma": "πορνεία",
 "strongs": "G4202",
-"gloss": "fornications"
+"gloss": "fornications,"
 },
 {
 "ref": "5.1",
 "greek": "κλοπαί",
 "lemma": "κλοπή",
 "strongs": "G2829",
-"gloss": "thefts"
+"gloss": "thefts,"
 },
 {
 "ref": "5.1",
 "greek": "εἰδωλολατρίαι",
 "lemma": "εἰδωλολατρεία",
 "strongs": "G1495",
-"gloss": "idolatries"
+"gloss": "idolatries,"
 },
 {
 "ref": "5.1",
 "greek": "μαγεῖαι",
 "lemma": "μαγεία",
 "strongs": "G3095",
-"gloss": "magic arts"
+"gloss": "magic arts,"
 },
 {
 "ref": "5.1",
 "greek": "φαρμακίαι",
 "lemma": "φαρμακεία",
 "strongs": "G5331",
-"gloss": "sorceries"
+"gloss": "sorceries,"
 },
 {
 "ref": "5.1",
 "greek": "ἁρπαγαί",
 "lemma": "ἁρπαγή",
 "strongs": "G724",
-"gloss": "robberies"
+"gloss": "robberies,"
 },
 {
 "ref": "5.1",
 "greek": "ψευδομαρτυρίαι",
 "lemma": "ψευδομαρτυρία",
 "strongs": "G5577",
-"gloss": "false witnessings"
+"gloss": "false witnessings,"
 },
 {
 "ref": "5.1",
 "greek": "ὑποκρίσεις",
 "lemma": "ὑπόκρισις",
 "strongs": "G5272",
-"gloss": "hypocrisies"
+"gloss": "hypocrisies,"
 },
 {
 "ref": "5.1",
 "greek": "διπλοκαρδία",
 "lemma": "διπλοκαρδία",
 "strongs": null,
-"gloss": "double-heartedness"
+"gloss": "double-heartedness,"
 },
 {
 "ref": "5.1",
 "greek": "δόλος",
 "lemma": "δόλος",
 "strongs": "G1388",
-"gloss": "deceit"
+"gloss": "deceit,"
 },
 {
 "ref": "5.1",
 "greek": "ὑπερηφανία",
 "lemma": "ὑπερηφανία",
 "strongs": "G5243",
-"gloss": "arrogance"
+"gloss": "arrogance,"
 },
 {
 "ref": "5.1",
 "greek": "κακία",
 "lemma": "κακία",
 "strongs": "G2549",
-"gloss": "malice"
+"gloss": "malice,"
 },
 {
 "ref": "5.1",
 "greek": "αὐθάδεια",
 "lemma": "αὐθάδεια",
 "strongs": null,
-"gloss": "self-will"
+"gloss": "self-will,"
 },
 {
 "ref": "5.1",
 "greek": "πλεονεξία",
 "lemma": "πλεονεξία",
 "strongs": "G4124",
-"gloss": "greed"
+"gloss": "greed,"
 },
 {
 "ref": "5.1",
 "greek": "αἰσχρολογία",
 "lemma": "αἰσχρολογία",
 "strongs": "G148",
-"gloss": "foul speech"
+"gloss": "foul speech,"
 },
 {
 "ref": "5.1",
 "greek": "ζηλοτυπία",
 "lemma": "ζηλοτυπία",
 "strongs": null,
-"gloss": "jealousy"
+"gloss": "jealousy,"
 },
 {
 "ref": "5.1",
 "greek": "θρασύτης",
 "lemma": "θρασύτης",
 "strongs": null,
-"gloss": "audacity"
+"gloss": "audacity,"
 },
 {
 "ref": "5.1",
 "greek": "ὕψος",
 "lemma": "ὕψος",
 "strongs": "G5311",
-"gloss": "haughtiness"
+"gloss": "haughtiness,"
 },
 {
 "ref": "5.1",
 "greek": "ἀλαζονεία",
 "lemma": "ἀλαζονεία",
 "strongs": "G212",
-"gloss": "boastfulness"
+"gloss": "boastfulness."
 },
 {
 "ref": "5.2",
@@ -5702,7 +5702,7 @@
 "greek": "ἀγαθῶν",
 "lemma": "ἀγαθός",
 "strongs": "G18",
-"gloss": "of the good"
+"gloss": "of the good,"
 },
 {
 "ref": "5.2",
@@ -5716,7 +5716,7 @@
 "greek": "ἀλήθειαν",
 "lemma": "ἀλήθεια",
 "strongs": "G225",
-"gloss": "truth"
+"gloss": "truth,"
 },
 {
 "ref": "5.2",
@@ -5730,7 +5730,7 @@
 "greek": "ψεῦδος",
 "lemma": "ψεῦδος",
 "strongs": "G5579",
-"gloss": "a lie"
+"gloss": "a lie,"
 },
 {
 "ref": "5.2",
@@ -5758,7 +5758,7 @@
 "greek": "δικαιοσύνης",
 "lemma": "δικαιοσύνη",
 "strongs": "G1343",
-"gloss": "of righteousness"
+"gloss": "of righteousness,"
 },
 {
 "ref": "5.2",
@@ -5800,7 +5800,7 @@
 "greek": "δικαίᾳ",
 "lemma": "δίκαιος",
 "strongs": "G1342",
-"gloss": "just"
+"gloss": "just,"
 },
 {
 "ref": "5.2",
@@ -5835,7 +5835,7 @@
 "greek": "ἀγαθόν",
 "lemma": "ἀγαθός",
 "strongs": "G18",
-"gloss": "good"
+"gloss": "good,"
 },
 {
 "ref": "5.2",
@@ -5863,7 +5863,7 @@
 "greek": "πονηρόν",
 "lemma": "πονηρός",
 "strongs": "G4190",
-"gloss": "evil"
+"gloss": "evil;"
 },
 {
 "ref": "5.2",
@@ -5898,7 +5898,7 @@
 "greek": "ὑπομονή",
 "lemma": "ὑπομονή",
 "strongs": "G5281",
-"gloss": "endurance"
+"gloss": "endurance,"
 },
 {
 "ref": "5.2",
@@ -5912,7 +5912,7 @@
 "greek": "ἀγαπῶντες",
 "lemma": "ἀγαπάω",
 "strongs": "G25",
-"gloss": "loving"
+"gloss": "loving,"
 },
 {
 "ref": "5.2",
@@ -5926,7 +5926,7 @@
 "greek": "ἀνταπόδομα",
 "lemma": "ἀνταπόδομα",
 "strongs": "G468",
-"gloss": "recompense"
+"gloss": "recompense,"
 },
 {
 "ref": "5.2",
@@ -5947,7 +5947,7 @@
 "greek": "πτωχόν",
 "lemma": "πτωχός",
 "strongs": "G4434",
-"gloss": "the poor"
+"gloss": "the poor,"
 },
 {
 "ref": "5.2",
@@ -5975,7 +5975,7 @@
 "greek": "καταπονουμένῳ",
 "lemma": "καταπονέω",
 "strongs": "G2669",
-"gloss": "the oppressed"
+"gloss": "the oppressed,"
 },
 {
 "ref": "5.2",
@@ -6010,7 +6010,7 @@
 "greek": "αὐτούς",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "them"
+"gloss": "them,"
 },
 {
 "ref": "5.2",
@@ -6024,7 +6024,7 @@
 "greek": "τέκνων",
 "lemma": "τέκνον",
 "strongs": "G5043",
-"gloss": "of children"
+"gloss": "of children,"
 },
 {
 "ref": "5.2",
@@ -6045,7 +6045,7 @@
 "greek": "θεοῦ",
 "lemma": "θεός",
 "strongs": "G2316",
-"gloss": "of God"
+"gloss": "of God,"
 },
 {
 "ref": "5.2",
@@ -6066,7 +6066,7 @@
 "greek": "ἐνδεόμενον",
 "lemma": "ἐνδέομαι",
 "strongs": null,
-"gloss": "one in need"
+"gloss": "one in need,"
 },
 {
 "ref": "5.2",
@@ -6087,7 +6087,7 @@
 "greek": "θλιβόμενον",
 "lemma": "θλίβω",
 "strongs": "G2346",
-"gloss": "the afflicted"
+"gloss": "the afflicted,"
 },
 {
 "ref": "5.2",
@@ -6101,7 +6101,7 @@
 "greek": "παράκλητοι",
 "lemma": "παράκλητος",
 "strongs": "G3875",
-"gloss": "advocates"
+"gloss": "advocates,"
 },
 {
 "ref": "5.2",
@@ -6122,28 +6122,28 @@
 "greek": "κριταί",
 "lemma": "κριτής",
 "strongs": "G2923",
-"gloss": "judges"
+"gloss": "judges,"
 },
 {
 "ref": "5.2",
 "greek": "πανθαμάρτητοι",
 "lemma": "πανθαμάρτητος",
 "strongs": null,
-"gloss": "utterly sinful"
+"gloss": "utterly sinful;"
 },
 {
 "ref": "5.2",
 "greek": "ῥυσθείητε",
 "lemma": "ῥύομαι",
 "strongs": "G4506",
-"gloss": "may you be delivered"
+"gloss": "may you be delivered,"
 },
 {
 "ref": "5.2",
 "greek": "τέκνα",
 "lemma": "τέκνον",
 "strongs": "G5043",
-"gloss": "children"
+"gloss": "children,"
 },
 {
 "ref": "5.2",
@@ -6164,14 +6164,14 @@
 "greek": "ἁπάντων",
 "lemma": "ἅπας",
 "strongs": "G537",
-"gloss": "all"
+"gloss": "all."
 },
 {
 "ref": "6.1",
 "greek": "Ὅρα",
 "lemma": "ὁράω",
 "strongs": "G3708",
-"gloss": "beware"
+"gloss": "beware,"
 },
 {
 "ref": "6.1",
@@ -6241,7 +6241,7 @@
 "greek": "διδαχῆς",
 "lemma": "διδαχή",
 "strongs": "G1322",
-"gloss": "teaching"
+"gloss": "teaching,"
 },
 {
 "ref": "6.1",
@@ -6276,7 +6276,7 @@
 "greek": "διδάσκει",
 "lemma": "διδάσκω",
 "strongs": "G1321",
-"gloss": "it teaches"
+"gloss": "it teaches."
 },
 {
 "ref": "6.2",
@@ -6346,7 +6346,7 @@
 "greek": "κυρίου",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord,"
 },
 {
 "ref": "6.2",
@@ -6360,7 +6360,7 @@
 "greek": "ἔσῃ",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "you shall be"
+"gloss": "you shall be;"
 },
 {
 "ref": "6.2",
@@ -6388,7 +6388,7 @@
 "greek": "δύνασαι",
 "lemma": "δύναμαι",
 "strongs": "G1410",
-"gloss": "you are able"
+"gloss": "you are able,"
 },
 {
 "ref": "6.2",
@@ -6402,7 +6402,7 @@
 "greek": "δύνῃ",
 "lemma": "δύναμαι",
 "strongs": "G1410",
-"gloss": "you can"
+"gloss": "you can,"
 },
 {
 "ref": "6.2",
@@ -6416,7 +6416,7 @@
 "greek": "ποίει",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "do"
+"gloss": "do."
 },
 {
 "ref": "6.3",
@@ -6444,7 +6444,7 @@
 "greek": "βρώσεως",
 "lemma": "βρῶσις",
 "strongs": "G1035",
-"gloss": "food"
+"gloss": "food,"
 },
 {
 "ref": "6.3",
@@ -6465,7 +6465,7 @@
 "greek": "βάστασον",
 "lemma": "βαστάζω",
 "strongs": "G941",
-"gloss": "bear"
+"gloss": "bear;"
 },
 {
 "ref": "6.3",
@@ -6507,7 +6507,7 @@
 "greek": "πρόσεχε",
 "lemma": "προσέχω",
 "strongs": "G4337",
-"gloss": "beware"
+"gloss": "beware;"
 },
 {
 "ref": "6.3",
@@ -6542,7 +6542,7 @@
 "greek": "νεκρῶν",
 "lemma": "νεκρός",
 "strongs": "G3498",
-"gloss": "dead"
+"gloss": "dead."
 },
 {
 "ref": "7.1",
@@ -6570,7 +6570,7 @@
 "greek": "βαπτίσματος",
 "lemma": "βάπτισμα",
 "strongs": "G908",
-"gloss": "baptism"
+"gloss": "baptism,"
 },
 {
 "ref": "7.1",
@@ -6584,7 +6584,7 @@
 "greek": "βαπτίσατε",
 "lemma": "βαπτίζω",
 "strongs": "G907",
-"gloss": "baptize"
+"gloss": "baptize;"
 },
 {
 "ref": "7.1",
@@ -6605,7 +6605,7 @@
 "greek": "προειπόντες",
 "lemma": "προλέγω",
 "strongs": "G4302",
-"gloss": "having said beforehand"
+"gloss": "having said beforehand,"
 },
 {
 "ref": "7.1",
@@ -6717,7 +6717,7 @@
 "greek": "ζῶντι",
 "lemma": "ζάω",
 "strongs": "G2198",
-"gloss": "living"
+"gloss": "living."
 },
 {
 "ref": "7.2",
@@ -6759,7 +6759,7 @@
 "greek": "ζῶν",
 "lemma": "ζάω",
 "strongs": "G2198",
-"gloss": "living"
+"gloss": "living,"
 },
 {
 "ref": "7.2",
@@ -6787,7 +6787,7 @@
 "greek": "βάπτισον",
 "lemma": "βαπτίζω",
 "strongs": "G907",
-"gloss": "baptize"
+"gloss": "baptize;"
 },
 {
 "ref": "7.2",
@@ -6829,7 +6829,7 @@
 "greek": "ψυχρῷ",
 "lemma": "ψυχρός",
 "strongs": "G5593",
-"gloss": "cold"
+"gloss": "cold,"
 },
 {
 "ref": "7.2",
@@ -6843,7 +6843,7 @@
 "greek": "θερμῷ",
 "lemma": "θερμός",
 "strongs": null,
-"gloss": "warm"
+"gloss": "warm."
 },
 {
 "ref": "7.3",
@@ -6878,7 +6878,7 @@
 "greek": "ἔχῃς",
 "lemma": "ἔχω",
 "strongs": "G2192",
-"gloss": "you have"
+"gloss": "you have,"
 },
 {
 "ref": "7.3",
@@ -6976,7 +6976,7 @@
 "greek": "πνεύματος",
 "lemma": "πνεῦμα",
 "strongs": "G4151",
-"gloss": "Spirit"
+"gloss": "Spirit."
 },
 {
 "ref": "7.4",
@@ -7081,7 +7081,7 @@
 "greek": "δύνανται",
 "lemma": "δύναμαι",
 "strongs": "G1410",
-"gloss": "are able"
+"gloss": "are able;"
 },
 {
 "ref": "7.4",
@@ -7144,7 +7144,7 @@
 "greek": "δύο",
 "lemma": "δύο",
 "strongs": "G1417",
-"gloss": "two"
+"gloss": "two."
 },
 {
 "ref": "8.1",
@@ -7207,7 +7207,7 @@
 "greek": "ὑποκριτῶν",
 "lemma": "ὑποκριτής",
 "strongs": "G5273",
-"gloss": "hypocrites"
+"gloss": "hypocrites."
 },
 {
 "ref": "8.1",
@@ -7249,7 +7249,7 @@
 "greek": "πέμπτῃ",
 "lemma": "πέμπτος",
 "strongs": "G3991",
-"gloss": "on the fifth"
+"gloss": "on the fifth;"
 },
 {
 "ref": "8.1",
@@ -7291,7 +7291,7 @@
 "greek": "παρασκευήν",
 "lemma": "παρασκευή",
 "strongs": "G3904",
-"gloss": "Friday"
+"gloss": "Friday."
 },
 {
 "ref": "8.2",
@@ -7326,7 +7326,7 @@
 "greek": "ὑποκριταί",
 "lemma": "ὑποκριτής",
 "strongs": "G5273",
-"gloss": "hypocrites"
+"gloss": "hypocrites,"
 },
 {
 "ref": "8.2",
@@ -7389,7 +7389,7 @@
 "greek": "αὐτοῦ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "his"
+"gloss": "his,"
 },
 {
 "ref": "8.2",
@@ -7403,7 +7403,7 @@
 "greek": "προσεύχεσθε",
 "lemma": "προσεύχομαι",
 "strongs": "G4336",
-"gloss": "pray"
+"gloss": "pray;"
 },
 {
 "ref": "8.2",
@@ -7445,7 +7445,7 @@
 "greek": "οὐρανῷ",
 "lemma": "οὐρανός",
 "strongs": "G3772",
-"gloss": "heaven"
+"gloss": "heaven,"
 },
 {
 "ref": "8.2",
@@ -7473,7 +7473,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "8.2",
@@ -7501,7 +7501,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "8.2",
@@ -7571,7 +7571,7 @@
 "greek": "γῆς",
 "lemma": "γῆ",
 "strongs": "G1093",
-"gloss": "earth"
+"gloss": "earth;"
 },
 {
 "ref": "8.2",
@@ -7627,7 +7627,7 @@
 "greek": "σήμερον",
 "lemma": "σήμερον",
 "strongs": "G4594",
-"gloss": "today"
+"gloss": "today,"
 },
 {
 "ref": "8.2",
@@ -7669,7 +7669,7 @@
 "greek": "ἡμῶν",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "our"
+"gloss": "our,"
 },
 {
 "ref": "8.2",
@@ -7718,7 +7718,7 @@
 "greek": "ἡμῶν",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "our"
+"gloss": "our,"
 },
 {
 "ref": "8.2",
@@ -7760,7 +7760,7 @@
 "greek": "πειρασμόν",
 "lemma": "πειρασμός",
 "strongs": "G3986",
-"gloss": "temptation"
+"gloss": "temptation,"
 },
 {
 "ref": "8.2",
@@ -7802,7 +7802,7 @@
 "greek": "πονηροῦ",
 "lemma": "πονηρός",
 "strongs": "G4190",
-"gloss": "evil one"
+"gloss": "evil one;"
 },
 {
 "ref": "8.2",
@@ -7879,7 +7879,7 @@
 "greek": "αἰῶνας",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "ages"
+"gloss": "ages."
 },
 {
 "ref": "8.3",
@@ -7914,7 +7914,7 @@
 "greek": "προσεύχεσθε",
 "lemma": "προσεύχομαι",
 "strongs": "G4336",
-"gloss": "pray"
+"gloss": "pray."
 },
 {
 "ref": "9.1",
@@ -7942,7 +7942,7 @@
 "greek": "εὐχαριστίας",
 "lemma": "εὐχαριστία",
 "strongs": "G2169",
-"gloss": "thanksgiving"
+"gloss": "thanksgiving,"
 },
 {
 "ref": "9.1",
@@ -7956,7 +7956,7 @@
 "greek": "εὐχαριστήσατε",
 "lemma": "εὐχαριστέω",
 "strongs": "G2168",
-"gloss": "give thanks"
+"gloss": "give thanks;"
 },
 {
 "ref": "9.2",
@@ -7984,7 +7984,7 @@
 "greek": "ποτηρίου",
 "lemma": "ποτήριον",
 "strongs": "G4221",
-"gloss": "cup"
+"gloss": "cup;"
 },
 {
 "ref": "9.2",
@@ -7998,7 +7998,7 @@
 "greek": "σοι",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "to you"
+"gloss": "to you,"
 },
 {
 "ref": "9.2",
@@ -8012,7 +8012,7 @@
 "greek": "ἡμῶν",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "our"
+"gloss": "our,"
 },
 {
 "ref": "9.2",
@@ -8068,7 +8068,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "9.2",
@@ -8124,7 +8124,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your;"
 },
 {
 "ref": "9.2",
@@ -8166,7 +8166,7 @@
 "greek": "αἰῶνας",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "ages"
+"gloss": "ages."
 },
 {
 "ref": "9.3",
@@ -8194,7 +8194,7 @@
 "greek": "κλάσματος",
 "lemma": "κλάσμα",
 "strongs": "G2801",
-"gloss": "broken piece"
+"gloss": "broken piece;"
 },
 {
 "ref": "9.3",
@@ -8208,7 +8208,7 @@
 "greek": "σοι",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "to you"
+"gloss": "to you,"
 },
 {
 "ref": "9.3",
@@ -8222,7 +8222,7 @@
 "greek": "ἡμῶν",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "our"
+"gloss": "our,"
 },
 {
 "ref": "9.3",
@@ -8257,7 +8257,7 @@
 "greek": "γνώσεως",
 "lemma": "γνῶσις",
 "strongs": "G1108",
-"gloss": "knowledge"
+"gloss": "knowledge,"
 },
 {
 "ref": "9.3",
@@ -8313,7 +8313,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your."
 },
 {
 "ref": "9.3",
@@ -8355,7 +8355,7 @@
 "greek": "αἰῶνας",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "ages"
+"gloss": "ages."
 },
 {
 "ref": "9.4",
@@ -8446,7 +8446,7 @@
 "greek": "ἕν",
 "lemma": "εἷς",
 "strongs": "G1520",
-"gloss": "one"
+"gloss": "one,"
 },
 {
 "ref": "9.4",
@@ -8544,7 +8544,7 @@
 "greek": "βασιλείαν",
 "lemma": "βασιλεία",
 "strongs": "G932",
-"gloss": "kingdom"
+"gloss": "kingdom."
 },
 {
 "ref": "9.4",
@@ -8642,7 +8642,7 @@
 "greek": "αἰῶνας",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "ages"
+"gloss": "ages."
 },
 {
 "ref": "9.5",
@@ -8705,7 +8705,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "9.5",
@@ -8747,7 +8747,7 @@
 "greek": "κυρίου",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "of Lord"
+"gloss": "of Lord;"
 },
 {
 "ref": "9.5",
@@ -8796,7 +8796,7 @@
 "greek": "κύριος",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord;"
 },
 {
 "ref": "9.5",
@@ -8838,7 +8838,7 @@
 "greek": "κυσί",
 "lemma": "κύων",
 "strongs": "G2965",
-"gloss": "dogs"
+"gloss": "dogs."
 },
 {
 "ref": "10.1",
@@ -8880,7 +8880,7 @@
 "greek": "εὐχαριστήσατε",
 "lemma": "εὐχαριστέω",
 "strongs": "G2168",
-"gloss": "give thanks"
+"gloss": "give thanks;"
 },
 {
 "ref": "10.2",
@@ -8894,7 +8894,7 @@
 "greek": "σοι",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "to you"
+"gloss": "to you,"
 },
 {
 "ref": "10.2",
@@ -8908,7 +8908,7 @@
 "greek": "ἅγιε",
 "lemma": "ἅγιος",
 "strongs": "G40",
-"gloss": "holy"
+"gloss": "holy,"
 },
 {
 "ref": "10.2",
@@ -8943,7 +8943,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "10.2",
@@ -8985,7 +8985,7 @@
 "greek": "ἡμῶν",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "our"
+"gloss": "our,"
 },
 {
 "ref": "10.2",
@@ -9041,7 +9041,7 @@
 "greek": "ἀθανασίας",
 "lemma": "ἀθανασία",
 "strongs": "G110",
-"gloss": "immortality"
+"gloss": "immortality,"
 },
 {
 "ref": "10.2",
@@ -9097,7 +9097,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your;"
 },
 {
 "ref": "10.2",
@@ -9139,14 +9139,14 @@
 "greek": "αἰῶνας",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "ages"
+"gloss": "ages."
 },
 {
 "ref": "10.3",
 "greek": "σύ",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "you"
+"gloss": "you,"
 },
 {
 "ref": "10.3",
@@ -9160,7 +9160,7 @@
 "greek": "παντοκράτορ",
 "lemma": "παντοκράτωρ",
 "strongs": "G3841",
-"gloss": "Almighty"
+"gloss": "Almighty,"
 },
 {
 "ref": "10.3",
@@ -9209,7 +9209,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "10.3",
@@ -9272,7 +9272,7 @@
 "greek": "ἀπόλαυσιν",
 "lemma": "ἀπόλαυσις",
 "strongs": "G619",
-"gloss": "enjoyment"
+"gloss": "enjoyment,"
 },
 {
 "ref": "10.3",
@@ -9293,7 +9293,7 @@
 "greek": "εὐχαριστήσωσιν",
 "lemma": "εὐχαριστέω",
 "strongs": "G2168",
-"gloss": "they might give thanks"
+"gloss": "they might give thanks,"
 },
 {
 "ref": "10.3",
@@ -9391,7 +9391,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your."
 },
 {
 "ref": "10.4",
@@ -9419,7 +9419,7 @@
 "greek": "σοι",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "to you"
+"gloss": "to you,"
 },
 {
 "ref": "10.4",
@@ -9440,7 +9440,7 @@
 "greek": "εἶ",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "you are"
+"gloss": "you are;"
 },
 {
 "ref": "10.4",
@@ -9482,21 +9482,21 @@
 "greek": "αἰῶνας",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "ages"
+"gloss": "ages."
 },
 {
 "ref": "10.5",
 "greek": "μνήσθητι",
 "lemma": "μιμνήσκω",
 "strongs": "G3403",
-"gloss": "remember"
+"gloss": "remember,"
 },
 {
 "ref": "10.5",
 "greek": "κύριε",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord,"
 },
 {
 "ref": "10.5",
@@ -9517,7 +9517,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "10.5",
@@ -9608,7 +9608,7 @@
 "greek": "σου",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "10.5",
@@ -9657,7 +9657,7 @@
 "greek": "ἀνέμων",
 "lemma": "ἄνεμος",
 "strongs": "G417",
-"gloss": "winds"
+"gloss": "winds,"
 },
 {
 "ref": "10.5",
@@ -9671,7 +9671,7 @@
 "greek": "ἁγιασθεῖσαν",
 "lemma": "ἁγιάζω",
 "strongs": "G37",
-"gloss": "sanctified"
+"gloss": "sanctified,"
 },
 {
 "ref": "10.5",
@@ -9699,7 +9699,7 @@
 "greek": "βασιλείαν",
 "lemma": "βασιλεία",
 "strongs": "G932",
-"gloss": "kingdom"
+"gloss": "kingdom,"
 },
 {
 "ref": "10.5",
@@ -9720,7 +9720,7 @@
 "greek": "αὐτῇ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "for it"
+"gloss": "for it;"
 },
 {
 "ref": "10.5",
@@ -9797,7 +9797,7 @@
 "greek": "αἰῶνας",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "ages"
+"gloss": "ages."
 },
 {
 "ref": "10.6",
@@ -9846,7 +9846,7 @@
 "greek": "οὗτος",
 "lemma": "οὗτος",
 "strongs": "G3778",
-"gloss": "this"
+"gloss": "this."
 },
 {
 "ref": "10.6",
@@ -9874,7 +9874,7 @@
 "greek": "Δαυείδ",
 "lemma": "Δαβίδ",
 "strongs": "G1138",
-"gloss": "of David"
+"gloss": "of David."
 },
 {
 "ref": "10.6",
@@ -9902,14 +9902,14 @@
 "greek": "ἐστιν",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "is"
+"gloss": "is,"
 },
 {
 "ref": "10.6",
 "greek": "ἐρχέσθω",
 "lemma": "ἔρχομαι",
 "strongs": "G2064",
-"gloss": "let him come"
+"gloss": "let him come;"
 },
 {
 "ref": "10.6",
@@ -9937,14 +9937,14 @@
 "greek": "ἔστι",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "is"
+"gloss": "is,"
 },
 {
 "ref": "10.6",
 "greek": "μετανοείτω",
 "lemma": "μετανοέω",
 "strongs": "G3340",
-"gloss": "let him repent"
+"gloss": "let him repent;"
 },
 {
 "ref": "10.6",
@@ -9958,14 +9958,14 @@
 "greek": "ἀθά",
 "lemma": "μαρὰν ἀθά",
 "strongs": "G3134",
-"gloss": "atha"
+"gloss": "atha;"
 },
 {
 "ref": "10.6",
 "greek": "ἀμήν",
 "lemma": "ἀμήν",
 "strongs": "G281",
-"gloss": "amen"
+"gloss": "amen."
 },
 {
 "ref": "10.7",
@@ -10014,7 +10014,7 @@
 "greek": "θέλουσιν",
 "lemma": "θέλω",
 "strongs": "G2309",
-"gloss": "they wish"
+"gloss": "they wish."
 },
 {
 "ref": "11.1",
@@ -10084,7 +10084,7 @@
 "greek": "προειρημένα",
 "lemma": "προλέγω",
 "strongs": "G4302",
-"gloss": "aforesaid"
+"gloss": "aforesaid,"
 },
 {
 "ref": "11.1",
@@ -10098,7 +10098,7 @@
 "greek": "αὐτόν",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "him"
+"gloss": "him;"
 },
 {
 "ref": "11.2",
@@ -10182,7 +10182,7 @@
 "greek": "καταλῦσαι",
 "lemma": "καταλύω",
 "strongs": "G2647",
-"gloss": "to destroy"
+"gloss": "to destroy,"
 },
 {
 "ref": "11.2",
@@ -10203,7 +10203,7 @@
 "greek": "ἀκούσητε",
 "lemma": "ἀκούω",
 "strongs": "G191",
-"gloss": "listen to"
+"gloss": "listen to;"
 },
 {
 "ref": "11.2",
@@ -10259,7 +10259,7 @@
 "greek": "κυρίου",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "of Lord"
+"gloss": "of Lord,"
 },
 {
 "ref": "11.2",
@@ -10287,7 +10287,7 @@
 "greek": "κύριον",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord."
 },
 {
 "ref": "11.3",
@@ -10329,7 +10329,7 @@
 "greek": "προφητῶν",
 "lemma": "προφήτης",
 "strongs": "G4396",
-"gloss": "prophets"
+"gloss": "prophets,"
 },
 {
 "ref": "11.3",
@@ -10378,7 +10378,7 @@
 "greek": "ποιήσατε",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "do"
+"gloss": "do."
 },
 {
 "ref": "11.4",
@@ -10441,7 +10441,7 @@
 "greek": "κύριος",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord;"
 },
 {
 "ref": "11.5",
@@ -10490,7 +10490,7 @@
 "greek": "μίαν",
 "lemma": "εἷς",
 "strongs": "G1520",
-"gloss": "one"
+"gloss": "one;"
 },
 {
 "ref": "11.5",
@@ -10518,7 +10518,7 @@
 "greek": "χρεία",
 "lemma": "χρεία",
 "strongs": "G5532",
-"gloss": "need"
+"gloss": "need,"
 },
 {
 "ref": "11.5",
@@ -10539,7 +10539,7 @@
 "greek": "ἄλλην",
 "lemma": "ἄλλος",
 "strongs": "G243",
-"gloss": "other"
+"gloss": "other;"
 },
 {
 "ref": "11.5",
@@ -10567,7 +10567,7 @@
 "greek": "μείνῃ",
 "lemma": "μένω",
 "strongs": "G3306",
-"gloss": "he remains"
+"gloss": "he remains,"
 },
 {
 "ref": "11.5",
@@ -10581,7 +10581,7 @@
 "greek": "ἐστίν",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "he is"
+"gloss": "he is."
 },
 {
 "ref": "11.6",
@@ -10644,7 +10644,7 @@
 "greek": "ἄρτον",
 "lemma": "ἄρτος",
 "strongs": "G740",
-"gloss": "bread"
+"gloss": "bread,"
 },
 {
 "ref": "11.6",
@@ -10665,7 +10665,7 @@
 "greek": "αὐλισθῇ",
 "lemma": "αὐλίζομαι",
 "strongs": "G835",
-"gloss": "he lodges"
+"gloss": "he lodges;"
 },
 {
 "ref": "11.6",
@@ -10693,7 +10693,7 @@
 "greek": "αἰτῇ",
 "lemma": "αἰτέω",
 "strongs": "G154",
-"gloss": "he asks"
+"gloss": "he asks,"
 },
 {
 "ref": "11.6",
@@ -10707,7 +10707,7 @@
 "greek": "ἐστί",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "he is"
+"gloss": "he is."
 },
 {
 "ref": "11.7",
@@ -10777,7 +10777,7 @@
 "greek": "διακρινεῖτε",
 "lemma": "διακρίνω",
 "strongs": "G1252",
-"gloss": "judge"
+"gloss": "judge;"
 },
 {
 "ref": "11.7",
@@ -10805,7 +10805,7 @@
 "greek": "ἀφεθήσεται",
 "lemma": "ἀφίημι",
 "strongs": "G863",
-"gloss": "shall be forgiven"
+"gloss": "shall be forgiven,"
 },
 {
 "ref": "11.7",
@@ -10847,7 +10847,7 @@
 "greek": "ἀφεθήσεται",
 "lemma": "ἀφίημι",
 "strongs": "G863",
-"gloss": "shall be forgiven"
+"gloss": "shall be forgiven."
 },
 {
 "ref": "11.8",
@@ -10910,7 +10910,7 @@
 "greek": "ἐστίν",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "is"
+"gloss": "is,"
 },
 {
 "ref": "11.8",
@@ -10952,7 +10952,7 @@
 "greek": "κυρίου",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "of Lord"
+"gloss": "of Lord."
 },
 {
 "ref": "11.8",
@@ -11022,7 +11022,7 @@
 "greek": "προφήτης",
 "lemma": "προφήτης",
 "strongs": "G4396",
-"gloss": "prophet"
+"gloss": "prophet."
 },
 {
 "ref": "11.9",
@@ -11099,7 +11099,7 @@
 "greek": "αὐτῆς",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "it"
+"gloss": "it,"
 },
 {
 "ref": "11.9",
@@ -11134,7 +11134,7 @@
 "greek": "ἐστί",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "he is"
+"gloss": "he is."
 },
 {
 "ref": "11.10",
@@ -11176,7 +11176,7 @@
 "greek": "ἀλήθειαν",
 "lemma": "ἀλήθεια",
 "strongs": "G225",
-"gloss": "truth"
+"gloss": "truth,"
 },
 {
 "ref": "11.10",
@@ -11211,7 +11211,7 @@
 "greek": "ποιεῖ",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "does"
+"gloss": "does,"
 },
 {
 "ref": "11.10",
@@ -11225,7 +11225,7 @@
 "greek": "ἐστί",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "he is"
+"gloss": "he is."
 },
 {
 "ref": "11.11",
@@ -11253,14 +11253,14 @@
 "greek": "δεδοκιμασμένος",
 "lemma": "δοκιμάζω",
 "strongs": "G1381",
-"gloss": "approved"
+"gloss": "approved,"
 },
 {
 "ref": "11.11",
 "greek": "ἀληθινός",
 "lemma": "ἀληθινός",
 "strongs": "G228",
-"gloss": "true"
+"gloss": "true,"
 },
 {
 "ref": "11.11",
@@ -11295,7 +11295,7 @@
 "greek": "ἐκκλησίας",
 "lemma": "ἐκκλησία",
 "strongs": "G1577",
-"gloss": "of the church"
+"gloss": "of the church,"
 },
 {
 "ref": "11.11",
@@ -11323,7 +11323,7 @@
 "greek": "ποιεῖν",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "to do"
+"gloss": "to do,"
 },
 {
 "ref": "11.11",
@@ -11344,7 +11344,7 @@
 "greek": "ποιεῖ",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "does"
+"gloss": "does,"
 },
 {
 "ref": "11.11",
@@ -11372,7 +11372,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "you"
+"gloss": "you;"
 },
 {
 "ref": "11.11",
@@ -11414,7 +11414,7 @@
 "greek": "κρίσιν",
 "lemma": "κρίσις",
 "strongs": "G2920",
-"gloss": "judgment"
+"gloss": "judgment;"
 },
 {
 "ref": "11.11",
@@ -11463,7 +11463,7 @@
 "greek": "προφῆται",
 "lemma": "προφήτης",
 "strongs": "G4396",
-"gloss": "prophets"
+"gloss": "prophets."
 },
 {
 "ref": "11.12",
@@ -11505,7 +11505,7 @@
 "greek": "πνεύματι",
 "lemma": "πνεῦμα",
 "strongs": "G4151",
-"gloss": "spirit"
+"gloss": "spirit;"
 },
 {
 "ref": "11.12",
@@ -11547,7 +11547,7 @@
 "greek": "τινα",
 "lemma": "τις",
 "strongs": "G5100",
-"gloss": "some"
+"gloss": "some,"
 },
 {
 "ref": "11.12",
@@ -11568,7 +11568,7 @@
 "greek": "αὐτοῦ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "him"
+"gloss": "him;"
 },
 {
 "ref": "11.12",
@@ -11617,7 +11617,7 @@
 "greek": "δοῦναι",
 "lemma": "δίδωμι",
 "strongs": "G1325",
-"gloss": "to give"
+"gloss": "to give,"
 },
 {
 "ref": "11.12",
@@ -11638,7 +11638,7 @@
 "greek": "κρινέτω",
 "lemma": "κρίνω",
 "strongs": "G2919",
-"gloss": "let judge"
+"gloss": "let judge."
 },
 {
 "ref": "12.1",
@@ -11694,7 +11694,7 @@
 "greek": "δεχθήτω",
 "lemma": "δέχομαι",
 "strongs": "G1209",
-"gloss": "let be received"
+"gloss": "let be received;"
 },
 {
 "ref": "12.1",
@@ -11729,7 +11729,7 @@
 "greek": "γνώσεσθε",
 "lemma": "γινώσκω",
 "strongs": "G1097",
-"gloss": "you shall know"
+"gloss": "you shall know,"
 },
 {
 "ref": "12.1",
@@ -11771,7 +11771,7 @@
 "greek": "ἀριστεράν",
 "lemma": "ἀριστερός",
 "strongs": "G710",
-"gloss": "left"
+"gloss": "left."
 },
 {
 "ref": "12.2",
@@ -11813,7 +11813,7 @@
 "greek": "ἐρχόμενος",
 "lemma": "ἔρχομαι",
 "strongs": "G2064",
-"gloss": "one coming"
+"gloss": "one coming,"
 },
 {
 "ref": "12.2",
@@ -11827,7 +11827,7 @@
 "greek": "αὐτῷ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "him"
+"gloss": "him,"
 },
 {
 "ref": "12.2",
@@ -11841,7 +11841,7 @@
 "greek": "δύνασθε",
 "lemma": "δύναμαι",
 "strongs": "G1410",
-"gloss": "you are able"
+"gloss": "you are able;"
 },
 {
 "ref": "12.2",
@@ -11918,7 +11918,7 @@
 "greek": "ἡμέρας",
 "lemma": "ἡμέρα",
 "strongs": "G2250",
-"gloss": "days"
+"gloss": "days,"
 },
 {
 "ref": "12.2",
@@ -11939,7 +11939,7 @@
 "greek": "ἀνάγκη",
 "lemma": "ἀνάγκη",
 "strongs": "G318",
-"gloss": "necessity"
+"gloss": "necessity."
 },
 {
 "ref": "12.3",
@@ -11981,7 +11981,7 @@
 "greek": "καθῆσθαι",
 "lemma": "κάθημαι",
 "strongs": "G2521",
-"gloss": "to settle"
+"gloss": "to settle,"
 },
 {
 "ref": "12.3",
@@ -11995,7 +11995,7 @@
 "greek": "ὤν",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "being"
+"gloss": "being,"
 },
 {
 "ref": "12.3",
@@ -12016,7 +12016,7 @@
 "greek": "φαγέτω",
 "lemma": "ἐσθίω",
 "strongs": "G2068",
-"gloss": "let him eat"
+"gloss": "let him eat."
 },
 {
 "ref": "12.4",
@@ -12051,7 +12051,7 @@
 "greek": "τέχνην",
 "lemma": "τέχνη",
 "strongs": "G5078",
-"gloss": "a trade"
+"gloss": "a trade,"
 },
 {
 "ref": "12.4",
@@ -12086,7 +12086,7 @@
 "greek": "προνοήσατε",
 "lemma": "προνοέω",
 "strongs": "G4306",
-"gloss": "provide"
+"gloss": "provide,"
 },
 {
 "ref": "12.4",
@@ -12135,7 +12135,7 @@
 "greek": "Χριστιανός",
 "lemma": "Χριστιανός",
 "strongs": "G5546",
-"gloss": "a Christian"
+"gloss": "a Christian."
 },
 {
 "ref": "12.5",
@@ -12177,7 +12177,7 @@
 "greek": "ποιεῖν",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "to do"
+"gloss": "to do,"
 },
 {
 "ref": "12.5",
@@ -12191,7 +12191,7 @@
 "greek": "ἐστι",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "he is"
+"gloss": "he is;"
 },
 {
 "ref": "12.5",
@@ -12219,7 +12219,7 @@
 "greek": "τοιούτων",
 "lemma": "τοιοῦτος",
 "strongs": "G5108",
-"gloss": "such ones"
+"gloss": "such ones."
 },
 {
 "ref": "13.1",
@@ -12310,7 +12310,7 @@
 "greek": "αὐτοῦ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "his"
+"gloss": "his."
 },
 {
 "ref": "13.2",
@@ -12401,7 +12401,7 @@
 "greek": "αὐτοῦ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "his"
+"gloss": "his."
 },
 {
 "ref": "13.3",
@@ -12450,7 +12450,7 @@
 "greek": "ἅλωνος",
 "lemma": "ἅλων",
 "strongs": "G257",
-"gloss": "threshing floor"
+"gloss": "threshing floor,"
 },
 {
 "ref": "13.3",
@@ -12520,7 +12520,7 @@
 "greek": "προφήταις",
 "lemma": "προφήτης",
 "strongs": "G4396",
-"gloss": "prophets"
+"gloss": "prophets;"
 },
 {
 "ref": "13.3",
@@ -12562,7 +12562,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your."
 },
 {
 "ref": "13.4",
@@ -12597,7 +12597,7 @@
 "greek": "προφήτην",
 "lemma": "προφήτης",
 "strongs": "G4396",
-"gloss": "prophet"
+"gloss": "prophet,"
 },
 {
 "ref": "13.4",
@@ -12618,7 +12618,7 @@
 "greek": "πτωχοῖς",
 "lemma": "πτωχός",
 "strongs": "G4434",
-"gloss": "poor"
+"gloss": "poor."
 },
 {
 "ref": "13.5",
@@ -12639,7 +12639,7 @@
 "greek": "ποιῇς",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "you make"
+"gloss": "you make,"
 },
 {
 "ref": "13.5",
@@ -12688,7 +12688,7 @@
 "greek": "ἐντολήν",
 "lemma": "ἐντολή",
 "strongs": "G1785",
-"gloss": "commandment"
+"gloss": "commandment."
 },
 {
 "ref": "13.6",
@@ -12730,7 +12730,7 @@
 "greek": "ἀνοίξας",
 "lemma": "ἀνοίγω",
 "strongs": "G455",
-"gloss": "opening"
+"gloss": "opening,"
 },
 {
 "ref": "13.6",
@@ -12772,7 +12772,7 @@
 "greek": "προφήταις",
 "lemma": "προφήτης",
 "strongs": "G4396",
-"gloss": "prophets"
+"gloss": "prophets;"
 },
 {
 "ref": "13.7",
@@ -12842,7 +12842,7 @@
 "greek": "ἀπαρχήν",
 "lemma": "ἀπαρχή",
 "strongs": "G536",
-"gloss": "firstfruit"
+"gloss": "firstfruit,"
 },
 {
 "ref": "13.7",
@@ -12870,7 +12870,7 @@
 "greek": "δόξῃ",
 "lemma": "δοκέω",
 "strongs": "G1380",
-"gloss": "it seems good"
+"gloss": "it seems good,"
 },
 {
 "ref": "13.7",
@@ -12898,7 +12898,7 @@
 "greek": "ἐντολήν",
 "lemma": "ἐντολή",
 "strongs": "G1785",
-"gloss": "commandment"
+"gloss": "commandment."
 },
 {
 "ref": "14.1",
@@ -12961,7 +12961,7 @@
 "greek": "εὐχαριστήσατε",
 "lemma": "εὐχαριστέω",
 "strongs": "G2168",
-"gloss": "give thanks"
+"gloss": "give thanks,"
 },
 {
 "ref": "14.1",
@@ -12989,7 +12989,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "14.1",
@@ -13031,7 +13031,7 @@
 "greek": "ᾖ",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "may be"
+"gloss": "may be."
 },
 {
 "ref": "14.2",
@@ -13115,7 +13115,7 @@
 "greek": "ὑμῖν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "with you"
+"gloss": "with you,"
 },
 {
 "ref": "14.2",
@@ -13136,7 +13136,7 @@
 "greek": "διαλλαγῶσιν",
 "lemma": "διαλλάσσω",
 "strongs": "G1259",
-"gloss": "they are reconciled"
+"gloss": "they are reconciled,"
 },
 {
 "ref": "14.2",
@@ -13178,7 +13178,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your."
 },
 {
 "ref": "14.3",
@@ -13227,7 +13227,7 @@
 "greek": "κυρίου",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord;"
 },
 {
 "ref": "14.3",
@@ -13290,7 +13290,7 @@
 "greek": "καθαράν",
 "lemma": "καθαρός",
 "strongs": "G2513",
-"gloss": "pure"
+"gloss": "pure."
 },
 {
 "ref": "14.3",
@@ -13318,7 +13318,7 @@
 "greek": "εἰμί",
 "lemma": "εἰμί",
 "strongs": "G1510",
-"gloss": "I am"
+"gloss": "I am,"
 },
 {
 "ref": "14.3",
@@ -13332,7 +13332,7 @@
 "greek": "κύριος",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord,"
 },
 {
 "ref": "14.3",
@@ -13388,7 +13388,7 @@
 "greek": "ἔθνεσι",
 "lemma": "ἔθνος",
 "strongs": "G1484",
-"gloss": "nations"
+"gloss": "nations."
 },
 {
 "ref": "15.1",
@@ -13451,7 +13451,7 @@
 "greek": "κυρίου",
 "lemma": "κύριος",
 "strongs": "G2962",
-"gloss": "Lord"
+"gloss": "Lord,"
 },
 {
 "ref": "15.1",
@@ -13507,7 +13507,7 @@
 "greek": "δεδοκιμασμένους",
 "lemma": "δοκιμάζω",
 "strongs": "G1381",
-"gloss": "approved"
+"gloss": "approved;"
 },
 {
 "ref": "15.1",
@@ -13584,7 +13584,7 @@
 "greek": "διδασκάλων",
 "lemma": "διδάσκαλος",
 "strongs": "G1320",
-"gloss": "teachers"
+"gloss": "teachers."
 },
 {
 "ref": "15.2",
@@ -13612,7 +13612,7 @@
 "greek": "αὐτούς",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "them"
+"gloss": "them;"
 },
 {
 "ref": "15.2",
@@ -13689,7 +13689,7 @@
 "greek": "διδασκάλων",
 "lemma": "διδάσκαλος",
 "strongs": "G1320",
-"gloss": "teachers"
+"gloss": "teachers."
 },
 {
 "ref": "15.3",
@@ -13731,7 +13731,7 @@
 "greek": "ὀργῇ",
 "lemma": "ὀργή",
 "strongs": "G3709",
-"gloss": "anger"
+"gloss": "anger,"
 },
 {
 "ref": "15.3",
@@ -13787,7 +13787,7 @@
 "greek": "εὐαγγελίῳ",
 "lemma": "εὐαγγέλιον",
 "strongs": "G2098",
-"gloss": "gospel"
+"gloss": "gospel;"
 },
 {
 "ref": "15.3",
@@ -13871,7 +13871,7 @@
 "greek": "ἀκουέτω",
 "lemma": "ἀκούω",
 "strongs": "G191",
-"gloss": "let him hear"
+"gloss": "let him hear,"
 },
 {
 "ref": "15.3",
@@ -13892,7 +13892,7 @@
 "greek": "μετανοήσῃ",
 "lemma": "μετανοέω",
 "strongs": "G3340",
-"gloss": "he repents"
+"gloss": "he repents."
 },
 {
 "ref": "15.4",
@@ -13983,7 +13983,7 @@
 "greek": "ποιήσατε",
 "lemma": "ποιέω",
 "strongs": "G4160",
-"gloss": "do"
+"gloss": "do,"
 },
 {
 "ref": "15.4",
@@ -14039,7 +14039,7 @@
 "greek": "ἡμῶν",
 "lemma": "ἐγώ",
 "strongs": "G1473",
-"gloss": "our"
+"gloss": "our."
 },
 {
 "ref": "16.1",
@@ -14074,7 +14074,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your;"
 },
 {
 "ref": "16.1",
@@ -14109,7 +14109,7 @@
 "greek": "σβεσθήτωσαν",
 "lemma": "σβέννυμι",
 "strongs": "G4570",
-"gloss": "let be extinguished"
+"gloss": "let be extinguished,"
 },
 {
 "ref": "16.1",
@@ -14151,7 +14151,7 @@
 "greek": "ἐκλυέσθωσαν",
 "lemma": "ἐκλύω",
 "strongs": "G1590",
-"gloss": "let be loosened"
+"gloss": "let be loosened,"
 },
 {
 "ref": "16.1",
@@ -14172,7 +14172,7 @@
 "greek": "ἕτοιμοι",
 "lemma": "ἕτοιμος",
 "strongs": "G2092",
-"gloss": "ready"
+"gloss": "ready;"
 },
 {
 "ref": "16.1",
@@ -14207,7 +14207,7 @@
 "greek": "ὥραν",
 "lemma": "ὥρα",
 "strongs": "G5610",
-"gloss": "hour"
+"gloss": "hour,"
 },
 {
 "ref": "16.1",
@@ -14249,7 +14249,7 @@
 "greek": "ἔρχεται",
 "lemma": "ἔρχομαι",
 "strongs": "G2064",
-"gloss": "comes"
+"gloss": "comes."
 },
 {
 "ref": "16.2",
@@ -14312,7 +14312,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your;"
 },
 {
 "ref": "16.2",
@@ -14382,7 +14382,7 @@
 "greek": "ὑμῶν",
 "lemma": "σύ",
 "strongs": "G4771",
-"gloss": "your"
+"gloss": "your,"
 },
 {
 "ref": "16.2",
@@ -14431,7 +14431,7 @@
 "greek": "τελειωθῆτε",
 "lemma": "τελειόω",
 "strongs": "G5048",
-"gloss": "you are made perfect"
+"gloss": "you are made perfect."
 },
 {
 "ref": "16.3",
@@ -14508,7 +14508,7 @@
 "greek": "φθορεῖς",
 "lemma": "φθορεύς",
 "strongs": null,
-"gloss": "corrupters"
+"gloss": "corrupters,"
 },
 {
 "ref": "16.3",
@@ -14550,7 +14550,7 @@
 "greek": "λύκους",
 "lemma": "λύκος",
 "strongs": "G3074",
-"gloss": "wolves"
+"gloss": "wolves,"
 },
 {
 "ref": "16.3",
@@ -14592,7 +14592,7 @@
 "greek": "μῖσος",
 "lemma": "μῖσος",
 "strongs": null,
-"gloss": "hatred"
+"gloss": "hatred."
 },
 {
 "ref": "16.4",
@@ -14662,7 +14662,7 @@
 "greek": "παραδώσουσι",
 "lemma": "παραδίδωμι",
 "strongs": "G3860",
-"gloss": "shall betray"
+"gloss": "shall betray,"
 },
 {
 "ref": "16.4",
@@ -14718,7 +14718,7 @@
 "greek": "θεοῦ",
 "lemma": "θεός",
 "strongs": "G2316",
-"gloss": "of God"
+"gloss": "of God,"
 },
 {
 "ref": "16.4",
@@ -14753,7 +14753,7 @@
 "greek": "τέρατα",
 "lemma": "τέρας",
 "strongs": "G5059",
-"gloss": "wonders"
+"gloss": "wonders,"
 },
 {
 "ref": "16.4",
@@ -14802,7 +14802,7 @@
 "greek": "αὐτοῦ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "his"
+"gloss": "his,"
 },
 {
 "ref": "16.4",
@@ -14823,7 +14823,7 @@
 "greek": "ἀθέμιτα",
 "lemma": "ἀθέμιτος",
 "strongs": "G111",
-"gloss": "unlawful things"
+"gloss": "unlawful things,"
 },
 {
 "ref": "16.4",
@@ -14858,7 +14858,7 @@
 "greek": "αἰῶνος",
 "lemma": "αἰών",
 "strongs": "G165",
-"gloss": "age"
+"gloss": "age."
 },
 {
 "ref": "16.5",
@@ -14935,7 +14935,7 @@
 "greek": "δοκιμασίας",
 "lemma": "δοκιμασία",
 "strongs": null,
-"gloss": "testing"
+"gloss": "testing,"
 },
 {
 "ref": "16.5",
@@ -14970,7 +14970,7 @@
 "greek": "ἀπολοῦνται",
 "lemma": "ἀπόλλυμι",
 "strongs": "G622",
-"gloss": "shall perish"
+"gloss": "shall perish,"
 },
 {
 "ref": "16.5",
@@ -15054,7 +15054,7 @@
 "greek": "καταθέματος",
 "lemma": "κατανάθεμα",
 "strongs": "G2652",
-"gloss": "accursed"
+"gloss": "accursed."
 },
 {
 "ref": "16.6",
@@ -15103,7 +15103,7 @@
 "greek": "ἀληθείας",
 "lemma": "ἀλήθεια",
 "strongs": "G225",
-"gloss": "truth"
+"gloss": "truth;"
 },
 {
 "ref": "16.6",
@@ -15138,7 +15138,7 @@
 "greek": "οὐρανῷ",
 "lemma": "οὐρανός",
 "strongs": "G3772",
-"gloss": "heaven"
+"gloss": "heaven,"
 },
 {
 "ref": "16.6",
@@ -15166,7 +15166,7 @@
 "greek": "σάλπιγγος",
 "lemma": "σάλπιγξ",
 "strongs": "G4536",
-"gloss": "of trumpet"
+"gloss": "of trumpet,"
 },
 {
 "ref": "16.6",
@@ -15201,7 +15201,7 @@
 "greek": "νεκρῶν",
 "lemma": "νεκρός",
 "strongs": "G3498",
-"gloss": "of dead"
+"gloss": "of dead."
 },
 {
 "ref": "16.7",
@@ -15222,7 +15222,7 @@
 "greek": "δέ",
 "lemma": "δέ",
 "strongs": "G1161",
-"gloss": "but"
+"gloss": "but,"
 },
 {
 "ref": "16.7",
@@ -15243,7 +15243,7 @@
 "greek": "ἐρρέθη",
 "lemma": "ἐρέω",
 "strongs": "G2046",
-"gloss": "it was said"
+"gloss": "it was said;"
 },
 {
 "ref": "16.7",
@@ -15306,7 +15306,7 @@
 "greek": "αὐτοῦ",
 "lemma": "αὐτός",
 "strongs": "G846",
-"gloss": "him"
+"gloss": "him."
 },
 {
 "ref": "16.8",
@@ -15390,6 +15390,6 @@
 "greek": "οὐρανοῦ",
 "lemma": "οὐρανός",
 "strongs": "G3772",
-"gloss": "heaven"
+"gloss": "heaven."
 }
 ]
