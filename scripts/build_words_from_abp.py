@@ -446,19 +446,14 @@ _LEAD_SKIP = _DET_FW | _SKIP_HEAD_FW | frozenset({
 
 def _split_pn_article_lump(rows: list) -> None:
     """ABP lumps a proper noun and a trailing article into ONE chip on the article
-    slot ("Jesus the" on ὁ/G3588) and leaves the proper-noun slot (G* → '*') empty
-    — Greek order is "the Jesus", English "Jesus the". eSword shows two clickable
-    words. Split into two chips: the article keeps "the" (G3588); the leading
-    proper-noun word(s) move to the empty '*' slot. They go into a new 2-word
-    bracket with greek_pos set so PROSE reads proper-noun-then-article (English
-    order) while CHIP keeps Greek/source position order — same dual-order trick as
-    _redistribute_pronoun_compounds. Rare (Act 19:4 is the only corpus case) but
-    built-in, not a per-verse patch. Replaces the fix_article_noun_swaps band-aid.
-
-    Touches only the pair's english/head/greek_pos/bracket_id; the Greek tags stay
-    (article G3588; the '*' slot stays '*' for import_tipnr to fill). Runs last."""
-    existing = [r[6] for r in rows if r[6] is not None]
-    next_bid = (max(existing) + 1) if existing else 1
+    slot ("Jesus the" on ὁ/G3588) and leaves the proper-noun slot (G* → '*') empty.
+    Split into two plain, separately-clickable chips that read in English order
+    "Jesus the" — NO bracket, NO reorder superscripts (matches eSword: "Jesus the
+    Christ"). The EARLIER position takes the proper noun ("Jesus", '*' tag for
+    import_tipnr to fill); the later position takes the article ("the", G3588). Only
+    the pair's english/head/strongs/strongs_base/morph/lemma move; greek_pos and
+    bracket_id are cleared so it renders inline with no [ ] markers. Rare (Act 19:4
+    is the only corpus case) but built-in, not a per-verse patch. Runs last."""
     by_pos = {r[0]: i for i, r in enumerate(rows)}
 
     for idx, r in enumerate(rows):
@@ -479,15 +474,15 @@ def _split_pn_article_lump(rows: list) -> None:
             continue
         art_eng = toks[-1]                  # "the"
         pn_eng  = " ".join(toks[:-1])       # "Jesus"
-        bid = next_bid
-        next_bid += 1
-        a, b = rows[idx], rows[nidx]
-        # article keeps "the", English-SECOND (greek_pos 2); joins the bracket
-        rows[idx]  = (a[0], art_eng, _head_word(art_eng), a[3], a[4], 2, bid,
-                      a[7], a[8], a[9], a[10], a[11], a[12])
-        # proper-noun slot gets the name, English-FIRST (greek_pos 1); joins bracket
-        rows[nidx] = (b[0], pn_eng, _head_word(pn_eng), b[3], b[4], 1, bid,
-                      b[7], b[8], b[9], b[10], b[11], b[12])
+        art, pn = rows[idx], rows[nidx]     # article identity vs '*' identity
+        early, late = (idx, nidx) if art[0] <= pn[0] else (nidx, idx)
+        e, l = rows[early], rows[late]
+        # earlier position -> proper noun ("Jesus"): '*' tag + its morph/lemma
+        rows[early] = (e[0], pn_eng, _head_word(pn_eng), pn[3], pn[4], None, None,
+                       e[7], e[8], e[9], e[10], pn[11], pn[12])
+        # later position -> article ("the"): G3588 tag + its morph/lemma
+        rows[late]  = (l[0], art_eng, _head_word(art_eng), art[3], art[4], None, None,
+                       l[7], l[8], l[9], l[10], art[11], art[12])
 
 
 # ── Bracket sorting ───────────────────────────────────────────────────────────
