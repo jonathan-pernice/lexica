@@ -1,5 +1,7 @@
 # TODO
 
+Open work only. **Completed & scrapped items (with full method notes) are in [TODO_ARCHIVE.md](TODO_ARCHIVE.md)** — moved there 2026-06-06.
+
 ## Code Health & Refactor Backlog (from 2026-06-03 deep-debug session)
 
 Ranked by bug-prevention value. App works today — these are where the bug density is.
@@ -29,337 +31,35 @@ Full detail + bug evidence in memory `project_architecture_rework.md`. **#1 and 
 - `dedup_words.py` — remove exact-duplicate rows
 - All have `--dry-run`. Post-rebuild checklist is in CLAUDE.md.
 
-## ★ DUAL-ORDERING: give bundled words their own clickable Strong's chip
-Queued 2026-06-05. Full context: memory [[project_bracket_order_fix]] ("DUAL-ORDERING project").
-NOT a bug — reading is correct everywhere today; this is a precision/clickability upgrade.
+## ★ DUAL-ORDERING — remaining wrong-slot work
 
-✅ **PILOT #1 (κύριος-subject) DONE + LIVE 2026-06-05** — `scripts/fix_lord_subject.py` (post-build
-repair, no rebuild, UPDATE-only: the empty κύριος slot already exists). 795 `(the) LORD <verb...>`
-slots split: "the LORD" → its own κύριος/G2962 chip (greek_pos=1), verb keeps its gloss (greek_pos=2),
-bound in a new bracket. CHIP stays Greek order, PROSE reads "the LORD <verb>". audit REPAIRABLE 795→0,
-OK +795, health 0/0, audit_bracket_order at baseline, idempotent. Rollback `bible_pre_lordsubj_20260605.db`.
-Added to the CLAUDE.md post-rebuild repair chain (runs last). **The dual-ordering mechanism is PROVEN.**
-✅ **#2 ROUND 1 (function-word nouns) DONE + LIVE 2026-06-06** — `scripts/fix_funcword_subject.py`,
-applied 21. Concrete nouns (God/judgment/heart/name/riches/city/part/side/east-north-west…) bundled
-onto an adjacent function-word slot (article G3588 / preposition) with the noun's OWN slot empty beside
-it → clicking the noun opened the article/prep. Fix RELOCATES the English onto the noun's empty adjacent
-slot + blanks the function word; one slot always empty ⇒ word order UNCHANGED, no brackets/greek_pos/
-reorder (can't garble). health 0/0, bracket_order baseline, idempotent. Rollback `bible_pre_funcword_
-20260606.db`. In the CLAUDE.md repair chain after fix_lord_subject. Slice A (bracket-internal collapse)
-was confirmed EMPTY (audit_bracket_collapse.py GENUINE-COLLAPSE=0 — subsumed by 0a4b146). Read-only
-scopers added: `audit_funcword_wrongslot.py`, `audit_bracket_collapse.py`.
-✅ **#2 ROUND 2 (idioms) DONE + LIVE 2026-06-06** — `fix_funcword_subject.py --include-idioms`, applied 75
-(κατὰ πρόσωπον "in front/person/face" G4383 + ἐν τάχει "quickly" G5034). 96 total across rounds 1+2.
-health 0/0, bracket_order baseline, idempotent. Rollback `bible_pre_funcword_idioms_20260606.db`. Chain now
-runs `--include-idioms` to restore all 96.
-✅ **#2 ROUND 3 (plurals + in-bracket) DONE + LIVE 2026-06-06** — `--include-idioms --include-bracketed`,
-applied 12 (5 plural fruits/judgments/places/myriads + 7 in-bracket way/place/year/time/part + 2 πρόσωπον).
-gloss_has() plural-stems; --include-bracketed carries greek_pos so audit_bracket_order stays baseline.
-**108 total across rounds 1+2+3.** Rollback was `bible_pre_funcword_idioms_20260606.db` (round 2; round 3
-applied on top, health 0/0). Chain runs `--include-idioms --include-bracketed`.
-REMAINING (none urgent): ~90 REPAIRABLE-OTHER adj/particle gray zone ("#4", deferred) + a few semantic
-synonym misses.
-⛔ **#3 (wrapped verb-gloss INSERT) SCRAPPED 2026-06-06** — scoped read-only (audit_verbwrap.py); the
-clean core is small, heterogeneous (μὴ γένοιτο idiom, εἰμί copulas we don't touch, negative-particle
-hosts), needs per-case inserts, and the 1Pe 5:10 headline shape isn't even in the empty-verb net. Minor
-payoff (click-target only; verbs read fine), real row-insert risk. Parked indefinitely. Below is the
-original kickoff brief (kept for history).
+Pilots #1 (κύριος-subject) and #2 (function-word nouns, rounds 1–3, 108 fixes) are **DONE + LIVE**;
+#3 (wrapped verb-gloss insert) was **SCRAPPED**. Full writeups + the proven method/constraints are in
+[TODO_ARCHIVE.md](TODO_ARCHIVE.md). The dual-ordering mechanism is proven; what's left:
 
-🔎 **BIGGEST WRONG-SLOT SOURCE — function-word slots (G3588 article, prepositions)** (flagged
-2026-06-06 via the Lexicon "rendered as" panel). G3588 ὁ "renders as" a huge list: most is LEGIT
-(the 46979; substantival ones/one/things/he/she/that/who/both; oblique-case article carrying the
-case's English prep — to/in/with/of/for/by/against), but the tail is BUNDLING ARTIFACTS — concrete/
-proper nouns leaked onto the article slot when their OWN Strong's slot was left empty (son 206, god 5,
-lord 1, jesus 2, wisdom 2, israel/uriah 1, covenant/sacrifice/blood/name/word/stone/gates…). Clicking
-"son" then opens the ARTICLE, not υἱός/G5207. SAME WRONG-SLOT family as pilot #1, just onto function
-words instead of a verb — and the highest-VOLUME source of it (G3588 is the commonest word). It's the
-ideal stress-test for the #2/#3 DISCRIMINATOR: the hard part is telling legit one-Greek-many-English
-(neuter substantival "things"/"ones", oblique-prep) from many-Greek-collapsed (concrete noun "son"/
-"jesus" bundled, own slot empty). A blanket "article = only 'the'" rule would DESTROY real Greek — so
-the read-only audit must PARTITION first (legit vs artifact) before any split. Scope this when doing
-#2/#3; start by auditing G3588 (and prep) slots whose english_head is a concrete/proper noun with an
-adjacent empty content slot. NOT a new project — the loudest symptom of this same backlog.
+- **G3588 article / preposition wrong-slot partition (BIGGEST remaining source)** — flagged 2026-06-06
+  via the Lexicon "rendered as" panel. G3588 ὁ "renders as" a huge list: most is LEGIT (the 46979;
+  substantival ones/one/things/he/she/that/who/both; oblique-case article carrying the case's English
+  prep — to/in/with/of/for/by/against), but the tail is BUNDLING ARTIFACTS — concrete/proper nouns
+  leaked onto the article slot when their OWN Strong's slot was left empty (son 206, god 5, lord 1,
+  jesus 2, wisdom 2, israel/uriah 1, covenant/sacrifice/blood/name/word/stone/gates…). Clicking "son"
+  opens the ARTICLE, not υἱός/G5207. SAME family as pilot #1, onto function words — highest-VOLUME
+  source (G3588 is the commonest word). The hard part is the DISCRIMINATOR: legit one-Greek-many-English
+  (neuter substantival "things"/"ones", oblique-prep) vs many-Greek-collapsed (concrete noun bundled,
+  own slot empty). A blanket "article = only 'the'" rule would DESTROY real Greek — the read-only audit
+  must PARTITION first. Start by auditing G3588 (and prep) slots whose english_head is a concrete/proper
+  noun with an adjacent empty content slot. Use the archived KICKOFF METHOD / CONSTRAINTS.
+- **~90 REPAIRABLE-OTHER gray zone (#4, deferred)** — adjective/particle wrong-slot cases left after
+  #2 rounds 1–3, plus a few semantic synonym misses. Lower yield, not urgent.
+- **Facet (b) — possessive split** ("your rod": "your" rides the noun slot, σου empty). Cosmetic,
+  lowest priority; the last untouched symptom-#2 facet.
 
-THE ONE IDEA: split a bundled gloss onto its OWN Greek slot while keeping BOTH orders correct —
-`position` = Greek/source order (what CHIP renders), `greek_pos` = English reading order (what
-PROSE sorts by). Build this once; it fixes three things that are all the same shape:
-  1. **κύριος-subject (~879, HIGHEST VALUE)** — "the LORD was enraged" is bundled onto the VERB
-     (G2373), so clicking the divine name "LORD" gives the verb, not κύριος/G2962. Dry-run
-     1Ch 13:10 CONFIRMS the empty κύριος/G2962 slot ALREADY EXISTS right after the verb (so NOT
-     an insert-row case). Blockers: (a) the `_split_compounds` leading-run guard keeps "LORD" on
-     the verb because supplied "the" fails to redistribute and sets seen_own=True — and that is
-     LOAD-BEARING for the "of this possession" fix, so DON'T just rip it out; (b) English is
-     subject-verb but the slot is verb-subject (Greek) order → moving "LORD" naively garbles →
-     this is exactly why you need the dual-ordering (position vs greek_pos), not a flat move.
-  2. **Split out brackets (user-flagged)** — bracketed multi-word glosses share ONE Strong's
-     ("and the LORD" = 3 chips all on G2962). Give each bracket token its own slot by `abp_pos`.
-     SAFEST use case: brackets carry the source numbers, so split + order with NO heuristic.
-  3. **Verb-gloss fragment wrapped around the subject (1Pe 5:10 "may he ready" / Joh 4:51 "as he")**
-     — "may"/"as" is part of a REAL Greek VERB's gloss (καταρτίσαι "may ready" / καταβαίνοντος
-     "as … going down") that wraps AROUND the subject in English, so it currently rides the
-     αὐτός/G846 pronoun slot. NOT a no-Greek italic — it HAS a Greek source (the verb). Fix = its
-     own inserted cell tagged with the VERB'S Strong's, ordered before the subject. The ONE
-     sub-case that truly needs an INSERTED row (the verb's own slot is taken by "ready"). Do last.
+## Priority: Lexicon tab & AI corpus search (need a focused pass)
 
-NON-GOAL — true italics (translator-supplied words with NO Greek, e.g. an added "the"/"is"/copula):
-  these get NO Strong's and NO new cell — they are English scaffolding, not Greek words; inventing
-  a tag would be inventing data. The ONLY requirement is they stay INERT: rendered muted (existing
-  `italic` flag) and NEVER borrowing a neighbor's real Strong's on click. Display-only, NOT part of
-  the slot-splitting. (Every other word in this project IS a real Greek word — or a real verb-gloss
-  fragment — reclaiming its CORRECT slot; italics are the opposite case and stay hands-off.)
-
-KICKOFF METHOD (next session): START READ-ONLY, scope first. Tools already built this session:
-  `audit_lord_strongs.py` (κύριος buckets), `audit_bracket_order.py` (bracket order, CHIP vs
-  PRINTED), `count_redistributions.py` (the ~10,058 non-bracket splits ALREADY done this way =
-  proof the pattern works), `diff_split_fix.py` (position-independent build diff). Decide PER use
-  case: build-change (rebuild) vs targeted post-build repair. RECOMMENDED PILOT: do use-case #1
-  (κύριος-subject) first — highest value, slot exists, narrow pattern — as the proof of the
-  dual-ordering mechanism, then generalize to #2, then #3.
-CONSTRAINTS (same as the bracket-order fix that worked): bible.db PA-only (give run commands);
-  COPY-FIRST (cp → --test dry-run → build to bible_test.db → diff_split_fix → health_check 0/0 →
-  strongs_base GLOB '[0-9]*'=0 → audit_bracket_order + audit_lord_strongs → tier1/tier2 → swap);
-  NEVER `DELETE FROM words`; repair scripts touch only needed columns + `--dry-run` + idempotent
-  + ADD to the CLAUDE.md post-rebuild checklist. The leading-run logic is FRAGILE (attempt-1 was
-  reverted — see memory [[project_bracket_punct_fix]] / [[project_bracket_order_fix]]); validate
-  position-INDEPENDENTLY, never by per-position diff.
-SHIPPED already (the easy half, 2026-06-05): κύριος ANCHOR-MORPH display fix — 552→3 LORDs
-  recovered via the frontend `strongsAnchorIndex` (commit 4652aa4). The 879 above are what's left.
-
-## Full Corpus Audit — ✓ TIER 1 + TIER 2 DONE + LIVE (2026-06-05)
-
-STATUS: Tier 1 (internal) and Tier 2 (external alignment) both built, run, and triaged.
-Verdict = **the corpus is sound**; one genuine fixable class found and fixed.
-
-- **Tier 1 — `scripts/audit_corpus_tier1.py`** (read-only, mode=ro; ranked report, sibling to
-  health_check). Result: ZERO αὐτός-class corruption across 595k Greek rows. The scary raw
-  counts collapsed under partitioning — A1 8509→0 genuine (all pron case-headwords σύ/ὑμῖν,
-  crasis, edit≤2 orthographic variants + the G3924 παρεμβάλλω ABP-LXX convention); C1 empty-
-  English content slots all render via a sibling (the known chip-granularity residual), 0
-  visible drops; B/A3 = legit dual-POS + crasis. Genuine internal error ≈ 0.
-- **Tier 2 — `scripts/audit_corpus_tier2.py`** (read-only; reuses lxx_align Rahlfs/TAGNT loaders
-  + NW aligner). Headline: **92.10% content-word Strong's agreement vs Rahlfs/TAGNT.** The ~8%
-  gap is NOT error — it's (a) PN H↔G cross-numbering (13,243: ABP Hebrew# vs ref Greek# for the
-  SAME name — TIPNR, expected), (b) same-word conventions (τις/τίς, εἴδω/ὁράω, ἅγιον/ἅγιος,
-  ἐσθίω/φάγω) + textual divergence (κύριος/θεός; ABP=Vaticanus/Sixtine vs Rahlfs eclectic),
-  (c) alignment gaps/versification (Dan 64%/Psa 70% = different edition, NOT 36% errors).
-  CEILING IS TEXTUAL: 100% would mean rewriting ABP into Rahlfs — do NOT chase it.
-  KEY PARTITION FIX during the run: the real-error bucket must compare gloss vs ABP's OWN
-  number (internal), NOT vs the reference (that flags textual divergence as error). And is_pn/
-  H-number slots must be audited separately (different numbering system).
-- **GENUINE ERROR FOUND + FIXED — `scripts/fix_g1473_gloss.py`** (applied 2026-06-05, rollback
-  `bible_pre_g1473gloss_20260605.db`): residual G1473 (ἐγώ) slots glossed 3rd-person ("he/him/
-  it/them") = un-fixed tail of the αὐτός corruption. ABP gloss decides PERSON, morph gives
-  CASE+NUMBER. **Applied 1,724 → G846/αὐτός** (3P; lemma αὐτός; morph untouched). health_check
-  0/0, strongs_base invariant 0, no new contradictions (verified: only 3P-glossed slots touched).
-  Bucket(a) 2,532→1,069. Agreement 92.08→92.10% (small — these were Rahlfs-unconfirmable slots;
-  the win is INTERNAL gloss↔number consistency, user-visible in the sidebar). Idempotent;
-  add to post-rebuild checklist AFTER import_tipnr.
-- **RESIDUAL (1,069, NOT chased — diminishing returns + delicate):** (1) ~1,012 G1473 glossed
-  2P "you/your" or 1P "us" with NULL morph → English can't give number (σου vs ὑμῶν), guessing
-  would create errors; (2) a smaller mirror class — G846 slots glossed 1S/2P (possible slight
-  over-corrections from the 2026-06-04 Rahlfs pass). Both blocked on case-split without morph.
-  Logged as known bounded residual. Tier 3 (LLM English) NOT started — not warranted yet.
-- **Both audit scripts are read-only and belong in the post-rebuild checklist** alongside
-  health_check (Tier 1 every rebuild; Tier 2 when refs are handy).
-
----
-
-### Original brief (kept for history — queued 2026-06-04)
-
-GOAL: a single rigorous audit report over all ~624k word rows — Strong's tags, interlinear
-Greek lemmas, English glosses, and word order. PRINCIPLE (learned from the αὐτός/G1473 fix):
-you can't audit a corpus against itself — audit by TRIANGULATION against independent witnesses.
-Now newly possible because the `morph` + `lemma` columns exist (rebuild #6). Run when the
-active feature work is settled, NOT mid-change. Output is ONE report = near-clean bill of
-health on numbers/lemmas (objective) + a prioritized SUSPECT list for English (subjective).
-
-HONEST CEILING (state this up front so nobody expects a clean "all-correct" on English):
-- **Strong's tags + Greek lemmas** → highly auditable; independent ground truth exists
-  (Rahlfs OT, TAGNT NT) + internal cross-checks. Can approach a verifiable verdict.
-- **English correctness + word order** → only PARTIALLY auditable. The English is ABP's own
-  human translation; there is NO machine ground truth for "is this gloss right / in the right
-  order." Can verify STRUCTURE (ordering invariants, orphan slots) and FLAG semantic suspects
-  (LLM), but cannot mechanically PROVE the translation correct. Ceiling = human review.
-
-### Tier 1 — internal consistency (no external data, pure SQL, ~seconds; do FIRST)
-Highest value per effort; extends `health_check.py`. The four signals on each word must agree:
-- **Strong's ↔ lemma**: compare `words.lemma` vs `lexicon[SUBSTR(strongs_base,2)].lemma`
-  (G-words) — a mismatch is exactly the αὐτός/ἐγώ defect, now catchable for EVERY word,
-  zero external files. (This single check would have caught the original corruption instantly.)
-- **Strong's ↔ morph**: verb-number with a noun morph (or vice-versa) → flag.
-- **Slot integrity**: Greek+Strong's present but empty English; English with no source word
-  (beyond known italic/supplied); orphan brackets; greek_pos gaps. (Some already in health_check.)
-
-### Tier 2 — external alignment (Rahlfs OT / TAGNT NT; refs + aligner already on PA)
-`lxx_align.py` already aligns ABP↔reference by position — the pronoun fix used it on G1473
-slots only. A full audit = the SAME run in "report everything" mode (new `--audit` mode):
-diff EVERY word's Strong's and lemma vs its aligned reference token. Partition the flags:
-- number/lemma **contradicts ABP's own English gloss** → likely REAL error (reuse the
-  gloss-consistency guard that drove pronoun MISMATCH to 0),
-- **textual divergence** (ABP=Vaticanus/Sixtine vs Rahlfs=eclectic) → expected, NOT an error,
-- **alignment gap** → needs a look.
-The partition is the whole trick — separates "bug" from "legitimately different text."
-Est. a focused session; reuses existing files (~/LXX-Rahlfs-1935, ~/TAGNT_*.txt).
-
-### Tier 3 — semantic English pass (LLM-assisted, fuzzy; decide separately if worth the spend)
-- Batch each word's (lemma, Strong's gloss, ABP English) through Haiku: "does this English
-  plausibly render this Greek word?" → flags gross mismatches (e.g. a noun gloss on a verb).
-  Produces a SUSPECT list, never "all correct." At 624k rows it's a real cost/time call —
-  run on suspect CLASSES first (e.g. only Tier-1/2 flagged rows), not the whole corpus blind.
-- Word order: mostly the structural ordering checks (symptom #2 class); true faithfulness
-  needs sampling + human/LLM review. Inherently judgment, not pass/fail.
-
-DELIVERABLES: extend `health_check.py` (Tier 1) + add an `audit_align.py` / `lxx_align --audit`
-mode (Tier 2); Tier 3 is an optional `audit_english_llm.py` gated on a go/no-go on cost.
-Would make this the most rigorously-audited ABP digital edition in existence — nobody
-downstream of ABP audits the source at all (see the αὐτós saga, memory
-`project_pronoun_strongs_corruption`).
-
-## ✓ _split_compounds demonstrative over-reach — "this/that of X" — DONE + LIVE (2026-06-05)
-
-FIXED and live on bible.db (rollback `bible_pre_splitfix_20260604.db`). Solution = the
-**leading-run rule, gated to NON-bracketed head slots** (build_words_from_abp.py
-`_split_compounds`, commits 6755053 + 52e1002): a redistributed gloss word is fronted only
-when no kept "own" word precedes it AND the head slot is non-bracketed (`bid is None`).
-- WHY the non-bracket gate: non-bracketed slots render straight from `position`, so the
-  fronting swap visibly garbled them ("this of possession", "the of LORD", "LORD the was
-  enraged"); bracketed slots render in abp_pos order via `_sort_brackets`, so the swap is
-  invisible there AND the redistribution keeps a useful separate chip — leave them alone.
-- HEAD-vs-TARGET resolved (the open question): head = the content/noun slot bearing the
-  bundled gloss; target = the following empty function-word slot. So "the LORD" (leading
-  "the") still splits; "of **this** possession" (kept "of" before "this") stays whole.
-- VALIDATION method that worked: `--test` trace → build to `bible_test.db` (copy-first) →
-  **position-INDEPENDENT** diff `scripts/diff_split_fix.py` ((strongs,english) multiset per
-  verse; bracket-aware [BRK]/[non-brk] tags). Final impact = **3,438 verses fixed**, all clean
-  garble-fixes across books (1Ch/2Ch/Jer/Gen/1Co spot-checked), 0 health warnings, strongs_base
-  invariant 0, repair counts identical to rebuild #6. Canaries confirmed live: Jer 32:14 "of
-  this possession", Gen 2:12 "of that land", Gen 3:8 "of the LORD", 2Ch 6:10 triple-fix,
-  1Ch 13:10 "the LORD was enraged".
-- ATTEMPT-1 lesson held: target-POS was the wrong axis; gloss word-order (leading-run) is right.
-  The [BRK] tag in the diff is per-strongs and NOISY — judge cases by content, not the tag.
-- KNOWN RESIDUAL (spawned as separate tasks — all PRE-EXISTING, NOT regressions): (1) content-
-  noun chip bundled onto a neighbor verb loses its own chip in non-bracketed cases (reading
-  correct, click less granular) — restore later via bracket+abp_pos dual-ordering; (2) complex-
-  bracket reorder garbles with tangled/missing abp_pos/greek_pos. **Subject-pronoun SUBSET FIXED
-  2026-06-05** (fix_subject_reorder + fix_mat25_37 + fix_supplied_attach — see memory
-  [[project_bracket_punct_fix]]). GENERAL multi-word garble ✅ **DONE + LIVE 2026-06-05** (see
-  memory [[project_bracket_order_fix]]): 1Ch 15:13 "the and LORD", Mat 25:37 class, etc. — 374
-  garbles → 0. ROOT CAUSE: `ee84aa0` removed the `_sort_brackets` re-sort (chip = Greek/source
-  order) but left `_split_compounds` front-swapping inside brackets. FIX (commit 0a4b146):
-  `_split_compounds` SKIPS bracketed slots (`bid is not None`) + `greek_pos`=source `abp_pos`.
-  Rebuild #7, all gates green. (Job 21:22 "it he" / Eze 40:3 "set he them" are a DIFFERENT,
-  non-bracket class — not covered by this bracket fix; revisit separately if wanted.)
-  → DONE via fresh READ-ONLY comparator `scripts/audit_bracket_order.py` (CHIP vs PRINTED /
-    PROSE vs READING; replaced audit_order_mismatch.py's greedy matcher). Its strongs-overlap
-    matcher cross-matches twin sibling brackets → ~8 WORDSET false positives (Jon 4:9, Gen 44:26,
-    Lev 14:36, 1Ki 12:12, Jon 1:8, Jdg 8:8, Lev 27:12) — DB is correct, DON'T re-chase; tighten
-    the matcher (sibling-in-source-order) only if it ever matters.
-  (2b) ✓ DONE 2026-06-05: Hab 3:14 duplicate-rows quirk RESOLVED. ROOT CAUSE was the ABP source —
-    two byte-identical `(Hab 3:14)` lines in `abp_texts/abp_ot_texts/abp_habakkuk.txt` (the ONLY
-    duplicated verse marker in the whole corpus); `iter_verses()`/the build loop have no per-verse
-    dedup, so every rebuild inserted it twice. `dedup_words` only catches byte-identical rows; the
-    second-pass bracket rows differ in `bracket_id` only → survived as a doubled "of mighty ones"
-    (G1413) chip + the lone health misalignment:1/fragmented:1 + an audit WORDSET hit. FIX: removed
-    the dup source line (permanent — future rebuilds insert once; commit 5543213) + `scripts/
-    fix_hab314_dupes.py` cleaned the live DB without a rebuild (deleted 1 residual row at position
-    4). health 0/0, audit GENUINE 3→2 (the 2 remaining = the Jon 4:9 twin-bracket FPs above).
-  (3) ✓ DONE 2026-06-04/05: punctuation riding the wrong token ("mourned many, days")
-  — fix_bracket_punct.py (365 verses, data) + chip renders clause punct OUTSIDE the "]" (d0a2456).
-  TOOLING CAVEAT: audit_order_mismatch.py greedy-matches the wrong "you"/"we" in repeated-word
-  verses → ~63 false positives; benign unless reused, then fix the matching first.
-
----
-
-### Original brief (kept for history — queued 2026-06-04)
-
-`_split_compounds` pulls a word out of an already-correct multi-word gloss into a
-following empty slot and FRONTS it (position swap). For a front determiner this is
-right ("the LORD", "their gatherings" — split off "the"/"their" → correct). But when
-the matched word sits AFTER a kept word (esp. a preposition), fronting reorders wrongly:
-- Jer 32:14 source `of this possession!G2934.3 G3778` → DB renders "the scroll **this of
-  possession**" (should be "of this possession"); "this"(οὗτος) pulled into G3778 + fronted.
-- Gen 2:12 "of that land" → "that of land" (same, ἐκεῖνος).
-Facet (a) already fixes the copula sub-case (skip εἰμί/G1510 as a target).
-
-ATTEMPT 1 REVERTED (2026-06-04): a morph-POS gate skipping ALL pronoun/article/
-demonstrative (CATSS R*) target slots. Build+diff vs live showed it changed **11,036
-verses / 34,032 slots** — it correctly stopped "this/that of X" BUT also bundled the
-beneficial re-separation of "the"/"their"/"her"/"my" determiners corpus-wide ("the LORD"
-→ one chip, article G3588 emptied; reading unchanged but loses the separate clickable
-article/possessive). Target-POS can't tell "front determiner (split it)" from "middle
-word after a preposition (don't front it)". Commits 924f53c+bdd11d4 reverted.
-
-REAL FIX (next attempt): key on **gloss word-order**, not target POS — candidate is the
-"leading-run" rule: only redistribute+front a word with no kept "own" word before it, so
-"the LORD"/"their X" (determiner first) still split but "of **this** possession" / "he
-**is** a prophet" stay whole. BUT this is UNCONFIRMED — see caveats.
-
-CRITICAL METHOD FIXES (attempt 1's mistakes, do NOT repeat):
-- **The diff must be POSITION-INDEPENDENT.** Attempt 1 compared `english` at the same
-  (verse_id, position) old-vs-new; redistribution shifts positions, so one real change
-  cascades into many spurious per-position diffs. The "11,036 verses / 34,032 slots" figure
-  is therefore INFLATED/unreliable — it does NOT mean 11k regressions. Re-measure by
-  comparing, per verse, the position-INDEPENDENT `(strongs_base → english)` mapping (sorted
-  by strongs, or a multiset) — that isolates real redistribution changes from shuffles.
-- **First TRACE `_split_compounds` on real rows** until the swap (L~312) is fully understood.
-  Open question attempt 1 could not resolve: for "the LORD", is the article the HEAD (own,
-  bears the bundled gloss) or the TARGET (taken)? That determines whether the leading-run
-  rule preserves the split or bundles it. Print rows before/after for a "the LORD" verse.
-- Then: build-to-`bible_test.db` + position-independent diff + eyeball, before any swap.
-- Watch object-fronting (object glossed at END, "[²hatred ¹I will put]") for regressions.
-
-Live (rebuild #6) is correct and untouched — this is the only remaining symptom-#2 facet.
-Relates to the ABP eSword re-source idea (project_abp_esword_fidelity) — the source bundles
-these glosses, so a re-source may dissolve the problem.
-
-## LSJ coverage audit — generalize the pronoun-stub fix (✅ PRONOUN CLASS DONE 2026-06-04)
-
-✅ **Pronoun paradigms audited and closed (2026-06-04).** Morph-driven audit (distinct Greek
-`strongs_base` whose `morph` GLOBs a pronoun tag → `lexicon.lemma` → exact-key test) over
-demonstratives/relatives/αὐτός-obliques/reflexives/interrog-indef. STRUCTURAL FINDING: the big
-paradigms DON'T dead-end — αὐτός (G846), demonstratives (οὗτος G3778, ἐκεῖνος, ὅδε), relatives
-(ὅς G3739, ὅστις) collapse ALL case forms onto ONE Strong's with a NOMINATIVE lemma that has a
-full LSJ entry, so τοῦτον/ὅν/αὐτόν resolve as οὗτος/ὅς/αὐτός. Reflexives + σός have own entries.
-Only 3 genuine new gaps → fixed with stubs: **ἐμοῦ(G1700)/ἐμοί(G1698)/ἐμέ(G1691) → `v. ἐγώ`**
-(emphatic 1st-sing, same class as the enclitic μοῦ/μοί/μέ stubs). τὶς(G5100) was a FALSE flag
-(exact-key test misses the plain fallback; strip_accents('τὶς')='τις' already hits the full `τις`
-entry). τηλικοῦτος(G5082, 4×) optional `v. τηλίκος`. Verified in-app (σέ→σύ, ἐμ-→ἐγώ). See memory
-`project_pronoun_fix_path_c.md` (LSJ pronoun-coverage AUDIT block). Rollback = `DELETE FROM lsj
-WHERE key IN ('ἐμοῦ','ἐμοί','ἐμέ','τηλικοῦτος')`.
-
-RESIDUAL (optional, lower value): a corpus-wide sweep of NON-pronoun inflected forms. Likely
-near-empty — `lexicon.lemma` for verbs/nouns is already the dictionary headword (present 1st-sing
-/ nominative), so they resolve directly; the pronoun class was special because of case-split
-Strong's numbers. Re-open only if a specific non-pronoun word is reported showing the terse gloss.
-
---- ORIGINAL TASK NOTES (kept for the method) ---
-
-Inflected Greek forms whose dictionary headword is a *different* word have no own LSJ key,
-so `/api/lsj` falls through to the terse Strong's gloss (e.g. σέ → "thee"). 2026-06-04 we
-fixed the personal-pronoun families by adding 11 "v. <base>" stub rows to `lsj`
-(σέ/ὑμεῖς/ὑμᾶς/ὑμῖν/ὑμῶν→σύ; μέ/μοί/μοῦ→ἐγώ; ἡμᾶς/ἡμῖν/ἡμῶν→ἡμεῖς) — see memory
-`project_pronoun_fix_path_c.md` (LSJ note). That was SCOPED to those forms only.
-
-This task = the corpus-wide version:
-- AUDIT: for every distinct `lexicon.lemma` the `words` table actually uses (G-numbers),
-  check whether it resolves in `lsj` (exact `key`, accent-strip via `plain` =
-  `lower(strip_accents(lemma))`, or an existing "v. X" xref stub) vs falls to the Strong's
-  gloss. List the misses by frequency. NOTE: `strip_accents` is an app-registered SQLite
-  fn (not in the bare CLI) — run the audit via a small read-only Python script using the
-  app's `db()` connection (or replicate NFD-strip in Python).
-- FIX only the misses that are an **inflected form of an existing LSJ headword** — add a
-  `<b>FORM</b>, v. <i>BASE</i>.` stub with `plain=lower(strip_accents(FORM))`, exactly like
-  the σέ fix; the generic `_resolve_lsj_xref` then follows it. Likely paradigms still
-  unaudited: αὐτός obliques (αὐτόν/αὐτοῦ/αὐτῷ/αὐτήν…), demonstratives (οὗτος/τοῦτον/ἐκεῖνος),
-  relatives (ὅς/ὅν/οὗ/ᾧ), reflexives (ἑαυτοῦ/σεαυτοῦ/ἐμαυτοῦ), interrogative/indefinite (τίς/τινος).
-- DO NOT stub genuinely-absent rare words (no base headword exists) — they correctly keep the
-  Strong's gloss. No code change, no rebuild — pure `lsj` data (idempotent INSERT OR IGNORE).
-
-## Priority: Lexicon tab & AI corpus search (ORPHANS — need a focused pass)
-
-Two areas the user flagged as under-attended and needing real attention. **Start each by
-AUDITING the current implementation before planning** — neither was deeply reviewed in the
-2026-06-03 session, so read the code first and propose a plan.
+Two areas the user flagged as under-attended. **Start each by AUDITING the current implementation
+before planning** — read the code first and propose a plan.
+(NOTE: user revisits these on their own timeline — do not proactively re-pitch as "next steps"; memory
+`project_pending_improvements`.)
 
 ### Lexicon tab — finish & polish
 - Nail down the workflow: search box → word profile → gloss chips → book distribution → verse list
@@ -373,8 +73,9 @@ AUDITING the current implementation before planning** — neither was deeply rev
 - Genuinely orphaned; revisit the whole flow end-to-end (quality, UX, layout)
 - Audit: result quality, the lexicon-vs-AI two-input split (does it still serve?), result-card rendering
 - Code: Search tab in app.jsx; `/api/search` (returns abp/kjv results+groupings+variants); AI mode uses
-  Haiku Berean prompt, key_strongs chips, empty-result retry, Hebrew bridge, corpus filters
-- Related work already specced below in "Search Layout Revamp" (bare-chip verse rendering, N+1 fetch fix)
+  Haiku Berean prompt, key_strongs chips, empty-result retry, Hebrew bridge, corpus filters.
+  (Pass-1 + retry system prompts ALREADY have cache_control:ephemeral — app.py ~3257/3373.)
+- Related work specced below in "Search Layout Revamp"
 - Cross-check memory `project_ai_search_architecture.md`
 
 ## Advanced Workspace Layout (major feature)
@@ -443,108 +144,10 @@ AUDITING the current implementation before planning** — neither was deeply rev
 - Overall search layout needs optimizing — spacing, hierarchy, result cards
 - Audit whether library display improvements (verse numbers neutral, interlinear hierarchy, gold overuse) carried over to search result verses — likely they did not since search uses different component classes
 - Align search verse rendering with library standards where appropriate
-- **✓ AI search verse display** — Strong's numbers hidden (`display:none`). Word tokens kept for gold highlights and word clicks.
+- ✓ AI search verse display — Strong's numbers hidden (`display:none`); word tokens kept for gold highlights and word clicks. (done)
 - **Search verse rendering direction** — target is "bare chips": word tokens in source order, no Strong's, no interlinear Greek row, brackets preserved, gold highlights intact. Matches Library chip mode visually. Backend: eliminate N+1 `api.verseWords` fetches by including full verse word lists in the AI search response (currently re-fetched even though `_fetch_verse_words` already ran server-side).
 
-## ✓ Text Structure Session — DONE
-
-### ✓ Pericopes / Section Headings
-`pericopes` table created and populated (2431 headings, full canon). Backend: `chapter_text()` LEFT JOINs pericopes, folds `heading` into verse object. Frontend: `renderVerse()` injects `.pericope-heading` div before verse when heading is present. Works in chip, prose, and parallel (ABP column only). Note: Song of Solomon has 0 headings — BibleHub doesn't carry them; not a bug.
-
-### ✓ Prose Mode — Continuous Flow
-Non-poetry books wrap as a single flowing paragraph in prose mode with inline verse-number superscripts. Poetry books (Psa/Pro/Job/Son/Lam/Ecc) keep line-per-verse. `renderProseWords()` helper shared by both paths.
-
-### ✓ Font Size Preference
-A−/A+ in desktop lib-bar and mobile modes sheet. `--lib-font-size` CSS custom property on `.lib-reading`. Persisted in localStorage. Defaults: 15px mobile / 18px desktop. Range 13–24px.
-
-## ✓ Symptom #2 + Morphology Session — DONE (2026-06-04)
-
-Live on `bible.db` = rebuild #6 (rollback `bible_pre_morph_20260604.db`). Detail in memory
-`project_pronoun_fix_path_c.md`.
-- **✓ morph + lemma columns** — `words.morph` + `words.lemma`, populated from the existing
-  Rahlfs(CATSS)/TAGNT alignment (78%; NULL only where the source is blank). Commit 998b92c.
-- **✓ Symptom #2 facet (a) — copula reorder** — Gen 20:7 "he is a prophet" (was "is he…").
-  `_split_compounds` no longer extracts the copula (εἰμί/G1510) into its own slot. Commit 90c911e.
-- **✓ Symptom #2 facet (c) — chip Strong's anchoring** — multi-word-gloss chip puts the
-  Strong's/lemma superscript on the morph-resolved head (content→`english_head`, function→
-  firstNonItalic), not blindly the first word. Jer 32:14 G5087 now on "put". Commit 675ba46.
-- **✓ LSJ pronoun definitions** — 11 oblique "v. ‹base›" stub rows in `lsj` (σέ→σύ etc.) so
-  inflected pronouns resolve to their dictionary entry, not the terse "thee". Data-only.
-- **✗ Symptom #2 demonstrative ("this/that of X")** — attempted, REVERTED (broad gate
-  regressed); requeued above as "_split_compounds demonstrative over-reach".
-- **Still open: facet (b)** — possessive split ("your rod": "your" rides the noun slot,
-  σου empty). Cosmetic, lowest priority; the last untouched symptom-#2 facet besides demonstrative.
-
-## Planned Features
-
-### ✓ Prose Reading Mode — DONE
-Chip/Prose toggle live. Prose renders clickable inline word spans, no chip borders. Continuous flow and poetry detection complete (Text Structure Session).
-
-### ✓ Morphology Display — DONE + LIVE (2026-06-04, commits ab6657b + e90f2ff)
-Word-click sidebar now renders the `morph` parsing in plain English under the headword
-(e.g. "Verb · Aorist · Active · Indicative · 3rd person · Singular"). Frontend-only:
-`decodeMorph()` in app.jsx (per-scheme tables — CATSS dotted OT / Robinson hyphen NT, since
-the letters conflict: CATSS perfect=X/imperative=D vs Robinson perfect=R/imperative=M),
-`morph` plumbed through the Library makeEntry, one muted `.detail-morph` line, ABP Greek only
-(Hebrew/PN/NULL hide cleanly). Verified in-app: V.AAI3S verb, RP.NS pronoun (Gen 3:15 σύ / 6:13
-ἐγώ → "Pronoun · Nominative · Singular"), NT Robinson, Hebrew/`*` omit. Decoder handles
-person-prefixed Robinson pronouns (P-1GS), trailing name markers (N-GSM-T), PRT-N,
-indeclinables (N-PRI/A-NUI), 2nd aorist.
-RD-class disambiguation (commit e90f2ff): CATSS lumps αὐτός, the reflexives (ἑαυτοῦ/σεαυτοῦ/
-ἐμαυτοῦ), the reciprocal (ἀλλήλων) and the true demonstratives all under RD. `_CATSS_RD_LEMMA`
-maps by lemma (passed in as entry.greek, NFC-normalized) → αὐτός="Pronoun" (matches Robinson
-P, 19.4k words), ἑαυτοῦ…="Reflexive pronoun" (547), ἀλλήλων="Reciprocal pronoun"; default for
-the rest (οὗτος/ἐκεῖνος/ὅδε/τοιοῦτος) stays "Demonstrative pronoun". Verified in-app: αὐτός
-(Gen 4:4) → "Pronoun · Nominative · Singular · Masculine". So OT now matches the finer P/F/C/D
-distinctions Robinson already encodes. Original kickoff brief below for reference.
-
-### ★ Morphology Display — KICKOFF (data DONE 2026-06-04 · display PENDING · NEXT SESSION)
-
-GOAL: when a Greek word is clicked, show its grammatical parsing in plain English in the
-word-detail sidebar, e.g. **"Verb · Aorist · Active · Indicative · 3rd person · Singular"**
-or **"Noun · Genitive · Singular · Feminine"**. Pure display feature — NO rebuild, NO DB
-writes, frontend-only (+ maybe a tiny serialization confirm). This cashes in rebuild #6's
-`morph` column, which today only facet (c) reads internally.
-
-STATE (already done, don't redo):
-- `words.morph` populated (rebuild #6, ~78%; NULL where the source was blank — just hide the
-  line then). `words.lemma` also populated.
-- `morph` is ALREADY serialized to the frontend as `w.morph` in BOTH word endpoints:
-  `chapter_text` (app.py ~L2486) and the verse-words endpoint (app.py ~L1697). Verify it
-  reaches the detail panel; if `makeEntry`/detail-entry construction drops it, add `morph: w.morph`.
-
-THE WORK = a decoder + sidebar render:
-1. **Enumerate the real codes first** (frequency-ordered, cover the bulk):
-   - OT/CATSS (dotted): `sqlite3 bible.db "SELECT morph,COUNT(*) FROM words WHERE morph LIKE '%.%' GROUP BY 1 ORDER BY 2 DESC LIMIT 80;"`
-   - NT/Robinson (hyphen): `sqlite3 bible.db "SELECT morph,COUNT(*) FROM words WHERE morph LIKE '%-%' GROUP BY 1 ORDER BY 2 DESC LIMIT 80;"`
-2. **Write `decodeMorph(morph)` → string** (pure JS, app.jsx). Detect scheme: contains '.' = CATSS, '-' = Robinson, else single-letter POS (C/X/D/P…). Two morph schemes (verbs start `V` in both):
-   - **CATSS** `POS.PARSE`: nominals `N./A./RA./RD./RP.` + `‹case›‹number›‹gender›` (case NVGDA = Nom/Voc/Gen/Dat/Acc; number S/P/D; gender M/F/N). Verbs `V.` + `‹tense›‹voice›‹mood›` then person+number, or +`‹case/num/gen›` for participles. Tense P/I/F/A/X/Y (pres/impf/fut/aor/perf/plup), voice A/M/P, mood I/D/S/O/N/P (ind/impv/subj/opt/inf/ptcp). Singles: C=conjunction, X=particle, D=adverb, P=preposition, I=interjection.
-   - **Robinson (TAGNT)**: `POS-PARSE`. `N-NSM`/`A-ASF`/`T-NSM`/`P-GSM` = `‹case›‹number›‹gender›`. `V-AAI-3S` = tense-voice-mood then person-number (note leading `2` = second aorist, e.g. `V-2AMS`). Word-POS tags: `CONJ`/`PREP`/`ADV`/`PRT`/`COND`/`INJ`. **The TAGNT source files have a legend in their header `#` lines** — read it for the authoritative Robinson key.
-   - Build from the frequency list so the top ~40 codes/scheme cover most of the corpus; degrade gracefully (show raw code or skip) on anything unmapped.
-3. **Render** in the word-detail sidebar near the lemma/Strong's (the LSJ panel — see `api.lsj`
-   call ~app.jsx:633 and the hero render ~app.jsx:679). One muted line under the headword.
-   ABP G-words only (KJV/Hebrew/`*` proper-noun slots have no `morph` → omit cleanly).
-
-GOTCHAS: ~22% NULL morph (hide, don't show "unknown"); the P/A/etc. letters are
-POSITION-dependent in CATSS (P = present OR passive OR participle by slot); don't confuse the
-display `morph` with facet (c)'s anchor use. Reference legends: TAGNT header lines (Robinson),
-CCAT/CATSS morphology codes (Rahlfs repo `03a_morphology…`).
-
-### ✓ Parallel Mode Versification Alignment — DONE
-Audited: ABP and KJV both use MT-style verse numbering, so they align in Parallel mode — no
-systematic off-by-one (Psalms specifically audited, memory `project_pericopes_parallel`). No
-offset-map needed; residual one-off gaps are inherent LXX/MT text differences, not a bug.
-
 ## MetaV
-
-### ✓ People & Places — DONE
-People sidebar (bio, relationships, genealogy), places sidebar (Leaflet map, coordinates), proper noun routing in both ABP and KJV. All live.
-
-### ✓ Hebrew PN + gentilic handling — DONE (2026-06-03)
-- Hebrew proper nouns route to metaV (person/place) with BDB stacked below (KJV-style); badge shows real H-number.
-- Person/place default: Person, flips to Place only on a prefix-exact strongs_g match (pn_type untrusted — tipnr PK collision).
-- Gentilics (-ite/-ites: Hivite, Sinite…): labeled "People / Clan", place card headed "Homeland", AI summary fires on the clan tab.
-- AI curation (`/api/metav/ai-description`, Haiku, cached `pn:` key, text-first prompt) fills groups with no metaV/BDB.
 
 ### Topic Index
 Browse by concept (Atonement, Covenant, Resurrection, Holy Spirit etc.) as a structured alternative to AI search. Good entry point for users who don't know what to search for.
