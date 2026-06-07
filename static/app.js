@@ -46,6 +46,7 @@ const api = {
   },
   books: () => fetch("/api/books").then(r => r.json()),
   chapter: (book, ch) => fetch(`/api/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  didacheChapter: ch => fetch(`/api/didache/chapter/${ch}`).then(r => r.json()),
   kjvChapter: (book, ch) => fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWords: (book, ch, v) => fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
@@ -2505,6 +2506,15 @@ function MobileBookPicker({
   }, b.abbrev.toUpperCase())))))));
 }
 
+// Non-canonical texts — reached via the "Other" pick, walled off from the Bible
+// book list, search, and lexicon counts. Each rides its own backend route + tables.
+// Add future early-church / apocryphal texts here.
+const NONCANON = [{
+  id: "didache",
+  name: "Didache",
+  chapters: 16
+}];
+
 // ============================================================
 // LIBRARY VIEW
 // ============================================================
@@ -2533,7 +2543,11 @@ function LibraryView({
     if (stored) return parseInt(stored, 10);
     return isMobile ? 15 : 18;
   });
-  const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
+  const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel" | <noncanon id, e.g. "didache">
+  const [didVerses, setDidVerses] = useState([]);
+  const [didLoading, setDidLoading] = useState(false);
+  const [otherOpen, setOtherOpen] = useState(false);
+  const nonCanon = NONCANON.find(t => t.id === translation) || null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
   useEffect(() => {
@@ -2567,7 +2581,7 @@ function LibraryView({
     }
   }, [nav, books]);
   useEffect(() => {
-    if (!selBook) return;
+    if (!selBook || nonCanon) return; // non-canonical texts load via their own effect below
     let cancelled = false;
     setLoading(true);
     setVerses([]);
@@ -2582,7 +2596,26 @@ function LibraryView({
     return () => {
       cancelled = true;
     };
-  }, [selBook && selBook.abbrev, selChapter]);
+  }, [selBook && selBook.abbrev, selChapter, translation]);
+
+  // Non-canonical text loader (Didache, etc.) — keyed on the picked id + chapter.
+  useEffect(() => {
+    if (!nonCanon) return;
+    let cancelled = false;
+    setDidLoading(true);
+    setDidVerses([]);
+    api.didacheChapter(selChapter).then(data => {
+      if (!cancelled) {
+        setDidVerses(data);
+        setDidLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) setDidLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [translation, selChapter]);
   useEffect(() => {
     if (!selBook || translation !== "kjv" && translation !== "parallel") return;
     let cancelled = false;
@@ -2624,7 +2657,25 @@ function LibraryView({
     raf = requestAnimationFrame(tryScroll);
     return () => cancelAnimationFrame(raf);
   }, [nav?.scroll, nav?.highlight, nav?.chapter, verses, loading, selChapter]);
-  const maxChap = selBook ? selBook.chapters : 1;
+  const maxChap = nonCanon ? nonCanon.chapters : selBook ? selBook.chapters : 1;
+
+  // Pick a non-canonical text (from the "Other" menu): switch the reader to it and
+  // start at chapter 1. Picking ABP/KJV/Parallel or a book in the nav returns to the Bible.
+  const pickNonCanon = t => {
+    setTranslation(t.id);
+    onTranslationChange?.(t.id);
+    setSelChapter(1);
+    setOtherOpen(false);
+  };
+  // When the user picks a Bible book from the nav while a non-canonical text is open,
+  // drop back to ABP so the book list stays meaningful.
+  const selectBook = b => {
+    setSelBook(b);
+    if (nonCanon) {
+      setTranslation("abp");
+      onTranslationChange?.("abp");
+    }
+  };
   const showStrongs = libOptions.showStrongs || false;
   const showInterlinear = libOptions.showInterlinear || false;
   const viewMode = libOptions.viewMode || "chip";
@@ -3182,12 +3233,70 @@ function LibraryView({
       className: w.italic ? "lib-prose-italic" : undefined
     }, w.word, w.punc || "", " ")))));
   };
+
+  // Didache reader: the readable English sentence carries readability; beneath it
+  // the Greek words render as clickable chips in natural order (no bracket/ordering
+  // machinery). Chip/Strong's/Interlinear toggles control the Greek layer; Prose
+  // (no toggles) shows English only. Word click → the shared word-study sidebar.
+  const renderDidacheVerse = v => {
+    const didChip = (w, key) => {
+      const clickable = !!(onWordClick && w.strongs_base);
+      const entry = {
+        id: `did-${selChapter}-${v.verse}-${w.position}`,
+        strongs: w.strongs ? strongsTag(w.strongs) : "",
+        strongs_base: w.strongs_base || "",
+        strongs_raw: w.strongs || "",
+        greek: w.lemma || w.greek || "",
+        translit: "",
+        morph: "",
+        gloss: w.english || "",
+        ref: `Didache ${selChapter}:${v.verse}`,
+        book: "Didache",
+        chapter: selChapter,
+        verse: v.verse,
+        definition: "",
+        derivation: "",
+        is_function: false,
+        is_pn: false,
+        pn_type: null,
+        pn_types: null
+      };
+      return /*#__PURE__*/React.createElement("span", {
+        key: key,
+        className: "lib-word lib-did-word" + (clickable ? " lib-word-clickable" : ""),
+        onClick: clickable ? () => onWordClick(entry) : undefined
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek"
+      }, w.greek), /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-english"
+      }, w.english), showStrongs && (w.strongs ? /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs"
+      }, "G" + w.strongs) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs",
+        style: {
+          visibility: "hidden"
+        }
+      }, "G0")));
+    };
+    return /*#__PURE__*/React.createElement("div", {
+      className: "lib-verse-row lib-did-row",
+      key: v.verse
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "lib-vnum"
+    }, v.verse), /*#__PURE__*/React.createElement("div", {
+      className: "lib-verse-content lib-did-content"
+    }, v.english && /*#__PURE__*/React.createElement("p", {
+      className: "lib-did-eng"
+    }, v.english), chipMode && /*#__PURE__*/React.createElement("span", {
+      className: "lib-verse-chips lib-did-chips"
+    }, v.words.map((w, i) => didChip(w, `d${i}`)))));
+  };
   return /*#__PURE__*/React.createElement("div", {
     className: "library"
   }, navVisible && /*#__PURE__*/React.createElement(LibNavPanel, {
     books: books,
     selBook: selBook,
-    setSelBook: setSelBook,
+    setSelBook: selectBook,
     selChapter: selChapter,
     setSelChapter: setSelChapter,
     navBookRef: navBookRef
@@ -3242,6 +3351,19 @@ function LibraryView({
       onTranslationChange?.("parallel");
     }
   }, "Parallel"))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Other texts"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, NONCANON.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: "mseg-b" + (translation === t.id ? " on" : ""),
+    onClick: () => {
+      pickNonCanon(t);
+      setModesOpen(false);
+    }
+  }, t.name)))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
@@ -3409,7 +3531,26 @@ function LibraryView({
   }, libFontSize), /*#__PURE__*/React.createElement("button", {
     className: "seg-b",
     onClick: () => changeFontSize(+1)
-  }, "A+")))) : /*#__PURE__*/React.createElement("div", {
+  }, "A+")), /*#__PURE__*/React.createElement("span", {
+    className: "lib-bar-sep",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-wrap"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle" + (nonCanon ? " on" : ""),
+    onClick: () => setOtherOpen(o => !o)
+  }, nonCanon ? nonCanon.name : "Other", " \u25BE"), otherOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-scrim",
+    onClick: () => setOtherOpen(false)
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-menu"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-head"
+  }, "Non-canonical"), NONCANON.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: "lib-other-item" + (translation === t.id ? " on" : ""),
+    onClick: () => pickNonCanon(t)
+  }, t.name))))))) : /*#__PURE__*/React.createElement("div", {
     className: "lib-toolbar"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mbar-logo-btn",
@@ -3451,7 +3592,7 @@ function LibraryView({
     onClick: () => setMobileNavOpen(true)
   }, /*#__PURE__*/React.createElement("span", {
     className: "mbar-loc-name"
-  }, selBook ? selBook.name : ""), /*#__PURE__*/React.createElement("span", {
+  }, nonCanon ? nonCanon.name : selBook ? selBook.name : ""), /*#__PURE__*/React.createElement("span", {
     className: "mbar-loc-ch"
   }, selChapter)), /*#__PURE__*/React.createElement("button", {
     className: "mbar-ch-nav",
@@ -3471,7 +3612,7 @@ function LibraryView({
     className: "mbar-trans",
     onClick: () => setModesOpen(true),
     "aria-label": "Reading options"
-  }, translation === "parallel" ? "Par" : translation.toUpperCase())), /*#__PURE__*/React.createElement("div", _extends({
+  }, nonCanon ? "Other" : translation === "parallel" ? "Par" : translation.toUpperCase())), /*#__PURE__*/React.createElement("div", _extends({
     className: "lib-reading" + (showInterlinear ? " lib-interlinear-on" : ""),
     style: {
       ...(translation === "parallel" ? {
@@ -3479,7 +3620,11 @@ function LibraryView({
       } : {}),
       "--lib-font-size": libFontSize + "px"
     }
-  }, swipeHandlers), translation === "parallel" ? /*#__PURE__*/React.createElement("div", {
+  }, swipeHandlers), nonCanon ? didLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-loading"
+  }, "Loading\u2026") : /*#__PURE__*/React.createElement("div", {
+    className: "lib-text-words lib-did-text"
+  }, didVerses.map(renderDidacheVerse)) : translation === "parallel" ? /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel-header"

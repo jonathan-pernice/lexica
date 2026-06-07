@@ -251,6 +251,13 @@ function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
   );
 }
 
+// Non-canonical texts — reached via the "Other" pick, walled off from the Bible
+// book list, search, and lexicon counts. Each rides its own backend route + tables.
+// Add future early-church / apocryphal texts here.
+const NONCANON = [
+  { id: "didache", name: "Didache", chapters: 16 },
+];
+
 // ============================================================
 // LIBRARY VIEW
 // ============================================================
@@ -270,7 +277,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     if (stored) return parseInt(stored, 10);
     return isMobile ? 15 : 18;
   });
-  const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
+  const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel" | <noncanon id, e.g. "didache">
+  const [didVerses, setDidVerses] = useState([]);
+  const [didLoading, setDidLoading] = useState(false);
+  const [otherOpen, setOtherOpen] = useState(false);
+  const nonCanon = NONCANON.find(t => t.id === translation) || null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
 
@@ -302,7 +313,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   }, [nav, books]);
 
   useEffect(() => {
-    if (!selBook) return;
+    if (!selBook || nonCanon) return;   // non-canonical texts load via their own effect below
     let cancelled = false;
     setLoading(true);
     setVerses([]);
@@ -310,7 +321,19 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       .then(data => { if (!cancelled) { setVerses(data); setLoading(false); } })
       .catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [selBook && selBook.abbrev, selChapter]);
+  }, [selBook && selBook.abbrev, selChapter, translation]);
+
+  // Non-canonical text loader (Didache, etc.) — keyed on the picked id + chapter.
+  useEffect(() => {
+    if (!nonCanon) return;
+    let cancelled = false;
+    setDidLoading(true);
+    setDidVerses([]);
+    api.didacheChapter(selChapter)
+      .then(data => { if (!cancelled) { setDidVerses(data); setDidLoading(false); } })
+      .catch(() => { if (!cancelled) setDidLoading(false); });
+    return () => { cancelled = true; };
+  }, [translation, selChapter]);
 
   useEffect(() => {
     if (!selBook || (translation !== "kjv" && translation !== "parallel")) return;
@@ -341,7 +364,22 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     return () => cancelAnimationFrame(raf);
   }, [nav?.scroll, nav?.highlight, nav?.chapter, verses, loading, selChapter]);
 
-  const maxChap = selBook ? selBook.chapters : 1;
+  const maxChap = nonCanon ? nonCanon.chapters : (selBook ? selBook.chapters : 1);
+
+  // Pick a non-canonical text (from the "Other" menu): switch the reader to it and
+  // start at chapter 1. Picking ABP/KJV/Parallel or a book in the nav returns to the Bible.
+  const pickNonCanon = (t) => {
+    setTranslation(t.id);
+    onTranslationChange?.(t.id);
+    setSelChapter(1);
+    setOtherOpen(false);
+  };
+  // When the user picks a Bible book from the nav while a non-canonical text is open,
+  // drop back to ABP so the book list stays meaningful.
+  const selectBook = (b) => {
+    setSelBook(b);
+    if (nonCanon) { setTranslation("abp"); onTranslationChange?.("abp"); }
+  };
   const showStrongs     = libOptions.showStrongs     || false;
   const showInterlinear = libOptions.showInterlinear || false;
   const viewMode        = libOptions.viewMode        || "chip";
@@ -794,13 +832,60 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     );
   };
 
+  // Didache reader: the readable English sentence carries readability; beneath it
+  // the Greek words render as clickable chips in natural order (no bracket/ordering
+  // machinery). Chip/Strong's/Interlinear toggles control the Greek layer; Prose
+  // (no toggles) shows English only. Word click → the shared word-study sidebar.
+  const renderDidacheVerse = (v) => {
+    const didChip = (w, key) => {
+      const clickable = !!(onWordClick && w.strongs_base);
+      const entry = {
+        id: `did-${selChapter}-${v.verse}-${w.position}`,
+        strongs: w.strongs ? strongsTag(w.strongs) : "",
+        strongs_base: w.strongs_base || "",
+        strongs_raw: w.strongs || "",
+        greek: w.lemma || w.greek || "",
+        translit: "", morph: "",
+        gloss: w.english || "",
+        ref: `Didache ${selChapter}:${v.verse}`,
+        book: "Didache", chapter: selChapter, verse: v.verse,
+        definition: "", derivation: "", is_function: false,
+        is_pn: false, pn_type: null, pn_types: null,
+      };
+      return (
+        <span key={key}
+          className={"lib-word lib-did-word" + (clickable ? " lib-word-clickable" : "")}
+          onClick={clickable ? () => onWordClick(entry) : undefined}>
+          <span className="lib-iw-greek">{w.greek}</span>
+          <span className="lib-iw-english">{w.english}</span>
+          {showStrongs && (w.strongs
+            ? <span className="lib-iw-strongs">{"G" + w.strongs}</span>
+            : <span className="lib-iw-strongs" style={{ visibility: "hidden" }}>G0</span>)}
+        </span>
+      );
+    };
+    return (
+      <div className="lib-verse-row lib-did-row" key={v.verse}>
+        <span className="lib-vnum">{v.verse}</span>
+        <div className="lib-verse-content lib-did-content">
+          {v.english && <p className="lib-did-eng">{v.english}</p>}
+          {chipMode && (
+            <span className="lib-verse-chips lib-did-chips">
+              {v.words.map((w, i) => didChip(w, `d${i}`))}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="library">
       {navVisible && (
         <LibNavPanel
           books={books}
           selBook={selBook}
-          setSelBook={setSelBook}
+          setSelBook={selectBook}
           selChapter={selChapter}
           setSelChapter={setSelChapter}
           navBookRef={navBookRef}
@@ -830,6 +915,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 <button className={"mseg-b"+(translation==="abp"?" on":"")} onClick={()=>{setTranslation("abp");onTranslationChange?.("abp");}}>ABP</button>
                 <button className={"mseg-b"+(translation==="kjv"?" on":"")} onClick={()=>{setTranslation("kjv");onTranslationChange?.("kjv");}}>KJV</button>
                 <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={()=>{setTranslation("parallel");onTranslationChange?.("parallel");}}>Parallel</button>
+              </div>
+            </div>
+            <div className="mode-sec">
+              <div className="mode-lbl">Other texts</div>
+              <div className="mseg">
+                {NONCANON.map(t => (
+                  <button key={t.id} className={"mseg-b"+(translation===t.id?" on":"")}
+                    onClick={()=>{ pickNonCanon(t); setModesOpen(false); }}>{t.name}</button>
+                ))}
               </div>
             </div>
             <div className="mode-sec">
@@ -927,6 +1021,25 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <span className="font-size-lbl">{libFontSize}</span>
               <button className="seg-b" onClick={() => changeFontSize(+1)}>A+</button>
             </div>
+            <span className="lib-bar-sep" aria-hidden="true"/>
+            <div className="lib-other-wrap">
+              <button className={"lib-toggle" + (nonCanon ? " on" : "")} onClick={() => setOtherOpen(o => !o)}>
+                {nonCanon ? nonCanon.name : "Other"} ▾
+              </button>
+              {otherOpen && (
+                <>
+                  <div className="lib-other-scrim" onClick={() => setOtherOpen(false)} />
+                  <div className="lib-other-menu">
+                    <div className="lib-other-head">Non-canonical</div>
+                    {NONCANON.map(t => (
+                      <button key={t.id}
+                        className={"lib-other-item" + (translation === t.id ? " on" : "")}
+                        onClick={() => pickNonCanon(t)}>{t.name}</button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       ) : (
@@ -940,20 +1053,28 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           <div className="mbar-center">
             <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Previous chapter">‹</button>
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
-              <span className="mbar-loc-name">{selBook ? selBook.name : ""}</span>
+              <span className="mbar-loc-name">{nonCanon ? nonCanon.name : (selBook ? selBook.name : "")}</span>
               <span className="mbar-loc-ch">{selChapter}</span>
             </button>
             <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => { const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Next chapter">›</button>
           </div>
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
-            {translation === "parallel" ? "Par" : translation.toUpperCase()}
+            {nonCanon ? "Other" : translation === "parallel" ? "Par" : translation.toUpperCase()}
           </button>
         </div>
       )}
 
       <div className={"lib-reading" + (showInterlinear ? " lib-interlinear-on" : "")} style={{...(translation === "parallel" ? {paddingTop: 0} : {}), "--lib-font-size": libFontSize + "px"}} {...swipeHandlers}>
 
-        {translation === "parallel" ? (
+        {nonCanon ? (
+          didLoading ? (
+            <div className="lib-loading">Loading…</div>
+          ) : (
+            <div className="lib-text-words lib-did-text">
+              {didVerses.map(renderDidacheVerse)}
+            </div>
+          )
+        ) : translation === "parallel" ? (
           <div className="lib-parallel">
             <div className="lib-parallel-header">
               <span className="lib-parallel-label">ABP</span>

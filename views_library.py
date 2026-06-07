@@ -94,6 +94,58 @@ def books_list():
     return jsonify([{"abbrev": r["abbrev"], "name": r["name"], "chapters": r["chapters"]} for r in rows])
 
 
+@bp.route("/api/didache/chapter/<int:chapter>")
+def didache_chapter(chapter):
+    """Serve one Didache chapter in the same shape the Library reader consumes,
+    plus a readable-English line per verse. The Didache lives in its OWN two
+    tables (didache_words / didache_verses) created by load_didache.py — it is
+    walled off from the Bible's words/verses and from search + lexicon counts.
+    Degrades quietly (empty list) until the loader has been run on PA."""
+    conn = db()
+    try:
+        if not conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='didache_words'"
+        ).fetchone():
+            return jsonify([])
+        wrows = conn.execute(
+            "SELECT verse, position, greek, lemma, strongs, gloss FROM didache_words "
+            "WHERE chapter=? ORDER BY verse, position", (chapter,)
+        ).fetchall()
+        vrows = conn.execute(
+            "SELECT verse, english FROM didache_verses WHERE chapter=? ORDER BY verse",
+            (chapter,)
+        ).fetchall()
+    finally:
+        conn.close()
+    english = {r["verse"]: r["english"] for r in vrows}
+    verses: dict[int, list] = {}
+    order: list[int] = []
+    for r in wrows:
+        vn = r["verse"]
+        if vn not in verses:
+            verses[vn] = []
+            order.append(vn)
+        sg = r["strongs"] or ""                          # "G1322" or ""
+        verses[vn].append({
+            "position":     r["position"],
+            "english":      r["gloss"],                  # per-word gloss (interlinear)
+            "english_head": None,
+            "lemma":        r["lemma"],                  # Greek dictionary form
+            "greek":        r["greek"],                  # inflected form as printed
+            "strongs_base": sg or None,                 # G-number → drives word-study click
+            "strongs":      sg[1:] if sg else None,      # bare, frontend renders G{strongs}
+            "greek_pos":    None,
+            "bracket_id":   None,
+            "italic":       0,
+            "is_pn":        0,
+            "morph":        None,
+        })
+    return jsonify([
+        {"verse": v, "heading": None, "english": english.get(v, ""), "words": verses[v]}
+        for v in order
+    ])
+
+
 @bp.route("/api/chapter/<book>/<int:chapter>")
 def chapter_text(book, chapter):
     conn = db()

@@ -80,11 +80,11 @@ already builds them. (Strong's numbers are already hidden on AI results — that
 
 ---
 
-## Didache — add to Library (IN PROGRESS, started 2026-06-07)
+## Didache — add to Library (CODE DONE 2026-06-07; needs PA load + deploy)
 
-Adding the Didache (early-church text) as a **non-canonical corpus inside the Library tab** — its
-own labeled pick next to ABP/KJV, reusing the existing reader, walled off from Bible search and
-word counts. ABP stays the anchor.
+Adding the Didache (early-church text) as a **non-canonical corpus inside the Library tab** — reached
+via an "Other" pick, reusing the existing reader, walled off from Bible search and word counts. ABP
+stays the anchor.
 
 **DONE + pushed (all in `scripts/didache_proof/`):**
 - Whole Didache (16 ch) tagged: each Greek word → dictionary form → Strong's → gloss. Greek =
@@ -92,20 +92,26 @@ word counts. ABP stays the anchor.
   (2199 words, 2147 linked to Strong's, 52 genuinely non-biblical, **zero bad numbers** — all
   verified against the live lexicon by `check_didache_tags.py`, read-only).
 - `load_didache.py` — loader that creates TWO NEW tables only (`didache_words`, `didache_verses`),
-  never touches words/verses/lexicon, safe to re-run. Needs the English file (below) before it runs.
+  never touches words/verses/lexicon, safe to re-run.
 - `build_proof.py` + `didache_ch1_proof.html` — standalone proof page (reading + interlinear).
+- **`didache_english.json`** — our OWN plain English for all 16 ch (title 0.1 → 16.8, 101 verses).
+  Copyright-clean; verified to cover every tagged verse.
 
-**REMAINING (next session — say "build the Didache into Library"):**
-1. **English, all 16 ch.** Write our OWN plain translation from the tagged Greek (the auto-fetcher
-   balked on copyright; our own text avoids it). Save as `didache_english.json` ({"1.1":"...", ...}).
-   ch1 English already exists inside build_proof.py.
-2. **Run the loader** on PA: `python3 scripts/didache_proof/load_didache.py bible.db`.
-3. **Backend route** — serve a Didache chapter in the shape the Library reader wants.
-   `code: new route alongside views_library.py`
-4. **Frontend** — add Didache as a Library corpus pick, render via the existing reader, keep it OUT
-   of search + lexicon counts; then `npm run build`. Read the Library view code first.
-   `code: static/src/60-library.jsx (corpus toggle/render); 00-core.jsx book lists`
-5. **Deploy** on PA (user runs): git pull + touch wsgi.
+**CODE DONE (this session) — not live until loaded on PA:**
+- Backend: `GET /api/didache/chapter/<n>` in `views_library.py` — serves a chapter in the reader's
+  shape + a readable-English line per verse. Degrades to empty if the tables aren't loaded yet (safe
+  to deploy before the load).
+- Frontend (`static/src/60-library.jsx` + `api.didacheChapter` in `00-core.jsx`, styles in
+  `styles.css`, rebuilt into `app.js`): an **"Other ▾"** popup after the font-size picker (desktop)
+  / "Other texts" row in the mobile sheet, listing non-canonical texts via a `NONCANON` list (grows
+  easily). Pick Didache → reader swaps to it, chapter nav 1–16. Each verse shows the readable English
+  with Greek chips beneath in natural order; word click → the shared word-study sidebar. Picking
+  ABP/KJV/Parallel or any book returns to the Bible.
+
+**REMAINING — on PA (user runs):**
+1. `git pull`
+2. `python3 scripts/didache_proof/load_didache.py bible.db`  (expect ~2199 words / 101 verses)
+3. `touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
 - Design notes: NO brackets/ordering machinery (Didache chips stay in natural Greek order; the
   English column carries readability). Decisions confirmed with user this session.
 

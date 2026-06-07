@@ -1623,6 +1623,56 @@ input { font-family: inherit; }
   letter-spacing: 0.02em;
 }
 
+/* ----- "Other" non-canonical texts picker (desktop lib bar popup) ----- */
+.lib-other-wrap { position: relative; display: inline-flex; }
+.lib-other-scrim { position: fixed; inset: 0; z-index: 40; }
+.lib-other-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  min-width: 150px;
+}
+.lib-other-head {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+  padding: 4px 8px 6px;
+}
+.lib-other-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.lib-other-item:hover { background: var(--bg-sunk); }
+.lib-other-item.on { color: var(--accent); font-weight: 500; }
+
+/* ----- Didache reader: readable English line + Greek chips beneath ----- */
+.lib-did-content { display: block; }
+.lib-did-eng {
+  font-family: var(--f-serif);
+  font-size: 1em;
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 0;
+}
+.lib-did-chips { margin-top: 4px; }
+.lib-did-word .lib-iw-greek { font-size: 1.05em; }
+.lib-did-word .lib-iw-english { font-size: 0.72em; color: var(--ink-3); }
+
 /* Bracket group wrapper — inline-flex so [ words ] stay on one visual unit */
 .lib-bracket-group {
   display: contents;
