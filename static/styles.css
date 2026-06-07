@@ -715,6 +715,15 @@ input { font-family: inherit; }
   color: var(--ink-3);
   letter-spacing: 0.02em;
 }
+/* Summary side panel: the head label is the book title, so give it a proper
+   serif heading weight (the word-study / xref heads keep the small detail-pos). */
+.summary-pos {
+  font-family: var(--f-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0;
+}
 .detail-close {
   width: 32px; height: 32px;
   border-radius: 6px;
