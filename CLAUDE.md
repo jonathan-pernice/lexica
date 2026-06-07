@@ -3,6 +3,17 @@
 ## Overview
 Lexica is a Flask-based Greek and Hebrew Bible word study app. ABP (Apostolic Bible Polyglot) interlinear is the primary text; KJV is a fully searchable parallel corpus. The design is scholarly but accessible — no prior Greek training required.
 
+## HOW TO TALK TO THE USER — read every session, no exceptions
+Plain, concise English — like a colleague, not a textbook. The user is a data-center engineer
+(CCNA, Linux, lots of hands-on) — NOT a programmer. Assume infra/CLI/networking fluency (don't
+explain basic console steps), but use NO developer jargon. Avoid words like *idempotent,
+transaction, schema, query/SELECT, commit, null, boolean, lock/read-lock, upsert, snapshot* —
+translate them into plain terms ("running it again just redoes the same work, no harm"; "that
+command only reads the database, it never changes it"). Short answers; skip heading-heavy formal
+reports unless he asks for depth; skip "want me to walk you through it?" offers — just give the
+answer. He has flagged this MORE THAN ONCE — treat it as a hard rule, not a preference. Full
+detail + the exact words I've slipped on before: memory `feedback_communication_style`.
+
 ## Instructions for Claude Code
 (Account: user is on the Max 20x plan — ample headroom. Bias to being THOROUGH and
 CORRECT over conserving tool calls. The notes below are about staying focused and
