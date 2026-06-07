@@ -54,11 +54,6 @@ function SearchBar({ q2, setQ2, onAiSearch, aiLoading }) {
             {aiLoading ? <span className="spinner"/> : <Icon.ArrowRight/>}
           </button>
         </form>
-        <div className="search-chips">
-          <button className="chip suggest" onClick={() => setQ2("Where does pneuma appear in Genesis")}>"Where does pneuma appear in Genesis"</button>
-          <button className="chip suggest" onClick={() => setQ2("Faith in Paul's letters")}>"Faith in Paul's letters"</button>
-          <button className="chip suggest" onClick={() => setQ2("divine council passages")}>"divine council passages"</button>
-        </div>
       </div>
     </section>
   );

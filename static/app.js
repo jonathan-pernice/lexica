@@ -725,18 +725,7 @@ function SearchBar({
     "aria-label": "Submit"
   }, aiLoading ? /*#__PURE__*/React.createElement("span", {
     className: "spinner"
-  }) : /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), /*#__PURE__*/React.createElement("div", {
-    className: "search-chips"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "chip suggest",
-    onClick: () => setQ2("Where does pneuma appear in Genesis")
-  }, "\"Where does pneuma appear in Genesis\""), /*#__PURE__*/React.createElement("button", {
-    className: "chip suggest",
-    onClick: () => setQ2("Faith in Paul's letters")
-  }, "\"Faith in Paul's letters\""), /*#__PURE__*/React.createElement("button", {
-    className: "chip suggest",
-    onClick: () => setQ2("divine council passages")
-  }, "\"divine council passages\""))));
+  }) : /*#__PURE__*/React.createElement(Icon.ArrowRight, null)))));
 }
 
 // ============================================================
