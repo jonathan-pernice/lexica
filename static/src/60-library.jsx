@@ -292,7 +292,9 @@ function ModesSheet({
 }) {
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
+  const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly);   // English-only: no Greek toggles
   const [otherShown, setOtherShown] = useState(!!activeNonCanon);
+  const gray = proseLocked ? { opacity: 0.35, cursor: "default" } : undefined;
   return (
     <>
       <div className="sheet-scrim" onClick={onClose} />
@@ -311,7 +313,7 @@ function ModesSheet({
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
               </div>
               <div className="mseg text-par">
-                <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={toggleParallel}>Parallel</button>
+                <button className={"mseg-b"+(translation==="parallel"?" on":"")} disabled={proseLocked} style={gray} onClick={()=>!proseLocked&&toggleParallel()}>Parallel</button>
               </div>
             </div>
             {nonCanonList.length > 0 && (
@@ -342,14 +344,14 @@ function ModesSheet({
                   <div className="mtog-name">Strong's numbers</div>
                   <div className="mtog-sub">Tap a word for its lexicon entry</div>
                 </div>
-                <button className={"switch"+(showStrongs?" on":"")} onClick={()=>setOpt("showStrongs",!showStrongs)} aria-label="Toggle Strong's" aria-pressed={showStrongs} />
+                <button className={"switch"+(showStrongs?" on":"")} disabled={proseLocked} style={gray} onClick={()=>!proseLocked&&setOpt("showStrongs",!showStrongs)} aria-label="Toggle Strong's" aria-pressed={showStrongs} />
               </div>
               <div className="mtog-row">
                 <div className="mtog-txt">
                   <div className="mtog-name">Interlinear</div>
                   <div className="mtog-sub">Stack Greek, transliteration &amp; gloss</div>
                 </div>
-                <button className={"switch"+(showInterlinear?" on":"")} onClick={()=>setOpt("showInterlinear",!showInterlinear)} aria-label="Toggle Interlinear" aria-pressed={showInterlinear} />
+                <button className={"switch"+(showInterlinear?" on":"")} disabled={proseLocked} style={gray} onClick={()=>!proseLocked&&setOpt("showInterlinear",!showInterlinear)} aria-label="Toggle Interlinear" aria-pressed={showInterlinear} />
               </div>
             </div>
           </div>
@@ -357,8 +359,8 @@ function ModesSheet({
             <div className="mode-lbl">Display</div>
             <div className="display-row">
               <div className="mseg">
-                <button className={"mseg-b"+(chipMode?" on":"")} onClick={()=>setOpt("viewMode","chip")}>Chip</button>
-                <button className={"mseg-b"+(!chipMode?" on":"")} disabled={showStrongs||showInterlinear} style={showStrongs||showInterlinear?{opacity:0.35}:undefined} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}>Prose</button>
+                <button className={"mseg-b"+(chipMode?" on":"")} disabled={proseLocked} style={gray} onClick={()=>!proseLocked&&setOpt("viewMode","chip")}>Chip</button>
+                <button className={"mseg-b"+(!chipMode?" on":"")} disabled={!proseLocked&&(showStrongs||showInterlinear)} style={!proseLocked&&(showStrongs||showInterlinear)?{opacity:0.35}:undefined} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}>Prose</button>
               </div>
               <div className="mseg font-picker">
                 <button className="mseg-b" onClick={() => changeFontSize(-1)}>A−</button>
@@ -536,7 +538,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const viewMode        = libOptions.viewMode        || "chip";
   const setOpt = (key, val) => setLibOptions(prev => ({ ...prev, [key]: val }));
 
-  const chipMode    = viewMode === "chip" || showStrongs || showInterlinear;
+  // English-only non-canonical texts (e.g. 1 Enoch) have no Greek, so the reader is
+  // locked to Prose and the Greek-only toggles (Strong's / Interlinear / Parallel /
+  // Chip) are disabled and grayed out.
+  const proseLocked = !!(nonCanon && nonCanon.englishOnly);
+  const chipMode    = !proseLocked && (viewMode === "chip" || showStrongs || showInterlinear);
   const wordMode    = chipMode;
   const kjvWordMode = chipMode;
 
@@ -1142,19 +1148,21 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <button className={"seg-b" + (corpus === "bible" && translation === "kjv" ? " on" : "")} onClick={() => pickBible("kjv")}>KJV</button>
             </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
-            <button className={"lib-toggle" + (showStrongs ? " on" : "")} onClick={() => setOpt("showStrongs", !showStrongs)}>Strong's</button>
-            <button className={"lib-toggle" + (showInterlinear ? " on" : "")} onClick={() => setOpt("showInterlinear", !showInterlinear)}>Interlinear</button>
-            <button className={"lib-toggle" + (translation === "parallel" ? " on" : "")} onClick={toggleParallel}>Parallel</button>
+            <button className={"lib-toggle" + (showStrongs ? " on" : "")} disabled={proseLocked} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showStrongs", !showStrongs)}>Strong's</button>
+            <button className={"lib-toggle" + (showInterlinear ? " on" : "")} disabled={proseLocked} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}>Interlinear</button>
+            <button className={"lib-toggle" + (translation === "parallel" ? " on" : "")} disabled={proseLocked} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && toggleParallel()}>Parallel</button>
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg">
               <button
                 className={"seg-b" + (chipMode ? " on" : "")}
-                onClick={() => setOpt("viewMode", "chip")}
+                disabled={proseLocked}
+                style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined}
+                onClick={() => !proseLocked && setOpt("viewMode", "chip")}
               >Chip</button>
               <button
                 className={"seg-b" + (!chipMode ? " on" : "")}
-                disabled={showStrongs || showInterlinear}
-                style={showStrongs || showInterlinear ? { opacity: 0.35, cursor: "default" } : undefined}
+                disabled={!proseLocked && (showStrongs || showInterlinear)}
+                style={!proseLocked && (showStrongs || showInterlinear) ? { opacity: 0.35, cursor: "default" } : undefined}
                 onClick={() => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")}
               >Prose</button>
             </div>
@@ -1202,7 +1210,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => { const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Next chapter">›</button>
           </div>
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
-            {translation === "parallel" ? "Par" : nonCanon ? "Grk" : translation.toUpperCase()}
+            {proseLocked ? "Prose" : translation === "parallel" ? "Par" : nonCanon ? "Grk" : translation.toUpperCase()}
           </button>
         </div>
       )}
