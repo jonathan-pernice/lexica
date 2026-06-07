@@ -102,6 +102,37 @@ def show_context(r):
               f"eng={n['english']!r:<22} head={n['english_head']!r}{mark}")
 
 
+verse_spec = opt("--verse")
+if verse_spec:
+    # Dump every word of one verse so a single odd tag can be read in full.
+    # Format: --verse 1Sa:5:2   (book:chapter:verse, book code as in verses.book)
+    try:
+        bk, ch, vs = verse_spec.split(":")
+    except ValueError:
+        print("usage: --verse BOOK:CH:VS   e.g. --verse 1Sa:5:2")
+        sys.exit(1)
+    v = conn.execute(
+        "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
+        (bk, int(ch), int(vs)),
+    ).fetchone()
+    if not v:
+        print(f"verse not found: {bk} {ch}:{vs}")
+        sys.exit(1)
+    rows = conn.execute(
+        """SELECT position, strongs_base, strongs, english, english_head,
+                  italic, bracket_id, greek_pos
+           FROM words WHERE verse_id=? ORDER BY position""",
+        (v["id"],),
+    ).fetchall()
+    print(f"{bk} {ch}:{vs}  —  {len(rows)} words  [DB: {DB}]\n")
+    for r in rows:
+        lem = lemma_for(r["strongs_base"])
+        ital = " ITALIC" if r["italic"] else ""
+        print(f"  pos {r['position']:>3}  {r['strongs_base'] or '-':<7} {lem:<11} "
+              f"eng={r['english']!r:<24} head={r['english_head']!r}"
+              f"  brk={r['bracket_id']}{ital}")
+    sys.exit(0)
+
 if opt("--scope"):
     print(f"Suspect (content-word gloss) rows per common function word — {DB}\n")
     rep = []
