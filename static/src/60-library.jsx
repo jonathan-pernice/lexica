@@ -187,31 +187,32 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
         <div className="seg nav-source-seg">
           <button className={"seg-b" + (!nonCanon && translation === "abp" ? " on" : "")} onClick={() => pickBible("abp")}>ABP</button>
           <button className={"seg-b" + (!nonCanon && translation === "kjv" ? " on" : "")} onClick={() => pickBible("kjv")}>KJV</button>
+          {nonCanonList && nonCanonList.length > 0 && (
+            <div className="lib-other-wrap nav-other-wrap">
+              <button className={"seg-b nav-other-seg" + (nonCanon ? " on" : "")} onClick={() => setOtherOpen(o => !o)} aria-expanded={otherOpen}>
+                <span className="nav-other-lbl">{nonCanon ? (nonCanon.abbr || nonCanon.name) : "Other"}</span>
+                <span className={"nav-other-caret" + (otherOpen ? " open" : "")}>▾</span>
+              </button>
+              {otherOpen && (
+                <>
+                  <div className="lib-other-scrim" onClick={() => setOtherOpen(false)} />
+                  <div className="lib-other-menu">
+                    {nonCanonGroups(nonCanonList).map(grp => (
+                      <React.Fragment key={grp.group}>
+                        <div className="lib-other-head">{grp.group}</div>
+                        {grp.items.map(t => (
+                          <button key={t.id}
+                            className={"lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : "")}
+                            onClick={() => { onPickNonCanon(t); setOtherOpen(false); if (isOverlay) onClose(); }}>{t.name}</button>
+                        ))}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
-        {nonCanonList && nonCanonList.length > 0 && (
-          <div className="lib-other-wrap nav-other-wrap">
-            <button className={"nav-other-btn" + (nonCanon ? " on" : "")} onClick={() => setOtherOpen(o => !o)} aria-expanded={otherOpen}>
-              {nonCanon ? (nonCanon.abbr || nonCanon.name) : "Other"} ▾
-            </button>
-            {otherOpen && (
-              <>
-                <div className="lib-other-scrim" onClick={() => setOtherOpen(false)} />
-                <div className="lib-other-menu">
-                  {nonCanonGroups(nonCanonList).map(grp => (
-                    <React.Fragment key={grp.group}>
-                      <div className="lib-other-head">{grp.group}</div>
-                      {grp.items.map(t => (
-                        <button key={t.id}
-                          className={"lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : "")}
-                          onClick={() => { onPickNonCanon(t); setOtherOpen(false); if (isOverlay) onClose(); }}>{t.name}</button>
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        )}
       </div>
       <div className="nav-scroll">
         {nonCanon && nonCanonActive}

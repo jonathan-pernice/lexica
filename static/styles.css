@@ -2372,16 +2372,20 @@ input { font-family: inherit; }
   height: 59px; box-sizing: border-box;
   border-bottom: 1px solid var(--rule);
 }
-.nav-source-seg { flex: 0 0 auto; }
-.nav-other-wrap { position: relative; display: inline-flex; }
-.nav-other-btn {
-  font-size: 12.5px; color: var(--ink-3);
-  padding: 6px 10px; border-radius: 8px;
-  border: 1px solid var(--rule); background: #fff;
-  white-space: nowrap;
+/* One unified 3-way segmented control [ ABP | KJV | Other ] spanning the nav,
+   so the mutually-exclusive text sources read as a single control. */
+.nav-source-seg { flex: 1 1 auto; display: flex; }
+.nav-source-seg > .seg-b,
+.nav-source-seg > .nav-other-wrap { flex: 1 1 0; min-width: 0; }
+.nav-other-wrap { position: relative; display: flex; }
+.nav-other-seg {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  width: 100%; min-width: 0;
 }
-.nav-other-btn:hover { color: var(--ink); border-color: var(--ink-3); }
-.nav-other-btn.on { color: var(--ink); border-color: var(--ink-3); font-weight: 500; }
+.nav-other-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-other-caret { font-size: 9px; color: var(--ink-4); flex: 0 0 auto; transition: transform 0.12s ease; }
+.nav-other-seg.on .nav-other-caret { color: var(--ink-3); }
+.nav-other-caret.open { transform: rotate(180deg); }
 
 .nav-scroll { flex: 1; overflow-y: auto; padding: 2px 6px 16px; }
 .nav-scroll::-webkit-scrollbar { width: 9px; }
