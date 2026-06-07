@@ -291,6 +291,8 @@ function ModesSheet({
   showStrongs, showInterlinear, setOpt, chipMode, libFontSize, changeFontSize, onClose,
 }) {
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
+  const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
+  const [otherShown, setOtherShown] = useState(!!activeNonCanon);
   return (
     <>
       <div className="sheet-scrim" onClick={onClose} />
@@ -309,11 +311,22 @@ function ModesSheet({
               <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={toggleParallel}>Parallel</button>
             </div>
             {nonCanonList.length > 0 && (
-              <div className="mseg msheet-other">
-                {nonCanonList.map(t => (
-                  <button key={t.id} className={"mseg-b"+(corpus===t.id?" on":"")}
-                    onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
-                ))}
+              <div className="other-acc">
+                <button className="other-acc-head" onClick={()=>setOtherShown(s=>!s)} aria-expanded={otherShown}>
+                  <span>Other texts</span>
+                  <span className="other-acc-r">
+                    {activeNonCanon && <span className="other-acc-cur">{activeNonCanon.name}</span>}
+                    <span className={"other-acc-chev"+(otherShown?" open":"")}>▾</span>
+                  </span>
+                </button>
+                {otherShown && (
+                  <div className="other-acc-list">
+                    {nonCanonList.map(t => (
+                      <button key={t.id} className={"other-acc-item"+(corpus===t.id?" on":"")}
+                        onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>

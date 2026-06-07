@@ -1893,7 +1893,24 @@ input { font-family: inherit; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 8px 18px 4px;
 }
-.msheet-other { margin-top: 8px; }
+.other-acc { margin-top: 8px; border: 1px solid var(--rule); border-radius: 11px; overflow: hidden; }
+.other-acc-head {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px; font-size: 14.5px; color: var(--ink-2);
+}
+.other-acc-head:active { background: var(--bg-sunk); }
+.other-acc-r { display: flex; align-items: center; gap: 8px; }
+.other-acc-cur { font-size: 13px; color: var(--accent); font-weight: 600; }
+.other-acc-chev { color: var(--ink-4); font-size: 12px; transition: transform 0.15s ease; }
+.other-acc-chev.open { transform: rotate(180deg); }
+.other-acc-list { display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
+.other-acc-item {
+  text-align: left; padding: 11px 14px; font-size: 14.5px; color: var(--ink-2);
+  background: var(--bg-sunk);
+}
+.other-acc-item + .other-acc-item { border-top: 1px solid var(--rule); }
+.other-acc-item:active { background: rgba(0,0,0,0.06); color: var(--ink); }
+.other-acc-item.on { color: var(--accent); font-weight: 600; }
 .display-row { display: flex; gap: 10px; align-items: stretch; }
 .display-row .mseg { flex: 1 1 auto; }
 .display-row .font-picker { flex: 0 0 auto; }

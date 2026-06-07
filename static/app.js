@@ -2594,6 +2594,8 @@ function ModesSheet({
     sheetRef,
     scrollRef
   } = useSwipeToDismiss(onClose);
+  const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
+  const [otherShown, setOtherShown] = useState(!!activeNonCanon);
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sheet-scrim",
     onClick: onClose
@@ -2632,15 +2634,27 @@ function ModesSheet({
     className: "mseg-b" + (translation === "parallel" ? " on" : ""),
     onClick: toggleParallel
   }, "Parallel")), nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "mseg msheet-other"
+    className: "other-acc"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "other-acc-head",
+    onClick: () => setOtherShown(s => !s),
+    "aria-expanded": otherShown
+  }, /*#__PURE__*/React.createElement("span", null, "Other texts"), /*#__PURE__*/React.createElement("span", {
+    className: "other-acc-r"
+  }, activeNonCanon && /*#__PURE__*/React.createElement("span", {
+    className: "other-acc-cur"
+  }, activeNonCanon.name), /*#__PURE__*/React.createElement("span", {
+    className: "other-acc-chev" + (otherShown ? " open" : "")
+  }, "\u25BE"))), otherShown && /*#__PURE__*/React.createElement("div", {
+    className: "other-acc-list"
   }, nonCanonList.map(t => /*#__PURE__*/React.createElement("button", {
     key: t.id,
-    className: "mseg-b" + (corpus === t.id ? " on" : ""),
+    className: "other-acc-item" + (corpus === t.id ? " on" : ""),
     onClick: () => {
       pickNonCanon(t);
       onClose();
     }
-  }, t.name)))), /*#__PURE__*/React.createElement("div", {
+  }, t.name))))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
