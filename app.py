@@ -459,6 +459,29 @@ def _word_boundary_match(haystack: str | None, needle: str | None) -> bool:
     return bool(pat.search(haystack))
 
 
+def _serialize_word_core(row) -> dict:
+    """Canonical core fields for an ABP words+lexicon row, built ONE way so the
+    three word serializers (chapter_text / verse_words / _fetch_verse_words) can't
+    drift — drift is what caused the is_pn-in-chapter bug. Each caller spreads this
+    and adds its own extras (position, morph, pn_type, smcap_words, strongs_def,
+    derivation, gloss, is_function/is_content, and italic's int-vs-bool form).
+    Requires the row to expose: english, english_head, strongs, strongs_base,
+    greek_pos, bracket_id, italic_words, lemma, translit, kjv_def, is_pn."""
+    return {
+        "english":      row["english"],
+        "english_head": row["english_head"],
+        "strongs":      row["strongs"],
+        "strongs_base": row["strongs_base"],
+        "greek_pos":    row["greek_pos"],
+        "bracket_id":   row["bracket_id"],
+        "italic_words": row["italic_words"],
+        "lemma":        row["lemma"],
+        "translit":     row["translit"],
+        "kjv_def":      row["kjv_def"],
+        "is_pn":        bool(row["is_pn"] or 0),
+    }
+
+
 def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
     """Return the full word list for a verse, used when fetching cited/primary verses."""
     wrows = conn.execute(
@@ -476,21 +499,11 @@ def _fetch_verse_words(conn, verse_id: int) -> list[dict]:
     ).fetchall()
     return [
         {
-            "strongs":      wr["strongs"],
-            "strongs_base": wr["strongs_base"],
-            "english":      wr["english"],
-            "english_head": wr["english_head"],
-            "greek_pos":    wr["greek_pos"],
-            "bracket_id":   wr["bracket_id"],
+            **_serialize_word_core(wr),
             "italic":       bool(wr["italic"]),
-            "italic_words": wr["italic_words"],
-            "is_pn":        bool(wr["is_pn"] or 0),
             "is_function":  wr["strongs_base"] in _FUNCTION_STRONGS,
             "gloss":        _clean_gloss(wr["english"]),
-            "lemma":        wr["lemma"],
-            "translit":     wr["translit"],
             "strongs_def":  (wr["strongs_def"] or "").strip(),
-            "kjv_def":      wr["kjv_def"],
             "derivation":   (wr["derivation"] or "").strip(),
         }
         for wr in wrows
@@ -1702,24 +1715,14 @@ def verse_words(book, chapter, verse):
     return jsonify({
         "words": [
             {
-                "position":   w["position"],
-                "english":    w["english"],
-                "english_head": w["english_head"],
-                "greek_pos":  w["greek_pos"],
-                "bracket_id":   w["bracket_id"],
-                "italic":       bool(w["italic"]),
-                "morph":        w["morph"],
-                "italic_words": w["italic_words"],
-                "kjv_def":    w["kjv_def"],
-                "strongs_base": w["strongs_base"],
-                "strongs":    w["strongs"],
-                "lemma":      w["lemma"],
-                "translit":   w["translit"],
+                **_serialize_word_core(w),
+                "position":    w["position"],
+                "italic":      bool(w["italic"]),
+                "morph":       w["morph"],
                 "strongs_def": (w["strongs_def"] or "").strip(),
-                "derivation": (w["derivation"] or "").strip(),
-                "is_pn":      bool(w["is_pn"] or 0),
-                "pn_type":    w["pn_type"],
-                "is_content": w["strongs_base"] not in _FUNCTION_STRONGS,
+                "derivation":  (w["derivation"] or "").strip(),
+                "pn_type":     w["pn_type"],
+                "is_content":  w["strongs_base"] not in _FUNCTION_STRONGS,
             }
             for w in wrows
         ]
@@ -2487,21 +2490,11 @@ def chapter_text(book, chapter):
             verses[vn] = {"words": [], "heading": r["heading"], "prose": r["prose"]}
             order.append(vn)
         verses[vn]["words"].append({
+            **_serialize_word_core(r),
             "position":     r["position"],
-            "english":      r["english"],
-            "english_head": r["english_head"],
-            "strongs_base": r["strongs_base"],
-            "strongs":      r["strongs"],
-            "lemma":        r["lemma"],
-            "translit":     r["translit"],
-            "kjv_def":      r["kjv_def"],
-            "greek_pos":    r["greek_pos"],
-            "bracket_id":   r["bracket_id"],
             "italic":       r["italic"],
             "morph":        r["morph"],
-            "italic_words": r["italic_words"],
             "smcap_words":  r["smcap_words"],
-            "is_pn":        bool(r["is_pn"] or 0),
             "pn_type":      r["pn_type"],
         })
     return jsonify([

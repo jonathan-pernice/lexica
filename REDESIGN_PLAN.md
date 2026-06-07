@@ -50,11 +50,19 @@ The fragile pattern behind 4+ past bugs: `SUBSTR(strongs_base, 2)` joins + hardc
 - Risk: medium (data-read paths) — Phase-0 snapshots made it safe. **Deploy note:** migration runs at
   PA startup (touch wsgi) BEFORE any query, so no missing-column window.
 
-## Phase 2 — DRY word serialization  *(backlog #3)*
-`/api/chapter` vs `/api/verse-words` drifted (the `is_pn` bug). Frontend mirrors it.
-- [ ] One `_serialize_word()` backend; one `makeWordEntry()` frontend.
+## Phase 2 — DRY word serialization  *(backlog #3)* — ✅ BACKEND DONE (local, 28/28); frontend → Phase 4
+`/api/chapter` vs `/api/verse-words` drifted (the `is_pn` bug).
+- [x] Backend: `_serialize_word_core(row)` builds the 11 shared fields ONE way; chapter_text /
+  verse_words / _fetch_verse_words each spread it + add their own extras. Byte-identical (snapshots
+  sort keys, so order is irrelevant; values + key-set unchanged). 28/28 local.
+- [ ] Frontend factories (makeEntry / flattenAiResults / renderCorpusWord / kjvEntry) → folded into
+  Phase 4 (they take genuinely different inputs + it's UI-risk with no snapshot coverage; the detail
+  panel is reworked there anyway).
+- KNOWN drift left byte-identical (deliberate, surface in Phase 4): `italic` is a raw int in
+  chapter_text but bool in the other two; `is_content` (verse_words) vs `is_function` (_fetch) are the
+  same data, opposite polarity. Normalizing these changes the contract → do it with the frontend.
 - Why: pairs with Phase 1 (same paths); kills a bug class.
-- Risk: low-medium.
+- Risk: low (byte-identical).
 
 ## Phase 3 — Split `app.py` into modules
 3,660-line monolith → domain modules/blueprints (library, lexicon, search/ai, metav, crossref,
