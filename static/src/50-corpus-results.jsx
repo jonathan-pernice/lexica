@@ -169,11 +169,29 @@ function VerseRow({ book, chapter, verse, label, allResults, onWordClick, onRead
                 <span className="lib-bracket-glyph">{ch}</span>
               </span>
             );
+            // Glue "[" to the first word and "]" to the last word (nowrap units)
+            // so a line break can only fall BETWEEN words inside the bracket —
+            // never stranding a lone "[" at a line end or a "]" at a line start.
+            const gw = g.words;
             return (
               <span key={`bg${gi}`} className="lib-bracket-group">
-                {corpusBracketChar("[", "bl")}
-                {g.words.map((w, wi) => renderCorpusWord(w, `bg${gi}w${wi}`))}
-                {corpusBracketChar("]", "br")}
+                {gw.length === 1 ? (
+                  <span className="lib-bracket-unit">
+                    {corpusBracketChar("[", "bl")}
+                    {renderCorpusWord(gw[0], `bg${gi}w0`)}
+                    {corpusBracketChar("]", "br")}
+                  </span>
+                ) : (<>
+                  <span className="lib-bracket-unit">
+                    {corpusBracketChar("[", "bl")}
+                    {renderCorpusWord(gw[0], `bg${gi}w0`)}
+                  </span>
+                  {gw.slice(1, -1).map((w, wi) => renderCorpusWord(w, `bg${gi}w${wi + 1}`))}
+                  <span className="lib-bracket-unit">
+                    {renderCorpusWord(gw[gw.length - 1], `bg${gi}w${gw.length - 1}`)}
+                    {corpusBracketChar("]", "br")}
+                  </span>
+                </>)}
               </span>
             );
           });
