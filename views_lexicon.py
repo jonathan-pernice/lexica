@@ -354,8 +354,8 @@ def lexicon_profile(strongs):
         if corpus in ("kjv", "all"):
             gloss_rows += _kjv_gloss_rows()
         # Function-word Strong's (ἐν, the article, conjunctions…): keep the
-        # leading token so phrase-glosses like "in blessing" fold into "in"
-        # instead of leaking the trailing noun into a count-1 noise tail.
+        # leading token so copula/preposition glosses ("is in" → "is") report the
+        # function word rather than collapsing to a trailing noun.
         is_func = (not is_heb) and snum in _FUNCTION_STRONGS
         norm_counts = {}
         for r in gloss_rows:
@@ -364,7 +364,14 @@ def lexicon_profile(strongs):
             key = _normalize_gloss(r["gloss"], keep_leading=is_func)
             if key:
                 norm_counts[key] = norm_counts.get(key, 0) + r["cnt"]
-        glosses = [{"gloss": g, "count": c} for g, c in sorted(norm_counts.items(), key=lambda x: -x[1])]
+        items = sorted(norm_counts.items(), key=lambda x: -x[1])
+        # A few function-word rows carry a stray bare content gloss ("blessing")
+        # from bracket/gloss mis-splits. In a word used thousands of times a
+        # one-off rendering is noise, so drop singletons for function words.
+        # Content words keep everything — a rare rendering there is meaningful.
+        if is_func:
+            items = [(g, c) for g, c in items if c > 1]
+        glosses = [{"gloss": g, "count": c} for g, c in items]
         # Which corpora actually have this strongs (so the UI can gray unavailable
         # toggles). Checks real data — so backfilled proper-noun Hebrew (which DO
         # have ABP/words rows) keep ABP enabled.
