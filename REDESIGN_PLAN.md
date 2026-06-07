@@ -35,7 +35,7 @@ Refactoring ~7,000 lines with no tests + deploy-and-eyeball is how regressions s
   → `.venv\Scripts\python scripts/snapshot_endpoints.py --base http://127.0.0.1:5000 --compare`
   → 0 diffs → push → deploy → `--compare` against live to confirm.
 
-## Phase 1 — Centralize Strong's handling  *(backlog #1 — the headline)* — ✅ DONE (local; awaiting deploy)
+## Phase 1 — Centralize Strong's handling  *(backlog #1 — the headline)* — ✅ DONE + LIVE 2026-06-06 (28/28 vs live)
 The fragile pattern behind 4+ past bugs: `SUBSTR(strongs_base, 2)` joins + hardcoded `G{...}`.
 - [x] Real JOIN KEY: added indexed `lexicon.strongs_g` (= 'G'||strongs) via _migrate_db (idempotent).
 - [x] Replaced all 13 real `SUBSTR(...,2)` joins (ABP + KJV families) with `l.strongs_g = w.strongs_base`
