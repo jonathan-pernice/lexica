@@ -169,10 +169,43 @@ handshakes + Leaflet parse — that's the bulk of the live ~748ms render delay.
   swings wildly (cold worker post-`touch wsgi` ~1006ms; warm ~240ms) — so single-trace LCP is
   server-bound noise, NOT the frontend. The next *speed* lever is the chapter API / PA tier.
 
-## Phase 6 — Schema + tests  *(backlog #5, #6)*
-- [ ] Fix `tipnr.strongs` PK collision (person+place sharing one number → composite key/type-set).
-- [ ] Extend the test net around build invariants.
-- Risk: low (additive).
+## Phase 6 — Schema + tests  *(backlog #5, #6)* — ✅ CODE DONE (pushed); needs PA re-import to activate
+- [x] **Fix `tipnr.strongs` PK collision** (backlog #5). `tipnr.strongs` is a PK +
+  `INSERT OR REPLACE`, so a name that is BOTH person AND place under one Strong's number
+  (Adam H121) collapsed to whichever row imported LAST → `entity_type`/`pn_type` lied.
+  - **Chose a type-SET column, NOT a composite key:** `views_library` does
+    `LEFT JOIN tipnr ON t.strongs = w.strongs_base`; a composite `(strongs,entity_type)`
+    would make that join one-to-many and DUPLICATE every Adam word row in the chapter
+    render. New `tipnr.entity_types` keeps ONE row per strongs with the set ('person,place').
+  - **Migration** (`_migrate_db`, commit): idempotent `ALTER TABLE tipnr ADD COLUMN
+    entity_types`. Additive, never touches `words`/`is_pn`. Makes the column EXIST so the
+    deployed code can `SELECT` it BEFORE the PA re-import runs (NULL until then → frontend
+    falls back to the old heuristic → **deploy order is safe, no regression window**).
+  - **`import_tipnr.py`**: `parse_tipnr` aggregates per-strongs into a type set
+    (`entity_types` = sorted set; `entity_type` = single primary token person>place>other).
+  - **API**: `chapter_text`/`verse_words` expose `pn_types` alongside legacy `pn_type`.
+  - **MetaV frontend**: default person/place tab now prefers the word's OWN `pn_types` (a
+    clean single type is authoritative); falls back to the `strongs_g` heuristic for
+    ambiguous `person,place` (which strongs alone can't disambiguate — Adam, Dan) or absent
+    `pn_types`. *Honest outcome:* `entity_types` REFINES the decision, it doesn't fully
+    replace the heuristic — the shared-strongs cases are irreducibly ambiguous.
+  - **Data finding that shaped this:** `metav_places.strongs_g` only ever holds G-numbers,
+    so the old heuristic could never match an OT word's H-number → OT proper nouns always
+    defaulted to Person. The `pn_types` signal is what lets a place-only OT strongs pick Place.
+- [x] **Test net** (backlog #6): `tests/test_build_invariants.py` (in-memory sqlite, no DB
+  dep) — strongs_base prefix invariant + gate-catches-a-bare-base, kjv_strongs prefix,
+  tipnr type-set keeps both types & 1:1 join, and the real `parse_tipnr` aggregation.
+- **Local verify:** snapshot 28/28 (the 7 ABP word goldens re-baselined with the additive
+  `pn_types`; metav person/place snapshots UNCHANGED — views_metav not touched);
+  `health_check.py` 0/0; both test files pass.
+- Risk: low (additive). **PA STEPS (run after `git pull && touch wsgi`):**
+  1. Rollback copy: `cp bible.db bible_pre_tipnr_typeset_20260607.db`
+  2. Re-run the proper-noun import to populate `entity_types`:
+     `python3 scripts/import_tipnr.py bible.db` (rebuilds tipnr from source; the migration
+     already added the column at startup). It prints the MULTI-type collision count.
+  3. `python3 scripts/health_check.py bible.db` — overlap report; expect 0 warnings.
+  4. Spot-check live: an OT word that is a place but also a person name should now default
+     to the correct tab; Adam (shared H121) still defaults to Person via the heuristic.
 
 ---
 
