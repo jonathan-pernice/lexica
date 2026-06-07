@@ -2511,50 +2511,50 @@ function MobileBookPicker({
 }) {
   const [screen, setScreen] = useState("book");
   const [pickedBook, setPickedBook] = useState(null);
+  // Same swipe-down-to-close + at-top scroll arming as the hero / xref sheets.
+  // ONE stable root so the refs survive the book→chapter screen switch.
+  const {
+    sheetRef,
+    scrollRef
+  } = useSwipeToDismiss(onClose);
   const otBooks = books.filter(b => !NT_BOOKS.has(b.abbrev));
   const ntBooks = books.filter(b => NT_BOOKS.has(b.abbrev));
-  if (screen === "chapter") {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "mpick"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "mpick-head"
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "mpick-back",
-      onClick: () => setScreen("book")
-    }, "\u2039 Books"), /*#__PURE__*/React.createElement("span", {
-      className: "mpick-title"
-    }, pickedBook.name), /*#__PURE__*/React.createElement("button", {
-      className: "mpick-x",
-      onClick: onClose
-    }, "\u2715")), /*#__PURE__*/React.createElement("div", {
-      className: "mpick-scroll"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "mpick-grid"
-    }, Array.from({
-      length: pickedBook.chapters
-    }, (_, i) => i + 1).map(n => {
-      const active = selBook && pickedBook.abbrev === selBook.abbrev && n === selChapter;
-      return /*#__PURE__*/React.createElement("button", {
-        key: n,
-        className: "mpick-btn" + (active ? " on" : ""),
-        onClick: () => onDone(pickedBook, n)
-      }, n);
-    }))));
-  }
+  const onChapter = screen === "chapter";
   return /*#__PURE__*/React.createElement("div", {
-    className: "mpick"
+    className: "mpick",
+    ref: sheetRef
   }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-drag-zone",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-handle"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "mpick-head"
-  }, /*#__PURE__*/React.createElement("span", {
+  }, onChapter ? /*#__PURE__*/React.createElement("button", {
+    className: "mpick-back",
+    onClick: () => setScreen("book")
+  }, "\u2039 Books") : /*#__PURE__*/React.createElement("span", {
     className: "mpick-head-spacer"
   }), /*#__PURE__*/React.createElement("span", {
     className: "mpick-title"
-  }, "Books"), /*#__PURE__*/React.createElement("button", {
+  }, onChapter ? pickedBook.name : "Books"), /*#__PURE__*/React.createElement("button", {
     className: "mpick-x",
     onClick: onClose
   }, "\u2715")), /*#__PURE__*/React.createElement("div", {
-    className: "mpick-scroll"
-  }, [["OT", otBooks], ["NT", ntBooks]].map(([label, bks]) => /*#__PURE__*/React.createElement("div", {
+    className: "mpick-scroll",
+    ref: scrollRef
+  }, onChapter ? /*#__PURE__*/React.createElement("div", {
+    className: "mpick-grid"
+  }, Array.from({
+    length: pickedBook.chapters
+  }, (_, i) => i + 1).map(n => {
+    const active = selBook && pickedBook.abbrev === selBook.abbrev && n === selChapter;
+    return /*#__PURE__*/React.createElement("button", {
+      key: n,
+      className: "mpick-btn" + (active ? " on" : ""),
+      onClick: () => onDone(pickedBook, n)
+    }, n);
+  })) : [["OT", otBooks], ["NT", ntBooks]].map(([label, bks]) => /*#__PURE__*/React.createElement("div", {
     key: label,
     className: "mpick-section"
   }, /*#__PURE__*/React.createElement("div", {
@@ -2571,6 +2571,138 @@ function MobileBookPicker({
   }, b.abbrev.toUpperCase())))))));
 }
 
+// ============================================================
+// MOBILE READING OPTIONS — bottom sheet (swipe-to-dismiss, scrollable).
+// Compacted to three groups: Text · Study layer · Display.
+// ============================================================
+function ModesSheet({
+  corpus,
+  translation,
+  pickBible,
+  toggleParallel,
+  nonCanonList,
+  pickNonCanon,
+  showStrongs,
+  showInterlinear,
+  setOpt,
+  chipMode,
+  libFontSize,
+  changeFontSize,
+  onClose
+}) {
+  const {
+    sheetRef,
+    scrollRef
+  } = useSwipeToDismiss(onClose);
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-scrim",
+    onClick: onClose
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "msheet",
+    ref: sheetRef
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-drag-zone",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-handle"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "msheet-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "msheet-title"
+  }, "Reading"), /*#__PURE__*/React.createElement("button", {
+    className: "msheet-x",
+    onClick: onClose,
+    "aria-label": "Close"
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "msheet-body",
+    ref: scrollRef
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Text"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (corpus === "bible" && translation === "abp" ? " on" : ""),
+    onClick: () => pickBible("abp")
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (corpus === "bible" && translation === "kjv" ? " on" : ""),
+    onClick: () => pickBible("kjv")
+  }, "KJV"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (translation === "parallel" ? " on" : ""),
+    onClick: toggleParallel
+  }, "Parallel")), nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "mseg msheet-other"
+  }, nonCanonList.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: "mseg-b" + (corpus === t.id ? " on" : ""),
+    onClick: () => {
+      pickNonCanon(t);
+      onClose();
+    }
+  }, t.name)))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Study layer"), /*#__PURE__*/React.createElement("div", {
+    className: "mtog"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-txt"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-name"
+  }, "Strong's numbers"), /*#__PURE__*/React.createElement("div", {
+    className: "mtog-sub"
+  }, "Tap a word for its lexicon entry")), /*#__PURE__*/React.createElement("button", {
+    className: "switch" + (showStrongs ? " on" : ""),
+    onClick: () => setOpt("showStrongs", !showStrongs),
+    "aria-label": "Toggle Strong's",
+    "aria-pressed": showStrongs
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "mtog-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-txt"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-name"
+  }, "Interlinear"), /*#__PURE__*/React.createElement("div", {
+    className: "mtog-sub"
+  }, "Stack Greek, transliteration & gloss")), /*#__PURE__*/React.createElement("button", {
+    className: "switch" + (showInterlinear ? " on" : ""),
+    onClick: () => setOpt("showInterlinear", !showInterlinear),
+    "aria-label": "Toggle Interlinear",
+    "aria-pressed": showInterlinear
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Display"), /*#__PURE__*/React.createElement("div", {
+    className: "display-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (chipMode ? " on" : ""),
+    onClick: () => setOpt("viewMode", "chip")
+  }, "Chip"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (!chipMode ? " on" : ""),
+    disabled: showStrongs || showInterlinear,
+    style: showStrongs || showInterlinear ? {
+      opacity: 0.35
+    } : undefined,
+    onClick: () => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")
+  }, "Prose")), /*#__PURE__*/React.createElement("div", {
+    className: "mseg font-picker"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b",
+    onClick: () => changeFontSize(-1)
+  }, "A\u2212"), /*#__PURE__*/React.createElement("span", {
+    className: "font-size-lbl"
+  }, libFontSize), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b",
+    onClick: () => changeFontSize(+1)
+  }, "A+")))))));
+}
+
 // Non-canonical texts — reached via the "Other" pick, walled off from the Bible
 // book list, search, and lexicon counts. Each rides its own backend route + tables.
 // Add future early-church / apocryphal texts here.
@@ -2578,6 +2710,15 @@ const NONCANON = [{
   id: "didache",
   name: "Didache",
   chapters: 16
+},
+// englishOnly: no Greek interlinear survives in our pipeline, so the reader stays
+// in Prose (chip / parallel-Greek views would be blank). Drop the flag once a
+// tagged Greek file is added (e.g. 1 Enoch ch 1–32 from the Akhmim papyrus).
+{
+  id: "enoch",
+  name: "1 Enoch",
+  chapters: 108,
+  englishOnly: true
 }];
 
 // ============================================================
@@ -3464,119 +3605,21 @@ function LibraryView({
       setMobileNavOpen(false);
     },
     onClose: () => setMobileNavOpen(false)
-  }), !navVisible && modesOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "sheet-scrim",
-    onClick: () => setModesOpen(false)
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "msheet"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "msheet-handle",
-    "aria-hidden": "true"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "msheet-head"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "msheet-title"
-  }, "Reading"), /*#__PURE__*/React.createElement("button", {
-    className: "msheet-x",
-    onClick: () => setModesOpen(false),
-    "aria-label": "Close"
-  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
-    className: "mode-sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mode-lbl"
-  }, "Edition"), /*#__PURE__*/React.createElement("div", {
-    className: "mseg"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (corpus === "bible" && translation === "abp" ? " on" : ""),
-    onClick: () => pickBible("abp")
-  }, "ABP"), /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (corpus === "bible" && translation === "kjv" ? " on" : ""),
-    onClick: () => pickBible("kjv")
-  }, "KJV"))), /*#__PURE__*/React.createElement("div", {
-    className: "mode-sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mode-lbl"
-  }, "Compare"), /*#__PURE__*/React.createElement("div", {
-    className: "mseg"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (translation === "parallel" ? " on" : ""),
-    onClick: toggleParallel
-  }, "Parallel"))), /*#__PURE__*/React.createElement("div", {
-    className: "mode-sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mode-lbl"
-  }, "Other texts"), /*#__PURE__*/React.createElement("div", {
-    className: "mseg"
-  }, NONCANON.map(t => /*#__PURE__*/React.createElement("button", {
-    key: t.id,
-    className: "mseg-b" + (corpus === t.id ? " on" : ""),
-    onClick: () => {
-      pickNonCanon(t);
-      setModesOpen(false);
-    }
-  }, t.name)))), /*#__PURE__*/React.createElement("div", {
-    className: "mode-sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mode-lbl"
-  }, "Study layer"), /*#__PURE__*/React.createElement("div", {
-    className: "mtog"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mtog-row"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mtog-txt"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mtog-name"
-  }, "Strong's numbers"), /*#__PURE__*/React.createElement("div", {
-    className: "mtog-sub"
-  }, "Tap a word for its lexicon entry")), /*#__PURE__*/React.createElement("button", {
-    className: "switch" + (showStrongs ? " on" : ""),
-    onClick: () => setOpt("showStrongs", !showStrongs),
-    "aria-label": "Toggle Strong's",
-    "aria-pressed": showStrongs
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "mtog-row"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mtog-txt"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mtog-name"
-  }, "Interlinear"), /*#__PURE__*/React.createElement("div", {
-    className: "mtog-sub"
-  }, "Stack Greek, transliteration & gloss")), /*#__PURE__*/React.createElement("button", {
-    className: "switch" + (showInterlinear ? " on" : ""),
-    onClick: () => setOpt("showInterlinear", !showInterlinear),
-    "aria-label": "Toggle Interlinear",
-    "aria-pressed": showInterlinear
-  })))), /*#__PURE__*/React.createElement("div", {
-    className: "mode-sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mode-lbl"
-  }, "Layout"), /*#__PURE__*/React.createElement("div", {
-    className: "mseg"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (chipMode ? " on" : ""),
-    onClick: () => setOpt("viewMode", "chip")
-  }, "Chip"), /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (!chipMode ? " on" : ""),
-    disabled: showStrongs || showInterlinear,
-    style: showStrongs || showInterlinear ? {
-      opacity: 0.35
-    } : undefined,
-    onClick: () => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")
-  }, "Prose"))), /*#__PURE__*/React.createElement("div", {
-    className: "mode-sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mode-lbl"
-  }, "Font Size"), /*#__PURE__*/React.createElement("div", {
-    className: "mseg font-picker"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b",
-    onClick: () => changeFontSize(-1)
-  }, "A\u2212"), /*#__PURE__*/React.createElement("span", {
-    className: "font-size-lbl"
-  }, libFontSize), /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b",
-    onClick: () => changeFontSize(+1)
-  }, "A+"))))), /*#__PURE__*/React.createElement("div", null, navVisible ? /*#__PURE__*/React.createElement("div", {
+  }), !navVisible && modesOpen && /*#__PURE__*/React.createElement(ModesSheet, {
+    corpus: corpus,
+    translation: translation,
+    pickBible: pickBible,
+    toggleParallel: toggleParallel,
+    nonCanonList: NONCANON,
+    pickNonCanon: pickNonCanon,
+    showStrongs: showStrongs,
+    showInterlinear: showInterlinear,
+    setOpt: setOpt,
+    chipMode: chipMode,
+    libFontSize: libFontSize,
+    changeFontSize: changeFontSize,
+    onClose: () => setModesOpen(false)
+  }), /*#__PURE__*/React.createElement("div", null, navVisible ? /*#__PURE__*/React.createElement("div", {
     className: "lib-bar"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lib-bar-l"
@@ -3764,7 +3807,7 @@ function LibraryView({
     }
   }, swipeHandlers), nonCanon ? didLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lib-loading"
-  }, "Loading\u2026") : translation === "parallel" ? /*#__PURE__*/React.createElement("div", {
+  }, "Loading\u2026") : nonCanon.englishOnly ? renderDidacheProse() : translation === "parallel" ? /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel-header"

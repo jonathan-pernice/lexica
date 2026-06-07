@@ -237,52 +237,122 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
 function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
   const [screen, setScreen] = useState("book");
   const [pickedBook, setPickedBook] = useState(null);
+  // Same swipe-down-to-close + at-top scroll arming as the hero / xref sheets.
+  // ONE stable root so the refs survive the book→chapter screen switch.
+  const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
 
   const otBooks = books.filter(b => !NT_BOOKS.has(b.abbrev));
   const ntBooks = books.filter(b => NT_BOOKS.has(b.abbrev));
+  const onChapter = screen === "chapter";
 
-  if (screen === "chapter") {
-    return (
-      <div className="mpick">
-        <div className="mpick-head">
-          <button className="mpick-back" onClick={() => setScreen("book")}>‹ Books</button>
-          <span className="mpick-title">{pickedBook.name}</span>
-          <button className="mpick-x" onClick={onClose}>✕</button>
-        </div>
-        <div className="mpick-scroll">
+  return (
+    <div className="mpick" ref={sheetRef}>
+      <div className="sheet-drag-zone" aria-hidden="true"><div className="sheet-handle"></div></div>
+      <div className="mpick-head">
+        {onChapter
+          ? <button className="mpick-back" onClick={() => setScreen("book")}>‹ Books</button>
+          : <span className="mpick-head-spacer" />}
+        <span className="mpick-title">{onChapter ? pickedBook.name : "Books"}</span>
+        <button className="mpick-x" onClick={onClose}>✕</button>
+      </div>
+      <div className="mpick-scroll" ref={scrollRef}>
+        {onChapter ? (
           <div className="mpick-grid">
             {Array.from({ length: pickedBook.chapters }, (_, i) => i + 1).map(n => {
               const active = selBook && pickedBook.abbrev === selBook.abbrev && n === selChapter;
               return <button key={n} className={"mpick-btn" + (active ? " on" : "")} onClick={() => onDone(pickedBook, n)}>{n}</button>;
             })}
           </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mpick">
-      <div className="mpick-head">
-        <span className="mpick-head-spacer" />
-        <span className="mpick-title">Books</span>
-        <button className="mpick-x" onClick={onClose}>✕</button>
-      </div>
-      <div className="mpick-scroll">
-        {[["OT", otBooks], ["NT", ntBooks]].map(([label, bks]) => (
-          <div key={label} className="mpick-section">
-            <div className="mpick-sec-label">{label}</div>
-            <div className="mpick-grid">
-              {bks.map(b => (
-                <button key={b.abbrev} className={"mpick-btn" + (selBook && b.abbrev === selBook.abbrev ? " on" : "")} onClick={() => { setPickedBook(b); setScreen("chapter"); }}>
-                  {b.abbrev.toUpperCase()}
-                </button>
-              ))}
+        ) : (
+          [["OT", otBooks], ["NT", ntBooks]].map(([label, bks]) => (
+            <div key={label} className="mpick-section">
+              <div className="mpick-sec-label">{label}</div>
+              <div className="mpick-grid">
+                {bks.map(b => (
+                  <button key={b.abbrev} className={"mpick-btn" + (selBook && b.abbrev === selBook.abbrev ? " on" : "")} onClick={() => { setPickedBook(b); setScreen("chapter"); }}>
+                    {b.abbrev.toUpperCase()}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
+  );
+}
+
+// ============================================================
+// MOBILE READING OPTIONS — bottom sheet (swipe-to-dismiss, scrollable).
+// Compacted to three groups: Text · Study layer · Display.
+// ============================================================
+function ModesSheet({
+  corpus, translation, pickBible, toggleParallel, nonCanonList, pickNonCanon,
+  showStrongs, showInterlinear, setOpt, chipMode, libFontSize, changeFontSize, onClose,
+}) {
+  const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
+  return (
+    <>
+      <div className="sheet-scrim" onClick={onClose} />
+      <div className="msheet" ref={sheetRef}>
+        <div className="sheet-drag-zone" aria-hidden="true"><div className="sheet-handle"></div></div>
+        <div className="msheet-head">
+          <span className="msheet-title">Reading</span>
+          <button className="msheet-x" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+        <div className="msheet-body" ref={scrollRef}>
+          <div className="mode-sec">
+            <div className="mode-lbl">Text</div>
+            <div className="mseg">
+              <button className={"mseg-b"+(corpus==="bible"&&translation==="abp"?" on":"")} onClick={()=>pickBible("abp")}>ABP</button>
+              <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
+              <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={toggleParallel}>Parallel</button>
+            </div>
+            {nonCanonList.length > 0 && (
+              <div className="mseg msheet-other">
+                {nonCanonList.map(t => (
+                  <button key={t.id} className={"mseg-b"+(corpus===t.id?" on":"")}
+                    onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="mode-sec">
+            <div className="mode-lbl">Study layer</div>
+            <div className="mtog">
+              <div className="mtog-row">
+                <div className="mtog-txt">
+                  <div className="mtog-name">Strong's numbers</div>
+                  <div className="mtog-sub">Tap a word for its lexicon entry</div>
+                </div>
+                <button className={"switch"+(showStrongs?" on":"")} onClick={()=>setOpt("showStrongs",!showStrongs)} aria-label="Toggle Strong's" aria-pressed={showStrongs} />
+              </div>
+              <div className="mtog-row">
+                <div className="mtog-txt">
+                  <div className="mtog-name">Interlinear</div>
+                  <div className="mtog-sub">Stack Greek, transliteration &amp; gloss</div>
+                </div>
+                <button className={"switch"+(showInterlinear?" on":"")} onClick={()=>setOpt("showInterlinear",!showInterlinear)} aria-label="Toggle Interlinear" aria-pressed={showInterlinear} />
+              </div>
+            </div>
+          </div>
+          <div className="mode-sec">
+            <div className="mode-lbl">Display</div>
+            <div className="display-row">
+              <div className="mseg">
+                <button className={"mseg-b"+(chipMode?" on":"")} onClick={()=>setOpt("viewMode","chip")}>Chip</button>
+                <button className={"mseg-b"+(!chipMode?" on":"")} disabled={showStrongs||showInterlinear} style={showStrongs||showInterlinear?{opacity:0.35}:undefined} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}>Prose</button>
+              </div>
+              <div className="mseg font-picker">
+                <button className="mseg-b" onClick={() => changeFontSize(-1)}>A−</button>
+                <span className="font-size-lbl">{libFontSize}</span>
+                <button className="mseg-b" onClick={() => changeFontSize(+1)}>A+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -291,6 +361,10 @@ function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
 // Add future early-church / apocryphal texts here.
 const NONCANON = [
   { id: "didache", name: "Didache", chapters: 16 },
+  // englishOnly: no Greek interlinear survives in our pipeline, so the reader stays
+  // in Prose (chip / parallel-Greek views would be blank). Drop the flag once a
+  // tagged Greek file is added (e.g. 1 Enoch ch 1–32 from the Akhmim papyrus).
+  { id: "enoch", name: "1 Enoch", chapters: 108, englishOnly: true },
 ];
 
 // ============================================================
@@ -999,72 +1073,21 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         />
       )}
       {!navVisible && modesOpen && (
-        <>
-          <div className="sheet-scrim" onClick={() => setModesOpen(false)} />
-          <div className="msheet">
-            <div className="msheet-handle" aria-hidden="true" />
-            <div className="msheet-head">
-              <span className="msheet-title">Reading</span>
-              <button className="msheet-x" onClick={() => setModesOpen(false)} aria-label="Close">✕</button>
-            </div>
-            <div className="mode-sec">
-              <div className="mode-lbl">Edition</div>
-              <div className="mseg">
-                <button className={"mseg-b"+(corpus==="bible"&&translation==="abp"?" on":"")} onClick={()=>pickBible("abp")}>ABP</button>
-                <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
-              </div>
-            </div>
-            <div className="mode-sec">
-              <div className="mode-lbl">Compare</div>
-              <div className="mseg">
-                <button className={"mseg-b"+(translation==="parallel"?" on":"")} onClick={toggleParallel}>Parallel</button>
-              </div>
-            </div>
-            <div className="mode-sec">
-              <div className="mode-lbl">Other texts</div>
-              <div className="mseg">
-                {NONCANON.map(t => (
-                  <button key={t.id} className={"mseg-b"+(corpus===t.id?" on":"")}
-                    onClick={()=>{ pickNonCanon(t); setModesOpen(false); }}>{t.name}</button>
-                ))}
-              </div>
-            </div>
-            <div className="mode-sec">
-              <div className="mode-lbl">Study layer</div>
-              <div className="mtog">
-                <div className="mtog-row">
-                  <div className="mtog-txt">
-                    <div className="mtog-name">Strong's numbers</div>
-                    <div className="mtog-sub">Tap a word for its lexicon entry</div>
-                  </div>
-                  <button className={"switch"+(showStrongs?" on":"")} onClick={()=>setOpt("showStrongs",!showStrongs)} aria-label="Toggle Strong's" aria-pressed={showStrongs} />
-                </div>
-                <div className="mtog-row">
-                  <div className="mtog-txt">
-                    <div className="mtog-name">Interlinear</div>
-                    <div className="mtog-sub">Stack Greek, transliteration &amp; gloss</div>
-                  </div>
-                  <button className={"switch"+(showInterlinear?" on":"")} onClick={()=>setOpt("showInterlinear",!showInterlinear)} aria-label="Toggle Interlinear" aria-pressed={showInterlinear} />
-                </div>
-              </div>
-            </div>
-            <div className="mode-sec">
-              <div className="mode-lbl">Layout</div>
-              <div className="mseg">
-                <button className={"mseg-b"+(chipMode?" on":"")} onClick={()=>setOpt("viewMode","chip")}>Chip</button>
-                <button className={"mseg-b"+(!chipMode?" on":"")} disabled={showStrongs||showInterlinear} style={showStrongs||showInterlinear?{opacity:0.35}:undefined} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}>Prose</button>
-              </div>
-            </div>
-            <div className="mode-sec">
-              <div className="mode-lbl">Font Size</div>
-              <div className="mseg font-picker">
-                <button className="mseg-b" onClick={() => changeFontSize(-1)}>A−</button>
-                <span className="font-size-lbl">{libFontSize}</span>
-                <button className="mseg-b" onClick={() => changeFontSize(+1)}>A+</button>
-              </div>
-            </div>
-          </div>
-        </>
+        <ModesSheet
+          corpus={corpus}
+          translation={translation}
+          pickBible={pickBible}
+          toggleParallel={toggleParallel}
+          nonCanonList={NONCANON}
+          pickNonCanon={pickNonCanon}
+          showStrongs={showStrongs}
+          showInterlinear={showInterlinear}
+          setOpt={setOpt}
+          chipMode={chipMode}
+          libFontSize={libFontSize}
+          changeFontSize={changeFontSize}
+          onClose={() => setModesOpen(false)}
+        />
       )}
       <div>
       {navVisible ? (
@@ -1172,6 +1195,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         {nonCanon ? (
           didLoading ? (
             <div className="lib-loading">Loading…</div>
+          ) : nonCanon.englishOnly ? (
+            renderDidacheProse()
           ) : translation === "parallel" ? (
             <div className="lib-parallel">
               <div className="lib-parallel-header">
