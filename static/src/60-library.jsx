@@ -918,6 +918,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       book: corpus, chapter: selChapter, verse: v.verse,
       definition: "", derivation: "", is_function: false,
       is_pn: false, pn_type: null, pn_types: null,
+      isExtra: true, extraBook: corpus, extraBookName: nonCanon ? nonCanon.name : "",
     };
     return (
       <span key={`d${i}`}

@@ -47,6 +47,7 @@ const api = {
   books: () => fetch("/api/books").then(r => r.json()),
   chapter: (book, ch) => fetch(`/api/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   extraChapter: (book, ch) => fetch(`/api/extra/${encodeURIComponent(book)}/chapter/${ch}`).then(r => r.json()),
+  extraStrongsCount: (book, strongs) => fetch(`/api/extra/${encodeURIComponent(book)}/strongs-count/${encodeURIComponent(strongs)}`).then(r => r.json()),
   kjvChapter: (book, ch) => fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWords: (book, ch, v) => fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
@@ -985,6 +986,7 @@ function DetailPanel({
   const [verseText, setVerseText] = useState("");
   const [verseLoading, setVerseLoading] = useState(false);
   const [abpCount, setAbpCount] = useState(null);
+  const [extraCount, setExtraCount] = useState(null);
   const [showInterlinear, setShowInterlinear] = useState(false);
   const [interlinearWords, setInterlinearWords] = useState(null);
   useEffect(() => {
@@ -1004,7 +1006,7 @@ function DetailPanel({
     };
   }, [showInterlinear, entry && entry.id]);
   useEffect(() => {
-    if (!entry) return;
+    if (!entry || entry.isExtra) return; // non-canonical words have no Bible verse to load
     let cancelled = false;
     setVerseText("");
     setVerseLoading(true);
@@ -1034,6 +1036,23 @@ function DetailPanel({
       cancelled = true;
     };
   }, [entry && entry.strongs_raw]);
+
+  // Count within the non-canonical text itself (e.g. the Didache).
+  useEffect(() => {
+    if (!entry || !entry.isExtra || !entry.extraBook || !entry.strongs_base || entry.strongs_base === "*") {
+      setExtraCount(null);
+      return;
+    }
+    let cancelled = false;
+    api.extraStrongsCount(entry.extraBook, entry.strongs_base).then(d => {
+      if (!cancelled) setExtraCount(d.count ?? null);
+    }).catch(() => {
+      if (!cancelled) setExtraCount(null);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id]);
   const isPN = entry && (entry.is_pn || entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
   // A word carrying an H-number. For Hebrew PROPER NOUNS we want metaV (person/
   // place) on top with the BDB lexical entry stacked BELOW (like KJV mode):
@@ -1301,11 +1320,12 @@ function DetailPanel({
   if (aiDescription || aiDescLoading) sections.push("aidesc");
   if (isHebrewWord) sections.push("bdb");else if ((!isPN || metavType === "place" && metavData?.strongs_g?.length > 0) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0)) sections.push("lsj");
   if (!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0) sections.push("abpOcc");
+  if (entry.isExtra && extraCount !== null && extraCount > 0) sections.push("extraOcc");
   if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
   if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
   if (isHebrew && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
   if (entry.derivation) sections.push("derivation");
-  if (entry.book) sections.push("verse");
+  if (entry.book && !entry.isExtra) sections.push("verse");
   if (occurrences > 0 || totalResults > 0) sections.push("frequency");
   const renderSection = id => {
     switch (id) {
@@ -1482,10 +1502,21 @@ function DetailPanel({
           className: "sec-head"
         }, /*#__PURE__*/React.createElement("span", {
           className: "sec-t"
-        }, "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
+        }, entry.isExtra ? "Occurrences in Scripture" : "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
           className: "occ-link",
           onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)
         }, /*#__PURE__*/React.createElement("b", null, abpCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
+      case "extraOcc":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "extraOcc",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "In the ", entry.extraBookName || "text")), /*#__PURE__*/React.createElement("div", {
+          className: "occ-link occ-link--static"
+        }, /*#__PURE__*/React.createElement("b", null, extraCount), "\xD7 in ", entry.extraBookName || "this text"));
       case "kjvOcc":
         return /*#__PURE__*/React.createElement("section", {
           key: "kjvOcc",
@@ -3329,7 +3360,10 @@ function LibraryView({
         is_function: false,
         is_pn: false,
         pn_type: null,
-        pn_types: null
+        pn_types: null,
+        isExtra: true,
+        extraBook: corpus,
+        extraBookName: nonCanon ? nonCanon.name : ""
       };
       return /*#__PURE__*/React.createElement("span", {
         key: `d${i}`,

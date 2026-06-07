@@ -989,6 +989,8 @@ input { font-family: inherit; }
 
 .occ-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-serif); font-size: 17px; color: var(--accent); font-weight: 500; }
 .occ-link:hover { text-decoration: underline; }
+.occ-link--static { color: var(--ink-2); cursor: default; }
+.occ-link--static:hover { text-decoration: none; }
 
 /* ---- Extracted from inline styles ---- */
 .detail-greek--he { font-family: var(--f-serif); text-align: left; }

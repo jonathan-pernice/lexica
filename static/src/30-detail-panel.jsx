@@ -5,6 +5,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [verseText, setVerseText] = useState("");
   const [verseLoading, setVerseLoading] = useState(false);
   const [abpCount, setAbpCount] = useState(null);
+  const [extraCount, setExtraCount] = useState(null);
   const [showInterlinear, setShowInterlinear] = useState(false);
   const [interlinearWords, setInterlinearWords] = useState(null);
 
@@ -23,7 +24,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   }, [showInterlinear, entry && entry.id]);
 
   useEffect(() => {
-    if (!entry) return;
+    if (!entry || entry.isExtra) return;   // non-canonical words have no Bible verse to load
     let cancelled = false;
     setVerseText("");
     setVerseLoading(true);
@@ -48,6 +49,18 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
       .catch(() => { if (!cancelled) setAbpCount(null); });
     return () => { cancelled = true; };
   }, [entry && entry.strongs_raw]);
+
+  // Count within the non-canonical text itself (e.g. the Didache).
+  useEffect(() => {
+    if (!entry || !entry.isExtra || !entry.extraBook || !entry.strongs_base || entry.strongs_base === "*") {
+      setExtraCount(null); return;
+    }
+    let cancelled = false;
+    api.extraStrongsCount(entry.extraBook, entry.strongs_base)
+      .then(d => { if (!cancelled) setExtraCount(d.count ?? null); })
+      .catch(() => { if (!cancelled) setExtraCount(null); });
+    return () => { cancelled = true; };
+  }, [entry && entry.id]);
 
   const isPN = entry && (entry.is_pn || entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
   // A word carrying an H-number. For Hebrew PROPER NOUNS we want metaV (person/
@@ -286,11 +299,12 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
            && !aiDescription && !aiDescLoading
            && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0)) sections.push("lsj");
   if (!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0) sections.push("abpOcc");
+  if (entry.isExtra && extraCount !== null && extraCount > 0) sections.push("extraOcc");
   if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
   if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
   if (isHebrew && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
   if (entry.derivation) sections.push("derivation");
-  if (entry.book) sections.push("verse");
+  if (entry.book && !entry.isExtra) sections.push("verse");
   if (occurrences > 0 || totalResults > 0) sections.push("frequency");
 
   const renderSection = (id) => {
@@ -415,10 +429,16 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     );
     case "abpOcc": return (
       <section key="abpOcc" className="sec">
-        <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
+        <h4 className="sec-head"><span className="sec-t">{entry.isExtra ? "Occurrences in Scripture" : "ABP Occurrences"}</span></h4>
         <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)}>
           <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
         </button>
+      </section>
+    );
+    case "extraOcc": return (
+      <section key="extraOcc" className="sec">
+        <h4 className="sec-head"><span className="sec-t">In the {entry.extraBookName || "text"}</span></h4>
+        <div className="occ-link occ-link--static"><b>{extraCount}</b>× in {entry.extraBookName || "this text"}</div>
       </section>
     );
     case "kjvOcc": return (
