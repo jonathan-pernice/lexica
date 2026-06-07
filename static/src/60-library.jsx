@@ -197,11 +197,15 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
               <>
                 <div className="lib-other-scrim" onClick={() => setOtherOpen(false)} />
                 <div className="lib-other-menu">
-                  <div className="lib-other-head">Non-canonical</div>
-                  {nonCanonList.map(t => (
-                    <button key={t.id}
-                      className={"lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : "")}
-                      onClick={() => { onPickNonCanon(t); setOtherOpen(false); if (isOverlay) onClose(); }}>{t.name}</button>
+                  {nonCanonGroups(nonCanonList).map(grp => (
+                    <React.Fragment key={grp.group}>
+                      <div className="lib-other-head">{grp.group}</div>
+                      {grp.items.map(t => (
+                        <button key={t.id}
+                          className={"lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : "")}
+                          onClick={() => { onPickNonCanon(t); setOtherOpen(false); if (isOverlay) onClose(); }}>{t.name}</button>
+                      ))}
+                    </React.Fragment>
                   ))}
                 </div>
               </>
@@ -344,9 +348,14 @@ function ModesSheet({
                 </button>
                 {otherShown && (
                   <div className="other-acc-list">
-                    {nonCanonList.map(t => (
-                      <button key={t.id} className={"other-acc-item"+(corpus===t.id?" on":"")}
-                        onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
+                    {nonCanonGroups(nonCanonList).map(grp => (
+                      <React.Fragment key={grp.group}>
+                        <div className="other-acc-grp">{grp.group}</div>
+                        {grp.items.map(t => (
+                          <button key={t.id} className={"other-acc-item"+(corpus===t.id?" on":"")}
+                            onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
+                        ))}
+                      </React.Fragment>
                     ))}
                   </div>
                 )}
@@ -397,12 +406,45 @@ function ModesSheet({
 // Add future early-church / apocryphal texts here.
 const NONCANON = [
   // abbr = short label for the mobile toolbar pill (standard scholarly short forms).
-  { id: "didache", name: "Didache", abbr: "Did", chapters: 16 },
-  // englishOnly: no Greek interlinear survives in our pipeline, so the reader stays
-  // in Prose (chip / parallel-Greek views would be blank). Drop the flag once a
-  // tagged Greek file is added (e.g. 1 Enoch ch 1–32 from the Akhmim papyrus).
-  { id: "enoch", name: "1 Enoch", abbr: "1En", chapters: 108, englishOnly: true },
+  // group = section heading in the "Other" menus (kept in array order).
+  // englishOnly: no Greek interlinear in our pipeline, so the reader stays in Prose
+  // (chip / parallel-Greek views would be blank). Drop the flag once a tagged Greek
+  // file is added (e.g. 1 Enoch ch 1–32 from the Akhmim papyrus).
+  { id: "didache", name: "Didache", abbr: "Did", chapters: 16, group: "Early Church" },
+  { id: "enoch", name: "1 Enoch", abbr: "1En", chapters: 108, englishOnly: true, group: "Pseudepigrapha" },
+
+  // Septuagint Apocrypha — Brenton's 1851 public-domain English LXX (ebible.org USFM),
+  // verse-perfect. English-only; the Greek isn't Strong's-tagged so no interlinear.
+  { id: "esdras1",    name: "1 Esdras",            abbr: "1Esd",  chapters: 9,  englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "tobit",      name: "Tobit",               abbr: "Tob",   chapters: 14, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "judith",     name: "Judith",              abbr: "Jdt",   chapters: 16, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "esther_gk",  name: "Esther (Greek)",      abbr: "EsG",   chapters: 10, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "maccabees1", name: "1 Maccabees",         abbr: "1Mac",  chapters: 16, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "maccabees2", name: "2 Maccabees",         abbr: "2Mac",  chapters: 15, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "maccabees3", name: "3 Maccabees",         abbr: "3Mac",  chapters: 7,  englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "maccabees4", name: "4 Maccabees",         abbr: "4Mac",  chapters: 18, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "wisdom",     name: "Wisdom of Solomon",   abbr: "Wis",   chapters: 19, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "sirach",     name: "Sirach",              abbr: "Sir",   chapters: 51, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "baruch",     name: "Baruch",              abbr: "Bar",   chapters: 5,  englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "epjeremiah", name: "Letter of Jeremiah",  abbr: "EpJer", chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "susanna",    name: "Susanna",             abbr: "Sus",   chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "bel",        name: "Bel and the Dragon",  abbr: "Bel",   chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "daniel_gk",  name: "Daniel (Greek)",      abbr: "DaG",   chapters: 12, englishOnly: true, group: "Septuagint Apocrypha" },
+  { id: "manasseh",   name: "Prayer of Manasseh",  abbr: "PrMan", chapters: 1,  englishOnly: true, group: "Septuagint Apocrypha" },
 ];
+
+// Group NONCANON entries by their `group` label, preserving array order, for the
+// section-headed "Other" menus (nav source-picker dropdown + mobile sheet).
+function nonCanonGroups(list) {
+  const out = [];
+  let cur = null;
+  for (const t of list) {
+    const g = t.group || "Other";
+    if (!cur || cur.group !== g) { cur = { group: g, items: [] }; out.push(cur); }
+    cur.items.push(t);
+  }
+  return out;
+}
 
 // ============================================================
 // LIBRARY VIEW
