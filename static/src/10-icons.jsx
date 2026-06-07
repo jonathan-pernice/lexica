@@ -64,4 +64,22 @@ const Icon = {
       <path d="M15 3v18"/>
     </svg>
   ),
+  // Strong's numbers → hash
+  Hash: (p) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M10 3 8 21M16 3l-2 18M4 8.5h16M3 15.5h16"/>
+    </svg>
+  ),
+  // Interlinear → Greek stacked over English (two rows)
+  Interlinear: (p) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M4 6h16M4 9.5h11"/><path d="M4 15h16M4 18.5h11"/>
+    </svg>
+  ),
+  // Parallel → two side-by-side columns
+  Columns: (p) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <rect x="3" y="4" width="7.5" height="16" rx="1"/><rect x="13.5" y="4" width="7.5" height="16" rx="1"/>
+    </svg>
+  ),
 };

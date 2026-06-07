@@ -49,6 +49,7 @@ const api = {
   extraChapter: (book, ch) => fetch(`/api/extra/${encodeURIComponent(book)}/chapter/${ch}`).then(r => r.json()),
   extraStrongsCount: (book, strongs) => fetch(`/api/extra/${encodeURIComponent(book)}/strongs-count/${encodeURIComponent(strongs)}`).then(r => r.json()),
   kjvChapter: (book, ch) => fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  summary: (book, ch) => fetch(`/api/summary/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWords: (book, ch, v) => fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWordsBatch: refs => fetch('/api/kjv/verse_words_batch', {
@@ -630,6 +631,57 @@ const Icon = {
     rx: "2"
   }), /*#__PURE__*/React.createElement("path", {
     d: "M15 3v18"
+  })),
+  // Strong's numbers → hash
+  Hash: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M10 3 8 21M16 3l-2 18M4 8.5h16M3 15.5h16"
+  })),
+  // Interlinear → Greek stacked over English (two rows)
+  Interlinear: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M4 6h16M4 9.5h11"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M4 15h16M4 18.5h11"
+  })),
+  // Parallel → two side-by-side columns
+  Columns: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("rect", {
+    x: "3",
+    y: "4",
+    width: "7.5",
+    height: "16",
+    rx: "1"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "13.5",
+    y: "4",
+    width: "7.5",
+    height: "16",
+    rx: "1"
   }))
 };
 
@@ -970,6 +1022,88 @@ function LeafletMap({
 }
 
 // ============================================================
+// SUMMARY PANEL — Library right-pane DEFAULT (desktop only)
+// ------------------------------------------------------------
+// Resting content of the right sidebar when no word/verse is selected: a short
+// Berean book blurb + a pericope-aware chapter summary for whatever the reader is
+// on. Reuses the .detail-side shell so its width matches the word-study panel
+// exactly. A word click (DetailPanel) or verse-# click (CrossRefPanel) replaces
+// it; closing those returns here. Never shown on mobile.
+// ============================================================
+function SummaryPanel({
+  book,
+  chapter,
+  bookLabel
+}) {
+  // Remembers fetched summaries across remounts (the panel unmounts whenever a
+  // word/verse takes over the slot) so re-opening the same chapter is instant
+  // instead of flashing the loading line again.
+  const key = book + "/" + chapter;
+  const [data, setData] = useState(() => SummaryPanel._cache[key] || null);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!book || !chapter) return;
+    const cached = SummaryPanel._cache[key];
+    if (cached) {
+      setData(cached);
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    setData(null);
+    api.summary(book, chapter).then(d => {
+      if (!cancelled) {
+        SummaryPanel._cache[key] = d || {};
+        setData(d || {});
+        setLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        setData({});
+        setLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [book, chapter]);
+  const bookText = data && data.book_summary;
+  const chapText = data && data.chapter_summary;
+  const nothing = !loading && !bookText && !chapText;
+  return /*#__PURE__*/React.createElement("aside", {
+    className: "detail detail-side summary-side",
+    role: "complementary",
+    "aria-label": "Reading overview"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-head-l"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "detail-pos"
+  }, bookLabel || book, chapter ? " " + chapter : ""))), /*#__PURE__*/React.createElement("div", {
+    className: "detail-body"
+  }, loading && /*#__PURE__*/React.createElement("div", {
+    className: "summary-loading"
+  }, "Reading the chapter\u2026"), !loading && bookText && /*#__PURE__*/React.createElement("div", {
+    className: "detail-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-h"
+  }, "About"), /*#__PURE__*/React.createElement("p", {
+    className: "detail-p"
+  }, bookText)), !loading && chapText && /*#__PURE__*/React.createElement("div", {
+    className: "detail-section last"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-h"
+  }, "This chapter"), /*#__PURE__*/React.createElement("p", {
+    className: "detail-p"
+  }, chapText)), nothing && /*#__PURE__*/React.createElement("div", {
+    className: "summary-loading"
+  }, "No overview available for this passage.")));
+}
+SummaryPanel._cache = {};
+
+// ============================================================
 // DETAIL PANEL — SIDEBAR / BOTTOM SHEET
 // ============================================================
 function DetailPanel({
@@ -981,7 +1115,8 @@ function DetailPanel({
   onStrongsSearch,
   onReadInContext,
   onNameSearch,
-  onNavigateToLexicon
+  onNavigateToLexicon,
+  overviewBack
 }) {
   const [verseText, setVerseText] = useState("");
   const [verseLoading, setVerseLoading] = useState(false);
@@ -1653,7 +1788,11 @@ function DetailPanel({
     className: "card-badge solid"
   }, entry.strongs), /*#__PURE__*/React.createElement("span", {
     className: "detail-pos"
-  }, BOOK_LABELS[entry.book] || entry.book)), /*#__PURE__*/React.createElement("button", {
+  }, BOOK_LABELS[entry.book] || entry.book)), overviewBack && !isMobile ? /*#__PURE__*/React.createElement("button", {
+    className: "detail-back",
+    onClick: onClose,
+    "aria-label": "Back to overview"
+  }, "\u2039 Overview") : /*#__PURE__*/React.createElement("button", {
     className: "detail-close",
     onClick: onClose,
     "aria-label": "Close"
@@ -1689,7 +1828,8 @@ function CrossRefPanel({
   onNavigate,
   isMobile,
   translation,
-  onAiSearch
+  onAiSearch,
+  overviewBack
 }) {
   const [refs, setRefs] = useState([]);
   const [synthesis, setSynthesis] = useState(null);
@@ -1752,7 +1892,11 @@ function CrossRefPanel({
     className: "detail-pos"
   }, sourceRef), /*#__PURE__*/React.createElement("span", {
     className: "xref-badge"
-  }, "TSK")), /*#__PURE__*/React.createElement("button", {
+  }, "TSK")), overviewBack && !isMobile ? /*#__PURE__*/React.createElement("button", {
+    className: "detail-back",
+    onClick: onClose,
+    "aria-label": "Back to overview"
+  }, "\u2039 Overview") : /*#__PURE__*/React.createElement("button", {
     className: "detail-close",
     onClick: onClose,
     "aria-label": "Close"
@@ -2394,9 +2538,13 @@ function LibNavPanel({
   navBookRef,
   nonCanon,
   nonCanonList,
-  onPickNonCanon
+  onPickNonCanon,
+  translation,
+  corpus,
+  pickBible
 }) {
   const [query, setQuery] = useState("");
+  const [otherOpen, setOtherOpen] = useState(false);
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return books;
@@ -2422,7 +2570,10 @@ function LibNavPanel({
     }
     return out;
   }, [filtered]);
-  const nonCanonGroup = nonCanonList && nonCanonList.length > 0 ? /*#__PURE__*/React.createElement("div", {
+
+  // When a non-canonical text is active, the nav shows that text's chapter chips
+  // (picking WHICH non-canon text happens via the "Other" menu in the source bar).
+  const nonCanonActive = nonCanon ? /*#__PURE__*/React.createElement("div", {
     className: "nav-group"
   }, /*#__PURE__*/React.createElement("div", {
     className: "nav-div"
@@ -2430,29 +2581,21 @@ function LibNavPanel({
     className: "nav-div-t"
   }, "Other"), /*#__PURE__*/React.createElement("span", {
     className: "nav-div-n"
-  }, "Non-canonical")), nonCanonList.map(t => {
-    const active = !!nonCanon && nonCanon.id === t.id;
-    return /*#__PURE__*/React.createElement("div", {
-      key: t.id,
-      ref: active ? navBookRef : null
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "nav-book" + (active ? " on" : ""),
-      onClick: () => {
-        onPickNonCanon(t);
-        if (isOverlay) onClose();
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "nav-book-name"
-    }, t.name)), active && /*#__PURE__*/React.createElement("div", {
-      className: "nav-chips"
-    }, Array.from({
-      length: t.chapters
-    }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
-      key: n,
-      className: "ch-chip" + (n === selChapter ? " on" : ""),
-      onClick: () => setSelChapter(n)
-    }, n))));
-  })) : null;
+  }, nonCanon.name)), /*#__PURE__*/React.createElement("div", {
+    ref: navBookRef
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "nav-book on"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "nav-book-name"
+  }, nonCanon.name)), /*#__PURE__*/React.createElement("div", {
+    className: "nav-chips"
+  }, Array.from({
+    length: nonCanon.chapters
+  }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
+    key: n,
+    className: "ch-chip" + (n === selChapter ? " on" : ""),
+    onClick: () => setSelChapter(n)
+  }, n))))) : null;
   return /*#__PURE__*/React.createElement("nav", {
     className: "nav" + (isOverlay ? " nav-overlay" : ""),
     "aria-label": "Books"
@@ -2463,8 +2606,39 @@ function LibNavPanel({
     onClick: onClose,
     "aria-label": "Close"
   }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "nav-source"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "seg nav-source-seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (!nonCanon && translation === "abp" ? " on" : ""),
+    onClick: () => pickBible("abp")
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (!nonCanon && translation === "kjv" ? " on" : ""),
+    onClick: () => pickBible("kjv")
+  }, "KJV")), nonCanonList && nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-wrap nav-other-wrap"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "nav-other-btn" + (nonCanon ? " on" : ""),
+    onClick: () => setOtherOpen(o => !o),
+    "aria-expanded": otherOpen
+  }, nonCanon ? nonCanon.name : "Other", " \u25BE"), otherOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-scrim",
+    onClick: () => setOtherOpen(false)
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-menu"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-head"
+  }, "Non-canonical"), nonCanonList.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: "lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : ""),
+    onClick: () => {
+      onPickNonCanon(t);
+      setOtherOpen(false);
+      if (isOverlay) onClose();
+    }
+  }, t.name)))))), /*#__PURE__*/React.createElement("div", {
     className: "nav-scroll"
-  }, nonCanon && nonCanonGroup, !nonCanon && groups.map(g => /*#__PURE__*/React.createElement("div", {
+  }, nonCanon && nonCanonActive, !nonCanon && groups.map(g => /*#__PURE__*/React.createElement("div", {
     className: "nav-group",
     key: g.key
   }, /*#__PURE__*/React.createElement("div", {
@@ -2496,7 +2670,7 @@ function LibNavPanel({
       className: "ch-chip" + (n === selChapter ? " on" : ""),
       onClick: () => setSelChapter(n)
     }, n))));
-  }))), !nonCanon && nonCanonGroup));
+  })))));
 }
 
 // ============================================================
@@ -2765,7 +2939,8 @@ function LibraryView({
   onWordClick,
   onVerseNumberClick,
   onTranslationChange,
-  isMobile
+  isMobile,
+  showSummary
 }) {
   const [books, setBooks] = useState([]);
   const [selBook, setSelBook] = useState(null);
@@ -2789,6 +2964,7 @@ function LibraryView({
   const [didVerses, setDidVerses] = useState([]);
   const [didLoading, setDidLoading] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
+  const [fontOpen, setFontOpen] = useState(false);
   const nonCanon = NONCANON.find(t => t.id === corpus) || null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
@@ -3634,7 +3810,10 @@ function LibraryView({
     navBookRef: navBookRef,
     nonCanon: nonCanon,
     nonCanonList: NONCANON,
-    onPickNonCanon: pickNonCanon
+    onPickNonCanon: pickNonCanon,
+    translation: translation,
+    corpus: corpus,
+    pickBible: pickBible
   }), !navVisible && mobileNavOpen && /*#__PURE__*/React.createElement(MobileBookPicker, {
     books: books,
     selBook: selBook,
@@ -3680,20 +3859,9 @@ function LibraryView({
     },
     "aria-label": "Previous chapter"
   }, "\u2039"), /*#__PURE__*/React.createElement("span", {
-    className: "ch-lbl"
-  }, "Ch ", /*#__PURE__*/React.createElement("input", {
-    className: "lib-chap-input",
-    type: "number",
-    min: 1,
-    max: maxChap,
-    value: selChapter,
-    onChange: e => {
-      const v = parseInt(e.target.value);
-      if (v >= 1 && v <= maxChap) setSelChapter(v);
-    }
-  }), " ", /*#__PURE__*/React.createElement("span", {
-    className: "ch-of"
-  }, "/ ", maxChap)), /*#__PURE__*/React.createElement("button", {
+    className: "ch-lbl ch-cur",
+    title: "Current chapter \u2014 pick any chapter from the book list at left"
+  }, selChapter), /*#__PURE__*/React.createElement("button", {
     className: "ch-nav",
     disabled: selChapter >= maxChap,
     onClick: () => {
@@ -3707,42 +3875,43 @@ function LibraryView({
       });
     },
     "aria-label": "Next chapter"
-  }, "\u203A")), /*#__PURE__*/React.createElement("div", {
-    className: "seg"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (corpus === "bible" && translation === "abp" ? " on" : ""),
-    onClick: () => pickBible("abp")
-  }, "ABP"), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (corpus === "bible" && translation === "kjv" ? " on" : ""),
-    onClick: () => pickBible("kjv")
-  }, "KJV")), /*#__PURE__*/React.createElement("span", {
+  }, "\u203A")), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("button", {
-    className: "lib-toggle" + (showStrongs ? " on" : ""),
+    className: "lib-toggle lib-toggle-icon" + (showStrongs ? " on" : ""),
     disabled: proseLocked,
+    title: "Strong's numbers",
+    "aria-label": "Strong's numbers",
+    "aria-pressed": showStrongs,
     style: proseLocked ? {
       opacity: 0.35,
       cursor: "default"
     } : undefined,
     onClick: () => !proseLocked && setOpt("showStrongs", !showStrongs)
-  }, "Strong's"), /*#__PURE__*/React.createElement("button", {
-    className: "lib-toggle" + (showInterlinear ? " on" : ""),
+  }, /*#__PURE__*/React.createElement(Icon.Hash, null)), /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle lib-toggle-icon" + (showInterlinear ? " on" : ""),
     disabled: proseLocked,
+    title: "Interlinear",
+    "aria-label": "Interlinear",
+    "aria-pressed": showInterlinear,
     style: proseLocked ? {
       opacity: 0.35,
       cursor: "default"
     } : undefined,
     onClick: () => !proseLocked && setOpt("showInterlinear", !showInterlinear)
-  }, "Interlinear"), /*#__PURE__*/React.createElement("button", {
-    className: "lib-toggle" + (translation === "parallel" ? " on" : ""),
+  }, /*#__PURE__*/React.createElement(Icon.Interlinear, null)), /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : ""),
     disabled: proseLocked,
+    title: "Parallel (ABP + KJV)",
+    "aria-label": "Parallel",
+    "aria-pressed": translation === "parallel",
     style: proseLocked ? {
       opacity: 0.35,
       cursor: "default"
     } : undefined,
     onClick: () => !proseLocked && toggleParallel()
-  }, "Parallel"), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement(Icon.Columns, null)), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("div", {
@@ -3767,6 +3936,18 @@ function LibraryView({
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-wrap"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle lib-font-btn",
+    onClick: () => setFontOpen(o => !o),
+    title: "Text size",
+    "aria-label": "Text size"
+  }, "Aa \u25BE"), fontOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-scrim",
+    onClick: () => setFontOpen(false)
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lib-other-menu lib-font-menu"
+  }, /*#__PURE__*/React.createElement("div", {
     className: "seg"
   }, /*#__PURE__*/React.createElement("button", {
     className: "seg-b",
@@ -3776,26 +3957,7 @@ function LibraryView({
   }, libFontSize), /*#__PURE__*/React.createElement("button", {
     className: "seg-b",
     onClick: () => changeFontSize(+1)
-  }, "A+")), /*#__PURE__*/React.createElement("span", {
-    className: "lib-bar-sep",
-    "aria-hidden": "true"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "lib-other-wrap"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "lib-toggle" + (nonCanon ? " on" : ""),
-    onClick: () => setOtherOpen(o => !o)
-  }, nonCanon ? nonCanon.name : "Other", " \u25BE"), otherOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "lib-other-scrim",
-    onClick: () => setOtherOpen(false)
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "lib-other-menu"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lib-other-head"
-  }, "Non-canonical"), NONCANON.map(t => /*#__PURE__*/React.createElement("button", {
-    key: t.id,
-    className: "lib-other-item" + (corpus === t.id ? " on" : ""),
-    onClick: () => pickNonCanon(t)
-  }, t.name))))))) : /*#__PURE__*/React.createElement("div", {
+  }, "A+"))))))) : /*#__PURE__*/React.createElement("div", {
     className: "lib-toolbar"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mbar-logo-btn",
@@ -3964,7 +4126,11 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement("sup", {
     className: "lib-flow-vnum",
     onClick: handleVerseNum ? () => handleVerseNum(v.verse) : undefined
-  }, v.verse), renderProseWords(v))))))));
+  }, v.verse), renderProseWords(v))))))), showSummary && (selBook || nonCanon) && /*#__PURE__*/React.createElement(SummaryPanel, {
+    book: nonCanon ? nonCanon.id : selBook.abbrev,
+    chapter: selChapter,
+    bookLabel: nonCanon ? nonCanon.name : BOOK_LABELS[selBook.abbrev] || selBook.abbrev
+  }));
 }
 
 // ============================================================
@@ -4797,8 +4963,14 @@ function App() {
     }
   };
   const searchLabel = q2.trim();
+
+  // Desktop Library: when nothing is selected, the right panel rests on the
+  // book/chapter overview (SummaryPanel). It fills the same slot the word-study
+  // and xref panels use, so `has-detail` stays on and the reading column keeps
+  // its condensed (three-column) measure. Mobile never shows the summary.
+  const showLibSummary = !isMobile && mainView === "library" && !activeEntry && !libCrossRef;
   return /*#__PURE__*/React.createElement("div", {
-    className: "app view-" + mainView + " " + (activeEntry || libCrossRef ? "has-detail" : "")
+    className: "app view-" + mainView + " " + (activeEntry || libCrossRef || showLibSummary ? "has-detail" : "")
   }, /*#__PURE__*/React.createElement(Header, {
     activeView: mainView,
     onNavChange: handleNavChange
@@ -4839,7 +5011,8 @@ function App() {
     },
     onVerseNumberClick: handleVerseNumberClick,
     onTranslationChange: setLibTranslation,
-    isMobile: isMobile
+    isMobile: isMobile,
+    showSummary: showLibSummary
   })), mainView === "about" && /*#__PURE__*/React.createElement(AboutView, null), /*#__PURE__*/React.createElement("div", {
     style: {
       display: mainView === "lexicon" ? undefined : "none"
@@ -4975,7 +5148,8 @@ function App() {
     occurrences: countMap[activeEntry.strongs_raw] || 0,
     totalResults: allResults.length,
     onNavigateToLexicon: handleNavigateToLexicon,
-    onReadInContext: handleReadInContext
+    onReadInContext: handleReadInContext,
+    overviewBack: mainView === "library"
   }), activeEntry && isMobile && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sheet-scrim",
     onClick: () => setActiveEntry(null)
@@ -5011,7 +5185,8 @@ function App() {
       setLibCrossRef(null);
       handleAiSearch(q);
     },
-    isMobile: false
+    isMobile: false,
+    overviewBack: true
   }), libCrossRef && isMobile && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sheet-scrim",
     onClick: () => {
