@@ -1,0 +1,4566 @@
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+const {
+  useState,
+  useEffect,
+  useRef,
+  useMemo
+} = React;
+const _ARTICLE_RE = /^((?:the|a|an|his|her|its|of|my|your|their|our)\s+)+/i;
+function stripArticles(s) {
+  if (!s) return s;
+  return s.replace(_ARTICLE_RE, "").trim() || s;
+}
+
+// ============================================================
+// API LAYER
+// ============================================================
+const api = {
+  search: (q, phrase = false) => fetch(`/api/search?q=${encodeURIComponent(q)}&phrase=${phrase ? 1 : 0}`).then(r => r.json()),
+  aiSearch: q => fetch(`/api/ai-search?q=${encodeURIComponent(q)}`).then(r => r.json()),
+  verse: (book, chapter, verse) => fetch(`/api/verse/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  verseWords: (book, chapter, verse) => fetch(`/api/verse-words/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  strongsCount: strongs_base => fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
+  lsj: (lemma, strongs) => {
+    const path = lemma || strongs || '';
+    if (!path) return Promise.resolve({
+      error: 'not found'
+    });
+    const qs = strongs ? `?strongs=${encodeURIComponent(strongs)}` : '';
+    return fetch(`/api/lsj/${encodeURIComponent(path)}${qs}`).then(r => r.json());
+  },
+  lsjSummary: (key, strongs, book, chapter, verse) => {
+    const hasDot = strongs && strongs.includes('.');
+    const path = key || (hasDot ? strongs : '');
+    if (!path) return Promise.resolve({
+      error: 'not found'
+    });
+    const p = new URLSearchParams();
+    if (hasDot) p.set('strongs', strongs);
+    if (book && chapter && verse) {
+      p.set('book', book);
+      p.set('chapter', chapter);
+      p.set('verse', verse);
+    }
+    const qs = p.toString() ? `?${p}` : '';
+    return fetch(`/api/lsj-summary/${encodeURIComponent(path)}${qs}`).then(r => r.json());
+  },
+  books: () => fetch("/api/books").then(r => r.json()),
+  chapter: (book, ch) => fetch(`/api/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  kjvChapter: (book, ch) => fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
+  kjvVerseWords: (book, ch, v) => fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
+  kjvVerseWordsBatch: refs => fetch('/api/kjv/verse_words_batch', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(refs)
+  }).then(r => r.json()),
+  kjvStrongsCount: strongs_id => fetch(`/api/kjv/strongs-count/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
+  kjvStrongsSearch: strongs_id => fetch(`/api/kjv/strongs-search/${encodeURIComponent(strongs_id)}`).then(r => r.json()),
+  pnCount: name => fetch(`/api/pn-count/${encodeURIComponent(name)}`).then(r => r.json()),
+  metavPerson: name => fetch(`/api/metav/person/${encodeURIComponent(name)}`).then(r => r.json()),
+  metavAiDescription: name => fetch(`/api/metav/ai-description/${encodeURIComponent(name)}`).then(r => r.json()),
+  metavPlace: name => fetch(`/api/metav/place/${encodeURIComponent(name)}`).then(r => r.json()),
+  bdb: sid => fetch(`/api/bdb/${encodeURIComponent(sid)}`).then(r => r.json()),
+  crossRefsCurated: (book, chapter, verse) => fetch(`/api/cross-references/curated/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  lexiconLookup: q => fetch(`/api/lexicon/lookup?q=${encodeURIComponent(q)}`).then(r => r.json()),
+  lexiconProfile: (strongs, corpus) => fetch(`/api/lexicon/profile/${encodeURIComponent(strongs)}${corpus ? `?corpus=${corpus}` : ""}`).then(r => r.json()),
+  lexiconVerses: (strongs, book, corpus, gloss) => fetch(`/api/lexicon/verses/${encodeURIComponent(strongs)}/${encodeURIComponent(book)}?corpus=${corpus}${gloss ? `&gloss=${encodeURIComponent(gloss)}` : ""}`).then(r => r.json()),
+  lexiconBooks: (strongs, corpus, gloss) => fetch(`/api/lexicon/books/${encodeURIComponent(strongs)}?corpus=${corpus}${gloss ? `&gloss=${encodeURIComponent(gloss)}` : ""}`).then(r => r.json()),
+  lexiconEnglish: (q, corpus, testament) => fetch(`/api/lexicon/english?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus)}${testament && testament !== "all" ? `&testament=${encodeURIComponent(testament)}` : ""}`).then(r => r.json())
+};
+
+// Extract proper noun name from a multi-word gloss, skipping function words
+const _PN_STOP = new Set(["And", "But", "Or", "The", "A", "An", "In", "Of", "To", "For", "With", "From", "By", "At", "His", "Her", "Its", "Their", "My", "Your", "Our"]);
+function extractProperName(gloss) {
+  if (!gloss) return "";
+  const clean = gloss.replace(/[^a-zA-Z\s'-]/g, "").trim();
+  const proper = clean.split(/\s+/).find(w => /^[A-Z]/.test(w) && !_PN_STOP.has(w));
+  return proper || "";
+}
+
+// ============================================================
+// DATA SHAPING
+// ============================================================
+function strongsTag(snum) {
+  if (!snum || snum === "*") return "PN";
+  const s = String(snum);
+  const hasH = /^H/i.test(s);
+  const bare = s.replace(/^[GH]/i, "");
+  const n = parseInt(bare, 10);
+  if (hasH) return `H${bare}`;
+  return `${!isNaN(n) && n > 5624 ? "H" : "G"}${bare}`;
+}
+
+// ---- Morphology decoder (words.morph) -----------------------------------
+// OT = CATSS dotted (V.AAI3S, N.GSM, RP.GS, bare C/P/D/X); NT = Robinson
+// hyphen (V-PAI-3S, N-ASF, P-1GS, PRT-N, CONJ). Verbs start V in both, but
+// the rest CONFLICTS by scheme (CATSS perfect=X/imperative=D; Robinson
+// perfect=R/imperative=M) → separate tables. Returns e.g.
+// "Verb · Aorist · Active · Indicative · 3rd person · Singular", or "" when
+// morph is null/unmappable (caller hides the line — never shows "unknown").
+const _CASE = {
+  N: "Nominative",
+  V: "Vocative",
+  G: "Genitive",
+  D: "Dative",
+  A: "Accusative"
+};
+const _NUM = {
+  S: "Singular",
+  P: "Plural",
+  D: "Dual"
+};
+const _GEN = {
+  M: "Masculine",
+  F: "Feminine",
+  N: "Neuter"
+};
+const _PERS = {
+  "1": "1st person",
+  "2": "2nd person",
+  "3": "3rd person"
+};
+const _CATSS_POS = {
+  N: "Noun",
+  A: "Adjective",
+  RA: "Article",
+  RP: "Pronoun",
+  RD: "Demonstrative pronoun",
+  RR: "Relative pronoun",
+  RI: "Interrogative pronoun",
+  RX: "Indefinite pronoun",
+  V: "Verb",
+  C: "Conjunction",
+  P: "Preposition",
+  D: "Adverb",
+  X: "Particle",
+  M: "Numeral",
+  I: "Interjection"
+};
+const _CATSS_TENSE = {
+  P: "Present",
+  I: "Imperfect",
+  F: "Future",
+  A: "Aorist",
+  X: "Perfect",
+  Y: "Pluperfect"
+};
+const _CATSS_VOICE = {
+  A: "Active",
+  M: "Middle",
+  P: "Passive"
+};
+const _CATSS_MOOD = {
+  I: "Indicative",
+  D: "Imperative",
+  S: "Subjunctive",
+  O: "Optative",
+  N: "Infinitive",
+  P: "Participle"
+};
+// CATSS lumps several pronoun sub-classes under RD; disambiguate by lemma so
+// αὐτός (3rd-person personal, = Robinson P) and the reflexives/reciprocal don't
+// all read "Demonstrative". Anything not listed (οὗτος/ἐκεῖνος/ὅδε/τοιοῦτος…)
+// keeps the demonstrative default.
+const _CATSS_RD_LEMMA = {
+  "αὐτός": "Pronoun",
+  "ἑαυτοῦ": "Reflexive pronoun",
+  "σεαυτοῦ": "Reflexive pronoun",
+  "ἐμαυτοῦ": "Reflexive pronoun",
+  "ἀλλήλων": "Reciprocal pronoun"
+};
+const _ROB_POS = {
+  N: "Noun",
+  A: "Adjective",
+  T: "Article",
+  P: "Pronoun",
+  R: "Relative pronoun",
+  D: "Demonstrative pronoun",
+  K: "Correlative pronoun",
+  I: "Interrogative pronoun",
+  X: "Indefinite pronoun",
+  Q: "Correlative pronoun",
+  F: "Reflexive pronoun",
+  S: "Possessive pronoun",
+  C: "Reciprocal pronoun",
+  V: "Verb",
+  CONJ: "Conjunction",
+  PREP: "Preposition",
+  ADV: "Adverb",
+  PRT: "Particle",
+  COND: "Conditional",
+  INJ: "Interjection",
+  HEB: "Hebrew",
+  ARAM: "Aramaic"
+};
+const _ROB_TENSE = {
+  P: "Present",
+  I: "Imperfect",
+  F: "Future",
+  A: "Aorist",
+  R: "Perfect",
+  L: "Pluperfect"
+};
+const _ROB_VOICE = {
+  A: "Active",
+  M: "Middle",
+  P: "Passive",
+  E: "Middle/Passive",
+  D: "Middle deponent",
+  O: "Passive deponent",
+  N: "Middle/Passive deponent"
+};
+const _ROB_MOOD = {
+  I: "Indicative",
+  S: "Subjunctive",
+  O: "Optative",
+  M: "Imperative",
+  N: "Infinitive",
+  P: "Participle"
+};
+function _decodeCNG(s) {
+  // case + number + (optional) gender, by position
+  const out = [];
+  if (s[0] && _CASE[s[0]]) out.push(_CASE[s[0]]);
+  if (s[1] && _NUM[s[1]]) out.push(_NUM[s[1]]);
+  if (s[2] && _GEN[s[2]]) out.push(_GEN[s[2]]);
+  return out;
+}
+function decodeMorph(morph, lemma) {
+  if (!morph) return "";
+  const m = morph.trim();
+  let parts = [];
+  try {
+    if (m.indexOf(".") >= 0) {
+      // ---- CATSS (OT) ----
+      const dot = m.indexOf(".");
+      const pos = m.slice(0, dot),
+        p = m.slice(dot + 1);
+      if (pos === "V") {
+        parts = ["Verb"];
+        if (_CATSS_TENSE[p[0]]) parts.push(_CATSS_TENSE[p[0]]);
+        if (_CATSS_VOICE[p[1]]) parts.push(_CATSS_VOICE[p[1]]);
+        if (_CATSS_MOOD[p[2]]) parts.push(_CATSS_MOOD[p[2]]);
+        const rest = p.slice(3);
+        if (p[2] === "P") parts.push(..._decodeCNG(rest)); // participle
+        else if (p[2] !== "N" && rest) {
+          // finite (N = infinitive)
+          if (_PERS[rest[0]]) parts.push(_PERS[rest[0]]);
+          if (_NUM[rest[1]]) parts.push(_NUM[rest[1]]);
+        }
+      } else {
+        let label = _CATSS_POS[pos];
+        if (!label) return "";
+        if (pos === "RD") label = _CATSS_RD_LEMMA[(lemma || "").normalize("NFC")] || "Demonstrative pronoun";
+        parts = [label, ..._decodeCNG(p)];
+      }
+    } else if (m.indexOf("-") >= 0) {
+      // ---- Robinson (NT) ----
+      const seg = m.split("-");
+      const pos = seg[0];
+      if (pos === "V") {
+        let tvm = seg[1] || "";
+        if (/^[23]/.test(tvm)) tvm = tvm.slice(1); // 2nd aorist/perfect
+        parts = ["Verb"];
+        if (_ROB_TENSE[tvm[0]]) parts.push(_ROB_TENSE[tvm[0]]);
+        if (_ROB_VOICE[tvm[1]]) parts.push(_ROB_VOICE[tvm[1]]);
+        if (_ROB_MOOD[tvm[2]]) parts.push(_ROB_MOOD[tvm[2]]);
+        const rest = seg[2] || "";
+        if (rest) {
+          if (tvm[2] === "P") parts.push(..._decodeCNG(rest)); // participle
+          else {
+            if (_PERS[rest[0]]) parts.push(_PERS[rest[0]]);
+            if (_NUM[rest[1]]) parts.push(_NUM[rest[1]]);
+          }
+        }
+      } else if (pos === "PRT") {
+        parts = ["Particle"];
+        if (seg[1] === "N") parts.push("Negative");else if (seg[1] === "I") parts.push("Interrogative");
+      } else {
+        const label = _ROB_POS[pos];
+        if (!label) return "";
+        const p = seg[1] || "";
+        if (p === "PRI") return "Proper noun (indeclinable)";
+        if (p === "NUI") return "Numeral (indeclinable)";
+        parts = [label];
+        if (pos === "P" && /^[123]/.test(p)) {
+          // personal pron: person·case·number
+          if (_PERS[p[0]]) parts.push(_PERS[p[0]]);
+          if (_CASE[p[1]]) parts.push(_CASE[p[1]]);
+          if (_NUM[p[2]]) parts.push(_NUM[p[2]]);
+        } else {
+          parts.push(..._decodeCNG(p)); // incl. αὐτός P-GSM, drops trailing -T
+        }
+      }
+    } else {
+      // ---- bare POS token ----
+      const label = m.length === 1 ? _CATSS_POS[m] : _ROB_POS[m];
+      if (!label) return "";
+      parts = [label];
+    }
+  } catch (e) {
+    return "";
+  }
+  return parts.filter(Boolean).join(" · ");
+}
+function makeEntry(r, idx) {
+  const snum = r.strongs_base === "*" ? "*" : r.strongs || r.strongs_base;
+  return {
+    id: `${snum}-${r.book}-${r.chapter}-${r.verse}-${idx}`,
+    strongs: strongsTag(snum),
+    strongs_base: r.strongs_base,
+    strongs_raw: snum,
+    greek: r.lemma || "",
+    translit: r.translit || "",
+    gloss: r.gloss || "",
+    gloss_head: r.gloss_head || "",
+    ref: r.ref,
+    book: r.book,
+    chapter: r.chapter,
+    verse: r.verse,
+    definition: r.strongs_def || "",
+    derivation: r.derivation || "",
+    is_function: r.is_function || false,
+    is_pn: r.is_pn || false
+  };
+}
+function flattenAiResults(verses) {
+  const entries = [];
+  let idx = 0;
+  for (const v of verses) {
+    for (const w of v.words || []) {
+      const snum = w.strongs_base === "*" ? "*" : w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base;
+      entries.push({
+        id: `ai-${v.book}-${v.chapter}-${v.verse}-${snum}-${idx++}`,
+        strongs: strongsTag(snum),
+        strongs_base: w.strongs_base,
+        strongs_raw: snum,
+        greek: w.lemma || "",
+        translit: w.translit || "",
+        gloss: w.gloss || "",
+        ref: v.ref,
+        book: v.book,
+        chapter: v.chapter,
+        verse: v.verse,
+        definition: w.strongs_def || "",
+        derivation: w.derivation || "",
+        is_function: w.is_function || false,
+        is_pn: w.is_pn || false,
+        is_primary: v.is_primary || false,
+        is_additional: v.is_additional || false
+      });
+    }
+  }
+  return entries;
+}
+
+// ============================================================
+// BOOK LABELS
+// ============================================================
+const NT_BOOKS = new Set(["Mat", "Mar", "Luk", "Joh", "Act", "Rom", "1Co", "2Co", "Gal", "Eph", "Php", "Col", "1Th", "2Th", "1Ti", "2Ti", "Tit", "Phm", "Heb", "Jas", "1Pe", "2Pe", "1Jn", "2Jn", "3Jn", "Jud", "Rev"]);
+const BOOK_ORDER = {};
+["Gen", "Exo", "Lev", "Num", "Deu", "Jos", "Jdg", "Rth", "1Sa", "2Sa", "1Ki", "2Ki", "1Ch", "2Ch", "Ezr", "Neh", "Est", "Job", "Psa", "Pro", "Ecc", "Son", "Isa", "Jer", "Lam", "Eze", "Dan", "Hos", "Joe", "Amo", "Oba", "Jon", "Mic", "Nah", "Hab", "Zep", "Hag", "Zec", "Mal", "Mat", "Mar", "Luk", "Joh", "Act", "Rom", "1Co", "2Co", "Gal", "Eph", "Php", "Col", "1Th", "2Th", "1Ti", "2Ti", "Tit", "Phm", "Heb", "Jas", "1Pe", "2Pe", "1Jn", "2Jn", "3Jn", "Jud", "Rev"].forEach((b, i) => {
+  BOOK_ORDER[b] = i;
+});
+const BOOK_LABELS = {
+  Gen: "Genesis",
+  Exo: "Exodus",
+  Lev: "Leviticus",
+  Num: "Numbers",
+  Deu: "Deuteronomy",
+  Jos: "Joshua",
+  Jdg: "Judges",
+  Rth: "Ruth",
+  "1Sa": "1 Samuel",
+  "2Sa": "2 Samuel",
+  "1Ki": "1 Kings",
+  "2Ki": "2 Kings",
+  "1Ch": "1 Chronicles",
+  "2Ch": "2 Chronicles",
+  Ezr: "Ezra",
+  Neh: "Nehemiah",
+  Est: "Esther",
+  Job: "Job",
+  Psa: "Psalms",
+  Pro: "Proverbs",
+  Ecc: "Ecclesiastes",
+  Son: "Song of Solomon",
+  Isa: "Isaiah",
+  Jer: "Jeremiah",
+  Lam: "Lamentations",
+  Eze: "Ezekiel",
+  Dan: "Daniel",
+  Hos: "Hosea",
+  Joe: "Joel",
+  Amo: "Amos",
+  Oba: "Obadiah",
+  Jon: "Jonah",
+  Mic: "Micah",
+  Nah: "Nahum",
+  Hab: "Habakkuk",
+  Zep: "Zephaniah",
+  Hag: "Haggai",
+  Zec: "Zechariah",
+  Mal: "Malachi",
+  Mat: "Matthew",
+  Mar: "Mark",
+  Luk: "Luke",
+  Joh: "John",
+  Act: "Acts",
+  Rom: "Romans",
+  "1Co": "1 Corinthians",
+  "2Co": "2 Corinthians",
+  Gal: "Galatians",
+  Eph: "Ephesians",
+  Php: "Philippians",
+  Col: "Colossians",
+  "1Th": "1 Thessalonians",
+  "2Th": "2 Thessalonians",
+  "1Ti": "1 Timothy",
+  "2Ti": "2 Timothy",
+  Tit: "Titus",
+  Phm: "Philemon",
+  Heb: "Hebrews",
+  Jas: "James",
+  "1Pe": "1 Peter",
+  "2Pe": "2 Peter",
+  "1Jn": "1 John",
+  "2Jn": "2 John",
+  "3Jn": "3 John",
+  Jud: "Jude",
+  Rev: "Revelation"
+};
+
+// ============================================================
+// ICONS — minimal line set
+// ============================================================
+const Icon = {
+  Search: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("circle", {
+    cx: "11",
+    cy: "11",
+    r: "7"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "m20 20-3.5-3.5"
+  })),
+  Sparkle: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"
+  })),
+  Close: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M6 6l12 12M6 18 18 6"
+  })),
+  ArrowRight: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M5 12h14M13 6l6 6-6 6"
+  })),
+  Book: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5a2.5 2.5 0 0 0 0 5H20"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M8 6h8M8 10h6"
+  })),
+  Filter: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M3 6h18M6 12h12M10 18h4"
+  })),
+  Bookmark: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M6 3h12v18l-6-4-6 4z"
+  })),
+  Copy: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("rect", {
+    x: "8",
+    y: "8",
+    width: "13",
+    height: "13",
+    rx: "2"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"
+  })),
+  Share: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"
+  })),
+  Grid: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "15",
+    height: "15",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("rect", {
+    x: "3",
+    y: "3",
+    width: "7",
+    height: "7",
+    rx: "1"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "14",
+    y: "3",
+    width: "7",
+    height: "7",
+    rx: "1"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "3",
+    y: "14",
+    width: "7",
+    height: "7",
+    rx: "1"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "14",
+    y: "14",
+    width: "7",
+    height: "7",
+    rx: "1"
+  })),
+  Lines: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "15",
+    height: "15",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M3 6h18M3 11h18M3 16h12"
+  })),
+  Panel: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("rect", {
+    x: "3",
+    y: "3",
+    width: "18",
+    height: "18",
+    rx: "2"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M15 3v18"
+  }))
+};
+
+// ============================================================
+// HEADER
+// ============================================================
+function Header({
+  activeView,
+  onNavChange
+}) {
+  return /*#__PURE__*/React.createElement("header", {
+    className: "hdr"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "hdr-inner"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "brand"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "brand-mark",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "22",
+    height: "22",
+    viewBox: "0 0 24 24",
+    fill: "none"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M11 7v6M14 10h-6",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "brand-text"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "brand-name"
+  }, "Lexica"), /*#__PURE__*/React.createElement("div", {
+    className: "brand-sub"
+  }, "Greek & Hebrew Word Study"))), /*#__PURE__*/React.createElement("nav", {
+    className: "hdr-nav"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "hdr-link " + (activeView === "library" ? "active" : ""),
+    onClick: () => onNavChange("library")
+  }, "Library"), /*#__PURE__*/React.createElement("button", {
+    className: "hdr-link " + (activeView === "lexicon" ? "active" : ""),
+    onClick: () => onNavChange("lexicon")
+  }, "Lexicon"), /*#__PURE__*/React.createElement("button", {
+    className: "hdr-link " + (activeView === "search" ? "active" : ""),
+    onClick: () => onNavChange("search")
+  }, "Search"), /*#__PURE__*/React.createElement("button", {
+    className: "hdr-link " + (activeView === "about" ? "active" : ""),
+    onClick: () => onNavChange("about")
+  }, "About"))));
+}
+
+// ============================================================
+// SEARCH BAR
+// ============================================================
+function SearchBar({
+  q2,
+  setQ2,
+  onAiSearch,
+  aiLoading
+}) {
+  return /*#__PURE__*/React.createElement("section", {
+    className: "search"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "search-cell"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "search-label"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "search-eyebrow ai"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ai-dot"
+  }), "Ask the corpus")), /*#__PURE__*/React.createElement("form", {
+    className: "search-field ai-field",
+    onSubmit: e => {
+      e.preventDefault();
+      onAiSearch();
+    }
+  }, /*#__PURE__*/React.createElement(Icon.Sparkle, {
+    className: "search-icon"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    className: "search-input",
+    placeholder: "Ask the corpus\u2026 Where does the divine council appear?",
+    value: q2,
+    onChange: e => setQ2(e.target.value)
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    className: "search-go",
+    "aria-label": "Submit"
+  }, aiLoading ? /*#__PURE__*/React.createElement("span", {
+    className: "spinner"
+  }) : /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), /*#__PURE__*/React.createElement("div", {
+    className: "search-chips"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "chip suggest",
+    onClick: () => setQ2("Where does pneuma appear in Genesis")
+  }, "\"Where does pneuma appear in Genesis\""), /*#__PURE__*/React.createElement("button", {
+    className: "chip suggest",
+    onClick: () => setQ2("Faith in Paul's letters")
+  }, "\"Faith in Paul's letters\""), /*#__PURE__*/React.createElement("button", {
+    className: "chip suggest",
+    onClick: () => setQ2("divine council passages")
+  }, "\"divine council passages\""))));
+}
+
+// ============================================================
+// RESULT CARD
+// ============================================================
+function ResultCard({
+  entry,
+  active,
+  onClick,
+  count
+}) {
+  return /*#__PURE__*/React.createElement("article", {
+    className: "card " + (active ? "card-active" : ""),
+    onClick: onClick,
+    tabIndex: "0",
+    onKeyDown: e => (e.key === "Enter" || e.key === " ") && onClick()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-top"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-ref"
+  }, entry.ref), /*#__PURE__*/React.createElement("span", {
+    className: "card-badge"
+  }, entry.strongs)), /*#__PURE__*/React.createElement("div", {
+    className: "card-main"
+  }, entry.greek ? /*#__PURE__*/React.createElement("div", {
+    className: "card-greek"
+  }, entry.greek) : /*#__PURE__*/React.createElement("div", {
+    className: "card-greek",
+    style: {
+      fontSize: "22px"
+    }
+  }, stripArticles(entry.gloss)), entry.greek && /*#__PURE__*/React.createElement("div", {
+    className: "card-gloss"
+  }, stripArticles(entry.gloss))), /*#__PURE__*/React.createElement("div", {
+    className: "card-translit"
+  }, entry.translit), /*#__PURE__*/React.createElement("div", {
+    className: "card-foot"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-pos"
+  }, BOOK_LABELS[entry.book] || entry.book), /*#__PURE__*/React.createElement("span", {
+    className: "card-occ"
+  }, count, "\xD7")));
+}
+
+// ============================================================
+// LSJ SUMMARY DISPLAY
+// ============================================================
+function _senseLevel(marker) {
+  if (!marker) return 0;
+  if (/^[IVX]+\.$/.test(marker)) return 0;
+  if (/^[A-E]\.$/.test(marker)) return 1;
+  if (/^[1-9]/.test(marker)) return 2;
+  return 3;
+}
+function _stripMd(text) {
+  return text.replace(/^#+\s*/gm, "") // strip # ## ### headers
+  .replace(/^\s*[-*]\s+/gm, "") // strip bullet points
+  .replace(/\*\*(.+?)\*\*/g, "$1") // strip bold **
+  .replace(/\*(.+?)\*/g, "$1") // strip italic *
+  .replace(/\s{2,}/g, " ").trim();
+}
+const _REFUSAL_RE = /^(I |A\.\s*I |I'm |I don't|I cannot|I appreciate|I need|Unfortunately)/i;
+function LsjSummary({
+  data,
+  loading
+}) {
+  if (loading) return /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def",
+    style: {
+      color: "var(--muted)",
+      fontStyle: "italic"
+    }
+  }, "Summarizing\u2026");
+  if (!data?.summary) return /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def",
+    style: {
+      color: "var(--muted)"
+    }
+  }, "No definition available.");
+  return /*#__PURE__*/React.createElement("p", {
+    className: "lsj-synthesis"
+  }, data.summary);
+}
+
+// Google-Maps-style bottom-sheet dismissal: drag the WHOLE card down to close,
+// but only when the inner scroll area is already at the top — otherwise the body
+// scrolls normally. Uses native non-passive listeners so we can block page scroll
+// / pull-to-refresh while dragging (React's touch props are passive and can't).
+function useSwipeToDismiss(onClose) {
+  const sheetRef = React.useRef(null);
+  const scrollRef = React.useRef(null);
+  const closeRef = React.useRef(onClose);
+  closeRef.current = onClose;
+  React.useEffect(() => {
+    const el = sheetRef.current;
+    if (!el) return;
+    let startY = 0,
+      dragY = 0,
+      active = false;
+    const SNAP = 'transform 0.25s cubic-bezier(0.2,0.8,0.2,1)';
+    const atTop = () => {
+      const sc = scrollRef.current;
+      return !sc || sc.scrollTop <= 0;
+    };
+    const onStart = e => {
+      active = atTop(); // only arm the drag if the body is scrolled to the top
+      startY = e.touches[0].clientY;
+      dragY = 0;
+    };
+    const onMove = e => {
+      if (!active) return;
+      const d = e.touches[0].clientY - startY;
+      if (d <= 0 || !atTop()) {
+        // pulling up, or body got scrolled → hand back to native scroll
+        if (dragY) {
+          el.style.transition = '';
+          el.style.transform = '';
+          dragY = 0;
+        }
+        active = false;
+        return;
+      }
+      dragY = d;
+      el.style.transition = 'none';
+      el.style.transform = `translateY(${d}px)`;
+      if (e.cancelable) e.preventDefault(); // stop the page scrolling / pull-to-refresh
+    };
+    const onEnd = () => {
+      if (!active) return;
+      active = false;
+      if (dragY > 90) {
+        closeRef.current?.();
+        return;
+      }
+      if (dragY) {
+        el.style.transition = SNAP;
+        el.style.transform = '';
+      }
+      dragY = 0;
+    };
+    el.addEventListener('touchstart', onStart, {
+      passive: true
+    });
+    el.addEventListener('touchmove', onMove, {
+      passive: false
+    });
+    el.addEventListener('touchend', onEnd, {
+      passive: true
+    });
+    el.addEventListener('touchcancel', onEnd, {
+      passive: true
+    });
+    return () => {
+      el.removeEventListener('touchstart', onStart);
+      el.removeEventListener('touchmove', onMove);
+      el.removeEventListener('touchend', onEnd);
+      el.removeEventListener('touchcancel', onEnd);
+    };
+  }, []);
+  return {
+    sheetRef,
+    scrollRef
+  };
+}
+
+// ============================================================
+// LEAFLET MINI-MAP
+// ============================================================
+function LeafletMap({
+  lat,
+  lon,
+  name
+}) {
+  const mapRef = React.useRef(null);
+  const instanceRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!mapRef.current || !window.L) return;
+    if (instanceRef.current) {
+      instanceRef.current.remove();
+      instanceRef.current = null;
+    }
+    const map = window.L.map(mapRef.current, {
+      center: [lat, lon],
+      zoom: 7,
+      zoomControl: true,
+      scrollWheelZoom: false,
+      attributionControl: false
+    });
+    window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+    window.L.marker([lat, lon]).addTo(map).bindPopup(name).openPopup();
+    instanceRef.current = map;
+    return () => {
+      if (instanceRef.current) {
+        instanceRef.current.remove();
+        instanceRef.current = null;
+      }
+    };
+  }, [lat, lon, name]);
+  return /*#__PURE__*/React.createElement("div", {
+    ref: mapRef,
+    className: "metav-leaflet-map"
+  });
+}
+
+// ============================================================
+// DETAIL PANEL — SIDEBAR / BOTTOM SHEET
+// ============================================================
+function DetailPanel({
+  entry,
+  isMobile,
+  onClose,
+  occurrences,
+  totalResults,
+  onStrongsSearch,
+  onReadInContext,
+  onNameSearch,
+  onNavigateToLexicon
+}) {
+  const [verseText, setVerseText] = useState("");
+  const [verseLoading, setVerseLoading] = useState(false);
+  const [abpCount, setAbpCount] = useState(null);
+  const [showInterlinear, setShowInterlinear] = useState(false);
+  const [interlinearWords, setInterlinearWords] = useState(null);
+  useEffect(() => {
+    setShowInterlinear(false);
+    setInterlinearWords(null);
+  }, [entry && entry.id]);
+  useEffect(() => {
+    if (!showInterlinear || !entry || interlinearWords) return;
+    let cancelled = false;
+    api.verseWords(entry.book, entry.chapter, entry.verse).then(d => {
+      if (!cancelled) setInterlinearWords(d.words || []);
+    }).catch(() => {
+      if (!cancelled) setInterlinearWords([]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [showInterlinear, entry && entry.id]);
+  useEffect(() => {
+    if (!entry) return;
+    let cancelled = false;
+    setVerseText("");
+    setVerseLoading(true);
+    api.verse(entry.book, entry.chapter, entry.verse).then(data => {
+      if (!cancelled) setVerseText(data.text || "");
+    }).catch(() => {
+      if (!cancelled) setVerseText("");
+    }).finally(() => {
+      if (!cancelled) setVerseLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id]);
+  useEffect(() => {
+    if (!entry || entry.strongs_base === "*") {
+      setAbpCount(null);
+      return;
+    }
+    let cancelled = false;
+    api.strongsCount(entry.strongs_raw).then(d => {
+      if (!cancelled) setAbpCount(d.count ?? null);
+    }).catch(() => {
+      if (!cancelled) setAbpCount(null);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.strongs_raw]);
+  const isPN = entry && (entry.is_pn || entry.isPN || entry.strongs === "PN" || entry.strongs_base === "*");
+  // A word carrying an H-number. For Hebrew PROPER NOUNS we want metaV (person/
+  // place) on top with the BDB lexical entry stacked BELOW (like KJV mode):
+  //  - isHebrewWord drives the BDB fetch + section (shown for ALL Hebrew words, incl. PNs)
+  //  - isHebrew (excludes PNs) drives the Hebrew HERO styling + LSJ suppression, so a
+  //    PN's hero shows its NAME and metaV stays the primary card.
+  const isHebrewWord = entry && entry.strongs && entry.strongs.startsWith("H");
+  const isHebrew = isHebrewWord && !isPN;
+  // Gentilics (-ite/-ites: Hivite, Sinite, Amorite…) are eponymous people-groups
+  // from the Table of Nations — labelled "People / Clan", but still shown as a
+  // metaV person so the genealogy (parent/sibling clans) is preserved.
+  const isGentilic = !!(isPN && entry && /ites?$/i.test(extractProperName(entry.pnName || entry.gloss || "")));
+
+  // PN occurrence count (by name, for strongs='*' entries)
+  const [pnCount, setPnCount] = useState(null);
+  useEffect(() => {
+    setPnCount(null);
+    if (!entry.gloss) return;
+    const name = extractProperName(entry.gloss);
+    if (!name || name.length < 2) return;
+    let cancelled = false;
+    api.pnCount(name).then(d => {
+      if (!cancelled) setPnCount(d.count ?? null);
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id]);
+
+  // KJV occurrence count for Hebrew words
+  const [kjvCount, setKjvCount] = useState(null);
+  useEffect(() => {
+    setKjvCount(null);
+    if (!isHebrew && !entry.isKjv || !entry.strongs) return;
+    let cancelled = false;
+    api.kjvStrongsCount(entry.strongs).then(d => {
+      if (!cancelled) setKjvCount(d.count ?? null);
+    }).catch(() => {
+      if (!cancelled) setKjvCount(null);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.strongs]);
+
+  // metaV person/place lookup — runs on any word click where gloss may be a name
+  const [metavPersonData, setMetavPersonData] = useState(null);
+  const [metavPlaceData, setMetavPlaceData] = useState(null);
+  const [metavTab, setMetavTab] = useState("person"); // "person" | "place"
+  const [metavLoading, setMetavLoading] = useState(false);
+  // Derived — all downstream code uses these unchanged
+  const metavHasBoth = !!(metavPersonData && metavPlaceData);
+  const metavType = metavHasBoth ? metavTab : metavPersonData ? "person" : metavPlaceData ? "place" : null;
+  const metavData = metavType === "person" ? metavPersonData : metavType === "place" ? metavPlaceData : null;
+  useEffect(() => {
+    setMetavPersonData(null);
+    setMetavPlaceData(null);
+    setMetavTab("person");
+    // Skip metaV for words with a real Greek lemma — those belong to LSJ
+    // Exception: KJV words that look like proper nouns (capitalized) still go through metaV
+    const kjvIsPN = entry.isKjv && extractProperName(entry.pnName || entry.gloss || "") !== "";
+    if (!isPN && !kjvIsPN && entry.greek && entry.translit && entry.strongs_raw !== "2316") return;
+    const name = extractProperName(entry.pnName || entry.gloss || "");
+    if (!name || name.length < 2) return;
+    const _DIVINE_SKIP = new Set(["LORD", "Lord", "YHWH", "Yahweh", "Jehovah", "Holy"]);
+    if (_DIVINE_SKIP.has(name)) return;
+    let cancelled = false;
+    setMetavLoading(true);
+    Promise.all([api.metavPerson(name).catch(() => ({
+      error: true
+    })), api.metavPlace(name).catch(() => ({
+      error: true
+    }))]).then(([pd, ld]) => {
+      if (cancelled) return;
+      const personOk = !pd.error && (pd.birth_year || pd.death_year || pd.relationships?.length >= 2);
+      if (personOk) setMetavPersonData(pd);
+      if (!ld.error) setMetavPlaceData(ld);
+      // Default tab (only matters when BOTH person+place exist). Default to Person
+      // and flip to Place ONLY when the word's own (prefixed) strongs matches the
+      // place's strongs_g — a genuinely distinct place id. pn_type is NOT trusted:
+      // tipnr.strongs is a PK, so a name sharing one strongs for person AND place
+      // (e.g. Adam H121) stores whichever type was inserted last ('place' for Adam),
+      // which would wrongly default person-names to Place.
+      const placeStrongsMatch = !ld.error && !!ld.strongs_g && !!entry.strongs_base && ld.strongs_g.split(/[^GH0-9.]+/i).map(s => s.toUpperCase()).includes(entry.strongs_base.toUpperCase());
+      setMetavTab(placeStrongsMatch ? "place" : "person");
+      setMetavLoading(false);
+    }).catch(() => {
+      if (!cancelled) setMetavLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id]);
+
+  // AI description fallback for PN entries with no metaV data
+  const [aiDescription, setAiDescription] = useState(null);
+  const [aiDescLoading, setAiDescLoading] = useState(false);
+  useEffect(() => {
+    setAiDescription(null);
+    setAiDescLoading(false);
+    if (metavLoading) return;
+    if (metavData && metavType === "person" && !isGentilic) return; // rich person bio replaces AI; groups still get the summary
+    if (metavData && metavType === "place" && metavData.strongs_g?.length > 0) return; // place has LSJ via strongs_g
+    if (isHebrew) return; // BDB covers Hebrew words
+    if (!isPN) return; // only for proper nouns
+    const name = extractProperName(entry.pnName || entry.gloss || "");
+    if (!name || name.length < 2) return;
+    let cancelled = false;
+    setAiDescLoading(true);
+    api.metavAiDescription(name).then(d => {
+      if (!cancelled && !d.error) setAiDescription(d.description || null);
+    }).catch(() => {}).finally(() => {
+      if (!cancelled) setAiDescLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id, metavData, metavLoading]);
+
+  // Hebrew BDB lookup
+  const [bdbEntry, setBdbEntry] = useState(null);
+  const [bdbLoading, setBdbLoading] = useState(false);
+  useEffect(() => {
+    setBdbEntry(null);
+    if (!isHebrewWord || !entry.strongs) return;
+    let cancelled = false;
+    setBdbLoading(true);
+    api.bdb(entry.strongs).then(d => {
+      if (!cancelled) {
+        setBdbEntry(d.error ? null : d);
+        setBdbLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        setBdbEntry(null);
+        setBdbLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id]);
+
+  // KJV verse text (when entry came from KJV mode, or is a Hebrew word)
+  const [kjvVerseText, setKjvVerseText] = useState("");
+  useEffect(() => {
+    setKjvVerseText("");
+    if (!entry || !entry.isKjv && !isHebrew && !(metavType === "place" && !isPN)) return;
+    let cancelled = false;
+    api.kjvVerse(entry.book, entry.chapter, entry.verse).then(d => {
+      if (!cancelled) setKjvVerseText(d.text || "");
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id]);
+  const [lsjEntry, setLsjEntry] = useState(null);
+  const [lsjLoading, setLsjLoading] = useState(false);
+  const [lsjTab, setLsjTab] = useState("def");
+  const [lsjSummary, setLsjSummary] = useState(null);
+  const [lsjSummaryLoading, setLsjSummaryLoading] = useState(false);
+  useEffect(() => {
+    setLsjEntry(null);
+    setLsjTab("def");
+    setLsjSummary(null);
+    // For PN place entries with a mapped strongs_g, use that for LSJ lookup
+    const placeStrongs = isPN && metavType === "place" && metavData?.strongs_g?.length > 0 ? metavData.strongs_g.replace(/^G/i, "") : null;
+    const canLookup = !isHebrew && entry && (entry.greek || entry.strongs_raw || placeStrongs);
+    if (!canLookup) {
+      setLsjLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLsjLoading(true);
+    api.lsj(entry.greek || "", placeStrongs || entry.strongs_raw).then(d => {
+      if (!cancelled) {
+        setLsjEntry(d.error ? null : d);
+        setLsjLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        setLsjEntry(null);
+        setLsjLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [entry && entry.id, metavType, metavData?.strongs_g]);
+  useEffect(() => {
+    if (!lsjEntry || lsjEntry.source === "strongs") {
+      setLsjSummary(null);
+      setLsjSummaryLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLsjSummaryLoading(true);
+    const summaryStrongs = lsjEntry.source === "abp_ext" ? lsjEntry.key : "";
+    // Always request the verse-agnostic ("general") summary. A word's LSJ summary
+    // is cached/shown universally, so it must not name the verse it was first clicked in.
+    api.lsjSummary(lsjEntry.key, summaryStrongs).then(d => {
+      if (!cancelled) setLsjSummary(d);
+    }).catch(() => {
+      if (!cancelled) setLsjSummary(null);
+    }).finally(() => {
+      if (!cancelled) setLsjSummaryLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [lsjEntry && lsjEntry.key, entry && entry.id]);
+  if (!entry) return null;
+  const barWidth = Math.min(100, occurrences / Math.max(1, totalResults) * 100);
+  const morphLine = entry.greek && !isHebrew ? decodeMorph(entry.morph, entry.greek) : "";
+  const {
+    sheetRef,
+    scrollRef
+  } = useSwipeToDismiss(onClose);
+  return /*#__PURE__*/React.createElement("aside", {
+    ref: isMobile ? sheetRef : null,
+    className: "detail " + (isMobile ? "detail-sheet" : "detail-side"),
+    role: "dialog",
+    "aria-label": "Lexicon detail"
+  }, isMobile && /*#__PURE__*/React.createElement("div", {
+    className: "sheet-drag-zone",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-handle"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "detail-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-head-l"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-badge solid"
+  }, entry.strongs), /*#__PURE__*/React.createElement("span", {
+    className: "detail-pos"
+  }, BOOK_LABELS[entry.book] || entry.book)), /*#__PURE__*/React.createElement("button", {
+    className: "detail-close",
+    onClick: onClose,
+    "aria-label": "Close"
+  }, /*#__PURE__*/React.createElement(Icon.Close, null))), /*#__PURE__*/React.createElement("div", {
+    className: "detail-body",
+    ref: isMobile ? scrollRef : null
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-hero" + (isPN && !entry.greek && !isHebrew ? " no-gloss" : "")
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-greek" + (isHebrew ? " detail-greek--he" : ""),
+    dir: isHebrew ? "rtl" : undefined
+  }, isHebrew ? bdbEntry?.lemma || entry.gloss : entry.greek || (isPN || metavData ? extractProperName(entry.gloss) : entry.gloss)), /*#__PURE__*/React.createElement("div", {
+    className: "detail-translit-row" + (isHebrew ? " detail-translit-row-he" : "")
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "detail-translit"
+  }, isHebrew ? bdbEntry?.xlit : entry.translit), isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    className: "detail-sep"
+  }, "\xB7"), /*#__PURE__*/React.createElement("span", {
+    className: "detail-gloss"
+  }, stripArticles((isPN || metavData ? extractProperName(entry.gloss) : entry.gloss)?.replace(/[.,;:!?—-]+$/, "").trim())))), !(isPN && !entry.greek && !isHebrew) && !(isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss) && /*#__PURE__*/React.createElement("div", {
+    className: "detail-gloss"
+  }, stripArticles((isPN || metavData ? extractProperName(entry.gloss) : entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss)?.replace(/[.,;:!?—-]+$/, "").trim())), morphLine && /*#__PURE__*/React.createElement("div", {
+    className: "detail-morph"
+  }, morphLine)), (metavLoading || metavPersonData || metavPlaceData) && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, metavLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def lsj-def--loading"
+  }, "Looking up\u2026") : /*#__PURE__*/React.createElement(React.Fragment, null, metavHasBoth && /*#__PURE__*/React.createElement("div", {
+    className: "metav-type-tabs"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "metav-type-tab" + (metavTab === "person" ? " on" : ""),
+    onClick: () => setMetavTab("person")
+  }, "Person"), /*#__PURE__*/React.createElement("button", {
+    className: "metav-type-tab" + (metavTab === "place" ? " on" : ""),
+    onClick: () => setMetavTab("place")
+  }, "Place")), metavType === "person" && metavData ? /*#__PURE__*/React.createElement("div", {
+    className: "metav-person"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, isGentilic ? "People / Clan" : "Biblical Person"), /*#__PURE__*/React.createElement("span", {
+    className: "lsj-badge lsj-badge--gold"
+  }, "metaV")), /*#__PURE__*/React.createElement("div", {
+    className: "metav-meta"
+  }, metavData.gender && /*#__PURE__*/React.createElement("span", {
+    className: "metav-tag"
+  }, metavData.gender === "M" ? "Male" : "Female"), metavData.groups.filter(g => g.startsWith("Tribe")).map(g => /*#__PURE__*/React.createElement("span", {
+    key: g,
+    className: "metav-tag"
+  }, g)), metavData.groups.includes("Genealogy of Jesus") && /*#__PURE__*/React.createElement("span", {
+    className: "metav-tag metav-tag-gold"
+  }, "Genealogy of Jesus")), (metavData.birth_year || metavData.death_year) && /*#__PURE__*/React.createElement("p", {
+    className: "detail-p detail-p--meta",
+    style: {
+      fontSize: "13px"
+    }
+  }, metavData.birth_year && /*#__PURE__*/React.createElement("span", null, "Born: ", metavData.birth_year, metavData.birth_place ? `, ${metavData.birth_place}` : ""), metavData.birth_year && metavData.death_year && " · ", metavData.death_year && /*#__PURE__*/React.createElement("span", null, "Died: ", metavData.death_year, metavData.death_place ? `, ${metavData.death_place}` : "")), metavData.relationships.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "metav-rels"
+  }, [{
+    types: ["child"],
+    label: "Parent"
+  }, {
+    types: ["father", "mother"],
+    label: "Children"
+  }, {
+    types: ["spouseOrConcubine"],
+    label: "Spouse"
+  }, {
+    types: ["sibling", "halfSiblingSameFather", "halfSiblingSameMother"],
+    label: "Siblings"
+  }].map(({
+    types,
+    label
+  }) => {
+    const matching = metavData.relationships.filter(r => types.includes(r.type));
+    if (!matching.length) return null;
+    return /*#__PURE__*/React.createElement("div", {
+      key: label,
+      className: "metav-rel-row"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "metav-rel-label"
+    }, label), /*#__PURE__*/React.createElement("span", {
+      className: "metav-rel-names"
+    }, matching.slice(0, 5).map(r => r.name).join(", "), matching.length > 5 ? ` +${matching.length - 5}` : ""));
+  }))) : metavType === "place" && metavData ? /*#__PURE__*/React.createElement("div", {
+    className: "metav-place"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, isGentilic ? "Homeland" : "Biblical Place"), /*#__PURE__*/React.createElement("span", {
+    className: "lsj-badge lsj-badge--gold"
+  }, "metaV")), metavData.comment && /*#__PURE__*/React.createElement("p", {
+    className: "detail-p detail-p--meta"
+  }, metavData.comment), metavData.lat && metavData.lon ? /*#__PURE__*/React.createElement(LeafletMap, {
+    lat: metavData.lat,
+    lon: metavData.lon,
+    name: metavData.name
+  }) : /*#__PURE__*/React.createElement("p", {
+    className: "detail-p detail-p--meta",
+    style: {
+      color: "var(--ink-4)",
+      fontStyle: "italic"
+    }
+  }, "Location unknown")) : null)), (aiDescription || aiDescLoading) && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, metavType === "place" ? "Biblical Place" : "Biblical Reference"), /*#__PURE__*/React.createElement("span", {
+    className: "lsj-badge lsj-badge--accent"
+  }, "AI")), aiDescLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def lsj-def--loading"
+  }, "Looking up\u2026") : /*#__PURE__*/React.createElement("p", {
+    className: "detail-p detail-p--meta"
+  }, aiDescription)), isHebrewWord ? /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "Brown-Driver-Briggs"), /*#__PURE__*/React.createElement("span", {
+    className: "bdb-badge"
+  }, "BDB")), bdbLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def lsj-def--loading"
+  }, "Loading\u2026") : bdbEntry ? /*#__PURE__*/React.createElement("div", {
+    className: "bdb-body"
+  }, bdbEntry.pronounce && /*#__PURE__*/React.createElement("div", {
+    className: "bdb-xlit"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bdb-pronounce"
+  }, bdbEntry.pronounce)), bdbEntry.part_of_speech && /*#__PURE__*/React.createElement("span", {
+    className: "bdb-pos-badge"
+  }, bdbEntry.part_of_speech), bdbEntry.description && /*#__PURE__*/React.createElement("p", {
+    className: "detail-p detail-p--meta"
+  }, bdbEntry.description)) : /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def lsj-def--loading"
+  }, "Not found in BDB.")) : (!isPN || metavType === "place" && metavData?.strongs_g?.length > 0) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0) && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsj-head"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, lsjEntry && lsjEntry.source === "abp_ext" ? /*#__PURE__*/React.createElement(React.Fragment, null, "ABP Extended", /*#__PURE__*/React.createElement("span", {
+    className: "abp-badge"
+  }, "ABP EXT")) : /*#__PURE__*/React.createElement(React.Fragment, null, "Liddell-Scott-Jones", /*#__PURE__*/React.createElement("span", {
+    className: "lsj-badge"
+  }, "LSJ")))), lsjEntry && /*#__PURE__*/React.createElement("div", {
+    className: "lsj-tabs"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lsj-tab " + (lsjTab === "def" ? "on" : ""),
+    onClick: () => setLsjTab("def")
+  }, "Definition"), /*#__PURE__*/React.createElement("button", {
+    className: "lsj-tab " + (lsjTab === "full" ? "on" : ""),
+    onClick: () => setLsjTab("full")
+  }, lsjEntry.source === "abp_ext" ? "Full ABP" : "Full LSJ"))), lsjLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def lsj-def--loading"
+  }, "Loading\u2026") : lsjEntry ? lsjTab === "def" ? lsjEntry.source === "strongs" ? /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def",
+    dangerouslySetInnerHTML: {
+      __html: lsjEntry.def_html
+    }
+  }) : /*#__PURE__*/React.createElement(LsjSummary, {
+    data: lsjSummary,
+    loading: lsjSummaryLoading
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def",
+    dangerouslySetInnerHTML: {
+      __html: lsjEntry.def_html
+    }
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def lsj-def--loading"
+  }, "Not found.")), !isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0 && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
+    className: "occ-link",
+    onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)
+  }, /*#__PURE__*/React.createElement("b", null, abpCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0 && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
+    className: "occ-link",
+    onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
+  }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), !entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
+    className: "occ-link",
+    onClick: () => onNameSearch(extractProperName(entry.gloss))
+  }, /*#__PURE__*/React.createElement("b", null, pnCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), isHebrew && kjvCount !== null && kjvCount > 0 && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
+    className: "occ-link",
+    onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
+  }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null))), entry.derivation && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "Derivation")), /*#__PURE__*/React.createElement("p", {
+    className: "detail-p"
+  }, entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) => /^G\d[\d.]*/i.test(part) ? /*#__PURE__*/React.createElement("button", {
+    key: i,
+    className: "link-btn link-btn--strong",
+    onClick: () => onNavigateToLexicon?.(part)
+  }, part) : part))), entry.book && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "Verse \u2014 ", entry.ref), /*#__PURE__*/React.createElement("span", {
+    className: "sec-meta"
+  }, entry.isKjv || isHebrew || metavType === "place" && !isPN ? "KJV" : "LXX (ABP English)")), /*#__PURE__*/React.createElement("blockquote", {
+    className: "dverse"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "dverse-n"
+  }, entry.verse), entry.isKjv || isHebrew || metavType === "place" && !isPN ? kjvVerseText || "—" : verseLoading ? "Loading…" : verseText || "—"), showInterlinear && /*#__PURE__*/React.createElement("div", {
+    className: "interlinear"
+  }, !interlinearWords ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "var(--ink-4)",
+      fontSize: "13px"
+    }
+  }, "Loading\u2026") : interlinearWords.map((w, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "iword"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "iw-greek"
+  }, w.lemma || "—"), /*#__PURE__*/React.createElement("span", {
+    className: "iw-translit"
+  }, w.translit || ""), /*#__PURE__*/React.createElement("span", {
+    className: "iw-english"
+  }, w.english || "—"), (w.strongs || w.strongs_base) && w.strongs_base !== "*" && /*#__PURE__*/React.createElement("span", {
+    className: "iw-strongs"
+  }, w.strongs && w.strongs !== '*' ? 'G' + w.strongs : w.strongs_base)))), /*#__PURE__*/React.createElement("div", {
+    className: "dverse-tools"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "link-btn",
+    onClick: () => onReadInContext && onReadInContext(entry.book, entry.chapter, entry.verse)
+  }, "Read in context ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)), /*#__PURE__*/React.createElement("span", {
+    className: "dot"
+  }, "\xB7"), /*#__PURE__*/React.createElement("button", {
+    className: "link-btn" + (showInterlinear ? " link-btn-on" : ""),
+    onClick: () => setShowInterlinear(v => !v)
+  }, "Interlinear"))), (occurrences > 0 || totalResults > 0) && /*#__PURE__*/React.createElement("section", {
+    className: "sec"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "sec-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sec-t"
+  }, "Frequency")), /*#__PURE__*/React.createElement("div", {
+    className: "freq"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "freq-bar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "freq-fill",
+    style: {
+      width: barWidth + "%"
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "freq-meta"
+  }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("b", null, occurrences), "\xD7 in current results"))))));
+}
+
+// ============================================================
+// CROSS-REFERENCE PANEL
+// ============================================================
+function CrossRefPanel({
+  source,
+  onClose,
+  onNavigate,
+  isMobile,
+  translation,
+  onAiSearch
+}) {
+  const [refs, setRefs] = useState([]);
+  const [synthesis, setSynthesis] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [abpTexts, setAbpTexts] = useState({});
+  const showAbp = translation === "abp" || translation === "parallel";
+  useEffect(() => {
+    if (!source) return;
+    let cancelled = false;
+    setRefs([]);
+    setSynthesis(null);
+    setAbpTexts({});
+    setLoading(true);
+    api.crossRefsCurated(source.book, source.chapter, source.verse).then(d => {
+      if (cancelled) return;
+      setRefs(d.refs || []);
+      setSynthesis(d.synthesis || null);
+      setLoading(false);
+    }).catch(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [source && source.book, source && source.chapter, source && source.verse]);
+  useEffect(() => {
+    if (!showAbp || !refs.length) {
+      setAbpTexts({});
+      return;
+    }
+    let cancelled = false;
+    Promise.all(refs.map(ref => api.verse(ref.book, ref.chapter, ref.verse).then(d => [ref.ref, d.text || ""]).catch(() => [ref.ref, ""]))).then(pairs => {
+      if (!cancelled) setAbpTexts(Object.fromEntries(pairs));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [refs, showAbp]);
+  const verseText = ref => showAbp ? abpTexts[ref.ref] || ref.kjv_text : ref.kjv_text;
+  const sourceRef = `${source.book} ${source.chapter}:${source.verse}`;
+  const {
+    sheetRef,
+    scrollRef
+  } = useSwipeToDismiss(onClose);
+  return /*#__PURE__*/React.createElement("aside", {
+    ref: isMobile ? sheetRef : null,
+    className: "xref-panel " + (isMobile ? "detail-sheet" : "detail-side"),
+    role: "dialog",
+    "aria-label": "Related Passages"
+  }, isMobile && /*#__PURE__*/React.createElement("div", {
+    className: "sheet-drag-zone",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-handle"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "detail-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-head-l"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "detail-pos"
+  }, sourceRef), /*#__PURE__*/React.createElement("span", {
+    className: "xref-badge"
+  }, "TSK")), /*#__PURE__*/React.createElement("button", {
+    className: "detail-close",
+    onClick: onClose,
+    "aria-label": "Close"
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "xref-body",
+    ref: isMobile ? scrollRef : null
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "xref-title"
+  }, "Related Passages"), loading ? /*#__PURE__*/React.createElement("p", {
+    className: "xref-synthesis-loading"
+  }, "Selecting relevant passages\u2026") : synthesis ? /*#__PURE__*/React.createElement("p", {
+    className: "xref-synthesis"
+  }, synthesis) : null, !loading && onAiSearch && /*#__PURE__*/React.createElement("button", {
+    className: "xref-ai-btn",
+    onClick: () => {
+      onClose();
+      onAiSearch(sourceRef);
+    }
+  }, "Explore in the corpus \u2192"), loading ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-loading"
+  }, "Loading\u2026") : refs.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    className: "detail-p"
+  }, "No cross-references found.") : /*#__PURE__*/React.createElement("div", {
+    className: "xref-list"
+  }, refs.map(ref => /*#__PURE__*/React.createElement("div", {
+    key: ref.ref,
+    className: "xref-verse",
+    onClick: () => onNavigate(ref.book, ref.chapter, ref.verse)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "xref-ref"
+  }, ref.ref), /*#__PURE__*/React.createElement("p", {
+    className: "xref-text"
+  }, verseText(ref)))))));
+}
+function corpusWordLabel(w) {
+  const e = w.english || "";
+  if (e) return e;
+  const kd = w.kjv_def || "";
+  if (kd) {
+    const first = kd.split(",").map(t => t.trim()).find(t => !t.startsWith("X ")) || kd.split(",")[0].trim();
+    const result = first.replace(/\s*[(\[+].*/, '').trim();
+    if (result) return result;
+  }
+  return w.translit || w.lemma || null;
+}
+
+// ============================================================
+// CORPUS SEARCH — VERSE ROW
+// ============================================================
+function CorpusVerseRow({
+  book,
+  chapter,
+  verse,
+  label,
+  allResults,
+  onWordClick,
+  onReadInContext,
+  textMode,
+  primaryStrongs,
+  citedStrongs,
+  kjvCache
+}) {
+  const [words, setWords] = useState(null);
+  const [kjvText, setKjvText] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const rowRef = useRef(null);
+  useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        obs.disconnect();
+      }
+    }, {
+      rootMargin: "300px"
+    });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  useEffect(() => {
+    if (!visible) return;
+    let cancelled = false;
+    setWords(null);
+    api.verseWords(book, chapter, verse).then(d => {
+      if (!cancelled) setWords(d.words || []);
+    }).catch(() => {
+      if (!cancelled) setWords([]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible, book, chapter, verse]);
+  useEffect(() => {
+    if (!visible || textMode !== "kjv") return;
+    const cacheKey = `${book}:${chapter}:${verse}`;
+    if (kjvCache && kjvCache[cacheKey]) {
+      setKjvText(kjvCache[cacheKey]);
+      return;
+    }
+    let cancelled = false;
+    setKjvText(null);
+    api.kjvVerseWords(book, chapter, verse).then(d => {
+      if (!cancelled) setKjvText(Array.isArray(d) ? d : []);
+    }).catch(() => {
+      if (!cancelled) setKjvText([]);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [visible, book, chapter, verse, textMode, kjvCache]);
+  const entryMap = useMemo(() => {
+    const m = new Map();
+    for (const e of allResults) {
+      if (e.book === book && e.chapter === chapter && e.verse === verse) {
+        if (!m.has(e.strongs_raw)) m.set(e.strongs_raw, e);
+        // Also index by bare number to handle G/H prefix inconsistency
+        const bare = (e.strongs_raw || "").replace(/^[GH]/i, "");
+        if (bare && !m.has(bare)) m.set(bare, e);
+      }
+    }
+    return m;
+  }, [allResults, book, chapter, verse]);
+
+  // citedStrongs is now passed directly as a prop from App level — no local computation needed
+
+  return /*#__PURE__*/React.createElement("div", {
+    className: "corpus-verse",
+    ref: rowRef
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "corpus-ref",
+    onClick: () => onReadInContext?.(book, chapter, verse)
+  }, label), /*#__PURE__*/React.createElement("span", {
+    className: "corpus-text"
+  }, textMode === "kjv" ? kjvText === null ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "var(--ink-4)",
+      fontSize: "13px"
+    }
+  }, "Loading\u2026") : kjvText.map((w, i) => {
+    const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
+    const sidBare = sid ? sid.replace(/^[GH]/i, "") : null;
+    const isCited = sid && citedStrongs != null && citedStrongs.size > 0 && (citedStrongs.has(sid) || citedStrongs.has(sidBare));
+    const kjvEntry = sid ? {
+      id: `kjvcorpus-${book}-${chapter}-${verse}-${i}`,
+      strongs: sid,
+      strongs_base: sid.slice(1),
+      strongs_raw: sid.slice(1),
+      greek: w.lemma || "",
+      translit: w.xlit || "",
+      gloss: w.word,
+      ref: `${book} ${chapter}:${verse}`,
+      book,
+      chapter,
+      verse,
+      definition: "",
+      derivation: "",
+      is_function: false,
+      isKjv: true,
+      isHebrew: sid.startsWith("H")
+    } : null;
+    return /*#__PURE__*/React.createElement("span", {
+      key: i,
+      className: "lib-word" + (sid ? " lib-word-clickable" : "") + (w.italic ? " lib-kjv-italic" : "") + (isCited ? " cited" : ""),
+      onClick: kjvEntry && onWordClick ? () => onWordClick(kjvEntry) : undefined
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "lib-iw-english"
+    }, w.word, w.punc || ""));
+  }) : words === null ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "var(--ink-4)",
+      fontSize: "13px"
+    }
+  }, "Loading\u2026") : (() => {
+    function renderCorpusWord(w, key) {
+      const label = corpusWordLabel(w);
+      if (!label) return null;
+      const isPN = !!(w.is_pn || w.strongs_base === "*");
+      const clickable = !!(w.strongs_base && (w.strongs_base !== "*" || w.english));
+      const wnum = w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base;
+      const foundEntry = !isPN && clickable && entryMap.get(wnum);
+      const entry = clickable && (foundEntry ? {
+        ...foundEntry,
+        gloss: w.english || foundEntry.gloss
+      } : {
+        id: `corpus-${book}-${chapter}-${verse}-${key}`,
+        strongs: strongsTag(wnum),
+        strongs_base: w.strongs_base,
+        strongs_raw: wnum,
+        greek: w.lemma || "",
+        translit: w.translit || "",
+        gloss: label,
+        ref: `${book} ${chapter}:${verse}`,
+        book,
+        chapter,
+        verse,
+        definition: "",
+        derivation: "",
+        is_function: false,
+        ...(isPN ? {
+          isPN: true,
+          pnName: label
+        } : {})
+      });
+      const hasPos = w.greek_pos !== null && w.greek_pos !== undefined;
+      const bareNum = (w.strongs_base || "").replace(/^[GH]/i, "");
+      const isCited = clickable && citedStrongs != null && citedStrongs.size > 0 && (citedStrongs.has(w.strongs_base) || citedStrongs.has(bareNum));
+      // Multi-word gloss with italic_words: split into separate chips (mirrors library)
+      if (label.includes(' ') && w.italic_words) {
+        const iset = new Set(w.italic_words.split(','));
+        return /*#__PURE__*/React.createElement(React.Fragment, {
+          key: key
+        }, label.split(' ').filter(Boolean).map((word, pi) => {
+          const bare = word.replace(/[^\w]/g, '').toLowerCase();
+          const isItal = iset.has(bare);
+          return /*#__PURE__*/React.createElement("span", {
+            key: pi,
+            className: "lib-word" + (!isItal && clickable ? " lib-word-clickable" : "") + (isItal ? " lib-abp-italic" : "") + (!isItal && isCited ? " cited" : ""),
+            onClick: !isItal && clickable ? () => onWordClick(entry) : undefined
+          }, /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-english"
+          }, word));
+        }));
+      }
+      return /*#__PURE__*/React.createElement("span", {
+        key: key,
+        className: "lib-word" + (clickable ? " lib-word-clickable" : "") + (w.italic ? " lib-abp-italic" : "") + (isCited ? " cited" : ""),
+        onClick: clickable ? () => onWordClick(entry) : undefined
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-pos-english"
+      }, hasPos && /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-pos"
+      }, w.greek_pos), /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-english"
+      }, label)));
+    }
+    const groups = groupForGreekMode(words.filter(w => w.english).sort((a, b) => a.position - b.position));
+    return groups.map((g, gi) => {
+      if (!g.isBracket) return renderCorpusWord(g.word, `g${gi}`);
+      const corpusBracketChar = (ch, k) => /*#__PURE__*/React.createElement("span", {
+        key: k,
+        className: "lib-bracket"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "lib-bracket-glyph"
+      }, ch));
+      return /*#__PURE__*/React.createElement("span", {
+        key: `bg${gi}`,
+        className: "lib-bracket-group"
+      }, corpusBracketChar("[", "bl"), g.words.map((w, wi) => renderCorpusWord(w, `bg${gi}w${wi}`)), corpusBracketChar("]", "br"));
+    });
+  })()));
+}
+
+// ============================================================
+// CORPUS SEARCH — PASSAGE GROUP (collapsible book+chapter section)
+// ============================================================
+function CorpusGroup({
+  label,
+  verses,
+  allResults,
+  onWordClick,
+  onReadInContext,
+  textMode,
+  primaryStrongs,
+  citedStrongs,
+  kjvCache
+}) {
+  const [open, setOpen] = useState(true);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "corpus-group"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "corpus-group-head " + (open ? "open" : ""),
+    onClick: () => setOpen(o => !o)
+  }, /*#__PURE__*/React.createElement(Icon.Book, {
+    style: {
+      opacity: 0.5,
+      flexShrink: 0
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "corpus-group-label"
+  }, label), /*#__PURE__*/React.createElement("span", {
+    className: "corpus-group-count"
+  }, verses.length, " verse", verses.length !== 1 ? "s" : ""), /*#__PURE__*/React.createElement("span", {
+    className: "corpus-chevron " + (open ? "open" : "")
+  })), open && /*#__PURE__*/React.createElement("div", {
+    className: "corpus-group-body"
+  }, verses.map(v => /*#__PURE__*/React.createElement(CorpusVerseRow, {
+    key: `${v.book}-${v.chapter}-${v.verse}`,
+    book: v.book,
+    chapter: v.chapter,
+    verse: v.verse,
+    label: v.ref,
+    allResults: allResults,
+    onWordClick: onWordClick,
+    onReadInContext: onReadInContext,
+    textMode: textMode,
+    primaryStrongs: primaryStrongs,
+    citedStrongs: citedStrongs,
+    kjvCache: kjvCache
+  }))));
+}
+
+// ============================================================
+// CORPUS SEARCH — OUTER CONTAINER
+// ============================================================
+function CorpusResults({
+  allResults,
+  primaryStrongs,
+  citedStrongs,
+  showAll,
+  onWordClick,
+  onReadInContext,
+  corpusSort,
+  textMode
+}) {
+  const [kjvCache, setKjvCache] = useState({}); // pre-fetched KJV verse words
+
+  // Pre-fetch all KJV verse words in one batch when switching to KJV mode
+  React.useEffect(() => {
+    if (textMode !== "kjv" || !allResults.length) return;
+    const seen = new Set();
+    const refs = [];
+    for (const e of allResults) {
+      const key = `${e.book}:${e.chapter}:${e.verse}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        refs.push({
+          book: e.book,
+          chapter: e.chapter,
+          verse: e.verse
+        });
+      }
+    }
+    if (!refs.length) return;
+    let cancelled = false;
+    api.kjvVerseWordsBatch(refs).then(data => {
+      if (!cancelled) setKjvCache(data);
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [textMode, allResults]);
+  const groups = useMemo(() => {
+    const gMap = {};
+    const gOrder = [];
+    for (const entry of allResults) {
+      const gk = `${entry.book}-${entry.chapter}`;
+      if (!gMap[gk]) {
+        gMap[gk] = {
+          label: `${BOOK_LABELS[entry.book] || entry.book} · Chapter ${entry.chapter}`,
+          verseMap: {},
+          verseOrder: []
+        };
+        gOrder.push(gk);
+      }
+      const vk = `${entry.book}-${entry.chapter}-${entry.verse}`;
+      if (!gMap[gk].verseMap[vk]) {
+        gMap[gk].verseMap[vk] = {
+          book: entry.book,
+          chapter: entry.chapter,
+          verse: entry.verse,
+          ref: entry.ref,
+          is_primary: entry.is_primary,
+          is_additional: entry.is_additional
+        };
+        gMap[gk].verseOrder.push(vk);
+      }
+    }
+    return gOrder.map(gk => ({
+      label: gMap[gk].label,
+      verses: gMap[gk].verseOrder.map(vk => gMap[gk].verseMap[vk])
+    })).sort((a, b) => {
+      if (corpusSort === "canonical") {
+        const bookDiff = (BOOK_ORDER[a.verses[0]?.book] ?? 99) - (BOOK_ORDER[b.verses[0]?.book] ?? 99);
+        return bookDiff || (a.verses[0]?.chapter ?? 0) - (b.verses[0]?.chapter ?? 0);
+      }
+      const aPrimary = a.verses.filter(v => v.is_primary).length;
+      const bPrimary = b.verses.filter(v => v.is_primary).length;
+      return bPrimary - aPrimary || b.verses.length - a.verses.length;
+    });
+  }, [allResults, corpusSort]);
+  const hasPrimary = allResults.some(e => e.is_primary);
+  const hasAdditional = allResults.some(e => e.is_additional);
+  const primaryGroups = hasPrimary ? groups.map(g => ({
+    ...g,
+    verses: g.verses.filter(v => v.is_primary)
+  })).filter(g => g.verses.length > 0) : groups;
+  const additionalGroups = hasAdditional ? groups.map(g => ({
+    ...g,
+    verses: g.verses.filter(v => v.is_additional)
+  })).filter(g => g.verses.length > 0) : [];
+  const otherGroups = hasPrimary || hasAdditional ? groups.map(g => ({
+    ...g,
+    verses: g.verses.filter(v => !v.is_primary && !v.is_additional)
+  })).filter(g => g.verses.length > 0) : [];
+  const passageGroupProps = {
+    allResults,
+    onWordClick,
+    onReadInContext,
+    textMode,
+    primaryStrongs,
+    citedStrongs,
+    kjvCache
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "corpus-groups"
+  }, primaryGroups.map(g => /*#__PURE__*/React.createElement(CorpusGroup, _extends({
+    key: g.label,
+    label: g.label,
+    verses: g.verses
+  }, passageGroupProps))), additionalGroups.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "additional-refs-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "additional-refs-label"
+  }, "Additional references"), additionalGroups.map(g => /*#__PURE__*/React.createElement(CorpusGroup, _extends({
+    key: g.label,
+    label: g.label,
+    verses: g.verses
+  }, passageGroupProps)))), showAll && otherGroups.map(g => /*#__PURE__*/React.createElement(CorpusGroup, _extends({
+    key: g.label,
+    label: g.label,
+    verses: g.verses
+  }, passageGroupProps))));
+}
+
+// ============================================================
+// LIBRARY HELPERS
+// ============================================================
+
+// Reorder words for natural English reading:
+// within each bracket group sort by greek_pos ascending; non-bracket words keep position order.
+function getEnglishOrderWords(words) {
+  const bracketMap = {};
+  for (const w of words) {
+    const bid = w.bracket_id;
+    if (bid !== null && bid !== undefined) {
+      if (!bracketMap[bid]) bracketMap[bid] = [];
+      bracketMap[bid].push(w);
+    }
+  }
+  // Trailing punctuation marks a clause boundary in the SOURCE order. After a
+  // bracket group is reordered into English order, that punctuation must float
+  // to the last word of the reordered group (Greek "were-completed ... earth,"
+  // -> English "... earth were-completed,") instead of stranding on "earth".
+  const TRAIL = /[.,;:!?·]+$/;
+  for (const bid in bracketMap) {
+    let trailing = "";
+    const cleaned = [];
+    for (const w of bracketMap[bid]) {
+      const eng = (w.english || "").trim();
+      if (eng && eng.replace(TRAIL, "") === "") {
+        // pure-punctuation token
+        trailing += eng;
+        continue;
+      }
+      const m = eng.match(TRAIL);
+      if (m) {
+        trailing += m[0];
+        cleaned.push({
+          ...w,
+          english: eng.slice(0, eng.length - m[0].length).trimEnd()
+        });
+      } else {
+        cleaned.push(w);
+      }
+    }
+    cleaned.sort((a, b) => (a.greek_pos ?? 999) - (b.greek_pos ?? 999));
+    if (trailing && cleaned.length) {
+      // Attach the floated punctuation to the last word that actually has English
+      // text. Empty-gloss words (e.g. the σου/αὐτός pronouns folded into a
+      // neighboring noun) would otherwise become a standalone "," token, which
+      // renders with a stray leading space ("reprove , me") in prose mode.
+      let li = cleaned.length - 1;
+      while (li > 0 && !(cleaned[li].english || "").trim()) li--;
+      cleaned[li] = {
+        ...cleaned[li],
+        english: (cleaned[li].english || "") + trailing
+      };
+    }
+    bracketMap[bid] = cleaned;
+  }
+  const result = [];
+  const seen = new Set();
+  for (const w of words) {
+    const bid = w.bracket_id;
+    if (bid === null || bid === undefined) {
+      result.push(w);
+    } else if (!seen.has(bid)) {
+      seen.add(bid);
+      result.push(...bracketMap[bid]);
+    }
+  }
+  return result;
+}
+
+// Group a position-sorted word list into runs by bracket_id for bracket notation rendering.
+function groupForGreekMode(words) {
+  const groups = [];
+  let cur = null;
+  for (const w of words) {
+    const bid = w.bracket_id !== null && w.bracket_id !== undefined ? w.bracket_id : null;
+    if (bid === null) {
+      groups.push({
+        isBracket: false,
+        word: w
+      });
+      cur = null;
+    } else {
+      if (!cur || cur.bid !== bid) {
+        cur = {
+          isBracket: true,
+          bid,
+          words: []
+        };
+        groups.push(cur);
+      }
+      cur.words.push(w);
+    }
+  }
+  return groups;
+}
+
+// Which sub-word of a split multi-word gloss carries the Strong's number + Greek
+// lemma superscript in chip mode. For a CONTENT-word slot (verb/noun/adjective per
+// the morph POS) the number belongs to the head content word — english_head, e.g.
+// "put" in "you shall put it" — not the leading "you". For a FUNCTION-word slot
+// (article/preposition/pronoun/conjunction/particle), and whenever morph is absent,
+// it stays on the first non-italic token (prior behavior), which IS the function
+// word itself ("of", "the"). Only ever returns a non-italic (visible) token so the
+// superscript actually renders. morph schemes: OT CATSS (V./N./A.) + NT Robinson
+// (V-/N-/A-) — content words start V/N/A in both.
+function strongsAnchorIndex(parts, italicSet, w) {
+  const bare = s => s.replace(/[^\w]/g, "").toLowerCase();
+  const firstNonItalic = parts.findIndex(word => !italicSet.has(bare(word)));
+  // Anchor the Strong's on the gloss's head word whenever it's present — even when
+  // the row has no morph. The old morph gate dropped the Strong's onto the FIRST word
+  // for null-morph rows ("of the LORD" → shown on "of", not "LORD"); the head is the
+  // Strong's-bearing word, so anchoring on it is always at least as good (recovers ~552
+  // κύριος/G2962 displays — see scripts/audit_lord_strongs.py ANCHOR-MORPH bucket).
+  if (w.english_head) {
+    const hb = bare(w.english_head);
+    const hi = parts.findIndex(word => bare(word) === hb && !italicSet.has(bare(word)));
+    if (hi >= 0) return hi;
+  }
+  return firstNonItalic;
+}
+
+// ============================================================
+// LIB NAV PANEL — desktop left sidebar (≥1100px)
+// ============================================================
+
+const _BOOK_DIV = {
+  Gen: "Law",
+  Exo: "Law",
+  Lev: "Law",
+  Num: "Law",
+  Deu: "Law",
+  Jos: "History",
+  Jdg: "History",
+  Rth: "History",
+  "1Sa": "History",
+  "2Sa": "History",
+  "1Ki": "History",
+  "2Ki": "History",
+  "1Ch": "History",
+  "2Ch": "History",
+  Ezr: "History",
+  Neh: "History",
+  Est: "History",
+  Job: "Wisdom",
+  Psa: "Wisdom",
+  Pro: "Wisdom",
+  Ecc: "Wisdom",
+  Son: "Wisdom",
+  Isa: "Major Prophets",
+  Jer: "Major Prophets",
+  Lam: "Major Prophets",
+  Eze: "Major Prophets",
+  Dan: "Major Prophets",
+  Hos: "Minor Prophets",
+  Joe: "Minor Prophets",
+  Amo: "Minor Prophets",
+  Oba: "Minor Prophets",
+  Jon: "Minor Prophets",
+  Mic: "Minor Prophets",
+  Nah: "Minor Prophets",
+  Hab: "Minor Prophets",
+  Zep: "Minor Prophets",
+  Hag: "Minor Prophets",
+  Zec: "Minor Prophets",
+  Mal: "Minor Prophets",
+  Mat: "Gospels",
+  Mar: "Gospels",
+  Luk: "Gospels",
+  Joh: "Gospels",
+  Act: "History",
+  Rom: "Pauline Epistles",
+  "1Co": "Pauline Epistles",
+  "2Co": "Pauline Epistles",
+  Gal: "Pauline Epistles",
+  Eph: "Pauline Epistles",
+  Php: "Pauline Epistles",
+  Col: "Pauline Epistles",
+  "1Th": "Pauline Epistles",
+  "2Th": "Pauline Epistles",
+  "1Ti": "Pauline Epistles",
+  "2Ti": "Pauline Epistles",
+  Tit: "Pauline Epistles",
+  Phm: "Pauline Epistles",
+  Heb: "General Epistles",
+  Jas: "General Epistles",
+  "1Pe": "General Epistles",
+  "2Pe": "General Epistles",
+  "1Jn": "General Epistles",
+  "2Jn": "General Epistles",
+  "3Jn": "General Epistles",
+  Jud: "General Epistles",
+  Rev: "Apocalyptic"
+};
+function LibNavPanel({
+  books,
+  selBook,
+  setSelBook,
+  selChapter,
+  setSelChapter,
+  isOverlay,
+  onClose,
+  navBookRef
+}) {
+  const [query, setQuery] = useState("");
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return books;
+    return books.filter(b => b.name.toLowerCase().includes(q) || b.abbrev.toLowerCase().includes(q));
+  }, [books, query]);
+  const groups = useMemo(() => {
+    const out = [];
+    let cur = null;
+    for (const b of filtered) {
+      const t = NT_BOOKS.has(b.abbrev) ? "NT" : "OT";
+      const div = _BOOK_DIV[b.abbrev] || "";
+      const key = t + " · " + div;
+      if (!cur || cur.key !== key) {
+        cur = {
+          key,
+          t,
+          div,
+          books: []
+        };
+        out.push(cur);
+      }
+      cur.books.push(b);
+    }
+    return out;
+  }, [filtered]);
+  return /*#__PURE__*/React.createElement("nav", {
+    className: "nav" + (isOverlay ? " nav-overlay" : ""),
+    "aria-label": "Books"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "nav-top"
+  }, isOverlay && /*#__PURE__*/React.createElement("button", {
+    className: "nav-x",
+    onClick: onClose,
+    "aria-label": "Close"
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "nav-scroll"
+  }, groups.map(g => /*#__PURE__*/React.createElement("div", {
+    className: "nav-group",
+    key: g.key
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "nav-div"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "nav-div-t"
+  }, g.t), /*#__PURE__*/React.createElement("span", {
+    className: "nav-div-n"
+  }, g.div)), g.books.map(b => {
+    const active = selBook && b.abbrev === selBook.abbrev;
+    return /*#__PURE__*/React.createElement("div", {
+      key: b.abbrev,
+      ref: active ? navBookRef : null
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "nav-book" + (active ? " on" : ""),
+      onClick: () => {
+        setSelBook(b);
+        setSelChapter(1);
+        if (isOverlay) onClose();
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "nav-book-name"
+    }, b.name)), active && /*#__PURE__*/React.createElement("div", {
+      className: "nav-chips"
+    }, Array.from({
+      length: b.chapters
+    }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
+      key: n,
+      className: "ch-chip" + (n === selChapter ? " on" : ""),
+      onClick: () => setSelChapter(n)
+    }, n))));
+  })))));
+}
+
+// ============================================================
+// MOBILE BOOK PICKER — full-screen, two-screen (book grid → chapter grid)
+// ============================================================
+function MobileBookPicker({
+  books,
+  selBook,
+  selChapter,
+  onDone,
+  onClose
+}) {
+  const [screen, setScreen] = useState("book");
+  const [pickedBook, setPickedBook] = useState(null);
+  const otBooks = books.filter(b => !NT_BOOKS.has(b.abbrev));
+  const ntBooks = books.filter(b => NT_BOOKS.has(b.abbrev));
+  if (screen === "chapter") {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "mpick"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "mpick-head"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "mpick-back",
+      onClick: () => setScreen("book")
+    }, "\u2039 Books"), /*#__PURE__*/React.createElement("span", {
+      className: "mpick-title"
+    }, pickedBook.name), /*#__PURE__*/React.createElement("button", {
+      className: "mpick-x",
+      onClick: onClose
+    }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+      className: "mpick-scroll"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "mpick-grid"
+    }, Array.from({
+      length: pickedBook.chapters
+    }, (_, i) => i + 1).map(n => {
+      const active = selBook && pickedBook.abbrev === selBook.abbrev && n === selChapter;
+      return /*#__PURE__*/React.createElement("button", {
+        key: n,
+        className: "mpick-btn" + (active ? " on" : ""),
+        onClick: () => onDone(pickedBook, n)
+      }, n);
+    }))));
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    className: "mpick"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mpick-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mpick-head-spacer"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "mpick-title"
+  }, "Books"), /*#__PURE__*/React.createElement("button", {
+    className: "mpick-x",
+    onClick: onClose
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "mpick-scroll"
+  }, [["OT", otBooks], ["NT", ntBooks]].map(([label, bks]) => /*#__PURE__*/React.createElement("div", {
+    key: label,
+    className: "mpick-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mpick-sec-label"
+  }, label), /*#__PURE__*/React.createElement("div", {
+    className: "mpick-grid"
+  }, bks.map(b => /*#__PURE__*/React.createElement("button", {
+    key: b.abbrev,
+    className: "mpick-btn" + (selBook && b.abbrev === selBook.abbrev ? " on" : ""),
+    onClick: () => {
+      setPickedBook(b);
+      setScreen("chapter");
+    }
+  }, b.abbrev.toUpperCase())))))));
+}
+
+// ============================================================
+// LIBRARY VIEW
+// ============================================================
+function LibraryView({
+  nav,
+  onNavChange,
+  onWordClick,
+  onVerseNumberClick,
+  onTranslationChange,
+  isMobile
+}) {
+  const [books, setBooks] = useState([]);
+  const [selBook, setSelBook] = useState(null);
+  const [selChapter, setSelChapter] = useState(1);
+  const [verses, setVerses] = useState([]);
+  const [kjvVerses, setKjvVerses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [kjvLoading, setKjvLoading] = useState(false);
+  const [libOptions, setLibOptions] = useState({
+    viewMode: "chip",
+    showStrongs: false,
+    showInterlinear: false
+  });
+  const [libFontSize, setLibFontSize] = useState(() => {
+    const stored = localStorage.getItem("libFontSize");
+    if (stored) return parseInt(stored, 10);
+    return isMobile ? 15 : 18;
+  });
+  const [translation, setTranslation] = useState("abp"); // "abp" | "kjv" | "parallel"
+  const highlightRef = useRef(null);
+  const navBookRef = useRef(null);
+  useEffect(() => {
+    if (!nav?.book || !navBookRef.current || nav.book !== selBook?.abbrev) return;
+    requestAnimationFrame(() => {
+      navBookRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+  }, [nav?.book, selBook?.abbrev]);
+  const navVisible = !isMobile;
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [modesOpen, setModesOpen] = useState(false);
+  useEffect(() => {
+    api.books().then(data => {
+      setBooks(data);
+      if (data.length) setSelBook(data[0]);
+    });
+  }, []);
+  useEffect(() => {
+    if (!nav || !nav.book || !books.length) return;
+    const b = books.find(b => b.abbrev === nav.book);
+    if (b) {
+      setSelBook(b);
+      setSelChapter(nav.chapter || 1);
+    }
+  }, [nav, books]);
+  useEffect(() => {
+    if (!selBook) return;
+    let cancelled = false;
+    setLoading(true);
+    setVerses([]);
+    api.chapter(selBook.abbrev, selChapter).then(data => {
+      if (!cancelled) {
+        setVerses(data);
+        setLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selBook && selBook.abbrev, selChapter]);
+  useEffect(() => {
+    if (!selBook || translation !== "kjv" && translation !== "parallel") return;
+    let cancelled = false;
+    setKjvLoading(true);
+    setKjvVerses([]);
+    api.kjvChapter(selBook.abbrev, selChapter).then(data => {
+      if (!cancelled) {
+        setKjvVerses(data);
+        setKjvLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) setKjvLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selBook && selBook.abbrev, selChapter, translation]);
+  useEffect(() => {
+    if (!nav?.scroll || loading || !verses.length) return;
+    // Don't scroll while the requested chapter's verses are still the OLD chapter's —
+    // otherwise we scroll to (and burn the scroll flag on) a wrong same-numbered verse.
+    if (nav.chapter != null && nav.chapter !== selChapter) return;
+    let raf,
+      tries = 0;
+    const tryScroll = () => {
+      if (highlightRef.current) {
+        highlightRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+        onNavChange?.({
+          ...nav,
+          scroll: false
+        });
+      } else if (tries++ < 30) {
+        raf = requestAnimationFrame(tryScroll); // highlight row not rendered yet — keep waiting
+      }
+    };
+    raf = requestAnimationFrame(tryScroll);
+    return () => cancelAnimationFrame(raf);
+  }, [nav?.scroll, nav?.highlight, nav?.chapter, verses, loading, selChapter]);
+  const maxChap = selBook ? selBook.chapters : 1;
+  const showStrongs = libOptions.showStrongs || false;
+  const showInterlinear = libOptions.showInterlinear || false;
+  const viewMode = libOptions.viewMode || "chip";
+  const setOpt = (key, val) => setLibOptions(prev => ({
+    ...prev,
+    [key]: val
+  }));
+  const chipMode = viewMode === "chip" || showStrongs || showInterlinear;
+  const wordMode = chipMode;
+  const kjvWordMode = chipMode;
+  const POETRY_BOOKS = new Set(["Psa", "Pro", "Job", "Son", "Lam", "Ecc"]);
+  const isPoetry = POETRY_BOOKS.has(selBook?.abbrev);
+  const swipeRef = React.useRef(null);
+  const tapMovedRef = React.useRef(false);
+  const swipeHandlers = isMobile ? {
+    onTouchStart: e => {
+      tapMovedRef.current = false;
+      swipeRef.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY
+      };
+    },
+    onTouchMove: e => {
+      if (!swipeRef.current) return;
+      const dx = e.touches[0].clientX - swipeRef.current.x;
+      const dy = e.touches[0].clientY - swipeRef.current.y;
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) tapMovedRef.current = true;
+    },
+    // A swipe/scroll that ends over a word must NOT open its panel — only a real tap should.
+    onClickCapture: e => {
+      if (tapMovedRef.current) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    },
+    onTouchEnd: e => {
+      if (!swipeRef.current) return;
+      const dx = e.changedTouches[0].clientX - swipeRef.current.x;
+      const dy = e.changedTouches[0].clientY - swipeRef.current.y;
+      swipeRef.current = null;
+      if (Math.abs(dx) < 50) return; // too short
+      if (Math.abs(dy) > Math.abs(dx) * 0.6) return; // too vertical
+      if (dx < 0 && selChapter < maxChap) {
+        const c = selChapter + 1;
+        setSelChapter(c);
+        onNavChange?.({
+          ...nav,
+          book: selBook?.abbrev,
+          chapter: c,
+          highlight: null
+        });
+      } else if (dx > 0 && selChapter > 1) {
+        const c = selChapter - 1;
+        setSelChapter(c);
+        onNavChange?.({
+          ...nav,
+          book: selBook?.abbrev,
+          chapter: c,
+          highlight: null
+        });
+      }
+    }
+  } : {};
+  const changeFontSize = delta => {
+    setLibFontSize(prev => {
+      const next = Math.min(24, Math.max(13, prev + delta));
+      localStorage.setItem("libFontSize", String(next));
+      return next;
+    });
+  };
+  const handleVerseNum = onVerseNumberClick && selBook ? verse => onVerseNumberClick(selBook.abbrev, selChapter, verse, translation) : null;
+  const vnumEl = verse => /*#__PURE__*/React.createElement("span", {
+    className: "lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "") + (showInterlinear ? " lib-vnum-il" : ""),
+    onClick: handleVerseNum ? () => handleVerseNum(verse) : undefined
+  }, verse);
+  const joinProse = words => {
+    const tokens = words.map(w => w.english).filter(Boolean);
+    return tokens.reduce((acc, tok, i) => {
+      if (i === 0) return tok;
+      return /^[.,;:?!—)]/.test(tok) ? acc + tok : acc + " " + tok;
+    }, "");
+  };
+  const renderProseWords = v => {
+    const englishWords = getEnglishOrderWords(v.words);
+    return englishWords.map((w, i) => {
+      const text = w.english || "";
+      if (!text) return null;
+      const isPunct = /^[.,;:?!—)]/.test(text);
+      if (isPunct) return /*#__PURE__*/React.createElement("span", {
+        key: i
+      }, text);
+      if (text.includes(' ')) {
+        if (w.italic_words) {
+          const iset = new Set(w.italic_words.split(','));
+          return /*#__PURE__*/React.createElement(React.Fragment, {
+            key: i
+          }, text.split(' ').filter(Boolean).map((word, pi) => {
+            const bare = word.replace(/[^\w]/g, '').toLowerCase();
+            return /*#__PURE__*/React.createElement("span", {
+              key: pi,
+              className: iset.has(bare) ? "lib-prose-italic" : undefined
+            }, word, " ");
+          }));
+        }
+        if (w.italic) {
+          const headBare = w.english_head ? w.english_head.replace(/[^\w]/g, '').toLowerCase() : null;
+          return /*#__PURE__*/React.createElement(React.Fragment, {
+            key: i
+          }, text.split(' ').filter(Boolean).map((word, pi) => {
+            const bare = word.replace(/[^\w]/g, '').toLowerCase();
+            const isItalic = !headBare || bare === headBare;
+            return /*#__PURE__*/React.createElement("span", {
+              key: pi,
+              className: isItalic ? "lib-prose-italic" : undefined
+            }, word, " ");
+          }));
+        }
+        return /*#__PURE__*/React.createElement("span", {
+          key: i
+        }, text + " ");
+      }
+      return /*#__PURE__*/React.createElement("span", {
+        key: i,
+        className: !!w.italic ? "lib-prose-italic" : undefined
+      }, text + " ");
+    });
+  };
+  const renderVerse = (v, skipHeading = false) => {
+    const isHighlight = nav && nav.highlight === v.verse;
+    const makeEntry = w => {
+      const snum = w.strongs_base === "*" ? "*" : w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base;
+      return {
+        id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
+        strongs: strongsTag(snum),
+        strongs_base: w.strongs_base,
+        strongs_raw: snum,
+        greek: w.lemma || "",
+        translit: w.translit || "",
+        morph: w.morph || "",
+        gloss: w.english || "",
+        ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
+        book: selBook.abbrev,
+        chapter: selChapter,
+        verse: v.verse,
+        definition: "",
+        derivation: "",
+        is_function: false,
+        is_pn: !!w.is_pn,
+        pn_type: w.pn_type || null
+      };
+    };
+    const chipLabel = w => {
+      return w.english_head && w.english?.includes(' ') ? w.english_head : w.english || w.english_head || "";
+    };
+
+    // Plain chip (English mode or non-bracketed word in Greek mode)
+    const chip = (w, key) => {
+      const isPN = !!(w.is_pn || w.strongs_base === "*");
+      const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english || w.english_head) && (w.english || w.english_head));
+
+      // Split multi-word gloss: mute italic sub-words, style smcap sub-words, chip the rest
+      if (w.italic_words && w.english && w.english.includes(' ')) {
+        const italicSet = new Set(w.italic_words.split(','));
+        const smcapSet = w.smcap_words ? new Set(w.smcap_words.split(',')) : new Set();
+        const parts = w.english.split(' ');
+        return /*#__PURE__*/React.createElement(React.Fragment, {
+          key: key
+        }, (() => {
+          const anchorIdx = strongsAnchorIndex(parts, italicSet, w);
+          return parts.map((word, pi) => {
+            const bare = word.replace(/[^\w]/g, '').toLowerCase();
+            if (italicSet.has(bare)) {
+              return /*#__PURE__*/React.createElement("span", {
+                key: `${key}-p${pi}`,
+                className: "lib-word lib-abp-italic" + (smcapSet.has(bare) ? " lib-smcap" : "")
+              }, showInterlinear && /*#__PURE__*/React.createElement("span", {
+                className: "lib-iw-greek",
+                style: {
+                  visibility: "hidden"
+                }
+              }, "x"), /*#__PURE__*/React.createElement("span", {
+                className: "lib-iw-english"
+              }, word), showStrongs && /*#__PURE__*/React.createElement("span", {
+                className: "lib-iw-strongs",
+                style: {
+                  visibility: "hidden"
+                }
+              }, "G0"));
+            }
+            const isSmcap = smcapSet.has(bare);
+            return /*#__PURE__*/React.createElement("span", {
+              key: `${key}-p${pi}`,
+              className: "lib-word" + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : ""),
+              onClick: clickable ? () => onWordClick(isPN ? {
+                ...makeEntry(w),
+                isPN: true,
+                pnName: w.english || w.english_head
+              } : makeEntry(w)) : undefined
+            }, showInterlinear && (pi === anchorIdx && w.lemma ? /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-greek"
+            }, w.lemma) : /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-greek",
+              style: {
+                visibility: "hidden"
+              }
+            }, "x")), /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-english"
+            }, word), showStrongs && (pi === anchorIdx && w.strongs_base && w.strongs_base !== "*" ? /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-strongs"
+            }, w.strongs && w.strongs !== '*' ? 'G' + w.strongs : w.strongs_base) : /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-strongs",
+              style: {
+                visibility: "hidden"
+              }
+            }, "G0")));
+          });
+        })());
+      }
+      const rawLabel = w.english || chipLabel(w);
+      if (!rawLabel) return null;
+      const label = isPN && rawLabel && !rawLabel.includes(' ') ? rawLabel[0].toUpperCase() + rawLabel.slice(1) : rawLabel;
+      const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(label.replace(/[^\w]/g, '').toLowerCase()) : false;
+      return /*#__PURE__*/React.createElement("span", {
+        key: key,
+        className: "lib-word" + (w.italic ? " lib-abp-italic" : "") + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : ""),
+        onClick: clickable ? () => onWordClick(isPN ? {
+          ...makeEntry(w),
+          isPN: true,
+          pnName: label,
+          gloss: label
+        } : makeEntry(w)) : undefined
+      }, showInterlinear && (w.lemma ? /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek"
+      }, w.lemma) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek",
+        style: {
+          visibility: "hidden"
+        }
+      }, "x")), /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-english"
+      }, label), showStrongs && (w.strongs_base && w.strongs_base !== "*" ? /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs"
+      }, w.strongs && w.strongs !== '*' ? 'G' + w.strongs : w.strongs_base) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs",
+        style: {
+          visibility: "hidden"
+        }
+      }, "G0")));
+    };
+
+    // Bracket chip (bracketed word in Greek mode — shows inline position number)
+    const bracketChip = (w, key) => {
+      const isPN = !!(w.is_pn || w.strongs_base === "*");
+      const clickable = !!(onWordClick && w.strongs_base && (w.strongs_base !== "*" || w.english));
+
+      // Split multi-word gloss within a bracket word
+      if (w.italic_words && w.english && w.english.includes(' ')) {
+        const italicSet = new Set(w.italic_words.split(','));
+        const smcapSet = w.smcap_words ? new Set(w.smcap_words.split(',')) : new Set();
+        const parts = w.english.split(' ');
+        const anchorIdx = strongsAnchorIndex(parts, italicSet, w);
+        return /*#__PURE__*/React.createElement(React.Fragment, {
+          key: key
+        }, parts.map((word, pi) => {
+          const bare = word.replace(/[^\w]/g, '').toLowerCase();
+          if (italicSet.has(bare)) {
+            return /*#__PURE__*/React.createElement("span", {
+              key: `${key}-p${pi}`,
+              className: "lib-word lib-word-bracketed lib-abp-italic" + (smcapSet.has(bare) ? " lib-smcap" : "")
+            }, showInterlinear && /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-greek",
+              style: {
+                visibility: "hidden"
+              }
+            }, "x"), /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-pos-english"
+            }, pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined && /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-pos"
+            }, w.greek_pos), /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-english"
+            }, word)), showStrongs && /*#__PURE__*/React.createElement("span", {
+              className: "lib-iw-strongs",
+              style: {
+                visibility: "hidden"
+              }
+            }, "G0"));
+          }
+          const isSmcap = smcapSet.has(bare);
+          return /*#__PURE__*/React.createElement("span", {
+            key: `${key}-p${pi}`,
+            className: "lib-word lib-word-bracketed" + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : ""),
+            onClick: clickable ? () => onWordClick(isPN ? {
+              ...makeEntry(w),
+              isPN: true,
+              pnName: w.english || w.english_head
+            } : makeEntry(w)) : undefined
+          }, showInterlinear && (pi === anchorIdx && w.lemma ? /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-greek"
+          }, w.lemma) : /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-greek",
+            style: {
+              visibility: "hidden"
+            }
+          }, "x")), /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-pos-english"
+          }, pi === 0 && w.greek_pos !== null && w.greek_pos !== undefined && /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-pos"
+          }, w.greek_pos), /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-english"
+          }, word)), showStrongs && (pi === anchorIdx && w.strongs_base && w.strongs_base !== "*" ? /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-strongs"
+          }, w.strongs && w.strongs !== '*' ? 'G' + w.strongs : w.strongs_base) : /*#__PURE__*/React.createElement("span", {
+            className: "lib-iw-strongs",
+            style: {
+              visibility: "hidden"
+            }
+          }, "G0")));
+        }));
+      }
+      const rawLabel = w.english || chipLabel(w);
+      if (!rawLabel) return null;
+      const label = isPN && rawLabel && !rawLabel.includes(' ') ? rawLabel[0].toUpperCase() + rawLabel.slice(1) : rawLabel;
+      const isSmcap = w.smcap_words ? new Set(w.smcap_words.split(',')).has(label.replace(/[^\w]/g, '').toLowerCase()) : false;
+      return /*#__PURE__*/React.createElement("span", {
+        key: key,
+        className: "lib-word lib-word-bracketed" + (w.italic ? " lib-abp-italic" : "") + (isSmcap ? " lib-smcap" : "") + (clickable ? " lib-word-clickable" : "") + (isPN ? " lib-word-pn" : ""),
+        onClick: clickable ? () => onWordClick(isPN ? {
+          ...makeEntry(w),
+          isPN: true,
+          pnName: label,
+          gloss: label
+        } : makeEntry(w)) : undefined
+      }, showInterlinear && (w.lemma ? /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek"
+      }, w.lemma) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek",
+        style: {
+          visibility: "hidden"
+        }
+      }, "x")), /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-pos-english"
+      }, w.greek_pos !== null && w.greek_pos !== undefined && /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-pos"
+      }, w.greek_pos), /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-english"
+      }, label)), showStrongs && (w.strongs_base && w.strongs_base !== "*" ? /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs"
+      }, w.strongs && w.strongs !== '*' ? 'G' + w.strongs : w.strongs_base) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs",
+        style: {
+          visibility: "hidden"
+        }
+      }, "G0")));
+    };
+    if (!wordMode) {
+      return /*#__PURE__*/React.createElement(React.Fragment, {
+        key: v.verse
+      }, !skipHeading && v.heading && /*#__PURE__*/React.createElement("div", {
+        className: "lib-verse-row pericope-row"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "lib-vnum",
+        "aria-hidden": "true"
+      }), /*#__PURE__*/React.createElement("div", {
+        className: "pericope-heading"
+      }, v.heading)), /*#__PURE__*/React.createElement("div", {
+        ref: isHighlight ? highlightRef : null,
+        className: "lib-verse-row" + (isHighlight ? " lib-highlight" : "")
+      }, vnumEl(v.verse), /*#__PURE__*/React.createElement("span", {
+        className: "lib-verse-content"
+      }, renderProseWords(v))));
+    }
+
+    // Chip mode — always Greek syntactic order with bracket notation
+    let content;
+    {
+      const sortedWords = [...v.words].filter(w => w.english || w.kjv_def || w.strongs_base === "*").sort((a, b) => a.position - b.position);
+      const groups = groupForGreekMode(sortedWords);
+      content = groups.map((g, gi) => {
+        if (!g.isBracket) {
+          return chip(g.word, `g${gi}`);
+        }
+        // Suppress a duplicate position number on continuation words: when a word
+        // shares the greek_pos of the previous numbered member (e.g. the source
+        // token "2God did" split into God + did, both pos 2), hide the second
+        // number so it renders "²God did", not "²God ²did".
+        let lastGp = null;
+        const gw = g.words.map(w => {
+          if (w.greek_pos != null && w.greek_pos === lastGp) return {
+            ...w,
+            greek_pos: null
+          };
+          if (w.greek_pos != null) lastGp = w.greek_pos;
+          return w;
+        });
+        // Lift the bracket's trailing clause punctuation OUTSIDE the "]". ABP
+        // writes "...many]," (mark after the bracket), but clean_english glued it
+        // onto the word ("many,") so it renders inside. fix_bracket_punct already
+        // parks the mark on the bracket's LAST word, so we snip it off here and
+        // re-emit it just after the "]" — "[...dominate]." not "[...dominate.]".
+        const TRAIL = /[.,;:!?·]+$/;
+        let bracketTrail = "";
+        let gwR = gw;
+        {
+          const li = gw.length - 1;
+          const lastEng = gw[li] && gw[li].english || "";
+          const m = lastEng.match(TRAIL);
+          if (m) {
+            bracketTrail = m[0];
+            gwR = gw.map((w, i) => i === li ? {
+              ...w,
+              english: lastEng.slice(0, m.index)
+            } : w);
+          }
+        }
+        const trailChar = (txt, k) => /*#__PURE__*/React.createElement("span", {
+          key: k,
+          className: "lib-bracket-trail"
+        }, showInterlinear && /*#__PURE__*/React.createElement("span", {
+          className: "lib-iw-greek",
+          style: {
+            visibility: "hidden"
+          }
+        }, "x"), /*#__PURE__*/React.createElement("span", {
+          className: "lib-iw-english"
+        }, txt), showStrongs && /*#__PURE__*/React.createElement("span", {
+          className: "lib-iw-strongs",
+          style: {
+            visibility: "hidden"
+          }
+        }, "G0"));
+        const bracketChar = (ch, k) => /*#__PURE__*/React.createElement("span", {
+          key: k,
+          className: "lib-bracket"
+        }, showInterlinear && /*#__PURE__*/React.createElement("span", {
+          className: "lib-iw-greek",
+          style: {
+            visibility: "hidden"
+          }
+        }, "x"), /*#__PURE__*/React.createElement("span", {
+          className: "lib-bracket-glyph"
+        }, ch), showStrongs && /*#__PURE__*/React.createElement("span", {
+          className: "lib-iw-strongs",
+          style: {
+            visibility: "hidden"
+          }
+        }, "G0"));
+        return /*#__PURE__*/React.createElement("span", {
+          key: `bg${gi}`,
+          className: "lib-bracket-group"
+        }, gwR.length === 1 ? /*#__PURE__*/React.createElement("span", {
+          className: "lib-bracket-unit"
+        }, bracketChar("[", "bl"), bracketChip(gwR[0], `bg${gi}w0`), bracketChar("]", "br"), bracketTrail && trailChar(bracketTrail, "bt")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+          className: "lib-bracket-unit"
+        }, bracketChar("[", "bl"), bracketChip(gwR[0], `bg${gi}w0`)), gwR.slice(1, -1).map((w, wi) => bracketChip(w, `bg${gi}w${wi + 1}`)), /*#__PURE__*/React.createElement("span", {
+          className: "lib-bracket-unit"
+        }, bracketChip(gwR[gwR.length - 1], `bg${gi}w${gwR.length - 1}`), bracketChar("]", "br"), bracketTrail && trailChar(bracketTrail, "bt"))));
+      });
+    }
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: v.verse
+    }, !skipHeading && v.heading && /*#__PURE__*/React.createElement("div", {
+      className: "lib-verse-row pericope-row"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "lib-vnum",
+      "aria-hidden": "true"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "pericope-heading"
+    }, v.heading)), /*#__PURE__*/React.createElement("div", {
+      ref: isHighlight ? highlightRef : null,
+      className: "lib-verse-row" + (isHighlight ? " lib-highlight" : "")
+    }, vnumEl(v.verse), /*#__PURE__*/React.createElement("span", {
+      className: "lib-verse-content lib-verse-chips"
+    }, content)));
+  };
+  const renderKjvVerse = (v, showVerseNum = true, skipHeading = false) => {
+    const makeKjvEntry = (w, sid) => ({
+      id: `kjv-${selBook.abbrev}-${selChapter}-${v.verse}-${w.word_id}`,
+      strongs: sid || "",
+      strongs_base: sid ? sid.slice(1) : "",
+      strongs_raw: sid ? sid.slice(1) : "",
+      greek: w.lemma || "",
+      translit: w.xlit || "",
+      gloss: w.word,
+      ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
+      book: selBook.abbrev,
+      chapter: selChapter,
+      verse: v.verse,
+      definition: "",
+      derivation: "",
+      is_function: false,
+      isKjv: true,
+      isHebrew: sid ? sid.startsWith("H") : false
+    });
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: v.verse
+    }, !skipHeading && v.heading && /*#__PURE__*/React.createElement("div", {
+      className: "lib-verse-row pericope-row"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "lib-vnum",
+      "aria-hidden": "true"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "pericope-heading"
+    }, v.heading)), /*#__PURE__*/React.createElement("div", {
+      className: "lib-verse-row"
+    }, showVerseNum && vnumEl(v.verse), /*#__PURE__*/React.createElement("span", {
+      className: "lib-verse-content lib-verse-chips"
+    }, v.words.map((w, i) => {
+      const sid = w.strongs_ids && w.strongs_ids.length ? w.strongs_ids[0] : null;
+      const clickable = !!(onWordClick && sid);
+      const isHebrew = sid ? sid.startsWith("H") : false;
+      return /*#__PURE__*/React.createElement("span", {
+        key: i,
+        className: "lib-word lib-kjv-word" + (w.italic ? " lib-kjv-italic" : "") + (clickable ? " lib-word-clickable" : ""),
+        onClick: clickable ? () => onWordClick(makeKjvEntry(w, sid)) : undefined
+      }, showInterlinear && (w.lemma ? /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek",
+        dir: isHebrew ? "rtl" : undefined,
+        style: isHebrew ? {
+          fontFamily: "var(--f-serif)"
+        } : undefined
+      }, w.lemma) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-greek",
+        style: {
+          visibility: "hidden"
+        }
+      }, "x")), /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-english"
+      }, w.word, w.punc || ""), showStrongs && (sid ? /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs"
+      }, sid) : /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-strongs",
+        style: {
+          visibility: "hidden"
+        }
+      }, "G0")));
+    }))));
+  };
+  const renderKjvProse = (v, showVerseNum = true, skipHeading = false) => {
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: v.verse
+    }, !skipHeading && v.heading && /*#__PURE__*/React.createElement("div", {
+      className: "lib-verse-row pericope-row"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "lib-vnum",
+      "aria-hidden": "true"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "pericope-heading"
+    }, v.heading)), /*#__PURE__*/React.createElement("div", {
+      className: "lib-verse-row"
+    }, showVerseNum && vnumEl(v.verse), /*#__PURE__*/React.createElement("span", {
+      className: "lib-verse-content"
+    }, v.words.map((w, i) => /*#__PURE__*/React.createElement("span", {
+      key: i,
+      className: w.italic ? "lib-prose-italic" : undefined
+    }, w.word, w.punc || "", " ")))));
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "library"
+  }, navVisible && /*#__PURE__*/React.createElement(LibNavPanel, {
+    books: books,
+    selBook: selBook,
+    setSelBook: setSelBook,
+    selChapter: selChapter,
+    setSelChapter: setSelChapter,
+    navBookRef: navBookRef
+  }), !navVisible && mobileNavOpen && /*#__PURE__*/React.createElement(MobileBookPicker, {
+    books: books,
+    selBook: selBook,
+    selChapter: selChapter,
+    onDone: (b, n) => {
+      setSelBook(b);
+      setSelChapter(n);
+      setMobileNavOpen(false);
+    },
+    onClose: () => setMobileNavOpen(false)
+  }), !navVisible && modesOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-scrim",
+    onClick: () => setModesOpen(false)
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "msheet"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "msheet-handle",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "msheet-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "msheet-title"
+  }, "Reading"), /*#__PURE__*/React.createElement("button", {
+    className: "msheet-x",
+    onClick: () => setModesOpen(false),
+    "aria-label": "Close"
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Edition"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (translation === "abp" ? " on" : ""),
+    onClick: () => {
+      setTranslation("abp");
+      onTranslationChange?.("abp");
+    }
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (translation === "kjv" ? " on" : ""),
+    onClick: () => {
+      setTranslation("kjv");
+      onTranslationChange?.("kjv");
+    }
+  }, "KJV"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (translation === "parallel" ? " on" : ""),
+    onClick: () => {
+      setTranslation("parallel");
+      onTranslationChange?.("parallel");
+    }
+  }, "Parallel"))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Study layer"), /*#__PURE__*/React.createElement("div", {
+    className: "mtog"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-txt"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-name"
+  }, "Strong's numbers"), /*#__PURE__*/React.createElement("div", {
+    className: "mtog-sub"
+  }, "Tap a word for its lexicon entry")), /*#__PURE__*/React.createElement("button", {
+    className: "switch" + (showStrongs ? " on" : ""),
+    onClick: () => setOpt("showStrongs", !showStrongs),
+    "aria-label": "Toggle Strong's",
+    "aria-pressed": showStrongs
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "mtog-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-txt"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mtog-name"
+  }, "Interlinear"), /*#__PURE__*/React.createElement("div", {
+    className: "mtog-sub"
+  }, "Stack Greek, transliteration & gloss")), /*#__PURE__*/React.createElement("button", {
+    className: "switch" + (showInterlinear ? " on" : ""),
+    onClick: () => setOpt("showInterlinear", !showInterlinear),
+    "aria-label": "Toggle Interlinear",
+    "aria-pressed": showInterlinear
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Layout"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (chipMode ? " on" : ""),
+    onClick: () => setOpt("viewMode", "chip")
+  }, "Chip"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (!chipMode ? " on" : ""),
+    disabled: showStrongs || showInterlinear,
+    style: showStrongs || showInterlinear ? {
+      opacity: 0.35
+    } : undefined,
+    onClick: () => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")
+  }, "Prose"))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Font Size"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg font-picker"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b",
+    onClick: () => changeFontSize(-1)
+  }, "A\u2212"), /*#__PURE__*/React.createElement("span", {
+    className: "font-size-lbl"
+  }, libFontSize), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b",
+    onClick: () => changeFontSize(+1)
+  }, "A+"))))), /*#__PURE__*/React.createElement("div", null, navVisible ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-bar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lib-bar-l"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bar-ch"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "ch-nav",
+    disabled: selChapter <= 1,
+    onClick: () => {
+      const c = Math.max(1, selChapter - 1);
+      setSelChapter(c);
+      onNavChange?.({
+        ...nav,
+        book: selBook?.abbrev,
+        chapter: c,
+        highlight: null
+      });
+    },
+    "aria-label": "Previous chapter"
+  }, "\u2039"), /*#__PURE__*/React.createElement("span", {
+    className: "ch-lbl"
+  }, "Ch ", /*#__PURE__*/React.createElement("input", {
+    className: "lib-chap-input",
+    type: "number",
+    min: 1,
+    max: maxChap,
+    value: selChapter,
+    onChange: e => {
+      const v = parseInt(e.target.value);
+      if (v >= 1 && v <= maxChap) setSelChapter(v);
+    }
+  }), " ", /*#__PURE__*/React.createElement("span", {
+    className: "ch-of"
+  }, "/ ", maxChap)), /*#__PURE__*/React.createElement("button", {
+    className: "ch-nav",
+    disabled: selChapter >= maxChap,
+    onClick: () => {
+      const c = Math.min(maxChap, selChapter + 1);
+      setSelChapter(c);
+      onNavChange?.({
+        ...nav,
+        book: selBook?.abbrev,
+        chapter: c,
+        highlight: null
+      });
+    },
+    "aria-label": "Next chapter"
+  }, "\u203A")), /*#__PURE__*/React.createElement("div", {
+    className: "seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (translation === "abp" ? " on" : ""),
+    onClick: () => {
+      setTranslation("abp");
+      onTranslationChange?.("abp");
+    }
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (translation === "kjv" ? " on" : ""),
+    onClick: () => {
+      setTranslation("kjv");
+      onTranslationChange?.("kjv");
+    }
+  }, "KJV"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (translation === "parallel" ? " on" : ""),
+    onClick: () => {
+      setTranslation("parallel");
+      onTranslationChange?.("parallel");
+    }
+  }, "Parallel")), /*#__PURE__*/React.createElement("span", {
+    className: "lib-bar-sep",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle" + (showStrongs ? " on" : ""),
+    onClick: () => setOpt("showStrongs", !showStrongs)
+  }, "Strong's"), /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle" + (showInterlinear ? " on" : ""),
+    onClick: () => setOpt("showInterlinear", !showInterlinear)
+  }, "Interlinear"), /*#__PURE__*/React.createElement("span", {
+    className: "lib-bar-sep",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (chipMode ? " on" : ""),
+    onClick: () => setOpt("viewMode", "chip")
+  }, "Chip"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (!chipMode ? " on" : ""),
+    disabled: showStrongs || showInterlinear,
+    style: showStrongs || showInterlinear ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    onClick: () => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")
+  }, "Prose")), /*#__PURE__*/React.createElement("span", {
+    className: "lib-bar-sep",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b",
+    onClick: () => changeFontSize(-1)
+  }, "A\u2212"), /*#__PURE__*/React.createElement("span", {
+    className: "font-size-lbl"
+  }, libFontSize), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b",
+    onClick: () => changeFontSize(+1)
+  }, "A+")))) : /*#__PURE__*/React.createElement("div", {
+    className: "lib-toolbar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mbar-logo-btn",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "20",
+    height: "20",
+    viewBox: "0 0 24 24",
+    fill: "none"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M11 7v6M14 10h-6",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "mbar-center"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mbar-ch-nav",
+    disabled: selChapter <= 1,
+    onClick: () => {
+      const c = Math.max(1, selChapter - 1);
+      setSelChapter(c);
+      onNavChange?.({
+        ...nav,
+        book: selBook?.abbrev,
+        chapter: c,
+        highlight: null
+      });
+    },
+    "aria-label": "Previous chapter"
+  }, "\u2039"), /*#__PURE__*/React.createElement("button", {
+    className: "mbar-loc",
+    onClick: () => setMobileNavOpen(true)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mbar-loc-name"
+  }, selBook ? selBook.name : ""), /*#__PURE__*/React.createElement("span", {
+    className: "mbar-loc-ch"
+  }, selChapter)), /*#__PURE__*/React.createElement("button", {
+    className: "mbar-ch-nav",
+    disabled: selChapter >= maxChap,
+    onClick: () => {
+      const c = Math.min(maxChap, selChapter + 1);
+      setSelChapter(c);
+      onNavChange?.({
+        ...nav,
+        book: selBook?.abbrev,
+        chapter: c,
+        highlight: null
+      });
+    },
+    "aria-label": "Next chapter"
+  }, "\u203A")), /*#__PURE__*/React.createElement("button", {
+    className: "mbar-trans",
+    onClick: () => setModesOpen(true),
+    "aria-label": "Reading options"
+  }, translation === "parallel" ? "Par" : translation.toUpperCase())), /*#__PURE__*/React.createElement("div", _extends({
+    className: "lib-reading" + (showInterlinear ? " lib-interlinear-on" : ""),
+    style: {
+      ...(translation === "parallel" ? {
+        paddingTop: 0
+      } : {}),
+      "--lib-font-size": libFontSize + "px"
+    }
+  }, swipeHandlers), translation === "parallel" ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-parallel"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lib-parallel-header"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lib-parallel-label"
+  }, "ABP"), /*#__PURE__*/React.createElement("span", {
+    className: "lib-parallel-label"
+  }, "KJV")), loading || kjvLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-loading"
+  }, "Loading\u2026") : (() => {
+    const kjvMap = Object.fromEntries(kjvVerses.map(v => [v.verse, v]));
+    // Build display items, lifting section headings above any preceding ABP-only verse
+    const items = [];
+    for (let i = 0; i < verses.length; i++) {
+      const abpV = verses[i];
+      const kjvV = kjvMap[abpV.verse];
+      const heading = abpV.heading || kjvV && kjvV.heading;
+      if (heading) {
+        const prev = items[items.length - 1];
+        if (prev && prev.type === 'verse' && !prev.kjvV) {
+          items.splice(items.length - 1, 0, {
+            type: 'heading',
+            heading,
+            key: `h-${abpV.verse}`
+          });
+        } else {
+          items.push({
+            type: 'heading',
+            heading,
+            key: `h-${abpV.verse}`
+          });
+        }
+      }
+      items.push({
+        type: 'verse',
+        abpV,
+        kjvV
+      });
+    }
+    return items.map(item => {
+      if (item.type === 'heading') {
+        return /*#__PURE__*/React.createElement("div", {
+          key: item.key,
+          className: "lib-parallel-section-heading"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "pericope-heading"
+        }, item.heading));
+      }
+      const {
+        abpV,
+        kjvV
+      } = item;
+      return /*#__PURE__*/React.createElement("div", {
+        key: abpV.verse,
+        className: "lib-parallel-verse"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "lib-parallel-vnum"
+      }, vnumEl(abpV.verse)), /*#__PURE__*/React.createElement("div", {
+        className: "lib-parallel-col"
+      }, renderVerse(abpV, true)), /*#__PURE__*/React.createElement("div", {
+        className: "lib-parallel-col"
+      }, kjvV ? kjvWordMode ? renderKjvVerse(kjvV, true, true) : renderKjvProse(kjvV, true, true) : null));
+    });
+  })()) : translation === "kjv" ? kjvLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-loading"
+  }, "Loading\u2026") : kjvWordMode ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-text-words"
+  }, kjvVerses.map(v => renderKjvVerse(v))) : /*#__PURE__*/React.createElement("div", {
+    className: "lib-text-words"
+  }, kjvVerses.map(v => renderKjvProse(v))) : loading ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-loading"
+  }, "Loading\u2026") : wordMode ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-text-words"
+  }, verses.map(v => renderVerse(v))) : isPoetry ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-text-words"
+  }, verses.map(v => renderVerse(v))) : /*#__PURE__*/React.createElement("div", {
+    className: "lib-text-words lib-prose-flow"
+  }, verses.map(v => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: v.verse
+  }, v.heading && /*#__PURE__*/React.createElement("div", {
+    className: "pericope-heading"
+  }, v.heading), /*#__PURE__*/React.createElement("span", {
+    className: "lib-flow-verse"
+  }, /*#__PURE__*/React.createElement("sup", {
+    className: "lib-flow-vnum",
+    onClick: handleVerseNum ? () => handleVerseNum(v.verse) : undefined
+  }, v.verse), renderProseWords(v))))))));
+}
+
+// ============================================================
+// GLOSS GROUPINGS
+// ============================================================
+// ============================================================
+// AI ANSWER STRIP
+// ============================================================
+function AIAnswer({
+  query,
+  explanation,
+  keyStrongs,
+  onPick
+}) {
+  return /*#__PURE__*/React.createElement("section", {
+    className: "ai-answer"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ai-answer-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ai-tag"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ai-dot"
+  }), "Synthesis"), /*#__PURE__*/React.createElement("span", {
+    className: "ai-q"
+  }, "\"", query, "\"")), /*#__PURE__*/React.createElement("p", {
+    className: "ai-answer-body"
+  }, explanation), keyStrongs && keyStrongs.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "ai-cites"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "ai-cites-label"
+  }, "Cited:"), keyStrongs.map(ks => /*#__PURE__*/React.createElement("button", {
+    key: ks.strongs,
+    className: "ai-cite",
+    onClick: () => onPick({
+      id: `ks-${ks.strongs_base}`,
+      strongs: ks.strongs,
+      strongs_base: ks.strongs_base,
+      strongs_raw: ks.strongs_base,
+      greek: ks.lemma,
+      translit: ks.translit,
+      gloss: "",
+      ref: "",
+      book: "",
+      chapter: 0,
+      verse: 0,
+      definition: ks.definition || "",
+      derivation: ks.derivation || ""
+    })
+  }, ks.strongs, " ", ks.translit || ks.lemma))));
+}
+
+// ============================================================
+// GUIDED TOUR
+// ============================================================
+const TOUR_STEPS = [{
+  icon: "Book",
+  label: "Welcome to Lexica",
+  body: "Lexica is a Greek and Hebrew word study tool built for the diligent Berean. No prior training required. Every word traces back to its Greek or Hebrew source so you can read what the text actually says — before any theological framework is applied. You won't be a scholar overnight, but you'll immediately be a Berean."
+}, {
+  icon: "Search",
+  label: "The Lexicon",
+  body: "Search by English, Greek, Hebrew, transliteration, or Strong's number. Results span both Greek (LSJ) and Hebrew (BDB) — click any word for its full lexicon entry and a context-aware AI summary anchored in the source text."
+}, {
+  icon: "Book",
+  label: "The Library",
+  body: "Read in ABP, KJV, or parallel. Enable Strong's badges or go fully interlinear — Hebrew script appears above OT words, Greek above NT. Click any word to open its lexicon entry. Click any verse number for cross-references."
+}, {
+  icon: "Panel",
+  label: "Cross-References",
+  body: "Every verse connects to Torrey's Treasury of Scripture Knowledge — AI-curated to the strongest matches and synthesized into a thematic overview anchored in ABP vocabulary."
+}, {
+  icon: "Sparkle",
+  label: "Ask the Corpus",
+  body: "Ask in plain language: 'Where does pneuma appear in Genesis?' or 'Differences in how KJV and ABP render spirit in the OT.' The AI searches Greek and Hebrew simultaneously and cites specific passages."
+}, {
+  icon: "Book",
+  label: "Support Lexica",
+  body: "Lexica is free, independent, and has no ads. It's maintained by one person who thinks serious Bible study tools shouldn't cost hundreds of dollars. If it's been useful to your studies, a small contribution keeps it running.",
+  donate: true
+}];
+function GuidedTour({
+  onDone
+}) {
+  const [step, setStep] = useState(0);
+  const cur = TOUR_STEPS[step];
+  const StepIcon = Icon[cur.icon];
+  const isLast = step === TOUR_STEPS.length - 1;
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "tour-scrim",
+    onClick: onDone
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "tour-modal",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-label": "Welcome to Lexica"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "tour-skip",
+    onClick: onDone
+  }, "Skip"), /*#__PURE__*/React.createElement("div", {
+    className: "tour-icon-wrap"
+  }, /*#__PURE__*/React.createElement(StepIcon, {
+    width: "20",
+    height: "20"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "tour-step-num"
+  }, step + 1, " of ", TOUR_STEPS.length), /*#__PURE__*/React.createElement("h2", {
+    className: "tour-title"
+  }, cur.label), /*#__PURE__*/React.createElement("p", {
+    className: "tour-body"
+  }, cur.body), cur.donate && /*#__PURE__*/React.createElement("div", {
+    className: "tour-donate-btns"
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "donate-btn kofi",
+    href: "https://ko-fi.com/lexica",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, "\u2615 Ko-fi"), /*#__PURE__*/React.createElement("a", {
+    className: "donate-btn github",
+    href: "https://github.com/sponsors/jonathan-pernice",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, "\u2665 GitHub Sponsors")), /*#__PURE__*/React.createElement("div", {
+    className: "tour-dots"
+  }, TOUR_STEPS.map((_, i) => /*#__PURE__*/React.createElement("button", {
+    key: i,
+    className: "tour-dot" + (i === step ? " active" : ""),
+    onClick: () => setStep(i),
+    "aria-label": `Step ${i + 1}`
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "tour-nav"
+  }, step > 0 && /*#__PURE__*/React.createElement("button", {
+    className: "tour-btn tour-btn-prev",
+    onClick: () => setStep(s => s - 1)
+  }, "Previous"), isLast ? /*#__PURE__*/React.createElement("button", {
+    className: "tour-btn tour-btn-done",
+    onClick: onDone
+  }, "Get started") : /*#__PURE__*/React.createElement("button", {
+    className: "tour-btn tour-btn-next",
+    onClick: () => setStep(s => s + 1)
+  }, "Next"))));
+}
+
+// ============================================================
+// ABOUT VIEW
+// ============================================================
+function AboutView() {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "about-view"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "about-inner"
+  }, /*#__PURE__*/React.createElement("h1", {
+    className: "about-title"
+  }, "About Lexica"), /*#__PURE__*/React.createElement("p", {
+    className: "about-lead"
+  }, "A Greek and Hebrew word study tool for the diligent Berean. No seminary required."), /*#__PURE__*/React.createElement("h2", {
+    className: "about-h2"
+  }, "What Lexica does"), /*#__PURE__*/React.createElement("p", {
+    className: "about-p"
+  }, "Lexica lets you trace any English word in the Bible back to its Greek or Hebrew source and explore its full meaning \u2014 not just the translation choice made by one committee. Every word links to the Liddell-Scott-Jones Greek lexicon (LSJ) or Brown-Driver-Briggs Hebrew lexicon (BDB), the two most comprehensive scholarly references available."), /*#__PURE__*/React.createElement("p", {
+    className: "about-p"
+  }, "The primary text is the ", /*#__PURE__*/React.createElement("b", null, "Apostolic Bible Polyglot (ABP)"), " \u2014 a word-for-word Greek interlinear covering both the Septuagint (OT) and New Testament. The ", /*#__PURE__*/React.createElement("b", null, "King James Version (KJV)"), " is available in parallel and interlinear modes for comparison. Cross-references come from Torrey's Treasury of Scripture Knowledge."), /*#__PURE__*/React.createElement("h2", {
+    className: "about-h2"
+  }, "The Berean approach"), /*#__PURE__*/React.createElement("p", {
+    className: "about-p"
+  }, "The Bereans \"received the word with all readiness of mind, and searched the scriptures daily\" (Acts 17:11). Lexica is built on that same posture: let the Greek and Hebrew speak first, before any theological system is imported. No commentary, no denominational lens, no conclusions pre-loaded. The text speaks \u2014 you decide what it means."), /*#__PURE__*/React.createElement("p", {
+    className: "about-p"
+  }, "Every AI-generated summary is anchored in the source vocabulary of the ABP. The system prompt explicitly forbids importing theology from outside the text."), /*#__PURE__*/React.createElement("h2", {
+    className: "about-h2"
+  }, "Methodology"), /*#__PURE__*/React.createElement("ul", {
+    className: "about-ul"
+  }, /*#__PURE__*/React.createElement("li", null, "Strong's numbers are the bridge between English, Greek, and Hebrew"), /*#__PURE__*/React.createElement("li", null, "Greek definitions draw from LSJ \u2014 the standard classical Greek reference"), /*#__PURE__*/React.createElement("li", null, "Hebrew definitions draw from BDB \u2014 the standard OT Hebrew reference"), /*#__PURE__*/React.createElement("li", null, "AI search generates SQL against the full lexicon corpus \u2014 not a summary or paraphrase"), /*#__PURE__*/React.createElement("li", null, "Translation comparisons surface where KJV and ABP make different rendering choices for the same source word")), /*#__PURE__*/React.createElement("h2", {
+    className: "about-h2"
+  }, "Support Lexica"), /*#__PURE__*/React.createElement("p", {
+    className: "about-p"
+  }, "Lexica is free, independent, and has no ads. It's maintained by one person who thinks serious Bible study tools shouldn't cost hundreds of dollars or require a seminary login. If it's been useful to you, a small contribution keeps the lights on."), /*#__PURE__*/React.createElement("div", {
+    className: "about-donate"
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "donate-btn kofi",
+    href: "https://ko-fi.com/lexica",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, "\u2615 Ko-fi"), /*#__PURE__*/React.createElement("a", {
+    className: "donate-btn github",
+    href: "https://github.com/sponsors/jonathan-pernice",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, "\u2665 GitHub Sponsors"))));
+}
+
+// ============================================================
+// LEXICON VIEW
+// ============================================================
+const _STRONGS_RE = /^[GgHh]?\d+(\.\d+)?$/;
+function LexiconView({
+  onNavigateToSearch,
+  onNavigateToLibrary,
+  onWordClick,
+  pendingStrongs,
+  onPendingStrongsConsumed
+}) {
+  const [query, setQuery] = useState("");
+  const [matches, setMatches] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [corpus, setCorpus] = useState("all"); // search-results scope: all | abp | kjv
+  const [profileCorpus, setProfileCorpus] = useState("abp"); // drilled-in word view: abp | kjv (never "all")
+  const [testament, setTestament] = useState("all");
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [verseList, setVerseList] = useState(null);
+  const [verseLoading, setVerseLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedGloss, setSelectedGloss] = useState(null);
+  const [bookGlosses, setBookGlosses] = useState(null);
+  const [filteredBooks, setFilteredBooks] = useState(null);
+  const [groupings, setGroupings] = useState(null);
+  const [pendingGloss, setPendingGloss] = useState(null);
+  const [showDef, setShowDef] = useState(false);
+  const [lsjEntry, setLsjEntry] = useState(null);
+  const [lsjSummary, setLsjSummary] = useState(null);
+  const [lsjLoading, setLsjLoading] = useState(false);
+  const [lsjSummaryLoading, setLsjSummaryLoading] = useState(false);
+
+  // Reset the curated LSJ definition whenever the focused word changes.
+  useEffect(() => {
+    setLsjEntry(null);
+    setLsjSummary(null);
+  }, [profile?.strongs]);
+
+  // Lazily fetch the LSJ entry + AI-curated summary when the Greek definition is
+  // opened (Haiku, cached). Hebrew keeps its BDB definition. The /api/lsj endpoint
+  // auto-falls back to strongs_def when there's no LSJ match.
+  useEffect(() => {
+    if (!showDef || !profile || !/^G/i.test(profile.strongs) || lsjEntry || lsjLoading) return;
+    let cancelled = false;
+    setLsjLoading(true);
+    api.lsj(profile.lemma || "", profile.strongs.replace(/^[GH]/i, "")).then(d => {
+      if (cancelled) return;
+      const entry = d && !d.error ? d : null;
+      setLsjEntry(entry);
+      setLsjLoading(false);
+      if (entry && entry.source !== "strongs") {
+        setLsjSummaryLoading(true);
+        api.lsjSummary(entry.key).then(s => {
+          if (!cancelled) setLsjSummary(s);
+        }).catch(() => {}).finally(() => {
+          if (!cancelled) setLsjSummaryLoading(false);
+        });
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        setLsjEntry(null);
+        setLsjLoading(false);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [showDef, profile?.strongs]);
+  useEffect(() => {
+    if (!pendingStrongs) return;
+    onPendingStrongsConsumed?.();
+    setGroupings(null);
+    setMatches(null);
+    loadProfile(pendingStrongs);
+  }, [pendingStrongs]);
+  const loadProfile = async (strongs, corpusOverride) => {
+    setLoading(true);
+    setError(null);
+    setMatches(null);
+    setSelectedBook(null);
+    setSelectedGloss(null);
+    setBookGlosses(null);
+    setFilteredBooks(null);
+    setShowDef(false);
+    const isHeb = /^H/i.test(strongs) || !/^[GgHh]/.test(strongs) && parseInt(strongs) > 5624;
+    const c = corpusOverride ?? (isHeb ? "kjv" : "abp"); // drilling in always lands in a single corpus
+    setProfileCorpus(c);
+    try {
+      const data = await api.lexiconProfile(strongs, c);
+      if (data.error) setError(data.error);else setProfile(data);
+    } catch (e) {
+      setError("Failed to load word profile: " + e);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (profile && pendingGloss) {
+      selectGloss(pendingGloss);
+      setPendingGloss(null);
+    }
+  }, [profile, pendingGloss]);
+
+  // Search-results scope toggle (All / ABP / KJV). Only shown when no word is
+  // in focus; re-runs the English search in that corpus.
+  const switchCorpus = async c => {
+    if (loading || c === corpus) return;
+    setCorpus(c);
+    const q = query.trim();
+    const isEnglishQuery = !!q && !_STRONGS_RE.test(q) && !_isGreekHebrew(q);
+    if (groupings && isEnglishQuery) {
+      setLoading(true);
+      try {
+        const data = await api.lexiconEnglish(q, c, testament);
+        setGroupings(data.length ? data : null);
+        setError(data.length ? null : "No matches found.");
+      } catch {
+        setError("Search failed.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  // Profile corpus toggle (ABP / KJV). Reloads the focused word in that corpus.
+  const switchProfileCorpus = async c => {
+    if (loading || c === profileCorpus || !profile) return;
+    setProfileCorpus(c);
+    setLoading(true);
+    setSelectedBook(null);
+    setVerseList(null);
+    setTestament("all");
+    setSelectedGloss(null);
+    setBookGlosses(null);
+    setFilteredBooks(null);
+    setShowDef(false);
+    try {
+      const data = await api.lexiconProfile(profile.strongs, c);
+      if (!data.error) setProfile(data);
+    } catch {} finally {
+      setLoading(false);
+    }
+  };
+  const switchTestament = async t => {
+    if (loading) return;
+    setTestament(t);
+    setSelectedBook(null);
+    setVerseList(null);
+    // Profile view filters its distribution + count on `testament` client-side.
+    if (profile) return;
+    // Results view: re-run the English search scoped to the testament.
+    const q = query.trim();
+    if (groupings && q && !_STRONGS_RE.test(q) && !_isGreekHebrew(q)) {
+      setLoading(true);
+      try {
+        const data = await api.lexiconEnglish(q, corpus, t);
+        setGroupings(data.length ? data : null);
+        setError(data.length ? null : "No matches found.");
+      } catch {
+        setError("Search failed.");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+  const fetchVerses = async (book, gloss) => {
+    setVerseList(null);
+    setVerseLoading(true);
+    try {
+      const data = await api.lexiconVerses(profile.strongs, book, profileCorpus, gloss);
+      if (data.error) {
+        setVerseList([{
+          error: data.error
+        }]);
+      } else {
+        setVerseList(data.verses || []);
+        setBookGlosses(data.glosses && data.glosses.length ? data.glosses : null);
+      }
+    } catch (e) {
+      setVerseList([{
+        error: String(e)
+      }]);
+    } finally {
+      setVerseLoading(false);
+    }
+  };
+  const selectBook = async book => {
+    if (selectedBook === book) {
+      setSelectedBook(null);
+      setVerseList(null);
+      setBookGlosses(null);
+      return;
+    }
+    setSelectedBook(book);
+    await fetchVerses(book, selectedGloss);
+  };
+  const selectGloss = async gloss => {
+    const next = selectedGloss === gloss ? null : gloss;
+    setSelectedGloss(next);
+    if (next) {
+      const data = await api.lexiconBooks(profile.strongs, profileCorpus, next);
+      setFilteredBooks(data.books && data.books.length ? data.books : null);
+    } else {
+      setFilteredBooks(null);
+    }
+    if (selectedBook) await fetchVerses(selectedBook, next);
+  };
+  const _isGreekHebrew = s => /[Ͱ-Ͽἀ-῿֐-׿]/.test(s);
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const q = query.trim();
+    if (!q) return;
+    setProfile(null);
+    setMatches(null);
+    setGroupings(null);
+    setError(null);
+    if (_STRONGS_RE.test(q)) {
+      const normalized = /^[GgHh]/i.test(q) ? q.toUpperCase() : q;
+      loadProfile(normalized);
+      return;
+    }
+    setLoading(true);
+    try {
+      if (_isGreekHebrew(q)) {
+        const data = await api.lexiconLookup(q);
+        if (!data.length) setError("No matches found.");else if (data.length === 1) loadProfile(data[0].strongs);else setMatches(data);
+      } else {
+        const data = await api.lexiconEnglish(q, corpus, testament);
+        if (!data.length) setError("No matches found for \"" + q + "\".");else setGroupings(data);
+      }
+    } catch {
+      setError("Search failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-view"
+  }, /*#__PURE__*/React.createElement("form", {
+    className: "lexicon-search-form",
+    onSubmit: handleSubmit
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "lexicon-search-input",
+    type: "text",
+    value: query,
+    onChange: e => setQuery(e.target.value),
+    placeholder: "Greek, Hebrew, English, or Strong's (G4151, H7307)\u2026",
+    autoFocus: true
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    className: "lexicon-search-btn",
+    disabled: loading
+  }, loading ? "…" : "Search")), /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-toolbar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-corpus-toggle"
+  }, profile ?
+  /*#__PURE__*/
+  /* Drilled into a word: All is N/A (search-only); gray a corpus the
+     word isn't in — but ABP stays live for backfilled proper nouns. */
+  React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+    className: "lct-btn",
+    disabled: true,
+    title: "Pick ABP or KJV to study this word"
+  }, "All"), /*#__PURE__*/React.createElement("button", {
+    className: "lct-btn" + (profileCorpus === "abp" ? " on" : ""),
+    disabled: !profile.has_abp,
+    onClick: () => switchProfileCorpus("abp")
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "lct-btn" + (profileCorpus === "kjv" ? " on" : ""),
+    disabled: !profile.has_kjv,
+    onClick: () => switchProfileCorpus("kjv")
+  }, "KJV")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+    className: "lct-btn" + (corpus === "all" ? " on" : ""),
+    onClick: () => switchCorpus("all")
+  }, "All"), /*#__PURE__*/React.createElement("button", {
+    className: "lct-btn" + (corpus === "abp" ? " on" : ""),
+    onClick: () => switchCorpus("abp")
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "lct-btn" + (corpus === "kjv" ? " on" : ""),
+    onClick: () => switchCorpus("kjv")
+  }, "KJV"))), /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-corpus-toggle"
+  }, ["all", "ot", "nt"].map(t => /*#__PURE__*/React.createElement("button", {
+    key: t,
+    className: "lct-btn" + (testament === t ? " on" : ""),
+    onClick: () => switchTestament(t)
+  }, t === "all" ? "All" : t.toUpperCase())))), error && /*#__PURE__*/React.createElement("p", {
+    className: "lexicon-error"
+  }, error), matches && /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-matches"
+  }, matches.map(m => /*#__PURE__*/React.createElement("button", {
+    key: m.strongs,
+    className: "lexicon-match-row",
+    onClick: () => loadProfile(m.strongs)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-match-strongs"
+  }, m.strongs), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-match-lemma"
+  }, m.lemma), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-match-translit"
+  }, m.translit), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-match-gloss"
+  }, m.gloss)))), groupings && !profile && /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-results"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-dist-label"
+  }, "rendered as \"", query.trim(), "\" \xB7 ", groupings.length, " ", groupings.length === 1 ? "word" : "words"), groupings.map(g => /*#__PURE__*/React.createElement("button", {
+    key: g.strongs,
+    className: "lexicon-result-row",
+    onClick: () => loadProfile(g.strongs)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-match-strongs"
+  }, g.strongs), g.lemma && /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-match-lemma",
+    dir: g.strongs[0] === "H" ? "rtl" : undefined
+  }, g.lemma), g.translit && /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-match-translit"
+  }, g.translit), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-result-preview"
+  }, (g.glosses || []).slice(0, 3).map(x => x.gloss).join(", ")), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-result-count"
+  }, g.count), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-result-chev"
+  }, "\u203A")))), profile && /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-profile"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-profile-header"
+  }, groupings && /*#__PURE__*/React.createElement("button", {
+    className: "lexicon-back-btn",
+    title: `Back to "${query.trim()}" results`,
+    onClick: () => {
+      setProfile(null);
+      setSelectedBook(null);
+      setVerseList(null);
+    }
+  }, "\u2190"), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-lemma",
+    dir: profile.strongs[0] === "H" ? "rtl" : undefined
+  }, profile.lemma), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-translit"
+  }, profile.translit), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-strongs-tag"
+  }, profile.strongs), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-total"
+  }, testament === "all" ? profile.total : (filteredBooks || profile.books).filter(b => (b.testament || "").toLowerCase() === testament).reduce((s, b) => s + b.count, 0), " occurrences")), (profile.definition || /^G/i.test(profile.strongs)) && /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-def-section"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lexicon-def-toggle",
+    onClick: () => setShowDef(v => !v)
+  }, "Definition", showDef && (!/^G/i.test(profile.strongs) ? /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-def-src"
+  }, "BDB") : !lsjLoading && lsjEntry ? /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-def-src"
+  }, lsjEntry.source === "strongs" ? "Strong's" : lsjEntry.source === "abp_ext" ? "ABP" : "LSJ") : null), " ", showDef ? "▲" : "▼"), showDef && (!/^G/i.test(profile.strongs) ? /*#__PURE__*/React.createElement("p", {
+    className: "lexicon-definition"
+  }, profile.definition) /* Hebrew: BDB */ : lsjLoading ? /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def lsj-def--loading"
+  }, "Loading\u2026") : !lsjEntry ? /*#__PURE__*/React.createElement("p", {
+    className: "lexicon-definition"
+  }, profile.definition) /* no LSJ: strongs_def */ : lsjEntry.source === "strongs" ? /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def",
+    dangerouslySetInnerHTML: {
+      __html: lsjEntry.def_html
+    }
+  }) : lsjSummaryLoading ? /*#__PURE__*/React.createElement(LsjSummary, {
+    data: null,
+    loading: true
+  }) : lsjSummary && lsjSummary.summary ? /*#__PURE__*/React.createElement(LsjSummary, {
+    data: lsjSummary,
+    loading: false
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "lsj-def",
+    dangerouslySetInnerHTML: {
+      __html: lsjEntry.def_html
+    }
+  }) /* AI down: raw LSJ */)), (bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-glosses"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-gloss-label"
+  }, selectedBook ? "In this book" : "Rendered as"), /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-dist-list"
+  }, (bookGlosses || profile.glosses).map((g, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: g.gloss
+  }, i > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-dist-sep"
+  }, " \xB7 "), /*#__PURE__*/React.createElement("button", {
+    className: "lexicon-dist-item" + (selectedGloss === g.gloss ? " selected" : ""),
+    onClick: () => selectGloss(g.gloss)
+  }, g.gloss, /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-dist-count"
+  }, g.count)))))), /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-distribution"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-dist-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-dist-label"
+  }, "Distribution by book")), /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-dist-list"
+  }, (filteredBooks || profile.books).filter(b => testament === "all" || (b.testament || "").toLowerCase() === testament).map((b, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: b.book
+  }, i > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-dist-sep"
+  }, " \xB7 "), /*#__PURE__*/React.createElement("button", {
+    className: "lexicon-dist-item" + (selectedBook === b.book ? " selected" : ""),
+    onClick: () => selectBook(b.book)
+  }, b.name, /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-dist-count"
+  }, b.count)))))), selectedBook && /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-verse-list"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-verse-list-header"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-verse-list-title"
+  }, profile.books.find(b => b.book === selectedBook)?.name), /*#__PURE__*/React.createElement("button", {
+    className: "lexicon-verse-close",
+    onClick: () => {
+      setSelectedBook(null);
+      setVerseList(null);
+    }
+  }, "\u2715")), verseLoading && /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-verse-loading"
+  }, "Loading\u2026"), verseList && verseList.map((v, i) => v.error ? /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "lexicon-verse-loading",
+    style: {
+      color: "red"
+    }
+  }, v.error) : /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "lexicon-verse-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-verse-ref"
+  }, selectedBook, " ", v.chapter, ":", v.verse), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-verse-text lib-verse-chips"
+  }, v.words ? v.words.map((w, wi) => /*#__PURE__*/React.createElement("span", {
+    key: wi,
+    className: "lib-word" + (w.h ? " cited" : "") + (w.i ? " lib-abp-italic" : "")
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lib-iw-english"
+  }, w.w, w.punc || ""))) : v.text), onNavigateToLibrary && /*#__PURE__*/React.createElement("button", {
+    className: "lexicon-verse-lib-link",
+    onClick: () => onNavigateToLibrary(selectedBook, v.chapter, v.verse)
+  }, "Read \u2192"))))));
+}
+
+// ============================================================
+// APP
+// ============================================================
+function App() {
+  const [q2, setQ2] = useState("");
+  const [allResults, setAllResults] = useState([]);
+  const [aiMeta, setAiMeta] = useState(null);
+  const [showAllAi, setShowAllAi] = useState(false);
+  const [mode, setMode] = useState("idle");
+  const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [aiNotice, setAiNotice] = useState("");
+  const [activeEntry, setActiveEntry] = useState(null);
+  const [corpusFilter, setCorpusFilter] = useState("all"); // "all" | "ot" | "nt"
+  const [corpusSort, setCorpusSort] = useState("curated"); // "curated" | "canonical"
+  const [corpusTextMode, setCorpusTextMode] = useState("abp"); // "abp" | "kjv"
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1100);
+  const [mainView, setMainView] = useState("library");
+  const [libNav, setLibNav] = useState(null);
+  const [libCrossRef, setLibCrossRef] = useState(null);
+  const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
+  const [libTranslation, setLibTranslation] = useState("abp");
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1100);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  const handleVerseNumberClick = (book, chapter, verse, translation) => {
+    setActiveEntry(null);
+    setLibCrossRef({
+      book,
+      chapter,
+      verse,
+      translation: translation || "abp"
+    });
+    setLibNav(prev => ({
+      ...(prev || {}),
+      book,
+      chapter,
+      highlight: verse
+    }));
+  };
+
+  // Corpus-filtered AI results (OT/NT filter)
+  const corpusFilteredResults = useMemo(() => {
+    let r = allResults;
+    if (corpusFilter === "ot") r = r.filter(e => !NT_BOOKS.has(e.book));
+    if (corpusFilter === "nt") r = r.filter(e => NT_BOOKS.has(e.book));
+    return r;
+  }, [allResults, corpusFilter]);
+
+  // Count occurrences per strongs across AI results
+  const countMap = useMemo(() => {
+    const map = {};
+    for (const e of corpusFilteredResults) {
+      const key = e.strongs_raw || e.strongs_base;
+      if (key) map[key] = (map[key] || 0) + 1;
+    }
+    return map;
+  }, [corpusFilteredResults]);
+
+  // Key strongs from AI search
+  const primaryStrongs = useMemo(() => {
+    if (mode === "ai" && aiMeta && aiMeta.keyStrongs && aiMeta.keyStrongs.length > 0) return aiMeta.keyStrongs;
+    return null;
+  }, [mode, aiMeta]);
+
+  // Compute citedStrongs at App level — single source of truth, no prop-threading issues
+  const citedStrongsApp = useMemo(() => {
+    if (!primaryStrongs || !primaryStrongs.length) return null;
+    const s = new Set();
+    for (const p of primaryStrongs) {
+      if (p.strongs_base) {
+        s.add(p.strongs_base); // as-is (e.g. "4151" or "G4151")
+        s.add(p.strongs_base.replace(/^[GH]/i, "")); // bare (e.g. "4151")
+        s.add(`G${p.strongs_base.replace(/^[GH]/i, "")}`); // G-prefixed
+        s.add(`H${p.strongs_base.replace(/^[GH]/i, "")}`); // H-prefixed
+      }
+    }
+    return s.size > 0 ? s : null;
+  }, [primaryStrongs]);
+
+  // Count of distinct primary verses (AI mode only)
+  const primaryVerseCount = useMemo(() => {
+    if (mode !== "ai") return null;
+    const seen = new Set();
+    for (const e of allResults) {
+      if (e.is_primary) seen.add(e.ref);
+    }
+    return seen.size;
+  }, [allResults, mode]);
+  const [showTour, setShowTour] = useState(() => {
+    try {
+      return !localStorage.getItem("lexica_tour_seen");
+    } catch {
+      return false;
+    }
+  });
+  const handleTourDone = () => {
+    try {
+      localStorage.setItem("lexica_tour_seen", "1");
+    } catch {}
+    setShowTour(false);
+  };
+  const [libEverVisited, setLibEverVisited] = useState(true);
+  const searchScrollRef = useRef(0);
+  const handleReadInContext = (book, chapter, verse) => {
+    searchScrollRef.current = window.scrollY;
+    setLibNav({
+      book,
+      chapter,
+      highlight: verse,
+      scroll: true
+    });
+    setLibEverVisited(true);
+    setMainView("library");
+  };
+  const handleNavChange = view => {
+    if (view === "library") {
+      searchScrollRef.current = window.scrollY;
+      setLibEverVisited(true);
+      if (!libNav) setLibNav({});
+    } else {
+      const saved = searchScrollRef.current;
+      requestAnimationFrame(() => window.scrollTo(0, saved));
+    }
+    setMainView(view);
+  };
+  const handleNavigateToLexicon = strongs => {
+    if (!strongs) return;
+    setActiveEntry(null); // close the word panel (bottom sheet on mobile) before showing the lexicon
+    setLibCrossRef(null);
+    setLexiconPendingStrongs(strongs);
+    handleNavChange("lexicon");
+  };
+  const handleAiSearch = async overrideQ => {
+    const q = (overrideQ !== undefined ? overrideQ : q2).trim();
+    if (!q) return;
+    if (overrideQ !== undefined) setQ2(overrideQ);
+    setMainView("search");
+    setAiLoading(true);
+    setError("");
+    setAiNotice("");
+    setMode("ai");
+    setShowAllAi(false);
+    setActiveEntry(null);
+    try {
+      const data = await api.aiSearch(q);
+      if (data.out_of_scope) {
+        setAiNotice(data.explanation || "This tool searches the Greek Bible corpus — try a question about a word, theme, or passage.");
+        setAllResults([]);
+        setAiMeta(null);
+      } else if (data.error) {
+        setError(data.error);
+        setAllResults([]);
+        setAiMeta(null);
+      } else {
+        setAllResults(flattenAiResults(data.results || []));
+        setAiMeta({
+          query: q,
+          explanation: data.explanation || "",
+          total: data.total || 0,
+          keyStrongs: data.key_strongs || []
+        });
+      }
+    } catch (e) {
+      setError("Network error: " + e.message);
+      setAllResults([]);
+      setAiMeta(null);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+  const searchLabel = q2.trim();
+  return /*#__PURE__*/React.createElement("div", {
+    className: "app view-" + mainView + " " + (activeEntry || libCrossRef ? "has-detail" : "")
+  }, /*#__PURE__*/React.createElement(Header, {
+    activeView: mainView,
+    onNavChange: handleNavChange
+  }), isMobile && mainView !== "library" && /*#__PURE__*/React.createElement("div", {
+    className: "mobile-brand-bar"
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M11 7v6M14 10h-6",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round"
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "mobile-brand-name"
+  }, "Lexica"), /*#__PURE__*/React.createElement("span", {
+    className: "mobile-brand-sub"
+  }, "Greek & Hebrew Word Study")), /*#__PURE__*/React.createElement("main", {
+    className: "main"
+  }, libEverVisited && /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: mainView === "library" ? undefined : "none"
+    }
+  }, /*#__PURE__*/React.createElement(LibraryView, {
+    nav: libNav,
+    onNavChange: setLibNav,
+    onWordClick: e => {
+      setLibCrossRef(null);
+      setActiveEntry(e);
+    },
+    onVerseNumberClick: handleVerseNumberClick,
+    onTranslationChange: setLibTranslation,
+    isMobile: isMobile
+  })), mainView === "about" && /*#__PURE__*/React.createElement(AboutView, null), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: mainView === "lexicon" ? undefined : "none"
+    }
+  }, /*#__PURE__*/React.createElement(LexiconView, {
+    onNavigateToSearch: q => {
+      handleNavChange("search");
+      setQ2(q);
+    },
+    onNavigateToLibrary: (book, chapter, verse) => {
+      searchScrollRef.current = window.scrollY;
+      setLibNav({
+        book,
+        chapter,
+        highlight: verse,
+        scroll: true
+      });
+      setLibEverVisited(true);
+      setMainView("library");
+    },
+    onWordClick: e => setActiveEntry(e),
+    pendingStrongs: lexiconPendingStrongs,
+    onPendingStrongsConsumed: () => setLexiconPendingStrongs(null)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "main-inner",
+    style: {
+      display: mainView === "library" || mainView === "about" || mainView === "lexicon" ? "none" : undefined
+    }
+  }, /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(SearchBar, {
+    q2: q2,
+    setQ2: setQ2,
+    onAiSearch: handleAiSearch,
+    aiLoading: aiLoading
+  }), aiNotice && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: "14px",
+      padding: "12px 16px",
+      background: "var(--accent-soft, #f0f4ff)",
+      border: "1px solid var(--accent, #b0bfff)",
+      borderRadius: "10px",
+      color: "var(--ink-2, #444)",
+      fontSize: "14px"
+    }
+  }, aiNotice), error && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: "14px",
+      padding: "12px 16px",
+      background: "#fef2f2",
+      border: "1px solid #fecaca",
+      borderRadius: "10px",
+      color: "#b91c1c",
+      fontSize: "14px"
+    }
+  }, error), aiMeta && /*#__PURE__*/React.createElement(AIAnswer, {
+    query: aiMeta.query,
+    explanation: aiMeta.explanation,
+    keyStrongs: aiMeta.keyStrongs || [],
+    onPick: e => setActiveEntry(e)
+  }), mode === "ai" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "results-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "results-meta"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "results-count"
+  }, loading || aiLoading ? "…" : primaryVerseCount), /*#__PURE__*/React.createElement("span", {
+    className: "results-label"
+  }, "primary ", primaryVerseCount === 1 ? "verse" : "verses"), !loading && aiMeta && aiMeta.total > primaryVerseCount && /*#__PURE__*/React.createElement("button", {
+    className: "see-all-link",
+    onClick: () => setShowAllAi(v => !v)
+  }, showAllAi ? "Show less" : `See all ${aiMeta.total} occurrences`), searchLabel && !aiLoading && /*#__PURE__*/React.createElement("span", {
+    className: "results-for"
+  }, "for \"", /*#__PURE__*/React.createElement("b", null, searchLabel), "\"")), /*#__PURE__*/React.createElement("div", {
+    className: "results-controls",
+    style: {
+      marginLeft: "auto"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "results-sort"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "sort-btn " + (corpusFilter === "all" ? "on" : ""),
+    onClick: () => setCorpusFilter("all")
+  }, "All"), /*#__PURE__*/React.createElement("button", {
+    className: "sort-btn " + (corpusFilter === "ot" ? "on" : ""),
+    onClick: () => setCorpusFilter("ot")
+  }, "OT"), /*#__PURE__*/React.createElement("button", {
+    className: "sort-btn " + (corpusFilter === "nt" ? "on" : ""),
+    onClick: () => setCorpusFilter("nt")
+  }, "NT"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      margin: "0 4px",
+      color: "var(--rule-2)"
+    }
+  }, "|"), /*#__PURE__*/React.createElement("button", {
+    className: "sort-btn " + (corpusSort === "curated" ? "on" : ""),
+    onClick: () => setCorpusSort("curated")
+  }, "Curated"), /*#__PURE__*/React.createElement("button", {
+    className: "sort-btn " + (corpusSort === "canonical" ? "on" : ""),
+    onClick: () => setCorpusSort("canonical")
+  }, "Canonical"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      margin: "0 4px",
+      color: "var(--rule-2)"
+    }
+  }, "|"), /*#__PURE__*/React.createElement("button", {
+    className: "sort-btn " + (corpusTextMode === "abp" ? "on" : ""),
+    onClick: () => setCorpusTextMode("abp")
+  }, "ABP"), /*#__PURE__*/React.createElement("button", {
+    className: "sort-btn " + (corpusTextMode === "kjv" ? "on" : ""),
+    onClick: () => setCorpusTextMode("kjv")
+  }, "KJV")))), loading || aiLoading ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      textAlign: "center",
+      padding: "60px 20px",
+      color: "var(--ink-3)",
+      fontSize: "14px"
+    }
+  }, "Searching\u2026") : /*#__PURE__*/React.createElement(CorpusResults, {
+    allResults: corpusFilteredResults,
+    primaryStrongs: primaryStrongs,
+    citedStrongs: citedStrongsApp,
+    showAll: showAllAi,
+    onWordClick: e => setActiveEntry(e),
+    onReadInContext: handleReadInContext,
+    corpusSort: corpusSort,
+    textMode: corpusTextMode
+  })), /*#__PURE__*/React.createElement("footer", {
+    className: "foot"
+  }, /*#__PURE__*/React.createElement("span", null, "Lexica \xB7 Greek Septuagint (LXX) \xB7 Apostolic Bible Polyglot Interlinear \xB7 Strong's Greek"))))), activeEntry && !isMobile && /*#__PURE__*/React.createElement(DetailPanel, {
+    entry: activeEntry,
+    isMobile: false,
+    onClose: () => setActiveEntry(null),
+    occurrences: countMap[activeEntry.strongs_raw] || 0,
+    totalResults: allResults.length,
+    onNavigateToLexicon: handleNavigateToLexicon,
+    onReadInContext: handleReadInContext
+  }), activeEntry && isMobile && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-scrim",
+    onClick: () => setActiveEntry(null)
+  }), /*#__PURE__*/React.createElement(DetailPanel, {
+    entry: activeEntry,
+    isMobile: true,
+    onClose: () => setActiveEntry(null),
+    occurrences: countMap[activeEntry.strongs_raw] || 0,
+    totalResults: allResults.length,
+    onNavigateToLexicon: handleNavigateToLexicon,
+    onReadInContext: handleReadInContext
+  })), libCrossRef && !isMobile && /*#__PURE__*/React.createElement(CrossRefPanel, {
+    source: libCrossRef,
+    translation: libTranslation === "kjv" ? "kjv" : "abp",
+    onClose: () => {
+      setLibCrossRef(null);
+      setLibNav(prev => prev ? {
+        ...prev,
+        highlight: null
+      } : prev);
+    },
+    onNavigate: (book, chapter, verse) => {
+      setMainView("library");
+      setLibCrossRef(null);
+      setLibNav({
+        book,
+        chapter,
+        scroll: true,
+        highlight: verse
+      });
+    },
+    onAiSearch: q => {
+      setLibCrossRef(null);
+      handleAiSearch(q);
+    },
+    isMobile: false
+  }), libCrossRef && isMobile && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "sheet-scrim",
+    onClick: () => {
+      setLibCrossRef(null);
+      setLibNav(prev => prev ? {
+        ...prev,
+        highlight: null
+      } : prev);
+    }
+  }), /*#__PURE__*/React.createElement(CrossRefPanel, {
+    source: libCrossRef,
+    translation: libTranslation === "kjv" ? "kjv" : "abp",
+    onClose: () => {
+      setLibCrossRef(null);
+      setLibNav(prev => prev ? {
+        ...prev,
+        highlight: null
+      } : prev);
+    },
+    onNavigate: (book, chapter, verse) => {
+      setMainView("library");
+      setLibCrossRef(null);
+      setLibNav({
+        book,
+        chapter,
+        scroll: true,
+        highlight: verse
+      });
+    },
+    onAiSearch: q => {
+      setLibCrossRef(null);
+      handleAiSearch(q);
+    },
+    isMobile: true
+  })), showTour && /*#__PURE__*/React.createElement(GuidedTour, {
+    onDone: handleTourDone
+  }), isMobile && /*#__PURE__*/React.createElement("nav", {
+    className: "mobile-tabs"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mobile-tab" + (mainView === "library" ? " active" : ""),
+    onClick: () => handleNavChange("library")
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3"
+  })), "Library"), /*#__PURE__*/React.createElement("button", {
+    className: "mobile-tab" + (mainView === "lexicon" ? " active" : ""),
+    onClick: () => handleNavChange("lexicon")
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M4 19V6a2 2 0 0 1 2-2h13"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M4 19a2 2 0 0 0 2 2h13V8H6a2 2 0 0 0-2 2"
+  })), "Lexicon"), /*#__PURE__*/React.createElement("button", {
+    className: "mobile-tab" + (mainView === "search" ? " active" : ""),
+    onClick: () => handleNavChange("search")
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "11",
+    cy: "11",
+    r: "7"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "16.5",
+    y1: "16.5",
+    x2: "21",
+    y2: "21"
+  })), "Search"), /*#__PURE__*/React.createElement("button", {
+    className: "mobile-tab" + (mainView === "about" ? " active" : ""),
+    onClick: () => handleNavChange("about")
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "12",
+    cy: "12",
+    r: "10"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "8",
+    x2: "12",
+    y2: "8.5"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "12",
+    y1: "12",
+    x2: "12",
+    y2: "16"
+  })), "About")));
+}
+ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));

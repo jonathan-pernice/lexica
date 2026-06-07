@@ -5,3 +5,4 @@ __pycache__/
 .env
 assets/figma-design/
 assets/
+node_modules/

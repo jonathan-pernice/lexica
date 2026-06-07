@@ -41,14 +41,27 @@ Pick effort by task TYPE. When in doubt, lean higher — the plan affords it.
 - All db changes must be made on PythonAnywhere
 
 ## Deployment
-- Deploy command: `cd ~/bible-db && git pull && touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
+- Deploy command (UNCHANGED): `cd ~/bible-db && git pull && touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
 - PythonAnywhere git is configured: `pull.rebase false`, `merge.autoedit no` (no prompts)
 - Database is NOT in git (too large) — managed directly on PythonAnywhere
 
+## Frontend build step (added 2026-06-06)
+- `static/app.jsx` is the SOURCE. `static/app.js` is the COMPILED output that the
+  browser actually loads (index.html points at `app.js`). The compiled `app.js` IS
+  committed to git; `node_modules/` is git-ignored.
+- After ANY edit to `static/app.jsx` you MUST rebuild before committing:
+  `npm run build` (runs Babel: jsx -> static/app.js). One-time setup: `npm install`.
+- The build runs LOCALLY (Node is on the dev machine, not needed on PA). PA deploy is
+  unchanged — it just `git pull`s the already-compiled app.js.
+- Why: in-browser Babel was recompiling 3,461 lines of JSX on every page load
+  (~2.5s render delay; server TTFB was only 96ms). Precompiling + production React
+  builds removes that tax. Babel-standalone and dev React were dropped from index.html.
+
 ## Stack
 - Backend: Flask (Python), SQLite
-- Frontend: React 18 + Babel standalone (JSX, no build step), HTML/CSS
-- Deployed: PythonAnywhere (free tier)
+- Frontend: React 18 (production UMD), JSX precompiled via Babel CLI to static/app.js
+  (build step — see "Frontend build step" above), HTML/CSS
+- Deployed: PythonAnywhere ($10 Dev tier)
 - Version control: GitHub (repo: jonathan-pernice/lexica)
 
 ## Project Structure
