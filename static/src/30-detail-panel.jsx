@@ -228,6 +228,267 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const morphLine = (entry.greek && !isHebrew) ? decodeMorph(entry.morph, entry.greek) : "";
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
 
+  // --------------------------------------------------------------------------
+  // Panel descriptor — resolve the isPN / isHebrew / metavType tangle into ONE
+  // place: a `hero` block and an ordered `sections` list. The return below is
+  // dumb: it renders `hero`, then `sections.map(renderSection)` — no decisions.
+  // --------------------------------------------------------------------------
+  const properName = extractProperName(entry.gloss);
+  const nameOrGloss = (isPN || metavData) ? properName : entry.gloss;
+  const trimTail = (s) => stripArticles((s)?.replace(/[.,;:!?—-]+$/, "").trim());
+  // Hebrew words show their gloss inline next to the transliteration; everything
+  // else shows it on its own line. This boolean gates which (and the standalone).
+  const heroHasHeGloss = !!(isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss);
+  const hero = {
+    he: isHebrew,
+    noGloss: isPN && !entry.greek && !isHebrew,
+    script: isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || nameOrGloss),
+    translit: isHebrew ? bdbEntry?.xlit : entry.translit,
+    inlineGloss: trimTail(nameOrGloss),
+    standaloneGloss: trimTail((isPN || metavData) ? properName
+      : (entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss)),
+    morph: morphLine,
+  };
+
+  // Verse + place sections show KJV text (not ABP) for Hebrew / KJV-mode / place words.
+  const useKjvText = entry.isKjv || isHebrew || (metavType === "place" && !isPN);
+
+  // Ordered list of stacked sections. BDB and LSJ are mutually exclusive (Hebrew
+  // gets BDB; everything else may get LSJ) — same either/or as the old ternary.
+  const sections = [];
+  if (metavLoading || metavPersonData || metavPlaceData) sections.push("metav");
+  if (aiDescription || aiDescLoading) sections.push("aidesc");
+  if (isHebrewWord) sections.push("bdb");
+  else if ((!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person"
+           && !aiDescription && !aiDescLoading
+           && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0)) sections.push("lsj");
+  if (!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0) sections.push("abpOcc");
+  if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
+  if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
+  if (isHebrew && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
+  if (entry.derivation) sections.push("derivation");
+  if (entry.book) sections.push("verse");
+  if (occurrences > 0 || totalResults > 0) sections.push("frequency");
+
+  const renderSection = (id) => {
+    switch (id) {
+    case "metav": return (
+      <section key="metav" className="sec">
+        {metavLoading ? (
+          <div className="lsj-def lsj-def--loading">Looking up…</div>
+        ) : <>
+          {metavHasBoth && (
+            <div className="metav-type-tabs">
+              <button className={"metav-type-tab"+(metavTab==="person"?" on":"")} onClick={()=>setMetavTab("person")}>Person</button>
+              <button className={"metav-type-tab"+(metavTab==="place"?" on":"")} onClick={()=>setMetavTab("place")}>Place</button>
+            </div>
+          )}
+          {metavType === "person" && metavData ? (
+          <div className="metav-person">
+            <h4 className="sec-head"><span className="sec-t">{isGentilic ? "People / Clan" : "Biblical Person"}</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
+            <div className="metav-meta">
+              {metavData.gender && <span className="metav-tag">{metavData.gender === "M" ? "Male" : "Female"}</span>}
+              {metavData.groups.filter(g => g.startsWith("Tribe")).map(g => (
+                <span key={g} className="metav-tag">{g}</span>
+              ))}
+              {metavData.groups.includes("Genealogy of Jesus") && <span className="metav-tag metav-tag-gold">Genealogy of Jesus</span>}
+            </div>
+            {(metavData.birth_year || metavData.death_year) && (
+              <p className="detail-p detail-p--meta" style={{fontSize:"13px"}}>
+                {metavData.birth_year && <span>Born: {metavData.birth_year}{metavData.birth_place ? `, ${metavData.birth_place}` : ""}</span>}
+                {metavData.birth_year && metavData.death_year && " · "}
+                {metavData.death_year && <span>Died: {metavData.death_year}{metavData.death_place ? `, ${metavData.death_place}` : ""}</span>}
+              </p>
+            )}
+            {metavData.relationships.length > 0 && (
+              <div className="metav-rels">
+                {[
+                  { types: ["child"],                    label: "Parent"   },
+                  { types: ["father","mother"],          label: "Children" },
+                  { types: ["spouseOrConcubine"],        label: "Spouse"   },
+                  { types: ["sibling","halfSiblingSameFather","halfSiblingSameMother"], label: "Siblings" },
+                ].map(({ types, label }) => {
+                  const matching = metavData.relationships.filter(r => types.includes(r.type));
+                  if (!matching.length) return null;
+                  return (
+                    <div key={label} className="metav-rel-row">
+                      <span className="metav-rel-label">{label}</span>
+                      <span className="metav-rel-names">{matching.slice(0,5).map(r => r.name).join(", ")}{matching.length > 5 ? ` +${matching.length - 5}` : ""}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : metavType === "place" && metavData ? (
+          <div className="metav-place">
+            <h4 className="sec-head"><span className="sec-t">{isGentilic ? "Homeland" : "Biblical Place"}</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
+            {metavData.comment && <p className="detail-p detail-p--meta">{metavData.comment}</p>}
+            {metavData.lat && metavData.lon
+              ? <LeafletMap lat={metavData.lat} lon={metavData.lon} name={metavData.name} />
+              : <p className="detail-p detail-p--meta" style={{color:"var(--ink-4)", fontStyle:"italic"}}>Location unknown</p>
+            }
+          </div>
+        ) : null}
+        </>}
+      </section>
+    );
+    case "aidesc": return (
+      <section key="aidesc" className="sec">
+        <h4 className="sec-head"><span className="sec-t">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}</span><span className="lsj-badge lsj-badge--accent">AI</span></h4>
+        {aiDescLoading
+          ? <div className="lsj-def lsj-def--loading">Looking up…</div>
+          : <p className="detail-p detail-p--meta">{aiDescription}</p>
+        }
+      </section>
+    );
+    case "bdb": return (
+      <section key="bdb" className="sec">
+        <h4 className="sec-head"><span className="sec-t">Brown-Driver-Briggs</span><span className="bdb-badge">BDB</span></h4>
+        {bdbLoading ? (
+          <div className="lsj-def lsj-def--loading">Loading…</div>
+        ) : bdbEntry ? (
+          <div className="bdb-body">
+            {bdbEntry.pronounce && <div className="bdb-xlit"><span className="bdb-pronounce">{bdbEntry.pronounce}</span></div>}
+            {bdbEntry.part_of_speech && <span className="bdb-pos-badge">{bdbEntry.part_of_speech}</span>}
+            {bdbEntry.description && <p className="detail-p detail-p--meta">{bdbEntry.description}</p>}
+          </div>
+        ) : (
+          <div className="lsj-def lsj-def--loading">Not found in BDB.</div>
+        )}
+      </section>
+    );
+    case "lsj": return (
+      <section key="lsj" className="sec">
+        <div className="lsj-head">
+          <h4 className="sec-head">
+            <span className="sec-t">
+              {lsjEntry && lsjEntry.source === "abp_ext"
+                ? <>ABP Extended<span className="abp-badge">ABP EXT</span></>
+                : <>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></>}
+            </span>
+          </h4>
+          {lsjEntry && (
+            <div className="lsj-tabs">
+              <button className={"lsj-tab " + (lsjTab === "def"  ? "on" : "")} onClick={() => setLsjTab("def")}>Definition</button>
+              <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>
+                {lsjEntry.source === "abp_ext" ? "Full ABP" : "Full LSJ"}
+              </button>
+            </div>
+          )}
+        </div>
+        {lsjLoading ? (
+          <div className="lsj-def lsj-def--loading">Loading…</div>
+        ) : lsjEntry ? (
+          lsjTab === "def"
+            ? lsjEntry.source === "strongs"
+              ? <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
+              : <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
+            : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
+        ) : (
+          <div className="lsj-def lsj-def--loading">Not found.</div>
+        )}
+      </section>
+    );
+    case "abpOcc": return (
+      <section key="abpOcc" className="sec">
+        <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
+        <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)}>
+          <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
+        </button>
+      </section>
+    );
+    case "kjvOcc": return (
+      <section key="kjvOcc" className="sec">
+        <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
+        <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)}>
+          <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
+        </button>
+      </section>
+    );
+    case "pnOcc": return (
+      <section key="pnOcc" className="sec">
+        <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
+        <button className="occ-link" onClick={() => onNameSearch(extractProperName(entry.gloss))}>
+          <b>{pnCount}</b>× in LXX <Icon.ArrowRight/>
+        </button>
+      </section>
+    );
+    case "hebrewKjvOcc": return (
+      <section key="hebrewKjvOcc" className="sec">
+        <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
+        <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)}>
+          <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
+        </button>
+      </section>
+    );
+    case "derivation": return (
+      <section key="derivation" className="sec">
+        <h4 className="sec-head"><span className="sec-t">Derivation</span></h4>
+        <p className="detail-p">
+          {entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) =>
+            /^G\d[\d.]*/i.test(part)
+              ? <button key={i} className="link-btn link-btn--strong" onClick={() => onNavigateToLexicon?.(part)}>{part}</button>
+              : part
+          )}
+        </p>
+      </section>
+    );
+    case "verse": return (
+      <section key="verse" className="sec">
+        <h4 className="sec-head">
+          <span className="sec-t">Verse — {entry.ref}</span>
+          <span className="sec-meta">{useKjvText ? "KJV" : "LXX (ABP English)"}</span>
+        </h4>
+        <blockquote className="dverse">
+          <span className="dverse-n">{entry.verse}</span>
+          {useKjvText ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
+        </blockquote>
+        {showInterlinear && (
+          <div className="interlinear">
+            {!interlinearWords ? (
+              <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
+            ) : interlinearWords.map((w, i) => (
+              <div key={i} className="iword">
+                <span className="iw-greek">{w.lemma || "—"}</span>
+                <span className="iw-translit">{w.translit || ""}</span>
+                <span className="iw-english">{w.english || "—"}</span>
+                {(w.strongs || w.strongs_base) && w.strongs_base !== "*" && (
+                  <span className="iw-strongs">{strongsTag((w.strongs && w.strongs !== '*') ? w.strongs : w.strongs_base)}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="dverse-tools">
+          <button className="link-btn" onClick={() => onReadInContext && onReadInContext(entry.book, entry.chapter, entry.verse)}>
+            Read in context <Icon.ArrowRight/>
+          </button>
+          <span className="dot">·</span>
+          <button
+            className={"link-btn" + (showInterlinear ? " link-btn-on" : "")}
+            onClick={() => setShowInterlinear(v => !v)}
+          >Interlinear</button>
+        </div>
+      </section>
+    );
+    case "frequency": return (
+      <section key="frequency" className="sec">
+        <h4 className="sec-head"><span className="sec-t">Frequency</span></h4>
+        <div className="freq">
+          <div className="freq-bar">
+            <div className="freq-fill" style={{ width: barWidth + "%" }}></div>
+          </div>
+          <div className="freq-meta">
+            <span><b>{occurrences}</b>× in current results</span>
+          </div>
+        </div>
+      </section>
+    );
+    default: return null;
+    }
+  };
+
   return (
     <aside ref={isMobile ? sheetRef : null} className={"detail " + (isMobile ? "detail-sheet" : "detail-side")} role="dialog" aria-label="Lexicon detail">
       {isMobile && <div className="sheet-drag-zone" aria-hidden="true"><div className="sheet-handle"></div></div>}
@@ -242,245 +503,24 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
       </div>
 
       <div className="detail-body" ref={isMobile ? scrollRef : null}>
-        <div className={"detail-hero" + (isPN && !entry.greek && !isHebrew ? " no-gloss" : "")}>
-          <div className={"detail-greek" + (isHebrew ? " detail-greek--he" : "")}
-               dir={isHebrew ? "rtl" : undefined}>
-            {isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || ((isPN || metavData) ? extractProperName(entry.gloss) : entry.gloss))}
+        <div className={"detail-hero" + (hero.noGloss ? " no-gloss" : "")}>
+          <div className={"detail-greek" + (hero.he ? " detail-greek--he" : "")}
+               dir={hero.he ? "rtl" : undefined}>
+            {hero.script}
           </div>
-          <div className={"detail-translit-row" + (isHebrew ? " detail-translit-row-he" : "")}>
-            <span className="detail-translit">{isHebrew ? bdbEntry?.xlit : entry.translit}</span>
-            {isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss && (
-              <><span className="detail-sep">·</span><span className="detail-gloss">{stripArticles(((isPN || metavData) ? extractProperName(entry.gloss) : entry.gloss)?.replace(/[.,;:!?—-]+$/, "").trim())}</span></>
+          <div className={"detail-translit-row" + (hero.he ? " detail-translit-row-he" : "")}>
+            <span className="detail-translit">{hero.translit}</span>
+            {heroHasHeGloss && (
+              <><span className="detail-sep">·</span><span className="detail-gloss">{hero.inlineGloss}</span></>
             )}
           </div>
-          {!(isPN && !entry.greek && !isHebrew) && !(isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss) && (
-            <div className="detail-gloss">{stripArticles(((isPN || metavData) ? extractProperName(entry.gloss) : (entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss))?.replace(/[.,;:!?—-]+$/, "").trim())}</div>
+          {!hero.noGloss && !heroHasHeGloss && (
+            <div className="detail-gloss">{hero.standaloneGloss}</div>
           )}
-          {morphLine && <div className="detail-morph">{morphLine}</div>}
+          {hero.morph && <div className="detail-morph">{hero.morph}</div>}
         </div>
 
-        {(metavLoading || metavPersonData || metavPlaceData) && (
-          <section className="sec">
-            {metavLoading ? (
-              <div className="lsj-def lsj-def--loading">Looking up…</div>
-            ) : <>
-              {metavHasBoth && (
-                <div className="metav-type-tabs">
-                  <button className={"metav-type-tab"+(metavTab==="person"?" on":"")} onClick={()=>setMetavTab("person")}>Person</button>
-                  <button className={"metav-type-tab"+(metavTab==="place"?" on":"")} onClick={()=>setMetavTab("place")}>Place</button>
-                </div>
-              )}
-              {metavType === "person" && metavData ? (
-              <div className="metav-person">
-                <h4 className="sec-head"><span className="sec-t">{isGentilic ? "People / Clan" : "Biblical Person"}</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
-                <div className="metav-meta">
-                  {metavData.gender && <span className="metav-tag">{metavData.gender === "M" ? "Male" : "Female"}</span>}
-                  {metavData.groups.filter(g => g.startsWith("Tribe")).map(g => (
-                    <span key={g} className="metav-tag">{g}</span>
-                  ))}
-                  {metavData.groups.includes("Genealogy of Jesus") && <span className="metav-tag metav-tag-gold">Genealogy of Jesus</span>}
-                </div>
-                {(metavData.birth_year || metavData.death_year) && (
-                  <p className="detail-p detail-p--meta" style={{fontSize:"13px"}}>
-                    {metavData.birth_year && <span>Born: {metavData.birth_year}{metavData.birth_place ? `, ${metavData.birth_place}` : ""}</span>}
-                    {metavData.birth_year && metavData.death_year && " · "}
-                    {metavData.death_year && <span>Died: {metavData.death_year}{metavData.death_place ? `, ${metavData.death_place}` : ""}</span>}
-                  </p>
-                )}
-                {metavData.relationships.length > 0 && (
-                  <div className="metav-rels">
-                    {[
-                      { types: ["child"],                    label: "Parent"   },
-                      { types: ["father","mother"],          label: "Children" },
-                      { types: ["spouseOrConcubine"],        label: "Spouse"   },
-                      { types: ["sibling","halfSiblingSameFather","halfSiblingSameMother"], label: "Siblings" },
-                    ].map(({ types, label }) => {
-                      const matching = metavData.relationships.filter(r => types.includes(r.type));
-                      if (!matching.length) return null;
-                      return (
-                        <div key={label} className="metav-rel-row">
-                          <span className="metav-rel-label">{label}</span>
-                          <span className="metav-rel-names">{matching.slice(0,5).map(r => r.name).join(", ")}{matching.length > 5 ? ` +${matching.length - 5}` : ""}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ) : metavType === "place" && metavData ? (
-              <div className="metav-place">
-                <h4 className="sec-head"><span className="sec-t">{isGentilic ? "Homeland" : "Biblical Place"}</span><span className="lsj-badge lsj-badge--gold">metaV</span></h4>
-                {metavData.comment && <p className="detail-p detail-p--meta">{metavData.comment}</p>}
-                {metavData.lat && metavData.lon
-                  ? <LeafletMap lat={metavData.lat} lon={metavData.lon} name={metavData.name} />
-                  : <p className="detail-p detail-p--meta" style={{color:"var(--ink-4)", fontStyle:"italic"}}>Location unknown</p>
-                }
-              </div>
-            ) : null}
-            </>}
-          </section>
-        )}
-
-        {(aiDescription || aiDescLoading) && (
-          <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}</span><span className="lsj-badge lsj-badge--accent">AI</span></h4>
-            {aiDescLoading
-              ? <div className="lsj-def lsj-def--loading">Looking up…</div>
-              : <p className="detail-p detail-p--meta">{aiDescription}</p>
-            }
-          </section>
-        )}
-
-        {isHebrewWord ? (
-          <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">Brown-Driver-Briggs</span><span className="bdb-badge">BDB</span></h4>
-            {bdbLoading ? (
-              <div className="lsj-def lsj-def--loading">Loading…</div>
-            ) : bdbEntry ? (
-              <div className="bdb-body">
-                {bdbEntry.pronounce && <div className="bdb-xlit"><span className="bdb-pronounce">{bdbEntry.pronounce}</span></div>}
-                {bdbEntry.part_of_speech && <span className="bdb-pos-badge">{bdbEntry.part_of_speech}</span>}
-                {bdbEntry.description && <p className="detail-p detail-p--meta">{bdbEntry.description}</p>}
-              </div>
-            ) : (
-              <div className="lsj-def lsj-def--loading">Not found in BDB.</div>
-            )}
-          </section>
-        ) : (!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0) && (
-          <section className="sec">
-            <div className="lsj-head">
-              <h4 className="sec-head">
-                <span className="sec-t">
-                  {lsjEntry && lsjEntry.source === "abp_ext"
-                    ? <>ABP Extended<span className="abp-badge">ABP EXT</span></>
-                    : <>Liddell-Scott-Jones<span className="lsj-badge">LSJ</span></>}
-                </span>
-              </h4>
-              {lsjEntry && (
-                <div className="lsj-tabs">
-                  <button className={"lsj-tab " + (lsjTab === "def"  ? "on" : "")} onClick={() => setLsjTab("def")}>Definition</button>
-                  <button className={"lsj-tab " + (lsjTab === "full" ? "on" : "")} onClick={() => setLsjTab("full")}>
-                    {lsjEntry.source === "abp_ext" ? "Full ABP" : "Full LSJ"}
-                  </button>
-                </div>
-              )}
-            </div>
-            {lsjLoading ? (
-              <div className="lsj-def lsj-def--loading">Loading…</div>
-            ) : lsjEntry ? (
-              lsjTab === "def"
-                ? lsjEntry.source === "strongs"
-                  ? <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
-                  : <LsjSummary data={lsjSummary} loading={lsjSummaryLoading} />
-                : <div className="lsj-def" dangerouslySetInnerHTML={{ __html: lsjEntry.def_html }} />
-            ) : (
-              <div className="lsj-def lsj-def--loading">Not found.</div>
-            )}
-          </section>
-        )}
-
-
-        {!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0 && (
-          <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
-            <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)}>
-              <b>{abpCount}</b>× in LXX <Icon.ArrowRight/>
-            </button>
-          </section>
-        )}
-
-        {entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0 && (
-          <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
-            <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)}>
-              <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
-            </button>
-          </section>
-        )}
-
-        {!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch && (
-          <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">ABP Occurrences</span></h4>
-            <button className="occ-link" onClick={() => onNameSearch(extractProperName(entry.gloss))}>
-              <b>{pnCount}</b>× in LXX <Icon.ArrowRight/>
-            </button>
-          </section>
-        )}
-
-        {isHebrew && kjvCount !== null && kjvCount > 0 && (
-          <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">KJV Occurrences</span></h4>
-            <button className="occ-link" onClick={() => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)}>
-              <b>{kjvCount}</b>× in KJV <Icon.ArrowRight/>
-            </button>
-          </section>
-        )}
-
-        {entry.derivation && (
-          <section className="sec">
-            <h4 className="sec-head"><span className="sec-t">Derivation</span></h4>
-            <p className="detail-p">
-              {entry.derivation.split(/\b(G\d[\d.]*)/i).map((part, i) =>
-                /^G\d[\d.]*/i.test(part)
-                  ? <button key={i} className="link-btn link-btn--strong" onClick={() => onNavigateToLexicon?.(part)}>{part}</button>
-                  : part
-              )}
-            </p>
-          </section>
-        )}
-
-        {entry.book && (
-        <section className="sec">
-          <h4 className="sec-head">
-            <span className="sec-t">Verse — {entry.ref}</span>
-            <span className="sec-meta">{(entry.isKjv || isHebrew || (metavType === "place" && !isPN)) ? "KJV" : "LXX (ABP English)"}</span>
-          </h4>
-          <blockquote className="dverse">
-            <span className="dverse-n">{entry.verse}</span>
-            {(entry.isKjv || isHebrew || (metavType === "place" && !isPN)) ? (kjvVerseText || "—") : (verseLoading ? "Loading…" : verseText || "—")}
-          </blockquote>
-          {showInterlinear && (
-            <div className="interlinear">
-              {!interlinearWords ? (
-                <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
-              ) : interlinearWords.map((w, i) => (
-                <div key={i} className="iword">
-                  <span className="iw-greek">{w.lemma || "—"}</span>
-                  <span className="iw-translit">{w.translit || ""}</span>
-                  <span className="iw-english">{w.english || "—"}</span>
-                  {(w.strongs || w.strongs_base) && w.strongs_base !== "*" && (
-                    <span className="iw-strongs">{strongsTag((w.strongs && w.strongs !== '*') ? w.strongs : w.strongs_base)}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="dverse-tools">
-            <button className="link-btn" onClick={() => onReadInContext && onReadInContext(entry.book, entry.chapter, entry.verse)}>
-              Read in context <Icon.ArrowRight/>
-            </button>
-            <span className="dot">·</span>
-            <button
-              className={"link-btn" + (showInterlinear ? " link-btn-on" : "")}
-              onClick={() => setShowInterlinear(v => !v)}
-            >Interlinear</button>
-          </div>
-        </section>
-        )}
-
-        {(occurrences > 0 || totalResults > 0) && (
-        <section className="sec">
-          <h4 className="sec-head"><span className="sec-t">Frequency</span></h4>
-          <div className="freq">
-            <div className="freq-bar">
-              <div className="freq-fill" style={{ width: barWidth + "%" }}></div>
-            </div>
-            <div className="freq-meta">
-              <span><b>{occurrences}</b>× in current results</span>
-            </div>
-          </div>
-        </section>
-        )}
+        {sections.map(renderSection)}
       </div>
     </aside>
   );
