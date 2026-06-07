@@ -1072,10 +1072,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <button className={"seg-b" + (corpus === "bible" && translation === "abp" ? " on" : "")} onClick={() => pickBible("abp")}>ABP</button>
               <button className={"seg-b" + (corpus === "bible" && translation === "kjv" ? " on" : "")} onClick={() => pickBible("kjv")}>KJV</button>
             </div>
-            <button className={"lib-toggle" + (translation === "parallel" ? " on" : "")} onClick={toggleParallel}>Parallel</button>
             <span className="lib-bar-sep" aria-hidden="true"/>
             <button className={"lib-toggle" + (showStrongs ? " on" : "")} onClick={() => setOpt("showStrongs", !showStrongs)}>Strong's</button>
             <button className={"lib-toggle" + (showInterlinear ? " on" : "")} onClick={() => setOpt("showInterlinear", !showInterlinear)}>Interlinear</button>
+            <button className={"lib-toggle" + (translation === "parallel" ? " on" : "")} onClick={toggleParallel}>Parallel</button>
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg">
               <button

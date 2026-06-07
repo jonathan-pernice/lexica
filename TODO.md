@@ -152,6 +152,28 @@ kept below.
 - **Toggle:** header button switches basic/advanced, remembered in the browser, only shown on wide screens.
 </details>
 
+### Highlighting + notes (Logos-style)
+Let a reader drag-select text, pick a color to highlight it, and attach a note. The trick Logos uses:
+the highlight isn't stored *inside* the text — it's a separate layer that *points at* a word range
+(book/chapter/verse + word position, which we already track). So the same highlight shows up in any
+view/translation, and all notes live in one searchable Notes panel (filter by color, tag, book; click
+to jump back). Maps cleanly onto our word-position data. Needs somewhere to keep the notes — the
+browser's local storage (one device only, no login) for a quick version, or real accounts (below) to
+sync across devices. `code: new notes store keyed to words-table positions; render layer paints matches`
+
+### Free user accounts
+Sign-up-yourself free accounts. Main payoff is syncing highlights/notes across a reader's devices, and
+it opens the door to an email campaign later (announcements, reading plans). We're currently a no-login
+public app, so this is real new plumbing (sign-up, login, password reset, a users store) — bigger lift,
+worth it once Notes proves people want their work saved. Keep the app fully usable without an account.
+
+### Broader AI search — meaning-based passage search
+Logos feels "broader" for two reasons: it reads their whole paid library (commentaries, dictionaries),
+and it blends exact-word search with meaning-based search. We deliberately stay text-first (bible +
+lexicons only), so we won't copy the library part. But we *can* add meaning-based search over the bible
+text itself — find verses that are *about* a concept even when they don't use the word — which gives the
+"broad" feel while staying inside scripture. `code: Search tab + /api/search; would need a concept index`
+
 ### Topic browser
 Browse by concept (Atonement, Covenant, Resurrection, Holy Spirit…) as an alternative to AI search —
 a good starting point when you don't know what to search. Use an existing topic list only for the

@@ -3564,10 +3564,7 @@ function LibraryView({
   }, "ABP"), /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (corpus === "bible" && translation === "kjv" ? " on" : ""),
     onClick: () => pickBible("kjv")
-  }, "KJV")), /*#__PURE__*/React.createElement("button", {
-    className: "lib-toggle" + (translation === "parallel" ? " on" : ""),
-    onClick: toggleParallel
-  }, "Parallel"), /*#__PURE__*/React.createElement("span", {
+  }, "KJV")), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("button", {
@@ -3576,7 +3573,10 @@ function LibraryView({
   }, "Strong's"), /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle" + (showInterlinear ? " on" : ""),
     onClick: () => setOpt("showInterlinear", !showInterlinear)
-  }, "Interlinear"), /*#__PURE__*/React.createElement("span", {
+  }, "Interlinear"), /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle" + (translation === "parallel" ? " on" : ""),
+    onClick: toggleParallel
+  }, "Parallel"), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("div", {
