@@ -245,8 +245,10 @@ input { font-family: inherit; }
 .lexicon-lemma { font-size: 20px; font-family: var(--f-serif); color: var(--ink); }
 .lexicon-translit { font-size: 15px; font-style: italic; color: var(--ink-2); }
 .lexicon-strongs-tag {
-  font-size: 12px; font-weight: 600; color: var(--gold);
-  background: var(--gold-soft); padding: 2px 8px; border-radius: 20px;
+  font-family: var(--f-mono);
+  font-size: 11px; font-weight: 500; color: #fff;
+  background: var(--accent); padding: 2px 7px; border-radius: 4px;
+  letter-spacing: 0.02em;
 }
 .lexicon-total { font-size: 13px; color: var(--ink-3); }
 .lexicon-header-controls { display: flex; gap: 8px; margin-left: auto; align-items: center; }
