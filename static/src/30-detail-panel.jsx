@@ -93,9 +93,22 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [metavPlaceData, setMetavPlaceData] = useState(null);
   const [metavTab, setMetavTab] = useState("person"); // "person" | "place"
   const [metavLoading, setMetavLoading] = useState(false);
-  // Derived — all downstream code uses these unchanged
-  const metavHasBoth = !!(metavPersonData && metavPlaceData);
-  const metavType = metavHasBoth ? metavTab : (metavPersonData ? "person" : metavPlaceData ? "place" : null);
+  // Derived — all downstream code uses these unchanged.
+  // If the word's OWN proper-noun type (tipnr pn_types) is a clean SINGLE type and
+  // we have that card, the word IS that entity — the other metaV card is a
+  // name-coincidence (loose name-based lookup), so PIN to the single entity and
+  // suppress the Person/Place toggle. When pn_types is ambiguous ('person,place':
+  // a strongs shared by a genuine person AND place — Adam, Dan) or absent (a
+  // non-Library entry, or no tipnr row), keep the toggle so the user can see both.
+  const pnList = ((entry && entry.pn_types) || "").toLowerCase().split(",").map(s => s.trim()).filter(Boolean);
+  const pnSingle = (pnList.length === 1 && (pnList[0] === "person" || pnList[0] === "place")) ? pnList[0] : null;
+  const metavPinned = (pnSingle === "person" && metavPersonData) ? "person"
+                    : (pnSingle === "place"  && metavPlaceData)  ? "place"
+                    : null;
+  const metavHasBoth = !!(metavPersonData && metavPlaceData) && !metavPinned;
+  const metavType = metavPinned
+    ? metavPinned
+    : (metavHasBoth ? metavTab : (metavPersonData ? "person" : metavPlaceData ? "place" : null));
   const metavData = metavType === "person" ? metavPersonData : metavType === "place" ? metavPlaceData : null;
   useEffect(() => {
     setMetavPersonData(null);
