@@ -118,9 +118,13 @@ def extra_chapter(book, chapter):
         ).fetchall()}
         if wtable not in have:
             return jsonify([])
+        # join the lexicon for the transliteration (same key the Bible uses:
+        # lexicon.strongs_g = 'G####'); the Didache words carry that G-number.
         wrows = conn.execute(
-            f"SELECT verse, position, greek, lemma, strongs, gloss FROM {wtable} "
-            "WHERE chapter=? ORDER BY verse, position", (chapter,)
+            f"""SELECT w.verse, w.position, w.greek, w.lemma, w.strongs, w.gloss, l.translit
+                FROM {wtable} w
+                LEFT JOIN lexicon l ON l.strongs_g = w.strongs
+                WHERE w.chapter=? ORDER BY w.verse, w.position""", (chapter,)
         ).fetchall()
         # `heading` was added later — only select it if the table has it, so an
         # older (pre-headings) load still serves cleanly until the next reload.
@@ -149,6 +153,7 @@ def extra_chapter(book, chapter):
             "english":      r["gloss"],                  # per-word gloss (interlinear)
             "english_head": None,
             "lemma":        r["lemma"],                  # Greek dictionary form
+            "translit":     r["translit"],               # romanized form (from lexicon)
             "greek":        r["greek"],                  # inflected form as printed
             "strongs_base": sg or None,                 # G-number → drives word-study click
             "strongs":      sg[1:] if sg else None,      # bare, frontend renders G{strongs}

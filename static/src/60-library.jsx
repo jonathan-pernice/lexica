@@ -911,8 +911,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       strongs_base: w.strongs_base || "",
       strongs_raw: w.strongs || "",
       greek: w.lemma || w.greek || "",
-      translit: "", morph: "",
+      translit: w.translit || "", morph: "",
       gloss: label,
+      english_head: label,   // hero shows the gloss even when it's a short phrase
       ref: `${nonCanon ? nonCanon.name : "Extra"} ${selChapter}:${v.verse}`,
       book: corpus, chapter: selChapter, verse: v.verse,
       definition: "", derivation: "", is_function: false,
