@@ -3354,29 +3354,45 @@ function LibraryView({
   };
 
   // Single view: Greek interlinear only (mirrors Bible ABP).
-  const renderDidacheVerse = v => /*#__PURE__*/React.createElement("div", {
-    className: "lib-verse-row lib-did-row",
+  const renderDidacheVerse = v => /*#__PURE__*/React.createElement(React.Fragment, {
     key: v.verse
+  }, v.heading && /*#__PURE__*/React.createElement("div", {
+    className: "lib-verse-row pericope-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lib-vnum",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "pericope-heading"
+  }, v.heading)), /*#__PURE__*/React.createElement("div", {
+    className: "lib-verse-row lib-did-row"
   }, /*#__PURE__*/React.createElement("span", {
     className: "lib-vnum"
   }, v.verse), /*#__PURE__*/React.createElement("span", {
     className: "lib-verse-content lib-verse-chips"
-  }, didChips(v)));
+  }, didChips(v))));
 
   // Prose view: our readable English as flowing text with verse numbers.
   const renderDidacheProse = () => /*#__PURE__*/React.createElement("div", {
     className: "lib-text-words lib-prose-flow"
-  }, didVerses.map(v => /*#__PURE__*/React.createElement("span", {
-    className: "lib-flow-verse",
+  }, didVerses.map(v => /*#__PURE__*/React.createElement(React.Fragment, {
     key: v.verse
+  }, v.heading && /*#__PURE__*/React.createElement("div", {
+    className: "pericope-heading"
+  }, v.heading), /*#__PURE__*/React.createElement("span", {
+    className: "lib-flow-verse"
   }, /*#__PURE__*/React.createElement("sup", {
     className: "lib-flow-vnum"
-  }, v.verse), (v.english || "") + " ")));
+  }, v.verse), (v.english || "") + " "))));
 
   // Parallel view: Greek interlinear | readable English (same shape as Bible parallel).
-  const renderDidacheParallelVerse = v => /*#__PURE__*/React.createElement("div", {
-    className: "lib-parallel-verse",
+  const renderDidacheParallelVerse = v => /*#__PURE__*/React.createElement(React.Fragment, {
     key: v.verse
+  }, v.heading && /*#__PURE__*/React.createElement("div", {
+    className: "lib-parallel-section-heading"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "pericope-heading"
+  }, v.heading)), /*#__PURE__*/React.createElement("div", {
+    className: "lib-parallel-verse"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel-vnum"
   }, /*#__PURE__*/React.createElement("span", {
@@ -3389,7 +3405,7 @@ function LibraryView({
     className: "lib-parallel-col"
   }, /*#__PURE__*/React.createElement("p", {
     className: "lib-did-eng"
-  }, v.english)));
+  }, v.english))));
   return /*#__PURE__*/React.createElement("div", {
     className: "library"
   }, navVisible && /*#__PURE__*/React.createElement(LibNavPanel, {

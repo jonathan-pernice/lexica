@@ -122,13 +122,20 @@ def extra_chapter(book, chapter):
             f"SELECT verse, position, greek, lemma, strongs, gloss FROM {wtable} "
             "WHERE chapter=? ORDER BY verse, position", (chapter,)
         ).fetchall()
+        # `heading` was added later — only select it if the table has it, so an
+        # older (pre-headings) load still serves cleanly until the next reload.
+        has_heading = vtable in have and any(
+            c["name"] == "heading" for c in conn.execute(f"PRAGMA table_info({vtable})")
+        )
+        vsel = "verse, english, heading" if has_heading else "verse, english"
         vrows = conn.execute(
-            f"SELECT verse, english FROM {vtable} WHERE chapter=? ORDER BY verse",
+            f"SELECT {vsel} FROM {vtable} WHERE chapter=? ORDER BY verse",
             (chapter,)
         ).fetchall() if vtable in have else []
     finally:
         conn.close()
     english = {r["verse"]: r["english"] for r in vrows}
+    headings = {r["verse"]: r["heading"] for r in vrows} if has_heading else {}
     verses: dict[int, list] = {}
     order: list[int] = []
     for r in wrows:
@@ -152,7 +159,7 @@ def extra_chapter(book, chapter):
             "morph":        None,
         })
     return jsonify([
-        {"verse": v, "heading": None, "english": english.get(v, ""), "words": verses[v]}
+        {"verse": v, "heading": headings.get(v), "english": english.get(v, ""), "words": verses[v]}
         for v in order
     ])
 

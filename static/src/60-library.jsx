@@ -936,31 +936,40 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
 
   // Single view: Greek interlinear only (mirrors Bible ABP).
   const renderDidacheVerse = (v) => (
-    <div className="lib-verse-row lib-did-row" key={v.verse}>
-      <span className="lib-vnum">{v.verse}</span>
-      <span className="lib-verse-content lib-verse-chips">{didChips(v)}</span>
-    </div>
+    <React.Fragment key={v.verse}>
+      {v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
+      <div className="lib-verse-row lib-did-row">
+        <span className="lib-vnum">{v.verse}</span>
+        <span className="lib-verse-content lib-verse-chips">{didChips(v)}</span>
+      </div>
+    </React.Fragment>
   );
 
   // Prose view: our readable English as flowing text with verse numbers.
   const renderDidacheProse = () => (
     <div className="lib-text-words lib-prose-flow">
       {didVerses.map(v => (
-        <span className="lib-flow-verse" key={v.verse}>
-          <sup className="lib-flow-vnum">{v.verse}</sup>
-          {(v.english || "") + " "}
-        </span>
+        <React.Fragment key={v.verse}>
+          {v.heading && <div className="pericope-heading">{v.heading}</div>}
+          <span className="lib-flow-verse">
+            <sup className="lib-flow-vnum">{v.verse}</sup>
+            {(v.english || "") + " "}
+          </span>
+        </React.Fragment>
       ))}
     </div>
   );
 
   // Parallel view: Greek interlinear | readable English (same shape as Bible parallel).
   const renderDidacheParallelVerse = (v) => (
-    <div className="lib-parallel-verse" key={v.verse}>
-      <div className="lib-parallel-vnum"><span className="lib-vnum">{v.verse}</span></div>
-      <div className="lib-parallel-col"><span className="lib-verse-chips">{didChips(v)}</span></div>
-      <div className="lib-parallel-col"><p className="lib-did-eng">{v.english}</p></div>
-    </div>
+    <React.Fragment key={v.verse}>
+      {v.heading && <div className="lib-parallel-section-heading"><div className="pericope-heading">{v.heading}</div></div>}
+      <div className="lib-parallel-verse">
+        <div className="lib-parallel-vnum"><span className="lib-vnum">{v.verse}</span></div>
+        <div className="lib-parallel-col"><span className="lib-verse-chips">{didChips(v)}</span></div>
+        <div className="lib-parallel-col"><p className="lib-did-eng">{v.english}</p></div>
+      </div>
+    </React.Fragment>
   );
 
   return (

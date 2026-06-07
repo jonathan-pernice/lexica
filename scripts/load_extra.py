@@ -26,11 +26,12 @@ from pathlib import Path
 BOOK_RE = re.compile(r"^[a-z0-9_]+$")
 
 
-def load(db_path, book, tagged_path, english_path):
+def load(db_path, book, tagged_path, english_path, headings_path=None):
     if not BOOK_RE.match(book):
         sys.exit(f"bad book id '{book}': use lowercase letters/digits/underscore only")
     words = json.loads(Path(tagged_path).read_text(encoding="utf-8"))
     english = json.loads(Path(english_path).read_text(encoding="utf-8"))
+    headings = json.loads(Path(headings_path).read_text(encoding="utf-8")) if headings_path else {}
 
     wtable, vtable = f"{book}_words", f"{book}_verses"
     conn = sqlite3.connect(db_path)
@@ -45,7 +46,7 @@ def load(db_path, book, tagged_path, english_path):
             greek   TEXT, lemma TEXT, strongs TEXT, gloss TEXT
         );
         CREATE TABLE {vtable} (
-            chapter INTEGER, verse INTEGER, english TEXT
+            chapter INTEGER, verse INTEGER, english TEXT, heading TEXT
         );
         CREATE INDEX idx_{wtable}_cv ON {wtable}(chapter, verse);
         CREATE INDEX idx_{vtable}_cv ON {vtable}(chapter, verse);
@@ -60,12 +61,12 @@ def load(db_path, book, tagged_path, english_path):
         wrows.append((ch, vs, pos, w["greek"], w["lemma"], w.get("strongs"), w["gloss"]))
     cur.executemany(f"INSERT INTO {wtable} VALUES (?,?,?,?,?,?,?)", wrows)
 
-    # english per verse
+    # english + optional section heading per verse
     vrows = []
     for ref, text in english.items():
         ch, vs = (int(x) for x in ref.split("."))
-        vrows.append((ch, vs, text))
-    cur.executemany(f"INSERT INTO {vtable} VALUES (?,?,?)", vrows)
+        vrows.append((ch, vs, text, headings.get(ref)))
+    cur.executemany(f"INSERT INTO {vtable} VALUES (?,?,?,?)", vrows)
 
     conn.commit()
     nw = cur.execute(f"SELECT count(*) FROM {wtable}").fetchone()[0]
@@ -76,8 +77,9 @@ def load(db_path, book, tagged_path, english_path):
 
 def main():
     if len(sys.argv) < 5:
-        sys.exit("usage: load_extra.py <db> <book> <tagged.json> <english.json>")
-    load(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        sys.exit("usage: load_extra.py <db> <book> <tagged.json> <english.json> [headings.json]")
+    headings = sys.argv[5] if len(sys.argv) > 5 else None
+    load(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], headings)
 
 
 if __name__ == "__main__":

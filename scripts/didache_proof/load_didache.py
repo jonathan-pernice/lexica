@@ -27,6 +27,7 @@ def main():
         "didache",
         str(HERE / "didache_tagged_full.json"),
         str(HERE / "didache_english.json"),
+        str(HERE / "didache_headings.json"),
     )
 
 
