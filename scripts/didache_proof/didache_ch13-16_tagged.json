@@ -207,7 +207,7 @@
 
   {"ref":"15.2","greek":"μὴ","lemma":"μή","strongs":"G3361","gloss":"not"},
   {"ref":"15.2","greek":"οὖν","lemma":"οὖν","strongs":"G3767","gloss":"therefore"},
-  {"ref":"15.2","greek":"ὑπερίδητε","lemma":"ὑπεροράω","strongs":"G5237","gloss":"despise"},
+  {"ref":"15.2","greek":"ὑπερίδητε","lemma":"ὑπερείδω","strongs":"G5237","gloss":"despise"},
   {"ref":"15.2","greek":"αὐτούς","lemma":"αὐτός","strongs":"G846","gloss":"them"},
   {"ref":"15.2","greek":"αὐτοὶ","lemma":"αὐτός","strongs":"G846","gloss":"they"},
   {"ref":"15.2","greek":"γάρ","lemma":"γάρ","strongs":"G1063","gloss":"for"},
@@ -273,7 +273,7 @@
   {"ref":"15.4","greek":"κυρίου","lemma":"κύριος","strongs":"G2962","gloss":"Lord"},
   {"ref":"15.4","greek":"ἡμῶν","lemma":"ἐγώ","strongs":"G1473","gloss":"our"},
 
-  {"ref":"16.1","greek":"Γρηγορεῖτε","lemma":"γρηγορέω","strongs":"G1127","gloss":"watch"},
+  {"ref":"16.1","greek":"Γρηγορεῖτε","lemma":"γρηγορεύω","strongs":"G1127","gloss":"watch"},
   {"ref":"16.1","greek":"ὑπὲρ","lemma":"ὑπέρ","strongs":"G5228","gloss":"over"},
   {"ref":"16.1","greek":"τῆς","lemma":"ὁ","strongs":"G3588","gloss":"the"},
   {"ref":"16.1","greek":"ζωῆς","lemma":"ζωή","strongs":"G2222","gloss":"life"},
@@ -421,7 +421,7 @@
   {"ref":"16.5","greek":"ὑπ’","lemma":"ὑπό","strongs":"G5259","gloss":"by"},
   {"ref":"16.5","greek":"αὐτοῦ","lemma":"αὐτός","strongs":"G846","gloss":"him"},
   {"ref":"16.5","greek":"τοῦ","lemma":"ὁ","strongs":"G3588","gloss":"the"},
-  {"ref":"16.5","greek":"καταθέματος","lemma":"κατάθεμα","strongs":"G2652","gloss":"accursed"},
+  {"ref":"16.5","greek":"καταθέματος","lemma":"κατανάθεμα","strongs":"G2652","gloss":"accursed"},
 
   {"ref":"16.6","greek":"καὶ","lemma":"καί","strongs":"G2532","gloss":"and"},
   {"ref":"16.6","greek":"τότε","lemma":"τότε","strongs":"G5119","gloss":"then"},
