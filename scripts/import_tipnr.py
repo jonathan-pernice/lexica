@@ -54,10 +54,14 @@ def parse_tipnr(lines):
     """
     Returns:
       lookup    : {lower_name -> {"h": str|None, "g": str|None, "type": str}}
-      tipnr_rows: [(strongs, primary_name, entity_type), ...]
+      tipnr_rows: [(strongs, primary_name, entity_type, entity_types), ...]
+                  entity_type  = single primary type (person>place>other) — legacy
+                  entity_types = full comma-joined SET (e.g. 'person,place'), so a
+                                 strongs shared by a person AND a place keeps BOTH
+                                 (the PK collision fix — backlog #5).
     """
-    lookup     = {}   # lower(name) -> entry dict
-    tipnr_rows = []   # for tipnr table
+    lookup = {}   # lower(name) -> entry dict
+    agg    = {}   # strongs -> {"name": str, "types": set()}  (one entry per strongs)
 
     section = "other"   # current $=== section
     cur     = None      # current main record
@@ -75,7 +79,8 @@ def parse_tipnr(lines):
             if cur["g"] and not e["g"]:
                 e["g"] = cur["g"]
         for s in filter(None, [cur["h"], cur["g"]]):
-            tipnr_rows.append((s, cur["name"], cur["type"]))
+            a = agg.setdefault(s, {"name": cur["name"], "types": set()})
+            a["types"].add(cur["type"])
 
     for line in lines:
         # Section delimiter
@@ -153,6 +158,17 @@ def parse_tipnr(lines):
                     cur["names"].add(alt)
 
     save(cur)
+
+    def _primary(types):
+        for t in ("person", "place", "other"):
+            if t in types:
+                return t
+        return "other"
+
+    tipnr_rows = [
+        (s, a["name"], _primary(a["types"]), ",".join(sorted(a["types"])))
+        for s, a in agg.items()
+    ]
     return lookup, tipnr_rows
 
 
@@ -169,7 +185,9 @@ def main():
     print("Parsing...")
     lookup, tipnr_rows = parse_tipnr(lines)
     print(f"  {len(lookup):,} name entries (incl. alternates)")
-    print(f"  {len(tipnr_rows):,} strongs entries for tipnr table\n")
+    print(f"  {len(tipnr_rows):,} strongs entries for tipnr table")
+    collisions = sum(1 for r in tipnr_rows if "," in (r[3] or ""))
+    print(f"  {collisions:,} strongs are MULTI-type (e.g. person+place) — both now preserved\n")
 
     # Spot-check key names + known problematic ones
     checks = ["Jesus","Israel","Edom","Abraham","Jerusalem","Moses",
@@ -195,14 +213,22 @@ def main():
         print("Creating tipnr table...")
         conn.execute("""
             CREATE TABLE IF NOT EXISTS tipnr (
-                strongs     TEXT PRIMARY KEY,
-                name        TEXT NOT NULL,
-                entity_type TEXT
+                strongs      TEXT PRIMARY KEY,
+                name         TEXT NOT NULL,
+                entity_type  TEXT,
+                entity_types TEXT
             )
         """)
+        # A pre-existing tipnr table won't get entity_types from CREATE IF NOT
+        # EXISTS — add it (mirrors the idempotent _migrate_db ALTER). Backlog #5:
+        # entity_types holds the full type SET so a strongs shared by a person AND
+        # a place (e.g. Adam H121) keeps BOTH; entity_type stays one primary token.
+        tcols = {r[1] for r in conn.execute("PRAGMA table_info(tipnr)").fetchall()}
+        if "entity_types" not in tcols:
+            conn.execute("ALTER TABLE tipnr ADD COLUMN entity_types TEXT")
         conn.execute("DELETE FROM tipnr")
         conn.executemany(
-            "INSERT OR REPLACE INTO tipnr(strongs,name,entity_type) VALUES(?,?,?)",
+            "INSERT OR REPLACE INTO tipnr(strongs,name,entity_type,entity_types) VALUES(?,?,?,?)",
             tipnr_rows,
         )
         conn.commit()
