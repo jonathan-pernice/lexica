@@ -2595,7 +2595,12 @@ function ModesSheet({
     scrollRef
   } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
+  const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly); // English-only: no Greek toggles
   const [otherShown, setOtherShown] = useState(!!activeNonCanon);
+  const gray = proseLocked ? {
+    opacity: 0.35,
+    cursor: "default"
+  } : undefined;
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sheet-scrim",
     onClick: onClose
@@ -2636,7 +2641,9 @@ function ModesSheet({
     className: "mseg text-par"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (translation === "parallel" ? " on" : ""),
-    onClick: toggleParallel
+    disabled: proseLocked,
+    style: gray,
+    onClick: () => !proseLocked && toggleParallel()
   }, "Parallel"))), nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "other-acc"
   }, /*#__PURE__*/React.createElement("button", {
@@ -2674,7 +2681,9 @@ function ModesSheet({
     className: "mtog-sub"
   }, "Tap a word for its lexicon entry")), /*#__PURE__*/React.createElement("button", {
     className: "switch" + (showStrongs ? " on" : ""),
-    onClick: () => setOpt("showStrongs", !showStrongs),
+    disabled: proseLocked,
+    style: gray,
+    onClick: () => !proseLocked && setOpt("showStrongs", !showStrongs),
     "aria-label": "Toggle Strong's",
     "aria-pressed": showStrongs
   })), /*#__PURE__*/React.createElement("div", {
@@ -2687,7 +2696,9 @@ function ModesSheet({
     className: "mtog-sub"
   }, "Stack Greek, transliteration & gloss")), /*#__PURE__*/React.createElement("button", {
     className: "switch" + (showInterlinear ? " on" : ""),
-    onClick: () => setOpt("showInterlinear", !showInterlinear),
+    disabled: proseLocked,
+    style: gray,
+    onClick: () => !proseLocked && setOpt("showInterlinear", !showInterlinear),
     "aria-label": "Toggle Interlinear",
     "aria-pressed": showInterlinear
   })))), /*#__PURE__*/React.createElement("div", {
@@ -2700,11 +2711,13 @@ function ModesSheet({
     className: "mseg"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (chipMode ? " on" : ""),
-    onClick: () => setOpt("viewMode", "chip")
+    disabled: proseLocked,
+    style: gray,
+    onClick: () => !proseLocked && setOpt("viewMode", "chip")
   }, "Chip"), /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (!chipMode ? " on" : ""),
-    disabled: showStrongs || showInterlinear,
-    style: showStrongs || showInterlinear ? {
+    disabled: !proseLocked && (showStrongs || showInterlinear),
+    style: !proseLocked && (showStrongs || showInterlinear) ? {
       opacity: 0.35
     } : undefined,
     onClick: () => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")
@@ -2935,7 +2948,12 @@ function LibraryView({
     ...prev,
     [key]: val
   }));
-  const chipMode = viewMode === "chip" || showStrongs || showInterlinear;
+
+  // English-only non-canonical texts (e.g. 1 Enoch) have no Greek, so the reader is
+  // locked to Prose and the Greek-only toggles (Strong's / Interlinear / Parallel /
+  // Chip) are disabled and grayed out.
+  const proseLocked = !!(nonCanon && nonCanon.englishOnly);
+  const chipMode = !proseLocked && (viewMode === "chip" || showStrongs || showInterlinear);
   const wordMode = chipMode;
   const kjvWordMode = chipMode;
   const POETRY_BOOKS = new Set(["Psa", "Pro", "Job", "Son", "Lam", "Ecc"]);
@@ -3698,13 +3716,28 @@ function LibraryView({
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle" + (showStrongs ? " on" : ""),
-    onClick: () => setOpt("showStrongs", !showStrongs)
+    disabled: proseLocked,
+    style: proseLocked ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    onClick: () => !proseLocked && setOpt("showStrongs", !showStrongs)
   }, "Strong's"), /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle" + (showInterlinear ? " on" : ""),
-    onClick: () => setOpt("showInterlinear", !showInterlinear)
+    disabled: proseLocked,
+    style: proseLocked ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    onClick: () => !proseLocked && setOpt("showInterlinear", !showInterlinear)
   }, "Interlinear"), /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle" + (translation === "parallel" ? " on" : ""),
-    onClick: toggleParallel
+    disabled: proseLocked,
+    style: proseLocked ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    onClick: () => !proseLocked && toggleParallel()
   }, "Parallel"), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
@@ -3712,11 +3745,16 @@ function LibraryView({
     className: "seg"
   }, /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (chipMode ? " on" : ""),
-    onClick: () => setOpt("viewMode", "chip")
+    disabled: proseLocked,
+    style: proseLocked ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    onClick: () => !proseLocked && setOpt("viewMode", "chip")
   }, "Chip"), /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (!chipMode ? " on" : ""),
-    disabled: showStrongs || showInterlinear,
-    style: showStrongs || showInterlinear ? {
+    disabled: !proseLocked && (showStrongs || showInterlinear),
+    style: !proseLocked && (showStrongs || showInterlinear) ? {
       opacity: 0.35,
       cursor: "default"
     } : undefined,
@@ -3815,7 +3853,7 @@ function LibraryView({
     className: "mbar-trans",
     onClick: () => setModesOpen(true),
     "aria-label": "Reading options"
-  }, translation === "parallel" ? "Par" : nonCanon ? "Grk" : translation.toUpperCase())), /*#__PURE__*/React.createElement("div", _extends({
+  }, proseLocked ? "Prose" : translation === "parallel" ? "Par" : nonCanon ? "Grk" : translation.toUpperCase())), /*#__PURE__*/React.createElement("div", _extends({
     className: "lib-reading" + (showInterlinear ? " lib-interlinear-on" : ""),
     style: {
       ...(translation === "parallel" ? {
