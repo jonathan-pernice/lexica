@@ -10,7 +10,7 @@ import re
 
 from flask import Blueprint, jsonify, request
 
-from core import db_ro, _KJV_BOOK_ID
+from core import db_ro, _KJV_BOOK_ID, _FUNCTION_STRONGS
 
 bp = Blueprint("lexicon", __name__)
 
@@ -25,12 +25,20 @@ _GLOSS_FUNC = {
     'up','out','off','over','under',
 }
 
-def _normalize_gloss(raw):
+def _normalize_gloss(raw, keep_leading=False):
     import re
     s = re.sub(r"'s\b", '', re.sub(r'^[^\w]+|[^\w]+$', '', raw.strip()).lower())
     words = s.split()
     if not words:
         return ''
+    if keep_leading:
+        # Function-word Strong's (prepositions, articles, conjunctions): the
+        # meaningful rendering IS the leading function token. ABP often glosses
+        # the token as a phrase ("in blessing", "by means"); the default rule
+        # below would strip the preposition and surface the trailing noun,
+        # producing a long count-1 noise tail. Keep the leading word instead so
+        # "in blessing" -> "in" and folds into the real count.
+        return words[0]
     while len(words) > 1 and words[0] in _GLOSS_FUNC:
         words.pop(0)
     while len(words) > 1 and words[-1] in _GLOSS_FUNC:
@@ -327,11 +335,15 @@ def lexicon_profile(strongs):
             gloss_rows += _abp_gloss_rows()
         if corpus in ("kjv", "all"):
             gloss_rows += _kjv_gloss_rows()
+        # Function-word Strong's (ἐν, the article, conjunctions…): keep the
+        # leading token so phrase-glosses like "in blessing" fold into "in"
+        # instead of leaking the trailing noun into a count-1 noise tail.
+        is_func = (not is_heb) and snum in _FUNCTION_STRONGS
         norm_counts = {}
         for r in gloss_rows:
             if not r["gloss"] or r["gloss"] in ("*", ""):
                 continue
-            key = _normalize_gloss(r["gloss"])
+            key = _normalize_gloss(r["gloss"], keep_leading=is_func)
             if key:
                 norm_counts[key] = norm_counts.get(key, 0) + r["cnt"]
         glosses = [{"gloss": g, "count": c} for g, c in sorted(norm_counts.items(), key=lambda x: -x[1])]
