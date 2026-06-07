@@ -307,6 +307,17 @@ the real rebuild. The build also makes its own `bible.db.bak`. Keep a dated roll
    genitive split "of God living" → move "God" onto the θεός chip). Pinned to exact
    verse+position+value, so safe to re-run. Verify with
    `scan_content_filler_tags.py bible.db` (G2316 → 0 rows).
+   Then `fix_split_merges bible.db --apply` — repairs ~237 reorder-MERGE garbles
+   where two source words got crammed on one chip and the verb's chip left blank
+   ("I see magistrates" with ὁράω/G3708 empty → "I see"|"magistrates"; "they know
+   not" → verb freed). Applies the VETTED list in scripts/split_merge_fixes.json,
+   each pinned to verse+position+strongs+english (safe to re-run). WHY a data-patch
+   not a build fix: the splitter assigns English by lexicon-text match, too leaky to
+   fix this class globally without regressing ~85 verses (article/copula). The fix
+   logic exists in _split_compounds behind `carry=` (DEFAULT False — a rebuild is
+   unchanged); only scripts/_gen_split_candidates.py runs it with carry=True to
+   REGENERATE the json (then keeps only provably-clean results). Regenerate the json
+   after a rebuild, then apply.
 5. Gap-fixers (clear the standard post-rebuild health warnings; `--dry-run` first):
    `dedup_words` (exact-dup rows) → `fix_greek_pos_gaps` (bracketed NULL greek_pos).
 6. Invariant (MUST be 0): `SELECT count(*) FROM words WHERE strongs_base GLOB '[0-9]*'`

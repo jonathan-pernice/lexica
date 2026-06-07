@@ -1,0 +1,4308 @@
+{
+ "Gen 9:27": [
+  {
+   "sbase": "2316",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "May God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "4115",
+   "old_pos": 0,
+   "old_eng": "May God widen",
+   "new_pos": 2,
+   "new_eng": "widen",
+   "new_head": "widen"
+  }
+ ],
+ "Gen 15:2": [
+  {
+   "sbase": "1325",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "will you give",
+   "new_head": "give"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 6,
+   "old_eng": "will you give to me,",
+   "new_pos": 7,
+   "new_eng": "to me,",
+   "new_head": "me"
+  }
+ ],
+ "Gen 16:5": [
+  {
+   "sbase": "2316",
+   "old_pos": 28,
+   "old_eng": null,
+   "new_pos": 26,
+   "new_eng": "May God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "2919",
+   "old_pos": 26,
+   "old_eng": "May God judge",
+   "new_pos": 28,
+   "new_eng": "judge",
+   "new_head": "judge"
+  }
+ ],
+ "Gen 18:12": [
+  {
+   "sbase": "1096",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "has it",
+   "new_head": "has"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 8,
+   "old_eng": "has it happened to me",
+   "new_pos": 9,
+   "new_eng": "happened to me",
+   "new_head": "me"
+  }
+ ],
+ "Gen 23:15": [
+  {
+   "sbase": "3778",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "may this",
+   "new_head": "may"
+  },
+  {
+   "sbase": "1510",
+   "old_pos": 10,
+   "old_eng": "may this be",
+   "new_pos": 11,
+   "new_eng": "be",
+   "new_head": null
+  }
+ ],
+ "Gen 25:30": [
+  {
+   "sbase": "3165",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "Let me",
+   "new_head": "me"
+  },
+  {
+   "sbase": "1089",
+   "old_pos": 5,
+   "old_eng": "Let me taste",
+   "new_pos": 6,
+   "new_eng": "taste",
+   "new_head": "taste"
+  }
+ ],
+ "Gen 25:34": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "2384",
+   "old_pos": 0,
+   "old_eng": "And Jacob",
+   "new_pos": 1,
+   "new_eng": "Jacob",
+   "new_head": "jacob"
+  }
+ ],
+ "Gen 28:22": [
+  {
+   "sbase": "1325",
+   "old_pos": 16,
+   "old_eng": null,
+   "new_pos": 15,
+   "new_eng": "you should give",
+   "new_head": "give"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 15,
+   "old_eng": "you should give to me,",
+   "new_pos": 16,
+   "new_eng": "to me,",
+   "new_head": "me"
+  }
+ ],
+ "Gen 30:36": [
+  {
+   "sbase": "1161",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "2384",
+   "old_pos": 10,
+   "old_eng": "And Jacob",
+   "new_pos": 11,
+   "new_eng": "Jacob",
+   "new_head": "jacob"
+  }
+ ],
+ "Gen 31:25": [
+  {
+   "sbase": "1161",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "2384",
+   "old_pos": 5,
+   "old_eng": "And Jacob",
+   "new_pos": 6,
+   "new_eng": "Jacob",
+   "new_head": "jacob"
+  }
+ ],
+ "Gen 31:49": [
+  {
+   "sbase": "2316",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "Let God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "1896",
+   "old_pos": 5,
+   "old_eng": "Let God look",
+   "new_pos": 7,
+   "new_eng": "look",
+   "new_head": "look"
+  }
+ ],
+ "Gen 34:5": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "2384",
+   "old_pos": 0,
+   "old_eng": "And Jacob",
+   "new_pos": 1,
+   "new_eng": "Jacob",
+   "new_head": "jacob"
+  }
+ ],
+ "Gen 38:16": [
+  {
+   "sbase": "1325",
+   "old_pos": 26,
+   "old_eng": null,
+   "new_pos": 25,
+   "new_eng": "will you give",
+   "new_head": "give"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 25,
+   "old_eng": "will you give to me,",
+   "new_pos": 26,
+   "new_eng": "to me,",
+   "new_head": "me"
+  }
+ ],
+ "Gen 41:24": [
+  {
+   "sbase": "3427",
+   "old_pos": 27,
+   "old_eng": null,
+   "new_pos": 26,
+   "new_eng": "it to",
+   "new_head": null
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 26,
+   "old_eng": "it to me.",
+   "new_pos": 27,
+   "new_eng": "me.",
+   "new_head": "me"
+  }
+ ],
+ "Gen 42:18": [
+  {
+   "sbase": "4160",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "You do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3778",
+   "old_pos": 7,
+   "old_eng": "You do this",
+   "new_pos": 8,
+   "new_eng": "this",
+   "new_head": null
+  }
+ ],
+ "Exo 4:23": [
+  {
+   "sbase": "3000",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "they should serve",
+   "new_head": "serve"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 8,
+   "old_eng": "they should serve me.",
+   "new_pos": 9,
+   "new_eng": "me.",
+   "new_head": "me"
+  }
+ ],
+ "Exo 8:1": [
+  {
+   "sbase": "3000",
+   "old_pos": 21,
+   "old_eng": null,
+   "new_pos": 20,
+   "new_eng": "they may serve",
+   "new_head": "serve"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 20,
+   "old_eng": "they may serve me!",
+   "new_pos": 21,
+   "new_eng": "me!",
+   "new_head": "me"
+  }
+ ],
+ "Exo 8:20": [
+  {
+   "sbase": "3000",
+   "old_pos": 31,
+   "old_eng": null,
+   "new_pos": 30,
+   "new_eng": "they shall serve",
+   "new_head": "serve"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 30,
+   "old_eng": "they shall serve me",
+   "new_pos": 31,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Exo 10:7": [
+  {
+   "sbase": "3778",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "will this",
+   "new_head": "will"
+  },
+  {
+   "sbase": "1510",
+   "old_pos": 9,
+   "old_eng": "will this be",
+   "new_pos": 10,
+   "new_eng": "be",
+   "new_head": null
+  }
+ ],
+ "Lev 4:2": [
+  {
+   "sbase": "1163",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "he must",
+   "new_head": "must"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 16,
+   "old_eng": "he must not",
+   "new_pos": 17,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Lev 11:22": [
+  {
+   "sbase": "2068",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "you shall eat",
+   "new_head": "eat"
+  },
+  {
+   "sbase": "3778",
+   "old_pos": 1,
+   "old_eng": "you shall eat these",
+   "new_pos": 2,
+   "new_eng": "these",
+   "new_head": null
+  }
+ ],
+ "Num 21:2": [
+  {
+   "sbase": "3860",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "you should deliver",
+   "new_head": "deliver"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 8,
+   "old_eng": "you should deliver up to me",
+   "new_pos": 9,
+   "new_eng": "up to me",
+   "new_head": "me"
+  }
+ ],
+ "Num 23:3": [
+  {
+   "sbase": "1166",
+   "old_pos": 24,
+   "old_eng": null,
+   "new_pos": 23,
+   "new_eng": "he shall show",
+   "new_head": "show"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 23,
+   "old_eng": "he shall show to me",
+   "new_pos": 24,
+   "new_eng": "to me",
+   "new_head": "me"
+  }
+ ],
+ "Num 32:27": [
+  {
+   "sbase": "3956",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "shall all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "3928",
+   "old_pos": 4,
+   "old_eng": "shall all go over,",
+   "new_pos": 5,
+   "new_eng": "go over,",
+   "new_head": "go"
+  }
+ ],
+ "Deu 29:20": [
+  {
+   "sbase": "2316",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "should God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "2309",
+   "old_pos": 2,
+   "old_eng": "should God want",
+   "new_pos": 4,
+   "new_eng": "want",
+   "new_head": "want"
+  }
+ ],
+ "Deu 30:12": [
+  {
+   "sbase": "2254",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "it to",
+   "new_head": null
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 14,
+   "old_eng": "it to us,",
+   "new_pos": 15,
+   "new_eng": "us,",
+   "new_head": "us"
+  }
+ ],
+ "Jos 2:4": [
+  {
+   "sbase": "1492",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "I know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 19,
+   "old_eng": "I know not",
+   "new_pos": 20,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Jos 2:18": [
+  {
+   "sbase": "2248",
+   "old_pos": 23,
+   "old_eng": null,
+   "new_pos": 22,
+   "new_eng": "you let us",
+   "new_head": "us"
+  },
+  {
+   "sbase": "2601",
+   "old_pos": 22,
+   "old_eng": "you let us down",
+   "new_pos": 23,
+   "new_eng": "down",
+   "new_head": "down"
+  }
+ ],
+ "Jos 9:1": [
+  {
+   "sbase": "3956",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "they all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "191",
+   "old_pos": 2,
+   "old_eng": "they all heard",
+   "new_pos": 3,
+   "new_eng": "heard",
+   "new_head": "heard"
+  }
+ ],
+ "Jos 24:16": [
+  {
+   "sbase": "1096",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 5,
+   "old_eng": "May it not be",
+   "new_pos": 6,
+   "new_eng": "not be",
+   "new_head": null
+  }
+ ],
+ "Jdg 11:7": [
+  {
+   "sbase": "5210",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "Did you",
+   "new_head": "did"
+  },
+  {
+   "sbase": "3780",
+   "old_pos": 6,
+   "old_eng": "Did you not",
+   "new_pos": 7,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Jdg 14:16": [
+  {
+   "sbase": "3427",
+   "old_pos": 30,
+   "old_eng": null,
+   "new_pos": 29,
+   "new_eng": "it to",
+   "new_head": null
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 29,
+   "old_eng": "it to me.",
+   "new_pos": 30,
+   "new_eng": "me.",
+   "new_head": "me"
+  }
+ ],
+ "Jdg 18:24": [
+  {
+   "sbase": "3004",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "you say",
+   "new_head": "say"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 19,
+   "old_eng": "you say to me,",
+   "new_pos": 20,
+   "new_eng": "to me,",
+   "new_head": "me"
+  }
+ ],
+ "1Sa 12:23": [
+  {
+   "sbase": "1096",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "may it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 2,
+   "old_eng": "may it not be",
+   "new_pos": 3,
+   "new_eng": "not be",
+   "new_head": null
+  }
+ ],
+ "1Sa 16:7": [
+  {
+   "sbase": "2316",
+   "old_pos": 28,
+   "old_eng": null,
+   "new_pos": 26,
+   "new_eng": "shall God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "3708",
+   "old_pos": 26,
+   "old_eng": "shall God see.",
+   "new_pos": 28,
+   "new_eng": "see.",
+   "new_head": "see"
+  }
+ ],
+ "1Sa 22:11": [
+  {
+   "sbase": "3956",
+   "old_pos": 25,
+   "old_eng": null,
+   "new_pos": 24,
+   "new_eng": "they all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "3854",
+   "old_pos": 24,
+   "old_eng": "they all came",
+   "new_pos": 25,
+   "new_eng": "came",
+   "new_head": "came"
+  }
+ ],
+ "1Sa 28:13": [
+  {
+   "sbase": "3708",
+   "old_pos": 16,
+   "old_eng": null,
+   "new_pos": 15,
+   "new_eng": "I see",
+   "new_head": "see"
+  },
+  {
+   "sbase": "2316",
+   "old_pos": 15,
+   "old_eng": "I see magistrates",
+   "new_pos": 16,
+   "new_eng": "magistrates",
+   "new_head": "magistrates"
+  }
+ ],
+ "2Sa 3:9": [
+  {
+   "sbase": "2316",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "may God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "4160",
+   "old_pos": 1,
+   "old_eng": "may God do",
+   "new_pos": 3,
+   "new_eng": "do",
+   "new_head": "do"
+  }
+ ],
+ "2Sa 13:25": [
+  {
+   "sbase": "3956",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "should we all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "4198",
+   "old_pos": 11,
+   "old_eng": "should we all go",
+   "new_pos": 12,
+   "new_eng": "go",
+   "new_head": "go"
+  }
+ ],
+ "2Sa 19:29": [
+  {
+   "sbase": "2089",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "do you still",
+   "new_head": "do"
+  },
+  {
+   "sbase": "2980",
+   "old_pos": 6,
+   "old_eng": "do you still speak",
+   "new_pos": 7,
+   "new_eng": "speak",
+   "new_head": "speak"
+  }
+ ],
+ "2Sa 20:20": [
+  {
+   "sbase": "1096",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 5,
+   "old_eng": "May it not be to me",
+   "new_pos": 7,
+   "new_eng": "not be to me",
+   "new_head": "me"
+  }
+ ],
+ "1Ki 15:29": [
+  {
+   "sbase": "5275",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "he left",
+   "new_head": "left"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 10,
+   "old_eng": "he left not",
+   "new_pos": 11,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "2Ki 10:4": [
+  {
+   "sbase": "2249",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "shall we",
+   "new_head": "shall"
+  },
+  {
+   "sbase": "2476",
+   "old_pos": 16,
+   "old_eng": "shall we stand?",
+   "new_pos": 17,
+   "new_eng": "stand?",
+   "new_head": "stand"
+  }
+ ],
+ "2Ki 10:19": [
+  {
+   "sbase": "3361",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "Let not",
+   "new_head": "let"
+  },
+  {
+   "sbase": "435",
+   "old_pos": 19,
+   "old_eng": "Let not a man",
+   "new_pos": 20,
+   "new_eng": "a man",
+   "new_head": "man"
+  }
+ ],
+ "2Ki 13:12": [
+  {
+   "sbase": "3778",
+   "old_pos": 21,
+   "old_eng": null,
+   "new_pos": 20,
+   "new_eng": "have these",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3780",
+   "old_pos": 20,
+   "old_eng": "have these not",
+   "new_pos": 21,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "2Ki 17:26": [
+  {
+   "sbase": "1097",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "they know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 16,
+   "old_eng": "they know not",
+   "new_pos": 17,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "1Ch 21:17": [
+  {
+   "sbase": "1473",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "Did I",
+   "new_head": "did"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 6,
+   "old_eng": "Did I not",
+   "new_pos": 7,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Neh 5:12": [
+  {
+   "sbase": "4160",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "we shall do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3779",
+   "old_pos": 8,
+   "old_eng": "we shall do thus",
+   "new_pos": 9,
+   "new_eng": "thus",
+   "new_head": null
+  }
+ ],
+ "Est 6:10": [
+  {
+   "sbase": "4160",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "you do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3779",
+   "old_pos": 8,
+   "old_eng": "you do thus",
+   "new_pos": 9,
+   "new_eng": "thus",
+   "new_head": null
+  }
+ ],
+ "Est 9:12": [
+  {
+   "sbase": "2089",
+   "old_pos": 26,
+   "old_eng": null,
+   "new_pos": 25,
+   "new_eng": "do you still",
+   "new_head": "do"
+  },
+  {
+   "sbase": "515",
+   "old_pos": 25,
+   "old_eng": "do you still petition,",
+   "new_pos": 26,
+   "new_eng": "petition,",
+   "new_head": "petition"
+  }
+ ],
+ "Job 6:26": [
+  {
+   "sbase": "5216",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "will your",
+   "new_head": "will"
+  },
+  {
+   "sbase": "1650",
+   "old_pos": 2,
+   "old_eng": "will your reproof",
+   "new_pos": 3,
+   "new_eng": "reproof",
+   "new_head": "reproof"
+  }
+ ],
+ "Job 7:19": [
+  {
+   "sbase": "3165",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "let me",
+   "new_head": "me"
+  },
+  {
+   "sbase": "4290",
+   "old_pos": 6,
+   "old_eng": "let me go,",
+   "new_pos": 7,
+   "new_eng": "go,",
+   "new_head": "go"
+  }
+ ],
+ "Job 8:10": [
+  {
+   "sbase": "3778",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "shall these",
+   "new_head": "shall"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 1,
+   "old_eng": "shall these not",
+   "new_pos": 2,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Job 9:15": [
+  {
+   "sbase": "1522",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "shall he listen",
+   "new_head": "listen"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 5,
+   "old_eng": "shall he listen not to",
+   "new_pos": 6,
+   "new_eng": "not to",
+   "new_head": null
+  }
+ ],
+ "Job 10:11": [
+  {
+   "sbase": "1746",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "you put",
+   "new_head": "put"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 3,
+   "old_eng": "you put on me,",
+   "new_pos": 4,
+   "new_eng": "on me,",
+   "new_head": "me"
+  }
+ ],
+ "Job 10:18": [
+  {
+   "sbase": "1806",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "did you lead",
+   "new_head": "lead"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 4,
+   "old_eng": "did you lead me out,",
+   "new_pos": 5,
+   "new_eng": "me out,",
+   "new_head": "me"
+  }
+ ],
+ "Job 13:20": [
+  {
+   "sbase": "5530",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "you shall furnish",
+   "new_head": "furnish"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 2,
+   "old_eng": "you shall furnish to me,",
+   "new_pos": 3,
+   "new_eng": "to me,",
+   "new_head": "me"
+  }
+ ],
+ "Job 19:22": [
+  {
+   "sbase": "1377",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "do you pursue",
+   "new_head": "pursue"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 2,
+   "old_eng": "do you pursue me",
+   "new_pos": 3,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Job 29:2": [
+  {
+   "sbase": "5087",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "he might have put",
+   "new_head": "put"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 2,
+   "old_eng": "he might have put me",
+   "new_pos": 3,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Job 31:30": [
+  {
+   "sbase": "686",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "may I then",
+   "new_head": "may"
+  },
+  {
+   "sbase": "2362",
+   "old_pos": 9,
+   "old_eng": "may I then be a common topic",
+   "new_pos": 10,
+   "new_eng": "be a common topic",
+   "new_head": "topic"
+  }
+ ],
+ "Psa 42:9": [
+  {
+   "sbase": "1950",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "you forget",
+   "new_head": "forget"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 7,
+   "old_eng": "you forget me?",
+   "new_pos": 8,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Psa 68:1": [
+  {
+   "sbase": "2316",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "Let God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "450",
+   "old_pos": 0,
+   "old_eng": "Let God arise,",
+   "new_pos": 2,
+   "new_eng": "arise,",
+   "new_head": "arise"
+  }
+ ],
+ "Psa 102:18": [
+  {
+   "sbase": "3778",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "Let this",
+   "new_head": "let"
+  },
+  {
+   "sbase": "1125",
+   "old_pos": 0,
+   "old_eng": "Let this be written",
+   "new_pos": 1,
+   "new_eng": "be written",
+   "new_head": "written"
+  }
+ ],
+ "Psa 107:32": [
+  {
+   "sbase": "846",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "Let them",
+   "new_head": "them"
+  },
+  {
+   "sbase": "5312",
+   "old_pos": 0,
+   "old_eng": "Let them exalt him",
+   "new_pos": 1,
+   "new_eng": "exalt him",
+   "new_head": "him"
+  }
+ ],
+ "Psa 119:25": [
+  {
+   "sbase": "3165",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "let me",
+   "new_head": "me"
+  },
+  {
+   "sbase": "2198",
+   "old_pos": 6,
+   "old_eng": "let me live",
+   "new_pos": 7,
+   "new_eng": "live",
+   "new_head": "live"
+  }
+ ],
+ "Psa 141:5": [
+  {
+   "sbase": "3450",
+   "old_pos": 21,
+   "old_eng": null,
+   "new_pos": 20,
+   "new_eng": "shall my",
+   "new_head": "shall"
+  },
+  {
+   "sbase": "4335",
+   "old_pos": 20,
+   "old_eng": "shall my prayer",
+   "new_pos": 21,
+   "new_eng": "prayer",
+   "new_head": "prayer"
+  }
+ ],
+ "Pro 19:3": [
+  {
+   "sbase": "846",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "in",
+   "new_head": null
+  },
+  {
+   "sbase": "2588",
+   "old_pos": 11,
+   "old_eng": "in his heart.",
+   "new_pos": 12,
+   "new_eng": "his heart.",
+   "new_head": "heart"
+  }
+ ],
+ "Pro 19:23": [
+  {
+   "sbase": "1519",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "of",
+   "new_head": null
+  },
+  {
+   "sbase": "2962",
+   "old_pos": 1,
+   "old_eng": "of the LORD",
+   "new_pos": 2,
+   "new_eng": "the LORD",
+   "new_head": "LORD"
+  }
+ ],
+ "Pro 20:22": [
+  {
+   "sbase": "997",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "he should help",
+   "new_head": "help"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 10,
+   "old_eng": "he should help you.",
+   "new_pos": 11,
+   "new_eng": "you.",
+   "new_head": null
+  }
+ ],
+ "Pro 24:34": [
+  {
+   "sbase": "4160",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "you should do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3778",
+   "old_pos": 2,
+   "old_eng": "you should do this,",
+   "new_pos": 3,
+   "new_eng": "this,",
+   "new_head": null
+  }
+ ],
+ "Isa 7:19": [
+  {
+   "sbase": "3956",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "they shall all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "373",
+   "old_pos": 3,
+   "old_eng": "they shall all rest",
+   "new_pos": 4,
+   "new_eng": "rest",
+   "new_head": "rest"
+  }
+ ],
+ "Isa 13:22": [
+  {
+   "sbase": "2730",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "shall dwell",
+   "new_head": "dwell"
+  },
+  {
+   "sbase": "1563",
+   "old_pos": 2,
+   "old_eng": "shall dwell there,",
+   "new_pos": 3,
+   "new_eng": "there,",
+   "new_head": "there"
+  }
+ ],
+ "Isa 31:8": [
+  {
+   "sbase": "3756",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "he will not",
+   "new_head": "will"
+  },
+  {
+   "sbase": "5343",
+   "old_pos": 12,
+   "old_eng": "he will not flee",
+   "new_pos": 13,
+   "new_eng": "flee",
+   "new_head": "flee"
+  }
+ ],
+ "Isa 40:25": [
+  {
+   "sbase": "3666",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "did you liken",
+   "new_head": "liken"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 3,
+   "old_eng": "did you liken me",
+   "new_pos": 4,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Isa 46:5": [
+  {
+   "sbase": "3666",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "do you liken",
+   "new_head": "liken"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 1,
+   "old_eng": "do you liken me?",
+   "new_pos": 2,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Isa 48:20": [
+  {
+   "sbase": "3778",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "let this",
+   "new_head": "let"
+  },
+  {
+   "sbase": "1096",
+   "old_pos": 12,
+   "old_eng": "let this be made known!",
+   "new_pos": 13,
+   "new_eng": "be made known!",
+   "new_head": "known"
+  }
+ ],
+ "Isa 54:2": [
+  {
+   "sbase": "5339",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "You should spare",
+   "new_head": "spare"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 13,
+   "old_eng": "You should spare not.",
+   "new_pos": 14,
+   "new_eng": "not.",
+   "new_head": null
+  }
+ ],
+ "Isa 56:10": [
+  {
+   "sbase": "3956",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "they all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "1626",
+   "old_pos": 2,
+   "old_eng": "they all have been blinded!",
+   "new_pos": 3,
+   "new_eng": "have been blinded!",
+   "new_head": "blinded"
+  }
+ ],
+ "Jer 3:4": [
+  {
+   "sbase": "2564",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "you called",
+   "new_head": "called"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 3,
+   "old_eng": "you called me",
+   "new_pos": 4,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Jer 17:18": [
+  {
+   "sbase": "846",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "May they",
+   "new_head": "may"
+  },
+  {
+   "sbase": "4422",
+   "old_pos": 8,
+   "old_eng": "May they be terrified,",
+   "new_pos": 9,
+   "new_eng": "be terrified,",
+   "new_head": "terrified"
+  }
+ ],
+ "Jer 34:18": [
+  {
+   "sbase": "2596",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "they",
+   "new_head": null
+  },
+  {
+   "sbase": "4160",
+   "old_pos": 16,
+   "old_eng": "they made",
+   "new_pos": 17,
+   "new_eng": "made",
+   "new_head": "made"
+  }
+ ],
+ "Jer 36:19": [
+  {
+   "sbase": "3361",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "Let not",
+   "new_head": "let"
+  },
+  {
+   "sbase": "444",
+   "old_pos": 12,
+   "old_eng": "Let not a man",
+   "new_pos": 13,
+   "new_eng": "a man",
+   "new_head": "man"
+  }
+ ],
+ "Jer 36:22": [
+  {
+   "sbase": "2596",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "of",
+   "new_head": null
+  },
+  {
+   "sbase": "4442",
+   "old_pos": 12,
+   "old_eng": "of fire",
+   "new_pos": 13,
+   "new_eng": "fire",
+   "new_head": "fire"
+  }
+ ],
+ "Jer 37:20": [
+  {
+   "sbase": "2596",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "for",
+   "new_head": null
+  },
+  {
+   "sbase": "3450",
+   "old_pos": 9,
+   "old_eng": "for me",
+   "new_pos": 10,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Eze 20:9": [
+  {
+   "sbase": "3361",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "should not",
+   "new_head": "should"
+  },
+  {
+   "sbase": "3892",
+   "old_pos": 7,
+   "old_eng": "should not be thoroughly",
+   "new_pos": 8,
+   "new_eng": "be thoroughly",
+   "new_head": "thoroughly"
+  }
+ ],
+ "Eze 20:14": [
+  {
+   "sbase": "3361",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "should not",
+   "new_head": "should"
+  },
+  {
+   "sbase": "3892",
+   "old_pos": 7,
+   "old_eng": "should not be thoroughly",
+   "new_pos": 8,
+   "new_eng": "be thoroughly",
+   "new_head": "thoroughly"
+  }
+ ],
+ "Eze 23:47": [
+  {
+   "sbase": "846",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "let them",
+   "new_head": "them"
+  },
+  {
+   "sbase": "2621",
+   "old_pos": 5,
+   "old_eng": "let them pierce them through",
+   "new_pos": 6,
+   "new_eng": "pierce them through",
+   "new_head": "them"
+  }
+ ],
+ "Eze 30:11": [
+  {
+   "sbase": "3956",
+   "old_pos": 16,
+   "old_eng": null,
+   "new_pos": 15,
+   "new_eng": "they shall all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "1573",
+   "old_pos": 15,
+   "old_eng": "they shall all empty out",
+   "new_pos": 16,
+   "new_eng": "empty out",
+   "new_head": "empty"
+  }
+ ],
+ "Eze 34:4": [
+  {
+   "sbase": "1765",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "you strengthen",
+   "new_head": "strengthen"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 2,
+   "old_eng": "you strengthen not,",
+   "new_pos": 3,
+   "new_eng": "not,",
+   "new_head": null
+  }
+ ],
+ "Eze 39:23": [
+  {
+   "sbase": "3956",
+   "old_pos": 34,
+   "old_eng": null,
+   "new_pos": 33,
+   "new_eng": "they all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "4098",
+   "old_pos": 33,
+   "old_eng": "they all fell",
+   "new_pos": 34,
+   "new_eng": "fell",
+   "new_head": "fell"
+  }
+ ],
+ "Dan 3:12": [
+  {
+   "sbase": "3000",
+   "old_pos": 28,
+   "old_eng": null,
+   "new_pos": 27,
+   "new_eng": "they serve",
+   "new_head": "serve"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 27,
+   "old_eng": "they serve not,",
+   "new_pos": 28,
+   "new_eng": "not,",
+   "new_head": null
+  }
+ ],
+ "Dan 3:14": [
+  {
+   "sbase": "3000",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "you serve",
+   "new_head": "serve"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 14,
+   "old_eng": "you serve not,",
+   "new_pos": 15,
+   "new_eng": "not,",
+   "new_head": null
+  }
+ ],
+ "Hos 3:1": [
+  {
+   "sbase": "4198",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "You go",
+   "new_head": "go"
+  },
+  {
+   "sbase": "2089",
+   "old_pos": 5,
+   "old_eng": "You go again",
+   "new_pos": 6,
+   "new_eng": "again",
+   "new_head": null
+  }
+ ],
+ "Zec 4:13": [
+  {
+   "sbase": "1492",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "Do you know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 5,
+   "old_eng": "Do you know not",
+   "new_pos": 6,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Zec 7:6": [
+  {
+   "sbase": "5210",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "do you",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 5,
+   "old_eng": "do you not",
+   "new_pos": 6,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "1Co 1:24": [
+  {
+   "sbase": "5037",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "both",
+   "new_head": "both"
+  },
+  {
+   "sbase": "2455",
+   "old_pos": 4,
+   "old_eng": "both Jews",
+   "new_pos": 5,
+   "new_eng": "Jews",
+   "new_head": "jews"
+  }
+ ],
+ "1Co 16:5": [
+  {
+   "sbase": "1063",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "for",
+   "new_head": null
+  },
+  {
+   "sbase": "3109",
+   "old_pos": 7,
+   "old_eng": "for Macedonia",
+   "new_pos": 8,
+   "new_eng": "Macedonia",
+   "new_head": "macedonia"
+  }
+ ],
+ "1Co 16:6": [
+  {
+   "sbase": "4311",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "should send",
+   "new_head": "send"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 10,
+   "old_eng": "should send me forward",
+   "new_pos": 11,
+   "new_eng": "me forward",
+   "new_head": "forward"
+  }
+ ],
+ "1Jn 5:2": [
+  {
+   "sbase": "25",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "we love",
+   "new_head": "love"
+  },
+  {
+   "sbase": "2316",
+   "old_pos": 11,
+   "old_eng": "we love God,",
+   "new_pos": 12,
+   "new_eng": "God,",
+   "new_head": "God"
+  }
+ ],
+ "1Th 5:23": [
+  {
+   "sbase": "5216",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "may your",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3648",
+   "old_pos": 10,
+   "old_eng": "may your entire",
+   "new_pos": 11,
+   "new_eng": "entire",
+   "new_head": "entire"
+  }
+ ],
+ "1Ti 5:13": [
+  {
+   "sbase": "1163",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "they must",
+   "new_head": "must"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 19,
+   "old_eng": "they must not.",
+   "new_pos": 20,
+   "new_eng": "not.",
+   "new_head": null
+  }
+ ],
+ "2Co 2:10": [
+  {
+   "sbase": "5483",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "you grant",
+   "new_head": "grant"
+  },
+  {
+   "sbase": "5100",
+   "old_pos": 2,
+   "old_eng": "you grant favor in anything,",
+   "new_pos": 3,
+   "new_eng": "favor in anything,",
+   "new_head": "anything"
+  }
+ ],
+ "2Co 5:15": [
+  {
+   "sbase": "2198",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "should live",
+   "new_head": "live"
+  },
+  {
+   "sbase": "1438",
+   "old_pos": 8,
+   "old_eng": "should live to themselves,",
+   "new_pos": 9,
+   "new_eng": "to themselves,",
+   "new_head": "themselves"
+  }
+ ],
+ "2Co 12:7": [
+  {
+   "sbase": "2852",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "he should buffet",
+   "new_head": "buffet"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 16,
+   "old_eng": "he should buffet me,",
+   "new_pos": 17,
+   "new_eng": "me,",
+   "new_head": "me"
+  }
+ ],
+ "2Th 3:9": [
+  {
+   "sbase": "2192",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "we do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 2,
+   "old_eng": "we do not have",
+   "new_pos": 3,
+   "new_eng": "not have",
+   "new_head": "have"
+  }
+ ],
+ "2Ti 4:10": [
+  {
+   "sbase": "1063",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "for",
+   "new_head": null
+  },
+  {
+   "sbase": "1214",
+   "old_pos": 0,
+   "old_eng": "for Demas",
+   "new_pos": 1,
+   "new_eng": "Demas",
+   "new_head": "demas"
+  }
+ ],
+ "2Ti 4:12": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "5190",
+   "old_pos": 0,
+   "old_eng": "And Tychicus",
+   "new_pos": 1,
+   "new_eng": "Tychicus",
+   "new_head": "tychicus"
+  }
+ ],
+ "Act 2:38": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "4074",
+   "old_pos": 0,
+   "old_eng": "And Peter",
+   "new_pos": 1,
+   "new_eng": "Peter",
+   "new_head": "peter"
+  }
+ ],
+ "Act 2:39": [
+  {
+   "sbase": "4341",
+   "old_pos": 16,
+   "old_eng": null,
+   "new_pos": 15,
+   "new_eng": "should call",
+   "new_head": "call"
+  },
+  {
+   "sbase": "302",
+   "old_pos": 15,
+   "old_eng": "should call on",
+   "new_pos": 16,
+   "new_eng": "on",
+   "new_head": null
+  }
+ ],
+ "Act 4:27": [
+  {
+   "sbase": "5037",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "both",
+   "new_head": "both"
+  },
+  {
+   "sbase": "2264",
+   "old_pos": 12,
+   "old_eng": "both Herod",
+   "new_pos": 13,
+   "new_eng": "Herod",
+   "new_head": "herod"
+  }
+ ],
+ "Act 4:36": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "2500",
+   "old_pos": 0,
+   "old_eng": "And Joses,",
+   "new_pos": 1,
+   "new_eng": "Joses,",
+   "new_head": "joses"
+  }
+ ],
+ "Act 6:8": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "4736",
+   "old_pos": 0,
+   "old_eng": "And Stephen,",
+   "new_pos": 1,
+   "new_eng": "Stephen,",
+   "new_head": "stephen"
+  }
+ ],
+ "Act 7:3": [
+  {
+   "sbase": "4671",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "to",
+   "new_head": null
+  },
+  {
+   "sbase": "1166",
+   "old_pos": 21,
+   "old_eng": null,
+   "new_pos": 20,
+   "new_eng": "I show",
+   "new_head": "show"
+  },
+  {
+   "sbase": "302",
+   "old_pos": 19,
+   "old_eng": "I show to you!",
+   "new_pos": 21,
+   "new_eng": "you!",
+   "new_head": null
+  }
+ ],
+ "Act 7:40": [
+  {
+   "sbase": "1492",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "we know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 19,
+   "old_eng": "we know not",
+   "new_pos": 20,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Act 8:5": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "5376",
+   "old_pos": 0,
+   "old_eng": "And Philip",
+   "new_pos": 1,
+   "new_eng": "Philip",
+   "new_head": "philip"
+  }
+ ],
+ "Act 8:20": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "4074",
+   "old_pos": 0,
+   "old_eng": "And Peter",
+   "new_pos": 1,
+   "new_eng": "Peter",
+   "new_head": "peter"
+  }
+ ],
+ "Act 8:40": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "5376",
+   "old_pos": 0,
+   "old_eng": "And Philip",
+   "new_pos": 1,
+   "new_eng": "Philip",
+   "new_head": "philip"
+  }
+ ],
+ "Act 9:4": [
+  {
+   "sbase": "1377",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "do you persecute",
+   "new_head": "persecute"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 12,
+   "old_eng": "do you persecute me?",
+   "new_pos": 13,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Act 12:25": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "921",
+   "old_pos": 0,
+   "old_eng": "And Barnabas",
+   "new_pos": 1,
+   "new_eng": "Barnabas",
+   "new_head": "barnabas"
+  }
+ ],
+ "Act 13:13": [
+  {
+   "sbase": "1161",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "2491",
+   "old_pos": 14,
+   "old_eng": "And John",
+   "new_pos": 15,
+   "new_eng": "John",
+   "new_head": "john"
+  }
+ ],
+ "Act 15:37": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "921",
+   "old_pos": 0,
+   "old_eng": "And Barnabas",
+   "new_pos": 1,
+   "new_eng": "Barnabas",
+   "new_head": "barnabas"
+  }
+ ],
+ "Act 18:12": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "1058",
+   "old_pos": 0,
+   "old_eng": "And Gallio",
+   "new_pos": 1,
+   "new_eng": "Gallio",
+   "new_head": "gallio"
+  }
+ ],
+ "Act 19:10": [
+  {
+   "sbase": "5037",
+   "old_pos": 19,
+   "old_eng": null,
+   "new_pos": 18,
+   "new_eng": "both",
+   "new_head": "both"
+  },
+  {
+   "sbase": "2455",
+   "old_pos": 18,
+   "old_eng": "both Jews",
+   "new_pos": 19,
+   "new_eng": "Jews",
+   "new_head": "jews"
+  }
+ ],
+ "Act 19:17": [
+  {
+   "sbase": "5037",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "both",
+   "new_head": "both"
+  },
+  {
+   "sbase": "2455",
+   "old_pos": 5,
+   "old_eng": "both Jews",
+   "new_pos": 6,
+   "new_eng": "Jews",
+   "new_head": "jews"
+  }
+ ],
+ "Act 19:24": [
+  {
+   "sbase": "1063",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "For",
+   "new_head": null
+  },
+  {
+   "sbase": "1216",
+   "old_pos": 0,
+   "old_eng": "For Demetrius,",
+   "new_pos": 1,
+   "new_eng": "Demetrius,",
+   "new_head": "demetrius"
+  }
+ ],
+ "Act 19:26": [
+  {
+   "sbase": "3778",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "this",
+   "new_head": null
+  },
+  {
+   "sbase": "3972",
+   "old_pos": 14,
+   "old_eng": "this Paul,",
+   "new_pos": 15,
+   "new_eng": "Paul,",
+   "new_head": "paul"
+  }
+ ],
+ "Act 22:7": [
+  {
+   "sbase": "1377",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "do you persecute",
+   "new_head": "persecute"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 13,
+   "old_eng": "do you persecute me?",
+   "new_pos": 14,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Act 25:9": [
+  {
+   "sbase": "1161",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "5347",
+   "old_pos": 1,
+   "old_eng": "And Festus,",
+   "new_pos": 2,
+   "new_eng": "Festus,",
+   "new_head": "festus"
+  }
+ ],
+ "Act 25:22": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "67",
+   "old_pos": 0,
+   "old_eng": "And Agrippa",
+   "new_pos": 1,
+   "new_eng": "Agrippa",
+   "new_head": "agrippa"
+  }
+ ],
+ "Act 26:1": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "67",
+   "old_pos": 0,
+   "old_eng": "And Agrippa",
+   "new_pos": 1,
+   "new_eng": "Agrippa",
+   "new_head": "agrippa"
+  }
+ ],
+ "Act 26:14": [
+  {
+   "sbase": "1377",
+   "old_pos": 21,
+   "old_eng": null,
+   "new_pos": 20,
+   "new_eng": "do you persecute",
+   "new_head": "persecute"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 20,
+   "old_eng": "do you persecute me?",
+   "new_pos": 21,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Act 26:28": [
+  {
+   "sbase": "3982",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "you persuade",
+   "new_head": "persuade"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 9,
+   "old_eng": "you persuade me",
+   "new_pos": 10,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Act 26:32": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "67",
+   "old_pos": 0,
+   "old_eng": "And Agrippa",
+   "new_pos": 1,
+   "new_eng": "Agrippa",
+   "new_head": "agrippa"
+  }
+ ],
+ "Gal 2:17": [
+  {
+   "sbase": "1096",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 14,
+   "old_eng": "May it not be.",
+   "new_pos": 15,
+   "new_eng": "not be.",
+   "new_head": null
+  }
+ ],
+ "Gal 3:21": [
+  {
+   "sbase": "1096",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 8,
+   "old_eng": "May it not be.",
+   "new_pos": 9,
+   "new_eng": "not be.",
+   "new_head": null
+  }
+ ],
+ "Gal 4:15": [
+  {
+   "sbase": "1325",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "you would have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "302",
+   "old_pos": 16,
+   "old_eng": "you would have given",
+   "new_pos": 17,
+   "new_eng": "given",
+   "new_head": "given"
+  }
+ ],
+ "Jas 4:2": [
+  {
+   "sbase": "2192",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "you have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 14,
+   "old_eng": "you have not",
+   "new_pos": 15,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 1:48": [
+  {
+   "sbase": "1097",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "do you know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 4,
+   "old_eng": "do you know me?",
+   "new_pos": 5,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Joh 2:15": [
+  {
+   "sbase": "1544",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "he cast",
+   "new_head": "cast"
+  },
+  {
+   "sbase": "3956",
+   "old_pos": 5,
+   "old_eng": "he cast out all",
+   "new_pos": 6,
+   "new_eng": "out all",
+   "new_head": "all"
+  }
+ ],
+ "Joh 3:8": [
+  {
+   "sbase": "1492",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "you know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 11,
+   "old_eng": "you know not",
+   "new_pos": 12,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 3:10": [
+  {
+   "sbase": "1097",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "you know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 13,
+   "old_eng": "you know not?",
+   "new_pos": 14,
+   "new_eng": "not?",
+   "new_head": null
+  }
+ ],
+ "Joh 4:22": [
+  {
+   "sbase": "1492",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "you know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 3,
+   "old_eng": "you know not;",
+   "new_pos": 4,
+   "new_eng": "not;",
+   "new_head": null
+  }
+ ],
+ "Joh 4:35": [
+  {
+   "sbase": "5210",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "Do you",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 0,
+   "old_eng": "Do you not",
+   "new_pos": 1,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 5:14": [
+  {
+   "sbase": "1096",
+   "old_pos": 22,
+   "old_eng": null,
+   "new_pos": 21,
+   "new_eng": "should happen",
+   "new_head": "happen"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 21,
+   "old_eng": "should happen to you!",
+   "new_pos": 22,
+   "new_eng": "to you!",
+   "new_head": null
+  }
+ ],
+ "Joh 5:38": [
+  {
+   "sbase": "2192",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "you have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "you have not",
+   "new_pos": 5,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 5:42": [
+  {
+   "sbase": "2192",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "you have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 8,
+   "old_eng": "you have not",
+   "new_pos": 9,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 5:47": [
+  {
+   "sbase": "4100",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "you believe",
+   "new_head": "believe"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 5,
+   "old_eng": "you believe not,",
+   "new_pos": 6,
+   "new_eng": "not,",
+   "new_head": null
+  }
+ ],
+ "Joh 6:52": [
+  {
+   "sbase": "3778",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "will this",
+   "new_head": "will"
+  },
+  {
+   "sbase": "1410",
+   "old_pos": 8,
+   "old_eng": "will this one be able",
+   "new_pos": 9,
+   "new_eng": "one be able",
+   "new_head": "able"
+  }
+ ],
+ "Joh 6:70": [
+  {
+   "sbase": "1473",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "Did I",
+   "new_head": "did"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "Did I not",
+   "new_pos": 5,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 9:12": [
+  {
+   "sbase": "1492",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "I know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 7,
+   "old_eng": "I know not.",
+   "new_pos": 8,
+   "new_eng": "not.",
+   "new_head": null
+  }
+ ],
+ "Joh 9:25": [
+  {
+   "sbase": "1492",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "I know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 8,
+   "old_eng": "I know not.",
+   "new_pos": 9,
+   "new_eng": "not.",
+   "new_head": null
+  }
+ ],
+ "Joh 10:25": [
+  {
+   "sbase": "4100",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "you believe",
+   "new_head": "believe"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 7,
+   "old_eng": "you believe not.",
+   "new_pos": 8,
+   "new_eng": "not.",
+   "new_head": null
+  }
+ ],
+ "Joh 10:28": [
+  {
+   "sbase": "5100",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "shall any",
+   "new_head": "any"
+  },
+  {
+   "sbase": "726",
+   "old_pos": 13,
+   "old_eng": "shall any seize them by force",
+   "new_pos": 14,
+   "new_eng": "seize them by force",
+   "new_head": "force"
+  }
+ ],
+ "Joh 11:42": [
+  {
+   "sbase": "191",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "you hear",
+   "new_head": "hear"
+  },
+  {
+   "sbase": "3450",
+   "old_pos": 5,
+   "old_eng": "you hear me;",
+   "new_pos": 6,
+   "new_eng": "me;",
+   "new_head": "me"
+  }
+ ],
+ "Joh 11:56": [
+  {
+   "sbase": "5213",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "do you",
+   "new_head": "do"
+  },
+  {
+   "sbase": "1380",
+   "old_pos": 13,
+   "old_eng": "do you think,",
+   "new_pos": 14,
+   "new_eng": "think,",
+   "new_head": "think"
+  }
+ ],
+ "Joh 12:26": [
+  {
+   "sbase": "1247",
+   "old_pos": 21,
+   "old_eng": null,
+   "new_pos": 20,
+   "new_eng": "should serve",
+   "new_head": "serve"
+  },
+  {
+   "sbase": "3427",
+   "old_pos": 20,
+   "old_eng": "should serve to me,",
+   "new_pos": 21,
+   "new_eng": "to me,",
+   "new_head": "me"
+  }
+ ],
+ "Joh 12:32": [
+  {
+   "sbase": "1670",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "I will draw",
+   "new_head": "draw"
+  },
+  {
+   "sbase": "3956",
+   "old_pos": 6,
+   "old_eng": "I will draw all",
+   "new_pos": 7,
+   "new_eng": "all",
+   "new_head": "all"
+  }
+ ],
+ "Joh 12:47": [
+  {
+   "sbase": "191",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "should hear",
+   "new_head": "hear"
+  },
+  {
+   "sbase": "3450",
+   "old_pos": 3,
+   "old_eng": "should hear of my",
+   "new_pos": 4,
+   "new_eng": "of my",
+   "new_head": null
+  }
+ ],
+ "Joh 13:8": [
+  {
+   "sbase": "2192",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "you have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 19,
+   "old_eng": "you have no",
+   "new_pos": 20,
+   "new_eng": "no",
+   "new_head": null
+  }
+ ],
+ "Joh 14:5": [
+  {
+   "sbase": "1492",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "we know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "we know not",
+   "new_pos": 5,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 14:14": [
+  {
+   "sbase": "154",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "you should ask",
+   "new_head": "ask"
+  },
+  {
+   "sbase": "5100",
+   "old_pos": 1,
+   "old_eng": "you should ask anything",
+   "new_pos": 2,
+   "new_eng": "anything",
+   "new_head": "anything"
+  }
+ ],
+ "Joh 15:21": [
+  {
+   "sbase": "1492",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "they know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 10,
+   "old_eng": "they know not",
+   "new_pos": 11,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 16:3": [
+  {
+   "sbase": "1097",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "they know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "they know not",
+   "new_pos": 5,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 16:9": [
+  {
+   "sbase": "4100",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "they believe",
+   "new_head": "believe"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "they believe not",
+   "new_pos": 5,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 17:15": [
+  {
+   "sbase": "2065",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "I ask",
+   "new_head": "ask"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 0,
+   "old_eng": "I ask not",
+   "new_pos": 1,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 18:8": [
+  {
+   "sbase": "2212",
+   "old_pos": 11,
+   "old_eng": null,
+   "new_pos": 10,
+   "new_eng": "you seek",
+   "new_head": "seek"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 10,
+   "old_eng": "you seek me,",
+   "new_pos": 11,
+   "new_eng": "me,",
+   "new_head": "me"
+  }
+ ],
+ "Joh 18:23": [
+  {
+   "sbase": "1194",
+   "old_pos": 16,
+   "old_eng": null,
+   "new_pos": 15,
+   "new_eng": "do you flay",
+   "new_head": "flay"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 15,
+   "old_eng": "do you flay at me?",
+   "new_pos": 16,
+   "new_eng": "at me?",
+   "new_head": "me"
+  }
+ ],
+ "Joh 18:26": [
+  {
+   "sbase": "1473",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "Did I",
+   "new_head": "did"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 14,
+   "old_eng": "Did I not",
+   "new_pos": 15,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Joh 19:10": [
+  {
+   "sbase": "2980",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "you speak",
+   "new_head": "speak"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 6,
+   "old_eng": "you speak not?",
+   "new_pos": 7,
+   "new_eng": "not?",
+   "new_head": null
+  }
+ ],
+ "Joh 19:15": [
+  {
+   "sbase": "2192",
+   "old_pos": 19,
+   "old_eng": null,
+   "new_pos": 18,
+   "new_eng": "We have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 18,
+   "old_eng": "We have no",
+   "new_pos": 19,
+   "new_eng": "no",
+   "new_head": null
+  }
+ ],
+ "Joh 19:40": [
+  {
+   "sbase": "3767",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "They then",
+   "new_head": null
+  },
+  {
+   "sbase": "2983",
+   "old_pos": 0,
+   "old_eng": "They then took",
+   "new_pos": 1,
+   "new_eng": "took",
+   "new_head": "took"
+  }
+ ],
+ "Joh 20:13": [
+  {
+   "sbase": "1492",
+   "old_pos": 16,
+   "old_eng": null,
+   "new_pos": 15,
+   "new_eng": "I know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 15,
+   "old_eng": "I know not",
+   "new_pos": 16,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Jud 1:10": [
+  {
+   "sbase": "1492",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "they know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "they know not of,",
+   "new_pos": 5,
+   "new_eng": "not of,",
+   "new_head": null
+  }
+ ],
+ "Luk 1:34": [
+  {
+   "sbase": "3778",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "will this",
+   "new_head": "will"
+  },
+  {
+   "sbase": "1510",
+   "old_pos": 7,
+   "old_eng": "will this be,",
+   "new_pos": 8,
+   "new_eng": "be,",
+   "new_head": null
+  }
+ ],
+ "Luk 1:63": [
+  {
+   "sbase": "3956",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "they all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "2296",
+   "old_pos": 11,
+   "old_eng": "they all marveled.",
+   "new_pos": 12,
+   "new_eng": "marveled.",
+   "new_head": "marveled"
+  }
+ ],
+ "Luk 3:1": [
+  {
+   "sbase": "1161",
+   "old_pos": 19,
+   "old_eng": null,
+   "new_pos": 18,
+   "new_eng": "and",
+   "new_head": null
+  },
+  {
+   "sbase": "5376",
+   "old_pos": 18,
+   "old_eng": "and Philip",
+   "new_pos": 19,
+   "new_eng": "Philip",
+   "new_head": "philip"
+  }
+ ],
+ "Luk 6:46": [
+  {
+   "sbase": "2564",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "do you call",
+   "new_head": "call"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 2,
+   "old_eng": "do you call me,",
+   "new_pos": 3,
+   "new_eng": "me,",
+   "new_head": "me"
+  }
+ ],
+ "Luk 9:20": [
+  {
+   "sbase": "3004",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "do you say",
+   "new_head": "say"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 6,
+   "old_eng": "do you say me",
+   "new_pos": 7,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Luk 10:42": [
+  {
+   "sbase": "1161",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "and",
+   "new_head": null
+  },
+  {
+   "sbase": "3137",
+   "old_pos": 4,
+   "old_eng": "and Mary",
+   "new_pos": 5,
+   "new_eng": "Mary",
+   "new_head": "mary"
+  }
+ ],
+ "Luk 12:17": [
+  {
+   "sbase": "2192",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "I do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 8,
+   "old_eng": "I do not have",
+   "new_pos": 9,
+   "new_eng": "not have",
+   "new_head": "have"
+  }
+ ],
+ "Luk 12:24": [
+  {
+   "sbase": "4687",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "they sow",
+   "new_head": "sow"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "they sow not,",
+   "new_pos": 5,
+   "new_eng": "not,",
+   "new_head": null
+  }
+ ],
+ "Luk 12:40": [
+  {
+   "sbase": "1380",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "you think",
+   "new_head": "think"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 8,
+   "old_eng": "you think not --",
+   "new_pos": 9,
+   "new_eng": "not --",
+   "new_head": null
+  }
+ ],
+ "Luk 13:35": [
+  {
+   "sbase": "1492",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "shall you behold",
+   "new_head": "behold"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 12,
+   "old_eng": "shall you behold me,",
+   "new_pos": 13,
+   "new_eng": "me,",
+   "new_head": "me"
+  }
+ ],
+ "Luk 14:14": [
+  {
+   "sbase": "2192",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "they do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 4,
+   "old_eng": "they do not have",
+   "new_pos": 5,
+   "new_eng": "not have",
+   "new_head": "have"
+  }
+ ],
+ "Luk 17:9": [
+  {
+   "sbase": "1380",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "I think",
+   "new_head": "think"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 11,
+   "old_eng": "I think not.",
+   "new_pos": 12,
+   "new_eng": "not.",
+   "new_head": null
+  }
+ ],
+ "Luk 18:19": [
+  {
+   "sbase": "3004",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "do you call",
+   "new_head": "call"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 6,
+   "old_eng": "do you call me",
+   "new_pos": 7,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Luk 20:16": [
+  {
+   "sbase": "1096",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 14,
+   "old_eng": "May it not be.",
+   "new_pos": 15,
+   "new_eng": "not be.",
+   "new_head": null
+  }
+ ],
+ "Luk 20:23": [
+  {
+   "sbase": "3985",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "do you test",
+   "new_head": "test"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 9,
+   "old_eng": "do you test me?",
+   "new_pos": 10,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Luk 23:6": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "4091",
+   "old_pos": 0,
+   "old_eng": "And Pilate",
+   "new_pos": 1,
+   "new_eng": "Pilate",
+   "new_head": "pilate"
+  }
+ ],
+ "Luk 23:13": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "4091",
+   "old_pos": 0,
+   "old_eng": "And Pilate,",
+   "new_pos": 1,
+   "new_eng": "Pilate,",
+   "new_head": "pilate"
+  }
+ ],
+ "Luk 23:22": [
+  {
+   "sbase": "3778",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "did this",
+   "new_head": "did"
+  },
+  {
+   "sbase": "4160",
+   "old_pos": 9,
+   "old_eng": "did this one do?",
+   "new_pos": 10,
+   "new_eng": "one do?",
+   "new_head": "do"
+  }
+ ],
+ "Mar 2:8": [
+  {
+   "sbase": "1260",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "do you reason",
+   "new_head": "reason"
+  },
+  {
+   "sbase": "3778",
+   "old_pos": 16,
+   "old_eng": "do you reason these things",
+   "new_pos": 17,
+   "new_eng": "these things",
+   "new_head": "things"
+  }
+ ],
+ "Mar 4:17": [
+  {
+   "sbase": "2192",
+   "old_pos": 2,
+   "old_eng": null,
+   "new_pos": 1,
+   "new_eng": "they do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 1,
+   "old_eng": "they do not have",
+   "new_pos": 2,
+   "new_eng": "not have",
+   "new_head": "have"
+  }
+ ],
+ "Mar 6:25": [
+  {
+   "sbase": "1325",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "you give",
+   "new_head": "give"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 12,
+   "old_eng": "you give to me",
+   "new_pos": 13,
+   "new_eng": "to me",
+   "new_head": "me"
+  }
+ ],
+ "Mar 8:2": [
+  {
+   "sbase": "2192",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "they do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 11,
+   "old_eng": "they do not have",
+   "new_pos": 12,
+   "new_eng": "not have",
+   "new_head": "have"
+  }
+ ],
+ "Mar 8:12": [
+  {
+   "sbase": "3778",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "does this",
+   "new_head": "does"
+  },
+  {
+   "sbase": "1074",
+   "old_pos": 8,
+   "old_eng": "does this generation",
+   "new_pos": 9,
+   "new_eng": "generation",
+   "new_head": "generation"
+  }
+ ],
+ "Mar 8:29": [
+  {
+   "sbase": "3004",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "do you say",
+   "new_head": "say"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 7,
+   "old_eng": "do you say me",
+   "new_pos": 8,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Mar 9:37": [
+  {
+   "sbase": "1209",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "should receive",
+   "new_head": "receive"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 16,
+   "old_eng": "should receive me,",
+   "new_pos": 17,
+   "new_eng": "me,",
+   "new_head": "me"
+  }
+ ],
+ "Mar 10:9": [
+  {
+   "sbase": "3361",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "let not",
+   "new_head": "let"
+  },
+  {
+   "sbase": "444",
+   "old_pos": 5,
+   "old_eng": "let not man",
+   "new_pos": 6,
+   "new_eng": "man",
+   "new_head": "man"
+  }
+ ],
+ "Mar 10:18": [
+  {
+   "sbase": "3004",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "do you call",
+   "new_head": "call"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 6,
+   "old_eng": "do you call me",
+   "new_pos": 7,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Mar 11:25": [
+  {
+   "sbase": "2192",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "you have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "5100",
+   "old_pos": 6,
+   "old_eng": "you have anything",
+   "new_pos": 7,
+   "new_eng": "anything",
+   "new_head": "anything"
+  }
+ ],
+ "Mar 11:28": [
+  {
+   "sbase": "4160",
+   "old_pos": 17,
+   "old_eng": null,
+   "new_pos": 16,
+   "new_eng": "you should do",
+   "new_head": "do"
+  },
+  {
+   "sbase": "3778",
+   "old_pos": 16,
+   "old_eng": "you should do these things?",
+   "new_pos": 17,
+   "new_eng": "these things?",
+   "new_head": "things"
+  }
+ ],
+ "Mar 12:15": [
+  {
+   "sbase": "3985",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "do you test",
+   "new_head": "test"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 13,
+   "old_eng": "do you test me?",
+   "new_pos": 14,
+   "new_eng": "me?",
+   "new_head": "me"
+  }
+ ],
+ "Mar 13:29": [
+  {
+   "sbase": "1492",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "you should see",
+   "new_head": "see"
+  },
+  {
+   "sbase": "3778",
+   "old_pos": 4,
+   "old_eng": "you should see these",
+   "new_pos": 5,
+   "new_eng": "these",
+   "new_head": null
+  }
+ ],
+ "Mar 14:11": [
+  {
+   "sbase": "3860",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "he should deliver",
+   "new_head": "deliver"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 13,
+   "old_eng": "he should deliver him up.",
+   "new_pos": 14,
+   "new_eng": "him up.",
+   "new_head": "him"
+  }
+ ],
+ "Mar 15:24": [
+  {
+   "sbase": "142",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "should take",
+   "new_head": "take"
+  },
+  {
+   "sbase": "5100",
+   "old_pos": 12,
+   "old_eng": "should take what.",
+   "new_pos": 13,
+   "new_eng": "what.",
+   "new_head": "what"
+  }
+ ],
+ "Mat 1:2": [
+  {
+   "sbase": "1161",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "and",
+   "new_head": null
+  },
+  {
+   "sbase": "2384",
+   "old_pos": 9,
+   "old_eng": "and Jacob",
+   "new_pos": 10,
+   "new_eng": "Jacob",
+   "new_head": "jacob"
+  }
+ ],
+ "Mat 1:12": [
+  {
+   "sbase": "1161",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "and",
+   "new_head": null
+  },
+  {
+   "sbase": "4528",
+   "old_pos": 9,
+   "old_eng": "and Salathiel",
+   "new_pos": 10,
+   "new_eng": "Salathiel",
+   "new_head": "salathiel"
+  }
+ ],
+ "Mat 1:16": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "and",
+   "new_head": null
+  },
+  {
+   "sbase": "2384",
+   "old_pos": 0,
+   "old_eng": "and Jacob",
+   "new_pos": 1,
+   "new_eng": "Jacob",
+   "new_head": "jacob"
+  }
+ ],
+ "Mat 1:19": [
+  {
+   "sbase": "1161",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "And",
+   "new_head": null
+  },
+  {
+   "sbase": "2501",
+   "old_pos": 0,
+   "old_eng": "And Joseph",
+   "new_pos": 1,
+   "new_eng": "Joseph",
+   "new_head": "joseph"
+  }
+ ],
+ "Mat 5:8": [
+  {
+   "sbase": "3708",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "shall see",
+   "new_head": "see"
+  },
+  {
+   "sbase": "2316",
+   "old_pos": 8,
+   "old_eng": "shall see God.",
+   "new_pos": 9,
+   "new_eng": "God.",
+   "new_head": "God"
+  }
+ ],
+ "Mat 7:16": [
+  {
+   "sbase": "4816",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "Do they collect",
+   "new_head": "collect"
+  },
+  {
+   "sbase": "3385",
+   "old_pos": 6,
+   "old_eng": "Do they collect together",
+   "new_pos": 7,
+   "new_eng": "together",
+   "new_head": "together"
+  }
+ ],
+ "Mat 15:32": [
+  {
+   "sbase": "2192",
+   "old_pos": 20,
+   "old_eng": null,
+   "new_pos": 19,
+   "new_eng": "they have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 19,
+   "old_eng": "they have not",
+   "new_pos": 20,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Mat 16:15": [
+  {
+   "sbase": "3004",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "do you say",
+   "new_head": "say"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 5,
+   "old_eng": "do you say me",
+   "new_pos": 6,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Mat 19:6": [
+  {
+   "sbase": "3361",
+   "old_pos": 13,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "let not",
+   "new_head": "let"
+  },
+  {
+   "sbase": "444",
+   "old_pos": 12,
+   "old_eng": "let not man",
+   "new_pos": 13,
+   "new_eng": "man",
+   "new_head": "man"
+  }
+ ],
+ "Mat 19:17": [
+  {
+   "sbase": "3004",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 5,
+   "new_eng": "do you call",
+   "new_head": "call"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 5,
+   "old_eng": "do you call me",
+   "new_pos": 6,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Mat 22:18": [
+  {
+   "sbase": "3985",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "do you test",
+   "new_head": "test"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 9,
+   "old_eng": "do you test me,",
+   "new_pos": 10,
+   "new_eng": "me,",
+   "new_head": "me"
+  }
+ ],
+ "Mat 23:39": [
+  {
+   "sbase": "1492",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "should you behold",
+   "new_head": "behold"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 4,
+   "old_eng": "should you behold me",
+   "new_pos": 5,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Mat 24:42": [
+  {
+   "sbase": "1492",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "you know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 3,
+   "old_eng": "you know not",
+   "new_pos": 4,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Mat 24:44": [
+  {
+   "sbase": "1380",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "you think",
+   "new_head": "think"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 9,
+   "old_eng": "you think not,",
+   "new_pos": 10,
+   "new_eng": "not,",
+   "new_head": null
+  }
+ ],
+ "Mat 25:5": [
+  {
+   "sbase": "3956",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "they all",
+   "new_head": "all"
+  },
+  {
+   "sbase": "3573",
+   "old_pos": 4,
+   "old_eng": "they all slumbered",
+   "new_pos": 5,
+   "new_eng": "slumbered",
+   "new_head": "slumbered"
+  }
+ ],
+ "Mat 25:13": [
+  {
+   "sbase": "1492",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "you know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 3,
+   "old_eng": "you know not",
+   "new_pos": 4,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Mat 26:23": [
+  {
+   "sbase": "3860",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "will deliver",
+   "new_head": "deliver"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 14,
+   "old_eng": "will deliver me up.",
+   "new_pos": 15,
+   "new_eng": "me up.",
+   "new_head": "me"
+  }
+ ],
+ "Mat 28:10": [
+  {
+   "sbase": "3708",
+   "old_pos": 19,
+   "old_eng": null,
+   "new_pos": 18,
+   "new_eng": "they shall see",
+   "new_head": "see"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 18,
+   "old_eng": "they shall see me.",
+   "new_pos": 19,
+   "new_eng": "me.",
+   "new_head": "me"
+  }
+ ],
+ "Phm 1:17": [
+  {
+   "sbase": "2192",
+   "old_pos": 3,
+   "old_eng": null,
+   "new_pos": 2,
+   "new_eng": "you have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 2,
+   "old_eng": "you have me",
+   "new_pos": 3,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Php 1:22": [
+  {
+   "sbase": "1107",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 13,
+   "new_eng": "I know",
+   "new_head": "know"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 13,
+   "old_eng": "I know not.",
+   "new_pos": 14,
+   "new_eng": "not.",
+   "new_head": null
+  }
+ ],
+ "Php 3:15": [
+  {
+   "sbase": "5426",
+   "old_pos": 4,
+   "old_eng": null,
+   "new_pos": 3,
+   "new_eng": "should think",
+   "new_head": "think"
+  },
+  {
+   "sbase": "3778",
+   "old_pos": 3,
+   "old_eng": "should think this;",
+   "new_pos": 4,
+   "new_eng": "this;",
+   "new_head": null
+  }
+ ],
+ "Rev 3:10": [
+  {
+   "sbase": "5083",
+   "old_pos": 9,
+   "old_eng": null,
+   "new_pos": 8,
+   "new_eng": "will keep",
+   "new_head": "keep"
+  },
+  {
+   "sbase": "1473",
+   "old_pos": 8,
+   "old_eng": "will keep you",
+   "new_pos": 9,
+   "new_eng": "you",
+   "new_head": null
+  }
+ ],
+ "Rev 14:11": [
+  {
+   "sbase": "2192",
+   "old_pos": 12,
+   "old_eng": null,
+   "new_pos": 11,
+   "new_eng": "they have",
+   "new_head": "have"
+  },
+  {
+   "sbase": "3756",
+   "old_pos": 11,
+   "old_eng": "they have not",
+   "new_pos": 12,
+   "new_eng": "not",
+   "new_head": null
+  }
+ ],
+ "Rev 22:19": [
+  {
+   "sbase": "2316",
+   "old_pos": 14,
+   "old_eng": null,
+   "new_pos": 12,
+   "new_eng": "may God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "851",
+   "old_pos": 12,
+   "old_eng": "may God remove",
+   "new_pos": 14,
+   "new_eng": "remove",
+   "new_head": "remove"
+  }
+ ],
+ "Rom 3:4": [
+  {
+   "sbase": "1096",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 0,
+   "old_eng": "May it not be.",
+   "new_pos": 1,
+   "new_eng": "not be.",
+   "new_head": null
+  },
+  {
+   "sbase": "1344",
+   "old_pos": 15,
+   "old_eng": null,
+   "new_pos": 14,
+   "new_eng": "you should be",
+   "new_head": "should"
+  },
+  {
+   "sbase": "302",
+   "old_pos": 14,
+   "old_eng": "you should be justified",
+   "new_pos": 15,
+   "new_eng": "justified",
+   "new_head": "justified"
+  }
+ ],
+ "Rom 3:6": [
+  {
+   "sbase": "1096",
+   "old_pos": 1,
+   "old_eng": null,
+   "new_pos": 0,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 0,
+   "old_eng": "May it not be;",
+   "new_pos": 1,
+   "new_eng": "not be;",
+   "new_head": null
+  },
+  {
+   "sbase": "2316",
+   "old_pos": 6,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "shall God",
+   "new_head": "God"
+  },
+  {
+   "sbase": "2919",
+   "old_pos": 4,
+   "old_eng": "shall God judge",
+   "new_pos": 6,
+   "new_eng": "judge",
+   "new_head": "judge"
+  }
+ ],
+ "Rom 3:9": [
+  {
+   "sbase": "5037",
+   "old_pos": 8,
+   "old_eng": null,
+   "new_pos": 7,
+   "new_eng": "both",
+   "new_head": "both"
+  },
+  {
+   "sbase": "2455",
+   "old_pos": 7,
+   "old_eng": "both Jews",
+   "new_pos": 8,
+   "new_eng": "Jews",
+   "new_head": "jews"
+  }
+ ],
+ "Rom 3:31": [
+  {
+   "sbase": "1096",
+   "old_pos": 7,
+   "old_eng": null,
+   "new_pos": 6,
+   "new_eng": "May it",
+   "new_head": "may"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 6,
+   "old_eng": "May it not be,",
+   "new_pos": 7,
+   "new_eng": "not be,",
+   "new_head": null
+  }
+ ],
+ "Rom 7:24": [
+  {
+   "sbase": "4506",
+   "old_pos": 5,
+   "old_eng": null,
+   "new_pos": 4,
+   "new_eng": "shall rescue",
+   "new_head": "rescue"
+  },
+  {
+   "sbase": "3165",
+   "old_pos": 4,
+   "old_eng": "shall rescue me",
+   "new_pos": 5,
+   "new_eng": "me",
+   "new_head": "me"
+  }
+ ],
+ "Rom 9:29": [
+  {
+   "sbase": "3666",
+   "old_pos": 18,
+   "old_eng": null,
+   "new_pos": 17,
+   "new_eng": "we would be",
+   "new_head": "would"
+  },
+  {
+   "sbase": "302",
+   "old_pos": 17,
+   "old_eng": "we would be like.",
+   "new_pos": 18,
+   "new_eng": "like.",
+   "new_head": "like"
+  }
+ ],
+ "Tit 1:11": [
+  {
+   "sbase": "1163",
+   "old_pos": 10,
+   "old_eng": null,
+   "new_pos": 9,
+   "new_eng": "they must",
+   "new_head": "must"
+  },
+  {
+   "sbase": "3361",
+   "old_pos": 9,
+   "old_eng": "they must not,",
+   "new_pos": 10,
+   "new_eng": "not,",
+   "new_head": null
+  }
+ ]
+}

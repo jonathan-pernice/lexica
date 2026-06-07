@@ -226,11 +226,31 @@ def load_lexicon(conn: sqlite3.Connection) -> dict:
 
 # ── Compound splitting ────────────────────────────────────────────────────────
 
-def _split_compounds(rows: list, lex: dict) -> None:
+# Leading subject pronouns / auxiliaries that never carry a lexical sense, so the
+# def-match below can't place them. Used ONLY when carry=True (see _split_compounds).
+_CARRY_FW = frozenset({
+    "i", "you", "ye", "thou", "thee", "we", "they", "he", "she", "it", "who",
+    "do", "did", "does", "shall", "will", "would", "should",
+    "may", "might", "can", "could", "must", "let", "have", "has", "had",
+})
+
+
+def _split_compounds(rows: list, lex: dict, carry: bool = False) -> None:
     """
     Redistribute words from compound ABP glosses to subsequent empty-english slots
     using lexicon evidence, then swap position numbers so redistributed words
     display before the verb/head word.
+
+    carry=False (DEFAULT, used by the build): original behavior, unchanged — a
+    rebuild produces exactly the same output it always has.
+
+    carry=True (used ONLY by scripts/_gen_split_candidates.py): also lets a leading
+    subject/aux word ("I", "do", "shall") ride to the verb it fronts, which fixes
+    the reorder-merge garbles ("I see magistrates" -> "I see" | "magistrates"). This
+    is NOT on by default because corpus-wide it also regresses ~85 verses
+    (article/copula garbles the leaky lexicon match can't avoid); instead the
+    PROVABLY-clean subset is frozen in split_merge_fixes.json and applied as a
+    pinned data-patch by fix_split_merges.py. Leave carry=False here.
 
     Row tuple indices (11 elements while processing):
       0:pos  1:english  2:english_head  3:strongs  4:sbase  5:gpos
@@ -285,17 +305,22 @@ def _split_compounds(rows: list, lex: dict) -> None:
         # leading determiner ("the LORD", "their X") still splits, but a word sitting
         # after a kept word ("of this possession", "he is a prophet") stays put.
         apply_leading_run = True
-        taken: dict = {}
+        taken: dict = {}          # slot index -> [gloss words] in reading order
         own = []
         seen_own = False
+        pending = []              # held leading subject/aux words awaiting a verb slot
 
         for word in gloss_words:
             norm = _NORM.sub("", word).lower()
             if not norm:
+                if pending:
+                    own.extend(pending); pending = []
                 own.append(word)
                 seen_own = True
                 continue
             if norm in own_def:
+                if pending:
+                    own.extend(pending); pending = []
                 own.append(word)
                 seen_own = True
                 continue
@@ -308,15 +333,31 @@ def _split_compounds(rows: list, lex: dict) -> None:
             if apply_leading_run and seen_own:
                 own.append(word)
                 continue
+            placed = False
             for j, slot_base, slot_def in ahead:
                 if j in taken:
                     continue
                 if slot_def and norm in slot_def:
-                    taken[j] = word
+                    # held leading pronouns/aux ride to the verb's slot ("I see")
+                    taken[j] = pending + [word]
+                    pending = []
+                    placed = True
                     break
+            if placed:
+                continue
+            # Unmatched word. A leading subject/aux ("I", "do", "shall") matches no
+            # definition; hold it so it travels with the verb it fronts instead of
+            # poisoning the leading run and stranding the verb's gloss (1Sa 28:13).
+            if carry and norm in _CARRY_FW and not seen_own:
+                pending.append(word)
             else:
+                if pending:
+                    own.extend(pending); pending = []
                 own.append(word)
                 seen_own = True
+
+        if pending:
+            own.extend(pending); pending = []
 
         if not taken:
             continue
@@ -327,10 +368,11 @@ def _split_compounds(rows: list, lex: dict) -> None:
         src_gpos    = rows[i][5]
         src_bid     = rows[i][6]
         src_abp_pos = rows[i][10]
-        for j, word in taken.items():
+        for j, words in taken.items():
             r = rows[j]
+            eng = " ".join(words)
             # slot j keeps its OWN morph/lemma (r[11]/r[12]) — only the english moved in
-            rows[j] = (r[0], word, word, r[3], r[4], src_gpos, src_bid, r[7], r[8], r[9],
+            rows[j] = (r[0], eng, _head_word(eng), r[3], r[4], src_gpos, src_bid, r[7], r[8], r[9],
                        src_abp_pos, r[11], r[12])
 
         new_eng = " ".join(own) if own else None
