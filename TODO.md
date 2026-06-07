@@ -107,10 +107,17 @@ tables). Web route `GET /api/extra/<book>/chapter/<n>` reads those. Loader `scri
   layout as Bible parallel. KJV is disabled there (no KJV for these texts). No bracket/ordering
   machinery; chips stay in natural Greek order; word click → the shared word-study sidebar.
 
-**REMAINING — on PA (user runs):** tables already loaded earlier, so just deploy:
+**REMAINING — on PA (user runs):** the verses table gained a `heading` column, so a reload is needed:
 1. `git pull`
-2. `touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
-(If ever reloading: `python3 scripts/didache_proof/load_didache.py bible.db` → ~2199 words / 101 verses.)
+2. `python3 scripts/didache_proof/load_didache.py bible.db`  (~2199 words / 101 verses, 11 headings)
+3. `touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
+
+**Future (when more non-canonical books exist): wire them into the Lexicon + Search tabs.**
+The word panel already shows an "In the Didache" count, but it isn't clickable and the Lexicon/Search
+tabs only know the Bible corpus. To let people browse every Didache (or future-book) verse where a
+word appears, teach those tabs about the `<book>_words` tables — best done once, generically, as a
+"non-canonical corpus" option rather than per book.
+`code: views_lexicon.py + LexiconView (80-lexicon.jsx); views_search.py + Search (70-search.jsx)`
 
 ## Bigger features (someday / ideas)
 
