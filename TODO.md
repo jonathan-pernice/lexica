@@ -9,28 +9,30 @@ spot. You can skip those lines.
 
 ## Code health / cleanup
 
-Most of this got done in the big rework — see [REDESIGN_PLAN.md](REDESIGN_PLAN.md) and the
-memory notes. What's done: the Strong's-number plumbing was centralized and the fragile join
-that caused several past bugs is gone (Phase 1); the word-building code that two pages shared
-was de-duplicated (Phase 2); and the giant `app.py` was split into one tidy file per feature
-(Phase 3). All three are live.
+The big rework is finished — all six phases are done and live (see
+[REDESIGN_PLAN.md](REDESIGN_PLAN.md) and the memory notes). Done: Strong's plumbing centralized +
+the fragile join gone (Phase 1); shared word-building code de-duplicated (Phase 2); the giant
+`app.py` split into one tidy file per feature (Phase 3); the front end split up and the word pop-up's
+tangle of on/off switches replaced with a "decide once, render simply" model (Phase 4); first-paint
+speed-ups (Phase 5); and the person/place database quirk fixed so a shared name keeps both types
+(Phase 6). A security pass and a code-health pass also ran (2026-06-07): flood protection added, a
+minor info leak closed, dead code removed, an unbounded cache capped, an endpoint hardened.
 
 Still open:
 
 1. **Rebuild script is messy.** When the word table is rebuilt, the script wipes everything and
    then runs a long chain of patch scripts to fix it back up. It should be one clean pass that
-   gets it right the first time. This is the riskiest part of the codebase to run.
+   gets it right the first time. This is the riskiest part of the codebase to run. (Partly done: the
+   safety-check slice is in — the build's own guards are now unit-tested — but the actual one-clean-
+   pass rewrite remains. Best done the next time a rebuild is genuinely needed, copy-first.)
    `code: scripts/build_words_from_abp.py + the fix_*.py chain (checklist in CLAUDE.md)`
-2. **Detail panel (the word pop-up) is tangled.** Too many on/off switches deciding what to show
-   (person vs place vs Hebrew vs Greek, etc.). Should compute "here's what to display" once and
-   render it simply. Planned for the frontend rework (Phase 4).
-   `code: DetailPanel in static/app.jsx`
-3. **One proper-noun quirk in the database.** When a name is both a person and a place (e.g. Adam),
-   the table can only remember one type. Low impact, fix when convenient.
-   `code: tipnr table; pn_type`
-4. **More automated checks wanted.** There's now a safety-net test that catches broken pages, but
-   the data-rebuild steps could use more guardrails so problems get caught automatically instead
-   of by eye. `code: scripts/health_check.py, scripts/snapshot_endpoints.py, tests/`
+2. **Two near-identical "build a word entry" functions on the front end.** Leftover from the Phase-4
+   rework. They do almost the same thing slightly differently — the kind of drift that caused a
+   couple of past bugs. Not broken; worth merging in a dedicated tidy-up.
+   `code: makeEntry / flattenAiResults in static/src/00-core.jsx + the inline makeEntry in 60-library.jsx`
+3. **More automated checks (optional).** The test net now covers broken pages (snapshot harness) and
+   the dangerous data invariants (strongs prefix, tipnr type-set, the build's guards). More rebuild
+   guardrails could still be added. `code: scripts/health_check.py, scripts/snapshot_endpoints.py, tests/`
 
 ---
 
@@ -58,14 +60,14 @@ You flagged this as under-attended. Start by reading the current code before pla
 - Tighten the flow: search → word profile → gloss chips → book distribution → verse list.
 - Visual polish — spacing, hierarchy, match the Library reading view; it currently looks unfinished.
 - Hunt for dead ends and missing states; decide what "done" looks like.
-- `code: LexiconView in static/app.jsx; /api/lexicon/* in views_lexicon.py; memory project_lexicon_tab`
+- `code: LexiconView in static/src/80-lexicon.jsx; /api/lexicon/* in views_lexicon.py; memory project_lexicon_tab`
 
 ## AI search — needs a real pass
 
 Also flagged, and a bit orphaned. Revisit the whole thing end to end: are results good, does the
 two-box layout (plain search on the left, AI on the right) still make sense, do the result cards
 look right? Audit first, then propose.
-`code: Search tab in static/app.jsx; /api/search + /api/ai-search (ai.py); memory project_ai_search_architecture`
+`code: Search tab in static/src/70-search.jsx; /api/search (views_search.py) + /api/ai-search (ai.py); memory project_ai_search_architecture`
 
 > Note: you revisit these two on your own schedule — Claude shouldn't keep pitching them as "next steps."
 

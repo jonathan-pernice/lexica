@@ -88,7 +88,7 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 
 ## Database Tables
 - `verses` — ABP verse text
-- `words` — ABP word-level interlinear, Strong's tagged. Columns: english, english_head, strongs, strongs_base, greek_pos, bracket_id, italic, italic_words, smcap_words, is_pn. NO greek/lemma column — the Greek lemma is joined live from `lexicon` via `LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base, 2)` (this is why strongs_base MUST stay G/H-prefixed). `is_pn=1` marks proper nouns (set by import_tipnr.py). Planned: add `morph` column (MorphGNT/CATSS)
+- `words` — ABP word-level interlinear, Strong's tagged. Columns: english, english_head, strongs, strongs_base, greek_pos, bracket_id, italic, italic_words, smcap_words, is_pn, morph, lemma. The displayed Greek lemma is joined live from `lexicon` via `LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base` (the indexed G-prefixed key added in Phase 1; replaced the old `SUBSTR(strongs_base,2)` join — this is why strongs_base MUST stay G/H-prefixed). `is_pn=1` marks proper nouns (set by import_tipnr.py). `morph`/`lemma` columns added rebuild #6 (~78% populated).
 - `lexicon` — Greek Strong's definitions
 - `lsj` — Liddell-Scott-Jones Greek lexicon
 - `abp_ext` — extended ABP data
@@ -110,10 +110,12 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 
 ## strongs_base format — CRITICAL INVARIANT
 - `words.strongs_base` is fully G/H prefixed ('G4151', 'H7307') — normalized 2026-06-01
-- This is NOT cosmetic: the lexicon join does `SUBSTR(w.strongs_base, 2)` to strip the
-  prefix. A BARE strongs_base ('4151') makes SUBSTR shave a DIGIT instead → wrong lemma.
-  (2026-06-03: a rebuild left 592k bare → G2206 ζηλόω rendered as ἄκρον/G206. Fixed by
-  `UPDATE words SET strongs_base='G'||strongs_base WHERE strongs_base GLOB '[0-9]*'`.)
+- This is NOT cosmetic: the lexicon join matches `l.strongs_g = w.strongs_base` (strongs_g =
+  'G'||strongs). A BARE strongs_base ('4151') won't equal 'G4151' → NULL lemma (missing, not
+  wrong). Under the OLD `SUBSTR(strongs_base,2)` join it was worse — a bare base shaved a DIGIT →
+  WRONG lemma. (2026-06-03, pre-Phase-1: a rebuild left 592k bare → G2206 ζηλόω rendered as
+  ἄκρον/G206. Fixed by `UPDATE words SET strongs_base='G'||strongs_base WHERE strongs_base GLOB
+  '[0-9]*'`.) tests/test_strongs_join.py + test_build_invariants.py lock this invariant.
 - `words.strongs` (the other column) is intentionally LEFT BARE ('2206', dotted '2321.1');
   the frontend renders it as `G{strongs}`. Only strongs_base carries the prefix.
 - `kjv_strongs.strongs_id` is also fully prefixed (was always so)
@@ -202,17 +204,25 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 - Looked up by NAME (not strongs). Frontend fetches person + place in parallel; toggle shown when both exist
 - Hebrew proper nouns: route to metaV (person/place) with BDB stacked BELOW (KJV-style). `isHebrewWord` (any H#)
   drives BDB; `isHebrew = isHebrewWord && !isPN` drives the Hebrew hero/LSJ suppression
-- Default tab = Person; flips to Place only on a prefix-exact match of the word's strongs_base to the place's
-  strongs_g. **Do NOT trust `tipnr.entity_type`/pn_type** — tipnr.strongs is a PK, so person+place sharing one
-  strongs (Adam H121='place') stores the last-imported type
+- Default tab (Phase 6): trusts the word's OWN tipnr type via `pn_types` (a SET — 'person'/'place'/
+  'person,place'). A clean single type is authoritative; ambiguous ('person,place', a genuinely shared
+  number like Adam H121) or absent pn_types falls back to the strongs_g heuristic (place's G-number
+  matching the word's strongs_base — note metav_places.strongs_g only holds G-numbers, so OT/H words
+  always fall through to Person unless pn_types pins them). The Person/Place toggle is SUPPRESSED when
+  pn_types is a clean single type (the other metaV card is a name-coincidence).
+- tipnr schema (Phase 6, backlog #5): `entity_types` column holds the type SET so a strongs shared by a
+  person AND a place keeps BOTH (was a PK collision: last-imported type won → Adam H121 read 'place').
+  `entity_type` = single primary token (legacy). Migration adds the column at PA startup; re-run
+  import_tipnr.py after any rebuild to populate. Old "do NOT trust entity_type" rule is now obsolete —
+  pn_types (the set) is trustworthy.
 - Gentilics (`/ites?$/`: Hivite, Sinite…): card labeled "People / Clan", place header "Homeland", AI summary
   fires on the clan tab. Kept as persons (Table-of-Nations genealogy is the value; only Jebusite has map coords)
 - AI curation: `/api/metav/ai-description/<name>` — Haiku, 1-2 sentences, text-first prompt, cached in
   ai_search_cache (`pn:` key). Fills entries with no metaV/BDB data
-- CRITICAL: the lexicon join is `LEFT JOIN lexicon l ON l.strongs = SUBSTR(w.strongs_base,2) AND w.strongs_base
-  LIKE 'G%'`. The `LIKE 'G%'` guard is REQUIRED — without it a Hebrew H121 matches Greek G121 and gets a bogus
-  Greek lemma (which made the metaV effect early-return and broke Hebrew-PN metaV). Applies to BOTH chapter_text
-  and verse_words
+- CRITICAL: the lexicon join is `LEFT JOIN lexicon l ON l.strongs_g = w.strongs_base` (Phase 1 indexed key).
+  strongs_g only ever holds 'G…', so a Hebrew H-number can never match — this STRUCTURALLY replaced the old
+  `SUBSTR(strongs_base,2) ... LIKE 'G%'` guard that a Hebrew H121 used to slip past (bogus Greek G121 lemma
+  made the metaV effect early-return and broke Hebrew-PN metaV). Applies to BOTH chapter_text and verse_words
 
 ## Maintenance / data-quality scripts
 - `scripts/health_check.py <db>` — READ-ONLY scanner; run after ANY import/rebuild. ~14 checks (strongs_base
@@ -221,9 +231,23 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 - `fix_greek_pos_gaps.py` / `fix_bracket_gaps_absorb.py` / `fix_orphan_greek_pos.py` / `dedup_words.py` —
   targeted data repairs, all with `--dry-run`. Touch only the named column; never blanket DELETE
 
-## Refactor backlog
-- See memory `project_architecture_rework.md` and TODO.md "Code Health" section. #1 (centralize Strong's-number
-  handling — kill `SUBSTR(strongs_base,2)` joins + hardcoded `G{...}`) is the highest-leverage rework
+## Rate limiting / security (2026-06-07 security pass)
+- `core.limiter` (flask-limiter, memory storage): site-wide default `300/min` per endpoint per IP
+  (flood backstop on the DB routes); paid AI endpoints set tighter `@limiter.limit("200 per hour")`
+  which overrides the default. Static assets exempted via a `request_filter` in app.py (page loads
+  never trip it). 429s handled by the errorhandler in app.py.
+- AI-generated SQL runs on a READ-ONLY connection (`db_ro`), single-statement, SELECT-only guard;
+  failures log the SQL/error server-side ONLY (never returned to the client — info disclosure).
+- Verdict: read-only, no-auth, no-PII public app; all user input is parameterized; secrets via .env
+  (gitignored); Flask debug off in prod (app.run(debug=True) is local-only). No critical findings.
+
+## Refactor backlog (status 2026-06-07 — redesign Phases 0–6 done)
+- See memory `project_architecture_rework.md` and TODO.md. DONE: #1 centralize Strong's handling (Phase 1 —
+  `lexicon.strongs_g` join key + frontend `strongsBare`/`strongsTag`); #3 backend DRY serialization (Phase 2,
+  `_serialize_word_core`); #4 detail-panel state (Phase 4, `{hero, sections[]}`); #5 tipnr PK collision
+  (Phase 6, `entity_types` type-set). REMAINING: #2 destructive-rebuild→patch pipeline → idempotent single
+  pass (only the CI-lock slice done — `_prefix_base` lifted + tested; the upsert/patch-fold needs a copy-first
+  PA rebuild to validate) and the frontend half of #3 (makeEntry/flattenAiResults dedup).
 
 ## Do Not
 - Do not add KJV as the sole primary study text — ABP remains the anchor
