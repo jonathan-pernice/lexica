@@ -4183,38 +4183,32 @@ function LexiconView({
   }, b.name, /*#__PURE__*/React.createElement("span", {
     className: "lexicon-dist-count"
   }, b.count)))))), selectedBook && /*#__PURE__*/React.createElement("div", {
-    className: "lexicon-verse-list"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lexicon-verse-list-header"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lexicon-verse-list-title"
-  }, profile.books.find(b => b.book === selectedBook)?.name), /*#__PURE__*/React.createElement("button", {
-    className: "lexicon-verse-close",
-    onClick: () => {
-      setSelectedBook(null);
-      setVerseList(null);
-    }
-  }, "\u2715")), verseLoading && /*#__PURE__*/React.createElement("div", {
+    className: "corpus-groups"
+  }, verseLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lexicon-verse-loading"
-  }, "Loading\u2026"), verseList && verseList.map((v, i) => v.error ? /*#__PURE__*/React.createElement("div", {
-    key: i,
+  }, "Loading\u2026") : verseList && verseList[0] && verseList[0].error ? /*#__PURE__*/React.createElement("div", {
     className: "lexicon-verse-loading",
     style: {
       color: "red"
     }
-  }, v.error) : /*#__PURE__*/React.createElement(VerseRow, {
-    key: `${selectedBook}-${v.chapter}-${v.verse}`,
-    book: selectedBook,
-    chapter: v.chapter,
-    verse: v.verse,
-    label: `${selectedBook} ${v.chapter}:${v.verse}`,
+  }, verseList[0].error) : verseList && verseList.length ? /*#__PURE__*/React.createElement(CorpusGroup, {
+    label: profile.books.find(b => b.book === selectedBook)?.name || selectedBook,
+    verses: verseList.map(v => ({
+      book: selectedBook,
+      chapter: v.chapter,
+      verse: v.verse,
+      ref: `${selectedBook} ${v.chapter}:${v.verse}`
+    })),
     allResults: [],
     onWordClick: onWordClick,
     onReadInContext: onNavigateToLibrary ? (b, c, vv) => onNavigateToLibrary(b, c, vv, profileCorpus) : undefined,
     textMode: profileCorpus === "kjv" ? "kjv" : "greek",
     primaryStrongs: null,
-    citedStrongs: citedStrongs
-  })))));
+    citedStrongs: citedStrongs,
+    kjvCache: {}
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "lexicon-verse-loading"
+  }, "No verses."))));
 }
 
 // ============================================================
