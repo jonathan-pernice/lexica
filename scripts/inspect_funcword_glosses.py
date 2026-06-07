@@ -140,7 +140,18 @@ if opt("--swaps"):
     # between the noun and its article.
     CONNECTORS = {'of', 'the', 'of the', 'a', 'an', 'to', 'in', 'by', 'with',
                   'for', 'from', "'s", 's'}
+    # The article legitimately stands in for a noun ("the things", "the ones").
+    # Those start with a determiner and are NOT bugs. A real swap is the article
+    # showing a plain word with no determiner in front (e.g. "God").
+    DET = {'the', 'a', 'an', 'this', 'that', 'these', 'those', 'my', 'your',
+           'his', 'her', 'our', 'their', 'its', 'all', 'of', 'some', 'any',
+           'each', 'every', 'no', 'which', 'what', 'one', 'ones'}
+    def first_word(s):
+        toks = (s or "").strip().lower().split()
+        return toks[0].strip(".,;:'\"") if toks else ""
+
     art_rows = suspect_rows("G3588")  # article rows holding a content word
+    art_rows = [r for r in art_rows if first_word(r["english"]) not in DET]
     swaps = []
     for r in art_rows:
         for dp in (-1, 1):
