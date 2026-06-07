@@ -5,8 +5,7 @@ The /api/search endpoint (study-mode lexicon/Strong's search) plus its KJV
 parallel helpers. Returns ABP + KJV results, gloss groupings, and dotted-variant
 maps. Results are cached in-memory (_search_cache) keyed by "v3|q|phrase".
 
-_hebrew_search is retained (currently unused) alongside the active
-_kjv_strongs_search / _kjv_word_search helpers.
+KJV results come from the _kjv_strongs_search / _kjv_word_search helpers.
 """
 from collections import Counter
 import json
@@ -21,42 +20,6 @@ from core import (
 bp = Blueprint("search", __name__)
 
 _search_cache: dict = {}        # in-memory lexicon search cache (q → payload)
-
-
-def _hebrew_search(conn, h_id, out_rows, out_groupings):
-    h_id = h_id.upper()
-    bdb_row = conn.execute(
-        "SELECT strongs_id, lemma, xlit, description FROM bdb WHERE strongs_id = ?",
-        (h_id,)
-    ).fetchone()
-    if not bdb_row:
-        return
-    for r in conn.execute("""
-        SELECT b.abbrev AS book, kw.chapter, kw.verse_num AS verse, kw.word AS kjv_word
-        FROM kjv_strongs ks
-        JOIN kjv_words kw ON kw.word_id = ks.word_id
-        JOIN books b ON b.sort_order = kw.book_id - 1
-        WHERE ks.strongs_id = ?
-        ORDER BY kw.book_id, kw.chapter, kw.verse_num
-        LIMIT 500
-    """, (h_id,)).fetchall():
-        out_rows.append({
-            "ref": f"{r['book']} {r['chapter']}:{r['verse']}",
-            "book": r['book'], "chapter": r['chapter'], "verse": r['verse'],
-            "strongs": h_id, "strongs_base": h_id,
-            "gloss": r['kjv_word'], "gloss_head": r['kjv_word'],
-            "lemma": bdb_row['lemma'] or "", "translit": bdb_row['xlit'] or "",
-            "strongs_def": bdb_row['description'] or "",
-            "kjv_def": "", "derivation": "", "is_function": False,
-        })
-    for gr in conn.execute("""
-        SELECT kw.word AS w, COUNT(*) AS cnt
-        FROM kjv_strongs ks
-        JOIN kjv_words kw ON kw.word_id = ks.word_id
-        WHERE ks.strongs_id = ?
-        GROUP BY kw.word ORDER BY cnt DESC
-    """, (h_id,)).fetchall():
-        out_groupings.setdefault(h_id, []).append({"gloss": gr['w'], "count": gr['cnt']})
 
 
 def _kjv_strongs_search(conn, sids, out_rows, out_groupings):

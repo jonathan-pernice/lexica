@@ -32,8 +32,17 @@ Do not state the word's grammatical parsing (part of speech, case, number, tense
 voice, mood) — that is shown separately. Focus only on meaning and semantic range.\
 """
 
-# keyed on LSJ key; persists for server lifetime
+# keyed on LSJ key; persists for server lifetime. Capped so a long-running worker
+# can't grow it without bound — context-keyed entries are many distinct keys.
 _lsj_summary_cache: dict = {}
+_LSJ_SUMMARY_CACHE_MAX = 500
+
+
+def _cache_lsj_summary(key: str, payload: dict) -> dict:
+    """Store a summary payload, bounding the in-memory cache size. Returns payload."""
+    if len(_lsj_summary_cache) < _LSJ_SUMMARY_CACHE_MAX:
+        _lsj_summary_cache[key] = payload
+    return payload
 
 _LSJ_TERM_LIMIT = 4  # max LSJ entries per extracted search term
 
@@ -327,12 +336,10 @@ def lsj_summary(lemma):
     ctx_db_key = f"{book}.{chapter}.{verse_n}"
     if has_ctx and sj.get("context", {}).get(ctx_db_key):
         payload = {"summary": sj["context"][ctx_db_key], "contextual": True}
-        _lsj_summary_cache[mem_key] = payload
-        return jsonify(payload)
+        return jsonify(_cache_lsj_summary(mem_key, payload))
     if not has_ctx and sj.get("general"):
         payload = {"summary": sj["general"], "contextual": False}
-        _lsj_summary_cache[mem_key] = payload
-        return jsonify(payload)
+        return jsonify(_cache_lsj_summary(mem_key, payload))
 
     # Fetch verse text for contextual summary
     plain_def = re.sub(r"<[^>]+>", " ", row["def_html"] or "").strip()
@@ -405,8 +412,7 @@ def lsj_summary(lemma):
         conn.close()
 
     payload = {"summary": synthesis, "contextual": actual_ctx}
-    _lsj_summary_cache[mem_key] = payload
-    return jsonify(payload)
+    return jsonify(_cache_lsj_summary(mem_key, payload))
 
 
 @bp.route("/api/bdb/<path:strongs_id>")
