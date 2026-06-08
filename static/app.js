@@ -3410,6 +3410,7 @@ function LibraryView({
     if (!nav || !nav.book || !books.length) return;
     const b = books.find(b => b.abbrev === nav.book);
     if (b) {
+      setCorpus("bible"); // a verse reference is a Bible verse — leave any open non-canonical text
       setSelBook(b);
       setSelChapter(nav.chapter || 1);
       if (nav.translation) {
@@ -5071,7 +5072,7 @@ function LexiconView({
   }, "rendered as \"", query.trim(), "\" \xB7 ", groupings.length, " ", groupings.length === 1 ? "word" : "words"), groupings.map(g => /*#__PURE__*/React.createElement("button", {
     key: g.strongs,
     className: "lexicon-result-row",
-    onClick: () => loadProfile(g.strongs)
+    onClick: () => loadProfile(g.strongs, corpus === "all" ? undefined : corpus)
   }, /*#__PURE__*/React.createElement("span", {
     className: "lexicon-match-strongs"
   }, g.strongs), g.lemma && /*#__PURE__*/React.createElement("span", {

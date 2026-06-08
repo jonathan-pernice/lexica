@@ -592,6 +592,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     if (!nav || !nav.book || !books.length) return;
     const b = books.find(b => b.abbrev === nav.book);
     if (b) {
+      setCorpus("bible");   // a verse reference is a Bible verse — leave any open non-canonical text
       setSelBook(b);
       setSelChapter(nav.chapter || 1);
       if (nav.translation) { setTranslation(nav.translation); onTranslationChange?.(nav.translation); }
