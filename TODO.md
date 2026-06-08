@@ -63,104 +63,33 @@ purely about which word you land on when you click. Most of this project is alre
 Essentially finished. Leave as a small footnote: tweak spacing/hierarchy as you notice rough edges,
 nothing structural left. `code: LexiconView in static/src/80-lexicon.jsx; /api/lexicon/* in views_lexicon.py`
 
-## AI search — needs a real pass
+## AI search — almost done; ongoing dev
 
-Also flagged, and a bit orphaned. Revisit the whole thing end to end: are results good, does the
-two-box layout (plain search on the left, AI on the right) still make sense, do the result cards
-look right? Audit first, then propose.
-`code: Search tab in static/src/70-search.jsx; /api/search (views_search.py) + /api/ai-search (ai.py); memory project_ai_search_architecture`
+Mostly there. Leave as a footnote: keep refining results quality and the result cards as you use it;
+nothing structural blocking. `code: Search tab in static/src/70-search.jsx; /api/search (views_search.py) + /api/ai-search (ai.py); memory project_ai_search_architecture`
 
-> Note: you revisit these two on your own schedule — Claude shouldn't keep pitching them as "next steps."
+> Note: you revisit these on your own schedule — Claude shouldn't keep pitching them as "next steps."
 
 ---
 
-## Non-canonical texts (generic "extra texts" plumbing DONE 2026-06-07)
+## Non-canonical texts — library DONE + LIVE; a few open scraps
 
-**STATUS 2026-06-07 — a large library now LIVE** (all in `NONCANON`, auto-loaded by deploy.sh):
-- Septuagint Apocrypha (16, English-only), Pseudepigrapha (1-2 Enoch, Jubilees, 2-3 Baruch,
-  Apocalypse of Abraham, Assumption of Moses, 2 Esdras/4 Ezra, Life of Adam and Eve, Psalms of
-  Solomon, Letter of Aristeas, Ascension of Isaiah, Sibylline Oracles — all English-only),
-  Testaments of the Twelve Patriarchs (12, English-only), and the **Apostolic Fathers (14) with
-  FULL GREEK INTERLINEAR** (Didache, 1-2 Clement, 7 Ignatius, Polycarp, Mart. Polycarp, Barnabas,
-  Diognetus, Shepherd of Hermas).
-- Greek-interlinear pipeline = `scripts/apfathers/build_af.py` (+ `build_hermas.py`): Brannan/Lake
-  Greek+lemma (CC-BY-SA) → Strong's via openscriptures + Dodson glosses → Lightfoot English.
-  Memory `project_noncanonical_texts` has the full recipe + source URLs.
-- "Other" picker (desktop dropdown, mobile book-picker, mobile reading-options sheet) all have
-  COLLAPSIBLE groups, ordered: Septuagint Apocrypha → Pseudepigrapha → Testaments → Apostolic Fathers.
-- **Added 2026-06-07 (English-only, all 7 of the prior shortlist):** 2 Esdras / 4 Ezra (WEB
-  Apocrypha), Life of Adam and Eve (Vita, Charles), Psalms of Solomon (Gray), 3 Baruch (Charles),
-  Letter of Aristeas (Andrews), Ascension of Isaiah (Charles), Sibylline Oracles (Terry — chapter =
-  book, verse = line; books 9 & 10 carry a "no such book" note). Each has its own `parse_*.py` in
-  `scripts/apocrypha/`; sources + the per-book parsing quirks are in memory `project_noncanonical_texts`.
+The whole non-canonical library is built, loaded, and live: Septuagint Apocrypha, Pseudepigrapha,
+and the Testaments of the Twelve Patriarchs (all English-only), plus the 14 Apostolic Fathers with
+full Greek interlinear. The full build record — pipeline, sources, per-book quirks, the Didache/Enoch
+details, and the lessons learned — lives in memory `project_noncanonical_texts` and TODO_ARCHIVE.
+Only the genuinely open items are kept below.
 - **Possible NEXT** (not started): Book of Jasher (Moses Samuel 1840 — beware the pseudo-Jasher);
   4 Baruch (Paraleipomena Jeremiou); Apocalypse of Zephaniah; Joseph and Aseneth.
-- Headings: 1 Enoch, Didache, 2-3 Baruch, Psalms of Solomon, Sibylline Oracles (harvested), and the
-  Apostolic Fathers (Hermas section titles) have section headings; the rest could get hand-written
-  ones if wanted (user said "later").
+- Headings: most books have section headings (harvested from source); the rest could get hand-written
+  ones if wanted (later).
 
-The Library can now carry non-canonical texts (Didache first) as their own picks, reached via an
-"Other" menu, walled off from Bible search and word counts. ABP stays the anchor. The plumbing is
-GENERIC: adding a future text = tag it, drop two json files, add one line to `NONCANON`, load.
-
-**How a text lives:** its own two tables `<book>_words` / `<book>_verses` (never touches the Bible's
-tables). Web route `GET /api/extra/<book>/chapter/<n>` reads those. Loader `scripts/load_extra.py
-<db> <book> <tagged.json> <english.json>` builds them; safe to re-run.
-
-**Didache data (all in `scripts/didache_proof/`):**
-- 16 ch tagged: each Greek word → dictionary form → Strong's → gloss (Tauber's corrected Lake text,
-  CC-BY-SA). `didache_tagged_full.json` (2199 words, 2147 Strong's-linked, 52 non-biblical, zero bad
-  numbers — `check_didache_tags.py`, read-only).
-- `didache_english.json` — our OWN plain English, all 16 ch (0.1 → 16.8, 101 verses), copyright-clean.
-- `load_didache.py` — thin wrapper around `load_extra.py` for the Didache (command unchanged).
-- `build_proof.py` + `didache_ch1_proof.html` — original standalone proof page.
-
-**Frontend (`static/src/60-library.jsx` + `api.extraChapter` in `00-core.jsx`):**
-- `corpus` ("bible" | a `NONCANON` id) is now SEPARATE from `translation` (the abp/kjv/parallel
-  layout). "Other ▾" popup (desktop) / "Other texts" sheet row (mobile) + a top-of-nav "Non-canonical"
-  group pick the text; picking a Bible book returns to the Bible.
-- Reading a non-canonical text: the **Greek interlinear is the normal view** (mirrors ABP — the
-  Greek/ABP button). **Parallel** shows Greek interlinear | our readable English, same two-column
-  layout as Bible parallel. KJV is disabled there (no KJV for these texts). No bracket/ordering
-  machinery; chips stay in natural Greek order; word click → the shared word-study sidebar.
-
-**DONE on PA 2026-06-07** — reloaded with the `heading` column (`load_didache.py`,
-~2199 words / 101 verses / 11 headings). Headings live. The 6 chapters with no heading
-(0, 2-4, 10, 12) are intentional — they continue the section a prior chapter started.
-
-**Future (when more non-canonical books exist): wire them into the Lexicon + Search tabs.**
+**Open: wire non-canonical texts into the Lexicon + Search tabs.**
 The word panel already shows an "In the Didache" count, but it isn't clickable and the Lexicon/Search
 tabs only know the Bible corpus. To let people browse every Didache (or future-book) verse where a
 word appears, teach those tabs about the `<book>_words` tables — best done once, generically, as a
 "non-canonical corpus" option rather than per book.
 `code: views_lexicon.py + LexiconView (80-lexicon.jsx); views_search.py + Search (70-search.jsx)`
-
-### 1 Enoch (English-only) — added 2026-06-07, English-only
-
-Second non-canonical text. R.H. Charles' 1917 translation (public domain, pre-1929), pulled verbatim
-from Wikisource's transcription. 108 chapters / 1063 verses / 93 section headings. NO Greek
-interlinear — only ~ch 1-32 survives in Greek (Akhmim papyrus), so this is text-only for now;
-`enoch_tagged_full.json` is empty `[]` and `enoch_words` loads empty.
-- Data + scripts in `scripts/enoch/`: `fetch_charles.py` (caches Wikisource wikitext → raw/),
-  `parse_charles.py` (cache → `enoch_english.json` + `enoch_headings.json`, both regenerable),
-  `load_enoch.py` (thin wrapper over `load_extra.py`).
-- Reader stays in **Prose** via the `englishOnly:true` flag on the `NONCANON` entry (chip/parallel
-  views would be blank with no Greek). Drop the flag once a tagged Greek file is added for ch 1-32.
-- **DONE + LIVE on PA 2026-06-07** (`load_enoch.py`, 0 words / 1063 verses / 93 headings).
-  80 of 108 chapters have a heading; the 28 without continue an earlier section (expected).
-- Reader locks to Prose for englishOnly texts; Strong's / Interlinear / Parallel / Chip are
-  grayed out (desktop bar + mobile sheet). Mobile pill shows the `abbr` ("1En" / "Did").
-
-### Lessons from Didache → Enoch (baked into the tooling)
-
-1. **The extra-text reader now serves text-only books.** The endpoint built its verse list ONLY from
-   the words table, so an English-only text returned nothing. Fixed in `views_library.py`: the list is
-   now every verse that has words OR English. Didache output unchanged.
-2. **`englishOnly` flag** on a `NONCANON` entry forces Prose so the reader doesn't open on an empty
-   interlinear. Set it for any future text loaded without an original-language tagging.
-3. **Harvest headings from the source, don't hand-write them.** Didache headings were written by us;
-   for a sourced text like Charles, its own `=== … ===` section titles are pulled in automatically
-   (`harvest_headings` in parse_charles.py) — faster and more faithful.
 
 ### KNOWN GAP — Hebrew/Aramaic interlinear for a non-canonical text
 

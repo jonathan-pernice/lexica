@@ -28,6 +28,29 @@ checklist in CLAUDE.md.
 
 ---
 
+## Non-canonical library — built and live (2026-06-07)
+
+A whole shelf of extra texts now lives in the Library under the "Other" menu, walled off from Bible
+search and word counts (ABP stays the anchor). All English-only unless noted:
+- **Septuagint Apocrypha** (16 books, Brenton 1851).
+- **Pseudepigrapha** — 1-2 Enoch, Jubilees, 2-3 Baruch, Apocalypse of Abraham, Assumption of Moses,
+  2 Esdras/4 Ezra, Life of Adam and Eve, Psalms of Solomon, Letter of Aristeas, Ascension of Isaiah,
+  Sibylline Oracles (mostly R.H. Charles; sources per-book in memory).
+- **Testaments of the Twelve Patriarchs** (12 separate books, Charles).
+- **Apostolic Fathers** (14, incl. Didache) — these have the **full Greek interlinear**, same
+  word-study layer as the Bible: Brannan/Lake Greek → Strong's (openscriptures + Dodson glosses) →
+  Lightfoot English. Polycarp ch 10-14 survive only in Latin → English-only there.
+
+How it's built (generic, re-runnable): each text gets its own two tables `<book>_words` /
+`<book>_verses`, served by `/api/extra/<book>/chapter/<n>`, loaded by `scripts/load_extra.py`. Adding
+a future text = tag it, drop two json files, add one line to `NONCANON`, load. `englishOnly:true`
+locks the reader to Prose for texts with no original-language tagging. The full pipeline, source URLs,
+and per-book parsing quirks are in memory `project_noncanonical_texts`. Still open (in the live TODO):
+more books (Jasher, 4 Baruch…), optional hand-written headings, wiring these into the Lexicon/Search
+tabs, and the Hebrew-interlinear gap.
+
+---
+
 ## Search results now match the Library look — done
 
 The AI search result verses were restyled to match the polished Library reading view: plain word
