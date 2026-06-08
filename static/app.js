@@ -1090,13 +1090,18 @@ function SummaryPanel({
       cancelled = true;
     };
   }, [book, chapter]);
+
+  // Swipe-to-dismiss for the mobile sheet (same hook the word-study / xref sheets
+  // use). Harmlessly no-ops on desktop, where sheetRef is never attached.
+  const {
+    sheetRef,
+    scrollRef
+  } = useSwipeToDismiss(onClose);
   const bookText = data && data.book_summary;
   const chapText = data && data.chapter_summary;
   const nothing = !loading && !bookText && !chapText;
   const title = (bookLabel || book) + (chapter ? " " + chapter : "");
-  const body = /*#__PURE__*/React.createElement("div", {
-    className: "detail-body"
-  }, loading && /*#__PURE__*/React.createElement("div", {
+  const content = /*#__PURE__*/React.createElement(React.Fragment, null, loading && /*#__PURE__*/React.createElement("div", {
     className: "summary-loading"
   }, "Reading the chapter\u2026"), !loading && bookText && /*#__PURE__*/React.createElement("div", {
     className: "detail-section"
@@ -1114,18 +1119,19 @@ function SummaryPanel({
     className: "summary-loading"
   }, "No overview available for this passage."));
 
-  // Mobile: bottom sheet opened from the reading cockpit (tap scrim / X to close).
+  // Mobile: bottom sheet opened from the reading cockpit. Swipe down (drag
+  // anywhere) or tap the scrim / X to close — matches the other sheets.
   if (isMobile) {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       className: "sheet-scrim",
       onClick: onClose
     }), /*#__PURE__*/React.createElement("aside", {
+      ref: sheetRef,
       className: "detail detail-sheet summary-sheet",
       role: "dialog",
       "aria-label": "Reading overview"
     }, /*#__PURE__*/React.createElement("div", {
       className: "sheet-drag-zone",
-      onClick: onClose,
       "aria-hidden": "true"
     }, /*#__PURE__*/React.createElement("div", {
       className: "sheet-handle"
@@ -1139,7 +1145,10 @@ function SummaryPanel({
       className: "detail-close",
       onClick: onClose,
       "aria-label": "Close"
-    }, /*#__PURE__*/React.createElement(Icon.Close, null))), body));
+    }, /*#__PURE__*/React.createElement(Icon.Close, null))), /*#__PURE__*/React.createElement("div", {
+      className: "detail-body",
+      ref: scrollRef
+    }, content)));
   }
 
   // Desktop: resting content of the right sidebar.
@@ -1153,7 +1162,9 @@ function SummaryPanel({
     className: "detail-head-l"
   }, /*#__PURE__*/React.createElement("span", {
     className: "detail-pos summary-pos"
-  }, title))), body);
+  }, title))), /*#__PURE__*/React.createElement("div", {
+    className: "detail-body"
+  }, content));
 }
 SummaryPanel._cache = {};
 

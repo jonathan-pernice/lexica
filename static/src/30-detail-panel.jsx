@@ -29,13 +29,17 @@ function SummaryPanel({ book, chapter, bookLabel, isMobile, onClose }) {
     return () => { cancelled = true; };
   }, [book, chapter]);
 
+  // Swipe-to-dismiss for the mobile sheet (same hook the word-study / xref sheets
+  // use). Harmlessly no-ops on desktop, where sheetRef is never attached.
+  const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
+
   const bookText = data && data.book_summary;
   const chapText = data && data.chapter_summary;
   const nothing = !loading && !bookText && !chapText;
   const title = (bookLabel || book) + (chapter ? " " + chapter : "");
 
-  const body = (
-    <div className="detail-body">
+  const content = (
+    <>
       {loading && <div className="summary-loading">Reading the chapter…</div>}
       {!loading && bookText && (
         <div className="detail-section">
@@ -52,16 +56,17 @@ function SummaryPanel({ book, chapter, bookLabel, isMobile, onClose }) {
       {nothing && (
         <div className="summary-loading">No overview available for this passage.</div>
       )}
-    </div>
+    </>
   );
 
-  // Mobile: bottom sheet opened from the reading cockpit (tap scrim / X to close).
+  // Mobile: bottom sheet opened from the reading cockpit. Swipe down (drag
+  // anywhere) or tap the scrim / X to close — matches the other sheets.
   if (isMobile) {
     return (
       <>
         <div className="sheet-scrim" onClick={onClose}/>
-        <aside className="detail detail-sheet summary-sheet" role="dialog" aria-label="Reading overview">
-          <div className="sheet-drag-zone" onClick={onClose} aria-hidden="true"><div className="sheet-handle"></div></div>
+        <aside ref={sheetRef} className="detail detail-sheet summary-sheet" role="dialog" aria-label="Reading overview">
+          <div className="sheet-drag-zone" aria-hidden="true"><div className="sheet-handle"></div></div>
           <div className="detail-head">
             <div className="detail-head-l">
               <span className="detail-pos summary-pos">{title}</span>
@@ -70,7 +75,7 @@ function SummaryPanel({ book, chapter, bookLabel, isMobile, onClose }) {
               <Icon.Close/>
             </button>
           </div>
-          {body}
+          <div className="detail-body" ref={scrollRef}>{content}</div>
         </aside>
       </>
     );
@@ -84,7 +89,7 @@ function SummaryPanel({ book, chapter, bookLabel, isMobile, onClose }) {
           <span className="detail-pos summary-pos">{title}</span>
         </div>
       </div>
-      {body}
+      <div className="detail-body">{content}</div>
     </aside>
   );
 }
