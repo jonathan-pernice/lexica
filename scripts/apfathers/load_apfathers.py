@@ -21,7 +21,15 @@ sys.path.insert(0, str(HERE.parent))   # so "import load_extra" finds scripts/lo
 import load_extra  # noqa: E402
 
 BOOKS = [
-    "clement2",   # 2 Clement -- 20 chapters (proof book)
+    "clement1",   # 1 Clement
+    "clement2",   # 2 Clement
+    "ign_eph", "ign_mag", "ign_tral", "ign_rom",   # Ignatius, 7 letters
+    "ign_phld", "ign_smyrn", "ign_pol",
+    "polycarp",   # Polycarp to the Philippians (ch 10-14 Latin -> English only)
+    "mpolycarp",  # Martyrdom of Polycarp
+    "barnabas",   # Epistle of Barnabas
+    "diognetus",  # Epistle to Diognetus
+    # Shepherd of Hermas held back (Vision/Mandate/Similitude structure)
 ]
 
 

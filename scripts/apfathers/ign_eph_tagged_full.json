@@ -1,0 +1,12406 @@
+[
+{
+"ref": "0.1",
+"greek": "Ἰγνάτιος,",
+"lemma": "Ἰγνάτιος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "0.1",
+"greek": "Θεοφόρος,",
+"lemma": "Θεοφόρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "εὐλογημένῃ",
+"lemma": "εὐλογημένῃ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "0.1",
+"greek": "μεγέθει",
+"lemma": "μέγεθος",
+"strongs": "G3174",
+"gloss": "greatness, vastness"
+},
+{
+"ref": "0.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "0.1",
+"greek": "πατρὸς",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "0.1",
+"greek": "πληρώματι,",
+"lemma": "πλήρωμα",
+"strongs": "G4138",
+"gloss": "fullness, fulfillment, completion"
+},
+{
+"ref": "0.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "προωρισμένῃ",
+"lemma": "προωρισμένῃ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "πρὸ",
+"lemma": "πρό",
+"strongs": "G4253",
+"gloss": "before"
+},
+{
+"ref": "0.1",
+"greek": "αἰώνων",
+"lemma": "αἰών",
+"strongs": "G165",
+"gloss": "an age, a cycle of time"
+},
+{
+"ref": "0.1",
+"greek": "εἶναι",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "0.1",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "0.1",
+"greek": "παντὸς",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "0.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "0.1",
+"greek": "δόξαν",
+"lemma": "δόξα",
+"strongs": "G1391",
+"gloss": "honor, renown, glory splendor"
+},
+{
+"ref": "0.1",
+"greek": "παράμονον",
+"lemma": "παράμονος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "ἄτρεπτον,",
+"lemma": "ἄτρεπτος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "ἡνωμένῃ",
+"lemma": "ἡνωμένῃ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "0.1",
+"greek": "ἐκλελεγμένῃ",
+"lemma": "ἐκλελεγμένῃ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "0.1",
+"greek": "πάθει",
+"lemma": "πάθος",
+"strongs": "G3806",
+"gloss": "suffering, emotion, depraved passion, lust"
+},
+{
+"ref": "0.1",
+"greek": "ἀληθινῷ,",
+"lemma": "ἀληθινός",
+"strongs": "G228",
+"gloss": "true, real, genuine"
+},
+{
+"ref": "0.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "0.1",
+"greek": "θελήματι",
+"lemma": "θέλημα",
+"strongs": "G2307",
+"gloss": "will, wish, desire"
+},
+{
+"ref": "0.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "πατρὸς",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "0.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "0.1",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "0.1",
+"greek": "Χριστοῦ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "0.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "0.1",
+"greek": "ἡμῶν,",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "0.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "ἐκκλησίᾳ",
+"lemma": "ἐκκλησία",
+"strongs": "G1577",
+"gloss": "an assembly, congregation, church"
+},
+{
+"ref": "0.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "ἀξιομακαρίστῳ,",
+"lemma": "ἀξιομακάριστος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "0.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "οὔσῃ",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "0.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "0.1",
+"greek": "Ἐφέσῳ",
+"lemma": "Ἔφεσος",
+"strongs": "G2181",
+"gloss": "Ephesus"
+},
+{
+"ref": "0.1",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "0.1",
+"greek": "Ἀσίας,",
+"lemma": "Ἀσία",
+"strongs": "G773",
+"gloss": "roughly the western third of Asia Minor"
+},
+{
+"ref": "0.1",
+"greek": "πλεῖστα",
+"lemma": "πολύς",
+"strongs": "G4183",
+"gloss": "much, many, often"
+},
+{
+"ref": "0.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "0.1",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "0.1",
+"greek": "Χριστῷ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "0.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "0.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "0.1",
+"greek": "ἀμώμῳ",
+"lemma": "ἄμωμος",
+"strongs": "G299",
+"gloss": "blameless"
+},
+{
+"ref": "0.1",
+"greek": "χαρᾷ",
+"lemma": "χαρά",
+"strongs": "G5479",
+"gloss": "joy, gladness"
+},
+{
+"ref": "0.1",
+"greek": "χαίρειν.",
+"lemma": "χαίρω",
+"strongs": "G5463",
+"gloss": "I rejoice, am glad"
+},
+{
+"ref": "1.1",
+"greek": "Ἀποδεξάμενος",
+"lemma": "Ἀποδέχομαι",
+"strongs": "G588",
+"gloss": "I receive, welcome, entertain"
+},
+{
+"ref": "1.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.1",
+"greek": "θεῷ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "1.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.1",
+"greek": "πολυαγάπητόν",
+"lemma": "πολυαγάπητος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "1.1",
+"greek": "σου",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "1.1",
+"greek": "ὄνομα,",
+"lemma": "ὄνομα",
+"strongs": "G3686",
+"gloss": "name, character, reputation"
+},
+{
+"ref": "1.1",
+"greek": "ὃ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "1.1",
+"greek": "κέκτησθε",
+"lemma": "κτάομαι",
+"strongs": "G2932",
+"gloss": "I win, get, buy, possess"
+},
+{
+"ref": "1.1",
+"greek": "φύσει",
+"lemma": "φύσις",
+"strongs": "G5449",
+"gloss": "nature, inherent nature"
+},
+{
+"ref": "1.1",
+"greek": "δικαίᾳ",
+"lemma": "δίκαιος",
+"strongs": "G1342",
+"gloss": "just, righteous, impartial"
+},
+{
+"ref": "1.1",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "1.1",
+"greek": "πίστιν",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "1.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "1.1",
+"greek": "ἀγάπην",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "1.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.1",
+"greek": "Χριστῷ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "1.1",
+"greek": "Ἰησοῦ,",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "1.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.1",
+"greek": "σωτῆρι",
+"lemma": "σωτήρ",
+"strongs": "G4990",
+"gloss": "a savior, deliverer, preserver"
+},
+{
+"ref": "1.1",
+"greek": "ἡμῶν·",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "1.1",
+"greek": "μιμηταὶ",
+"lemma": "μιμητής",
+"strongs": "G3402",
+"gloss": "an imitator"
+},
+{
+"ref": "1.1",
+"greek": "ὄντες",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "1.1",
+"greek": "θεοῦ,",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "1.1",
+"greek": "ἀναζωπυρήσαντες",
+"lemma": "ἀναζωπυρέω",
+"strongs": "G329",
+"gloss": "I stir up the fire, fan the flame of"
+},
+{
+"ref": "1.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.1",
+"greek": "αἵματι",
+"lemma": "αἷμα",
+"strongs": "G129",
+"gloss": "blood"
+},
+{
+"ref": "1.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "1.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.1",
+"greek": "συγγενικὸν",
+"lemma": "συγγενικός",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "1.1",
+"greek": "ἔργον",
+"lemma": "ἔργον",
+"strongs": "G2041",
+"gloss": "work, labor, action, deed"
+},
+{
+"ref": "1.1",
+"greek": "τελείως",
+"lemma": "τελείως",
+"strongs": "G5049",
+"gloss": "perfectly"
+},
+{
+"ref": "1.1",
+"greek": "ἀπηρτίσατε·",
+"lemma": "ἀπηρτίω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "1.2",
+"greek": "ἀκούσαντες",
+"lemma": "ἀκούω",
+"strongs": "G191",
+"gloss": "I hear, listen"
+},
+{
+"ref": "1.2",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "1.2",
+"greek": "δεδεμένον",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "1.2",
+"greek": "ἀπὸ",
+"lemma": "ἀπό",
+"strongs": "G575",
+"gloss": "from, away from"
+},
+{
+"ref": "1.2",
+"greek": "Συρίας",
+"lemma": "Συρία",
+"strongs": "G4947",
+"gloss": "Syria"
+},
+{
+"ref": "1.2",
+"greek": "ὑπὲρ",
+"lemma": "ὑπέρ",
+"strongs": "G5228",
+"gloss": "in behalf of, above"
+},
+{
+"ref": "1.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.2",
+"greek": "κοινοῦ",
+"lemma": "κοινός",
+"strongs": "G2839",
+"gloss": "common, shared, unclean"
+},
+{
+"ref": "1.2",
+"greek": "ὀνόματος",
+"lemma": "ὄνομα",
+"strongs": "G3686",
+"gloss": "name, character, reputation"
+},
+{
+"ref": "1.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "1.2",
+"greek": "ἐλπίδος,",
+"lemma": "ἐλπίς",
+"strongs": "G1680",
+"gloss": "hope, expectation"
+},
+{
+"ref": "1.2",
+"greek": "ἐλπίζοντα",
+"lemma": "ἐλπίζω",
+"strongs": "G1679",
+"gloss": "I hope, hope for, expect"
+},
+{
+"ref": "1.2",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.2",
+"greek": "προσευχῇ",
+"lemma": "προσευχή",
+"strongs": "G4335",
+"gloss": "prayer, a place for prayer"
+},
+{
+"ref": "1.2",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "1.2",
+"greek": "ἐπιτυχεῖν",
+"lemma": "ἐπιτυγχάνω",
+"strongs": "G2013",
+"gloss": "I attain, obtain, acquire"
+},
+{
+"ref": "1.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.2",
+"greek": "Ῥώμῃ",
+"lemma": "Ῥώμη",
+"strongs": "G4516",
+"gloss": "Rome"
+},
+{
+"ref": "1.2",
+"greek": "θηριομαχῆσαι,",
+"lemma": "θηριομαχέω",
+"strongs": "G2341",
+"gloss": "I fight with wild beasts"
+},
+{
+"ref": "1.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "1.2",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "1.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.2",
+"greek": "ἐπιτυχεῖν",
+"lemma": "ἐπιτυγχάνω",
+"strongs": "G2013",
+"gloss": "I attain, obtain, acquire"
+},
+{
+"ref": "1.2",
+"greek": "δυνηθῶ",
+"lemma": "δύναμαι",
+"strongs": "G1410",
+"gloss": "I am powerful, am able"
+},
+{
+"ref": "1.2",
+"greek": "μαθητὴς",
+"lemma": "μαθητής",
+"strongs": "G3101",
+"gloss": "a learner, disciple, pupil"
+},
+{
+"ref": "1.2",
+"greek": "εἶναι,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "1.2",
+"greek": "ἰδεῖν",
+"lemma": "ὁράω",
+"strongs": "G3708",
+"gloss": "I see, look upon, experience"
+},
+{
+"ref": "1.2",
+"greek": "ἐσπουδάσατε·",
+"lemma": "σπουδάζω",
+"strongs": "G4704",
+"gloss": "I hasten"
+},
+{
+"ref": "1.3",
+"greek": "ἐπεὶ",
+"lemma": "ἐπεί",
+"strongs": "G1893",
+"gloss": "after, for, since, otherwise"
+},
+{
+"ref": "1.3",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "1.3",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.3",
+"greek": "πολυπλήθειαν",
+"lemma": "πολυπλήθεια",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "1.3",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "1.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.3",
+"greek": "ὀνόματι",
+"lemma": "ὄνομα",
+"strongs": "G3686",
+"gloss": "name, character, reputation"
+},
+{
+"ref": "1.3",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "1.3",
+"greek": "ἀπείληφα",
+"lemma": "ἀπολαμβάνω",
+"strongs": "G618",
+"gloss": "I get back, receive back"
+},
+{
+"ref": "1.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.3",
+"greek": "Ὀνησίμῳ,",
+"lemma": "Ὀνήσιμος",
+"strongs": "G3682",
+"gloss": "Onesimus"
+},
+{
+"ref": "1.3",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.3",
+"greek": "ἀγάπῃ",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "1.3",
+"greek": "ἀδιηγήτῳ,",
+"lemma": "ἀδιήγητος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "1.3",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "1.3",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "1.3",
+"greek": "ἐπισκόπῳ,",
+"lemma": "ἐπισκόπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "1.3",
+"greek": "ὃν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "1.3",
+"greek": "εὔχομαι",
+"lemma": "εὔχομαι",
+"strongs": "G2172",
+"gloss": "I pray, wish"
+},
+{
+"ref": "1.3",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "1.3",
+"greek": "Ἰησοῦν",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "1.3",
+"greek": "Χριστὸν",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "1.3",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "1.3",
+"greek": "ἀγαπᾶν",
+"lemma": "ἀγαπάω",
+"strongs": "G25",
+"gloss": "I love"
+},
+{
+"ref": "1.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "1.3",
+"greek": "πάντας",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "1.3",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "1.3",
+"greek": "αὐτῷ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "1.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "1.3",
+"greek": "ὁμοιότητι",
+"lemma": "ὁμοιότης",
+"strongs": "G3665",
+"gloss": "likeness, resemblance"
+},
+{
+"ref": "1.3",
+"greek": "εἶναι.",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "1.3",
+"greek": "εὐλογητὸς",
+"lemma": "εὐλογητός",
+"strongs": "G2128",
+"gloss": "worthy of praise, blessed"
+},
+{
+"ref": "1.3",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "1.3",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "1.3",
+"greek": "χαρισάμενος",
+"lemma": "χαρίζομαι",
+"strongs": "G5483",
+"gloss": "I show favor to, forgive"
+},
+{
+"ref": "1.3",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "1.3",
+"greek": "ἀξίοις",
+"lemma": "ἄξιος",
+"strongs": "G514",
+"gloss": "worthy, worthy of, deserving"
+},
+{
+"ref": "1.3",
+"greek": "οὖσι",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "1.3",
+"greek": "τοιοῦτον",
+"lemma": "τοιοῦτος",
+"strongs": "G5108",
+"gloss": "of such a kind, such"
+},
+{
+"ref": "1.3",
+"greek": "ἐπίσκοπον",
+"lemma": "ἐπίσκοπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "1.3",
+"greek": "κεκτῆσθαι.",
+"lemma": "κτέομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "Περὶ",
+"lemma": "περί",
+"strongs": "G4012",
+"gloss": "about, concerning, around"
+},
+{
+"ref": "2.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "2.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.1",
+"greek": "συνδούλου",
+"lemma": "σύνδουλος",
+"strongs": "G4889",
+"gloss": "a fellow servant, colleague"
+},
+{
+"ref": "2.1",
+"greek": "μου",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "2.1",
+"greek": "Βούρρου,",
+"lemma": "Βούρρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.1",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "2.1",
+"greek": "θεὸν",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "2.1",
+"greek": "διακόνου",
+"lemma": "διακονέω",
+"strongs": "G1247",
+"gloss": "I wait at table, serve"
+},
+{
+"ref": "2.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "2.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "2.1",
+"greek": "πᾶσιν",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "2.1",
+"greek": "εὐλογημένου,",
+"lemma": "εὐλογημένου",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "εὔχομαι",
+"lemma": "εὔχομαι",
+"strongs": "G2172",
+"gloss": "I pray, wish"
+},
+{
+"ref": "2.1",
+"greek": "παραμεῖναι",
+"lemma": "παραμένω",
+"strongs": "G3887",
+"gloss": "I remain by, abide with"
+},
+{
+"ref": "2.1",
+"greek": "αὐτὸν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "2.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "2.1",
+"greek": "τιμὴν",
+"lemma": "τιμή",
+"strongs": "G5092",
+"gloss": "a price, honor"
+},
+{
+"ref": "2.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "2.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.1",
+"greek": "ἐπισκόπου·",
+"lemma": "ἐπισκοπέω",
+"strongs": "G1983",
+"gloss": "I exercise oversight, care for"
+},
+{
+"ref": "2.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.1",
+"greek": "Κρόκος",
+"lemma": "Κρόκος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "δέ,",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "2.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "2.1",
+"greek": "ἄξιος",
+"lemma": "ἄξιος",
+"strongs": "G514",
+"gloss": "worthy, worthy of, deserving"
+},
+{
+"ref": "2.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.1",
+"greek": "ὑμῶν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "2.1",
+"greek": "ὃν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "2.1",
+"greek": "ἐξεμπλάριον",
+"lemma": "ἐξεμπλάριον",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.1",
+"greek": "ἀφ’",
+"lemma": "ἀφ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "2.1",
+"greek": "ἀγάπης",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "2.1",
+"greek": "ἀπέλαβον,",
+"lemma": "ἀπολαμβάνω",
+"strongs": "G618",
+"gloss": "I get back, receive back"
+},
+{
+"ref": "2.1",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "2.1",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "2.1",
+"greek": "με",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "2.1",
+"greek": "ἀνέπαυσεν,",
+"lemma": "ἀναπαύω",
+"strongs": "G373",
+"gloss": "I make to rest, give rest to, rest, take my ease"
+},
+{
+"ref": "2.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "2.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.1",
+"greek": "αὐτὸν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "2.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.1",
+"greek": "πατὴρ",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "2.1",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "2.1",
+"greek": "Χριστοῦ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "2.1",
+"greek": "ἀναψύξαι,",
+"lemma": "ἀναψύσσω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "ἅμα",
+"lemma": "ἅμα",
+"strongs": "G260",
+"gloss": "at the same time, along with"
+},
+{
+"ref": "2.1",
+"greek": "Ὀνησίμῳ",
+"lemma": "Ὀνήσιμος",
+"strongs": "G3682",
+"gloss": "Onesimus"
+},
+{
+"ref": "2.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.1",
+"greek": "Βούρρῳ",
+"lemma": "Βούρρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.1",
+"greek": "Εὔπλῳ",
+"lemma": "Εὔπλος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.1",
+"greek": "Φρόντωνι,",
+"lemma": "Φρόντων",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.1",
+"greek": "δι’",
+"lemma": "δι",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "2.1",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "2.1",
+"greek": "πάντας",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "2.1",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "2.1",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "2.1",
+"greek": "ἀγάπην",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "2.1",
+"greek": "εἶδον.",
+"lemma": "ὁράω",
+"strongs": "G3708",
+"gloss": "I see, look upon, experience"
+},
+{
+"ref": "2.2",
+"greek": "ὀναίμην",
+"lemma": "ὀνίνημι",
+"strongs": "G3685",
+"gloss": "I help, profit, have joy of"
+},
+{
+"ref": "2.2",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "2.2",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "2.2",
+"greek": "παντός,",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "2.2",
+"greek": "ἐάνπερ",
+"lemma": "ἐάνπερ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "2.2",
+"greek": "ἄξιος",
+"lemma": "ἄξιος",
+"strongs": "G514",
+"gloss": "worthy, worthy of, deserving"
+},
+{
+"ref": "2.2",
+"greek": "ὦ.",
+"lemma": "ὦ",
+"strongs": "G5599",
+"gloss": "O, an exclamation"
+},
+{
+"ref": "2.2",
+"greek": "πρέπον",
+"lemma": "πρέπω",
+"strongs": "G4241",
+"gloss": "it becomes, is fitting to"
+},
+{
+"ref": "2.2",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "2.2",
+"greek": "ἐστὶν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "2.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "2.2",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "2.2",
+"greek": "τρόπον",
+"lemma": "τρόπος",
+"strongs": "G5158",
+"gloss": "way, manner, character"
+},
+{
+"ref": "2.2",
+"greek": "δοξάζειν",
+"lemma": "δοξάζω",
+"strongs": "G1392",
+"gloss": "I glorify, honor, bestow glory on"
+},
+{
+"ref": "2.2",
+"greek": "Ἰησοῦν",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "2.2",
+"greek": "Χριστὸν",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "2.2",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.2",
+"greek": "δοξάσαντα",
+"lemma": "δοξάζω",
+"strongs": "G1392",
+"gloss": "I glorify, honor, bestow glory on"
+},
+{
+"ref": "2.2",
+"greek": "ὑμᾶς,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "2.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "2.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "2.2",
+"greek": "μιᾷ",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "2.2",
+"greek": "ὑποταγῇ",
+"lemma": "ὑποταγή",
+"strongs": "G5292",
+"gloss": "subjection, submission"
+},
+{
+"ref": "2.2",
+"greek": "κατηρτισμένοι,",
+"lemma": "καταρτίζω",
+"strongs": "G2675",
+"gloss": "I fit together, prepare"
+},
+{
+"ref": "2.2",
+"greek": "ὑποτασσόμενοι",
+"lemma": "ὑποτάσσω",
+"strongs": "G5293",
+"gloss": "I place under, subject to"
+},
+{
+"ref": "2.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.2",
+"greek": "ἐπισκόπῳ",
+"lemma": "ἐπισκόπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "2.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "2.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "2.2",
+"greek": "πρεσβυτερίῳ,",
+"lemma": "πρεσβυτέριον",
+"strongs": "G4244",
+"gloss": "an assembly of elders"
+},
+{
+"ref": "2.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "2.2",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "2.2",
+"greek": "ἦτε",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "2.2",
+"greek": "ἡγιασμένοι.",
+"lemma": "ἁγιάζω",
+"strongs": "G37",
+"gloss": "I make holy, sanctify"
+},
+{
+"ref": "3.1",
+"greek": "Οὐ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "3.1",
+"greek": "διατάσσομαι",
+"lemma": "διατάσσω",
+"strongs": "G1299",
+"gloss": "I give orders to, prescribe"
+},
+{
+"ref": "3.1",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "3.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "3.1",
+"greek": "ὤν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "3.1",
+"greek": "τις.",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "3.1",
+"greek": "εἰ",
+"lemma": "εἰ",
+"strongs": "G1488",
+"gloss": null
+},
+{
+"ref": "3.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "3.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "3.1",
+"greek": "δέδεμαι",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "3.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "3.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.1",
+"greek": "ὀνόματι,",
+"lemma": "ὄνομα",
+"strongs": "G3686",
+"gloss": "name, character, reputation"
+},
+{
+"ref": "3.1",
+"greek": "οὔπω",
+"lemma": "οὔπω",
+"strongs": "G3768",
+"gloss": "not yet"
+},
+{
+"ref": "3.1",
+"greek": "ἀπήρτισμαι",
+"lemma": "ἀπήρτισμαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "3.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "3.1",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "3.1",
+"greek": "Χριστῷ·",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "3.1",
+"greek": "νῦν",
+"lemma": "νῦν",
+"strongs": "G3568",
+"gloss": "now, already, at present"
+},
+{
+"ref": "3.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "3.1",
+"greek": "ἀρχὴν",
+"lemma": "ἀρχή",
+"strongs": "G746",
+"gloss": "ruler, beginning"
+},
+{
+"ref": "3.1",
+"greek": "ἔχω",
+"lemma": "ἔχω",
+"strongs": "G2192",
+"gloss": "I have, hold, possess"
+},
+{
+"ref": "3.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.1",
+"greek": "μαθητεύεσθαι,",
+"lemma": "μαθητεύω",
+"strongs": "G3100",
+"gloss": "I make disciples, make into disciples"
+},
+{
+"ref": "3.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "3.1",
+"greek": "προσλαλῶ",
+"lemma": "προσλαλέω",
+"strongs": "G4354",
+"gloss": "I speak to"
+},
+{
+"ref": "3.1",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "3.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "3.1",
+"greek": "συνδιδασκαλίταις",
+"lemma": "συνδιδασκαλίταις",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "3.1",
+"greek": "μου.",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "3.1",
+"greek": "ἐμὲ",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "3.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "3.1",
+"greek": "ἔδει",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "3.1",
+"greek": "ὑφ’",
+"lemma": "ὑφ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "3.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "3.1",
+"greek": "ὑπαλειφθῆναι",
+"lemma": "ὑπαλείπω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "3.1",
+"greek": "πίστει,",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "3.1",
+"greek": "νουθεσίᾳ,",
+"lemma": "νουθεσία",
+"strongs": "G3559",
+"gloss": "a warning, admonition"
+},
+{
+"ref": "3.1",
+"greek": "ὑπομονῇ,",
+"lemma": "ὑπομονή",
+"strongs": "G5281",
+"gloss": "endurance, steadfastness"
+},
+{
+"ref": "3.1",
+"greek": "μακροθυμίᾳ.",
+"lemma": "μακροθυμία",
+"strongs": "G3115",
+"gloss": "patience, forbearance"
+},
+{
+"ref": "3.2",
+"greek": "ἀλλ’",
+"lemma": "ἀλλ",
+"strongs": "G235",
+"gloss": "but, except"
+},
+{
+"ref": "3.2",
+"greek": "ἐπεὶ",
+"lemma": "ἐπεί",
+"strongs": "G1893",
+"gloss": "after, for, since, otherwise"
+},
+{
+"ref": "3.2",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "ἀγάπη",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "3.2",
+"greek": "οὐκ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "3.2",
+"greek": "ἐᾷ",
+"lemma": "ἐάω",
+"strongs": "G1439",
+"gloss": "I allow, permit, leave"
+},
+{
+"ref": "3.2",
+"greek": "με",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "3.2",
+"greek": "σιωπᾶν",
+"lemma": "σιωπάω",
+"strongs": "G4623",
+"gloss": "I keep silence"
+},
+{
+"ref": "3.2",
+"greek": "περὶ",
+"lemma": "περί",
+"strongs": "G4012",
+"gloss": "about, concerning, around"
+},
+{
+"ref": "3.2",
+"greek": "ὑμῶν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "3.2",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "3.2",
+"greek": "τοῦτο",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "3.2",
+"greek": "προέλαβον",
+"lemma": "προαλαμβάνω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "3.2",
+"greek": "παρακαλεῖν",
+"lemma": "παρακαλέω",
+"strongs": "G3870",
+"gloss": "I summon, entreat, admonish, comfort"
+},
+{
+"ref": "3.2",
+"greek": "ὑμᾶς,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "3.2",
+"greek": "ὅπως",
+"lemma": "ὅπως",
+"strongs": "G3704",
+"gloss": "how, in order that, so that"
+},
+{
+"ref": "3.2",
+"greek": "συντρέχητε",
+"lemma": "συντρέχω",
+"strongs": "G4936",
+"gloss": "I run with"
+},
+{
+"ref": "3.2",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "γνώμῃ",
+"lemma": "γνώμη",
+"strongs": "G1106",
+"gloss": "opinion, counsel, judgment, intention"
+},
+{
+"ref": "3.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "θεοῦ.",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "3.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "3.2",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "3.2",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "3.2",
+"greek": "Χριστός,",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "3.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "ἀδιάκριτον",
+"lemma": "ἀδιάκριτος",
+"strongs": "G87",
+"gloss": "unambiguous"
+},
+{
+"ref": "3.2",
+"greek": "ἡμῶν",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "3.2",
+"greek": "ζῆν,",
+"lemma": "ζάω",
+"strongs": "G2198",
+"gloss": "I live"
+},
+{
+"ref": "3.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "πατρὸς",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "3.2",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "γνώμη,",
+"lemma": "γνώμη",
+"strongs": "G1106",
+"gloss": "opinion, counsel, judgment, intention"
+},
+{
+"ref": "3.2",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "3.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "3.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "ἐπίσκοποι,",
+"lemma": "ἐπίσκοπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "3.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "3.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "3.2",
+"greek": "πέρατα",
+"lemma": "πέρας",
+"strongs": "G4009",
+"gloss": "a boundary, limit, an end"
+},
+{
+"ref": "3.2",
+"greek": "ὁρισθέντες,",
+"lemma": "ὁρίζω",
+"strongs": "G3724",
+"gloss": "I define, determine, appoint, decree"
+},
+{
+"ref": "3.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "3.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "3.2",
+"greek": "Χριστοῦ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "3.2",
+"greek": "γνώμῃ",
+"lemma": "γνώμη",
+"strongs": "G1106",
+"gloss": "opinion, counsel, judgment, intention"
+},
+{
+"ref": "3.2",
+"greek": "εἰσίν.",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "4.1",
+"greek": "Ὅθεν",
+"lemma": "ὅθεν",
+"strongs": "G3606",
+"gloss": "whence, wherefore"
+},
+{
+"ref": "4.1",
+"greek": "πρέπει",
+"lemma": "πρέπω",
+"strongs": "G4241",
+"gloss": "it becomes, is fitting to"
+},
+{
+"ref": "4.1",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "4.1",
+"greek": "συντρέχειν",
+"lemma": "συντρέχω",
+"strongs": "G4936",
+"gloss": "I run with"
+},
+{
+"ref": "4.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.1",
+"greek": "ἐπισκόπου",
+"lemma": "ἐπισκοπέω",
+"strongs": "G1983",
+"gloss": "I exercise oversight, care for"
+},
+{
+"ref": "4.1",
+"greek": "γνώμῃ,",
+"lemma": "γνώμη",
+"strongs": "G1106",
+"gloss": "opinion, counsel, judgment, intention"
+},
+{
+"ref": "4.1",
+"greek": "ὅπερ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "4.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "4.1",
+"greek": "ποιεῖτε.",
+"lemma": "ποιέω",
+"strongs": "G4160",
+"gloss": "I do, make"
+},
+{
+"ref": "4.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "4.1",
+"greek": "ἀξιονόμαστον",
+"lemma": "ἀξιονόμαστος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "4.1",
+"greek": "πρεσβυτέριον,",
+"lemma": "πρεσβυτέριον",
+"strongs": "G4244",
+"gloss": "an assembly of elders"
+},
+{
+"ref": "4.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "4.1",
+"greek": "ἄξιον,",
+"lemma": "ἄξιος",
+"strongs": "G514",
+"gloss": "worthy, worthy of, deserving"
+},
+{
+"ref": "4.1",
+"greek": "οὕτως",
+"lemma": "οὕτω(ς)",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.1",
+"greek": "συνήρμοσται",
+"lemma": "συνήρμοσμαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.1",
+"greek": "ἐπισκόπῳ,",
+"lemma": "ἐπίσκοπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "4.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "4.1",
+"greek": "χορδαὶ",
+"lemma": "χορδή",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.1",
+"greek": "κιθάρᾳ.",
+"lemma": "κιθάρα",
+"strongs": "G2788",
+"gloss": "a harp"
+},
+{
+"ref": "4.1",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "4.1",
+"greek": "τοῦτο",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "4.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "4.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.1",
+"greek": "ὁμονοίᾳ",
+"lemma": "ὁμόνοια",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "4.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "4.1",
+"greek": "συμφώνῳ",
+"lemma": "συμφώνῳ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.1",
+"greek": "ἀγάπῃ",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "4.1",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "4.1",
+"greek": "Χριστὸς",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "4.1",
+"greek": "ᾄδεται.",
+"lemma": "ἀείδω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "4.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.2",
+"greek": "κατ’",
+"lemma": "κατ",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "4.2",
+"greek": "ἄνδρα",
+"lemma": "ἀνήρ",
+"strongs": "G435",
+"gloss": "a male human being, a man"
+},
+{
+"ref": "4.2",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "4.2",
+"greek": "χορὸς",
+"lemma": "χορός",
+"strongs": "G5525",
+"gloss": "a dance, dancing"
+},
+{
+"ref": "4.2",
+"greek": "γίνεσθε,",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "4.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "4.2",
+"greek": "σύμφωνοι",
+"lemma": "σύμφωνος",
+"strongs": "G4859",
+"gloss": "harmonious, agreeing with"
+},
+{
+"ref": "4.2",
+"greek": "ὄντες",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "4.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "4.2",
+"greek": "ὁμονοίᾳ,",
+"lemma": "ὁμόνοια",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.2",
+"greek": "χρῶμα",
+"lemma": "χρῶμα",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.2",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "4.2",
+"greek": "λαβόντες",
+"lemma": "λαμβάνω",
+"strongs": "G2983",
+"gloss": "I receive, take"
+},
+{
+"ref": "4.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "4.2",
+"greek": "ἑνότητι,",
+"lemma": "ἑνότης",
+"strongs": "G1775",
+"gloss": "oneness, unity"
+},
+{
+"ref": "4.2",
+"greek": "ᾄδητε",
+"lemma": "ᾄδω",
+"strongs": "G103",
+"gloss": "I sing"
+},
+{
+"ref": "4.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "4.2",
+"greek": "φωνῇ",
+"lemma": "φωνή",
+"strongs": "G5456",
+"gloss": "a sound, noise, voice"
+},
+{
+"ref": "4.2",
+"greek": "μιᾷ",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "4.2",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "4.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "4.2",
+"greek": "Χριστοῦ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "4.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.2",
+"greek": "πατρί,",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "4.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "4.2",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "4.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "4.2",
+"greek": "ἀκούσῃ",
+"lemma": "ἀκούω",
+"strongs": "G191",
+"gloss": "I hear, listen"
+},
+{
+"ref": "4.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "4.2",
+"greek": "ἐπιγινώσκῃ,",
+"lemma": "ἐπιγινώσκω",
+"strongs": "G1921",
+"gloss": "I come to know, discern, recognize"
+},
+{
+"ref": "4.2",
+"greek": "δι’",
+"lemma": "δι",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "4.2",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "4.2",
+"greek": "εὖ",
+"lemma": "εὖ",
+"strongs": "G2095",
+"gloss": "well, well done"
+},
+{
+"ref": "4.2",
+"greek": "πράσσετε,",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "4.2",
+"greek": "μέλη",
+"lemma": "μέλος",
+"strongs": "G3196",
+"gloss": "a limb, member"
+},
+{
+"ref": "4.2",
+"greek": "ὄντας",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "4.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "4.2",
+"greek": "υἱοῦ",
+"lemma": "υἱός",
+"strongs": "G5207",
+"gloss": "a son, descendent"
+},
+{
+"ref": "4.2",
+"greek": "αὐτοῦ.",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "4.2",
+"greek": "χρήσιμον",
+"lemma": "χρήσιμον",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "4.2",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "4.2",
+"greek": "ἐστὶν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "4.2",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "4.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "4.2",
+"greek": "ἀμώμῳ",
+"lemma": "ἄμωμος",
+"strongs": "G299",
+"gloss": "blameless"
+},
+{
+"ref": "4.2",
+"greek": "ἑνότητι",
+"lemma": "ἑνότης",
+"strongs": "G1775",
+"gloss": "oneness, unity"
+},
+{
+"ref": "4.2",
+"greek": "εἶναι,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "4.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "4.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "4.2",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "4.2",
+"greek": "πάντοτε",
+"lemma": "πάντοτε",
+"strongs": "G3842",
+"gloss": "always, at all times"
+},
+{
+"ref": "4.2",
+"greek": "μετέχητε.",
+"lemma": "μετέχω",
+"strongs": "G3348",
+"gloss": "I participate in, share"
+},
+{
+"ref": "5.1",
+"greek": "Εἰ",
+"lemma": "εἰ",
+"strongs": "G1488",
+"gloss": null
+},
+{
+"ref": "5.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "5.1",
+"greek": "ἐγὼ",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "5.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "5.1",
+"greek": "μικρῷ",
+"lemma": "μικρός",
+"strongs": "G3398",
+"gloss": "little, small"
+},
+{
+"ref": "5.1",
+"greek": "χρόνῳ",
+"lemma": "χρόνος",
+"strongs": "G5550",
+"gloss": "time, a particular time, season"
+},
+{
+"ref": "5.1",
+"greek": "τοιαύτην",
+"lemma": "τοιοῦτος",
+"strongs": "G5108",
+"gloss": "of such a kind, such"
+},
+{
+"ref": "5.1",
+"greek": "συνήθειαν",
+"lemma": "συνήθεια",
+"strongs": "G4914",
+"gloss": "a custom, habit"
+},
+{
+"ref": "5.1",
+"greek": "ἔσχον",
+"lemma": "ἔχω",
+"strongs": "G2192",
+"gloss": "I have, hold, possess"
+},
+{
+"ref": "5.1",
+"greek": "πρὸς",
+"lemma": "πρός",
+"strongs": "G4314",
+"gloss": "to, towards, with"
+},
+{
+"ref": "5.1",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.1",
+"greek": "ἐπίσκοπον",
+"lemma": "ἐπίσκοπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "5.1",
+"greek": "ὑμῶν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "5.1",
+"greek": "οὐκ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "5.1",
+"greek": "ἀνθρωπίνην",
+"lemma": "ἀνθρώπινος",
+"strongs": "G442",
+"gloss": "belonging to human beings, human"
+},
+{
+"ref": "5.1",
+"greek": "οὖσαν,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "5.1",
+"greek": "ἀλλὰ",
+"lemma": "ἀλλά",
+"strongs": "G235",
+"gloss": "but, except"
+},
+{
+"ref": "5.1",
+"greek": "πνευματικήν,",
+"lemma": "πνευματικός",
+"strongs": "G4152",
+"gloss": "spiritual"
+},
+{
+"ref": "5.1",
+"greek": "πόσῳ",
+"lemma": "πόσος",
+"strongs": "G4214",
+"gloss": "how much, how great, how many"
+},
+{
+"ref": "5.1",
+"greek": "μᾶλλον",
+"lemma": "μᾶλλον",
+"strongs": "G3123",
+"gloss": "more, rather"
+},
+{
+"ref": "5.1",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "5.1",
+"greek": "μακαρίζω",
+"lemma": "μακαρίζω",
+"strongs": "G3106",
+"gloss": "I deem happy"
+},
+{
+"ref": "5.1",
+"greek": "τοὺς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.1",
+"greek": "ἐγκεκραμένους",
+"lemma": "ἐγκεκραμένους",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "5.1",
+"greek": "οὕτως,",
+"lemma": "οὕτω(ς)",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "5.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "5.1",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.1",
+"greek": "ἐκκλησία",
+"lemma": "ἐκκλησία",
+"strongs": "G1577",
+"gloss": "an assembly, congregation, church"
+},
+{
+"ref": "5.1",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "5.1",
+"greek": "Χριστῷ,",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "5.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "5.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "5.1",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "5.1",
+"greek": "Χριστὸς",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "5.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.1",
+"greek": "πατρί,",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "5.1",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "5.1",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "5.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "5.1",
+"greek": "ἑνότητι",
+"lemma": "ἑνότης",
+"strongs": "G1775",
+"gloss": "oneness, unity"
+},
+{
+"ref": "5.1",
+"greek": "σύμφωνα",
+"lemma": "σύμφωνος",
+"strongs": "G4859",
+"gloss": "harmonious, agreeing with"
+},
+{
+"ref": "5.1",
+"greek": "ᾖ;",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "5.2",
+"greek": "μηδεὶς",
+"lemma": "μηδείς",
+"strongs": "G3367",
+"gloss": "no one, nothing"
+},
+{
+"ref": "5.2",
+"greek": "πλανάσθω·",
+"lemma": "πλανάω",
+"strongs": "G4105",
+"gloss": "I lead astray, deceive"
+},
+{
+"ref": "5.2",
+"greek": "ἐὰν",
+"lemma": "ἐάν",
+"strongs": "G1437",
+"gloss": "if"
+},
+{
+"ref": "5.2",
+"greek": "μή",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "5.2",
+"greek": "τις",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "5.2",
+"greek": "ᾖ",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "5.2",
+"greek": "ἐντὸς",
+"lemma": "ἐντός",
+"strongs": "G1787",
+"gloss": "within, inside, the inside"
+},
+{
+"ref": "5.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.2",
+"greek": "θυσιαστηρίου,",
+"lemma": "θυσιαστήριον",
+"strongs": "G2379",
+"gloss": "an altar"
+},
+{
+"ref": "5.2",
+"greek": "ὑστερεῖται",
+"lemma": "ὑστερέω",
+"strongs": "G5302",
+"gloss": "I am lacking, fall short, suffer need"
+},
+{
+"ref": "5.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.2",
+"greek": "ἄρτου",
+"lemma": "ἄρτος",
+"strongs": "G740",
+"gloss": "bread, a loaf, food"
+},
+{
+"ref": "5.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.2",
+"greek": "θεοῦ.",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "5.2",
+"greek": "εἰ",
+"lemma": "εἰ",
+"strongs": "G1488",
+"gloss": null
+},
+{
+"ref": "5.2",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "5.2",
+"greek": "ἑνὸς",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "5.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "5.2",
+"greek": "δευτέρου",
+"lemma": "δεύτερος",
+"strongs": "G1208",
+"gloss": "second, in the second place, for the second time"
+},
+{
+"ref": "5.2",
+"greek": "προσευχὴ",
+"lemma": "προσευχή",
+"strongs": "G4335",
+"gloss": "prayer, a place for prayer"
+},
+{
+"ref": "5.2",
+"greek": "τοσαύτην",
+"lemma": "τοσοῦτος",
+"strongs": "G5118",
+"gloss": "so great"
+},
+{
+"ref": "5.2",
+"greek": "ἰσχὺν",
+"lemma": "ἰσχύς",
+"strongs": "G2479",
+"gloss": "strength, power"
+},
+{
+"ref": "5.2",
+"greek": "ἔχει,",
+"lemma": "ἔχω",
+"strongs": "G2192",
+"gloss": "I have, hold, possess"
+},
+{
+"ref": "5.2",
+"greek": "πόσῳ",
+"lemma": "πόσος",
+"strongs": "G4214",
+"gloss": "how much, how great, how many"
+},
+{
+"ref": "5.2",
+"greek": "μᾶλλον",
+"lemma": "μᾶλλον",
+"strongs": "G3123",
+"gloss": "more, rather"
+},
+{
+"ref": "5.2",
+"greek": "ἥ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.2",
+"greek": "τε",
+"lemma": "τέ",
+"strongs": "G5037",
+"gloss": "and, both"
+},
+{
+"ref": "5.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.2",
+"greek": "ἐπισκόπου",
+"lemma": "ἐπισκοπέω",
+"strongs": "G1983",
+"gloss": "I exercise oversight, care for"
+},
+{
+"ref": "5.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "5.2",
+"greek": "πάσης",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "5.2",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.2",
+"greek": "ἐκκλησίας;",
+"lemma": "ἐκκλησία",
+"strongs": "G1577",
+"gloss": "an assembly, congregation, church"
+},
+{
+"ref": "5.3",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.3",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "5.3",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "5.3",
+"greek": "ἐρχόμενος",
+"lemma": "ἔρχομαι",
+"strongs": "G2064",
+"gloss": "I come, go"
+},
+{
+"ref": "5.3",
+"greek": "ἐπὶ",
+"lemma": "ἐπί",
+"strongs": "G1909",
+"gloss": "on, to, against, on the basis of, at"
+},
+{
+"ref": "5.3",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.3",
+"greek": "αὐτὸ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "5.3",
+"greek": "οὗτος",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "5.3",
+"greek": "ἤδη",
+"lemma": "ἤδη",
+"strongs": "G2235",
+"gloss": "now, already"
+},
+{
+"ref": "5.3",
+"greek": "ὑπερηφανεῖ",
+"lemma": "ὑπερηφαίνω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "5.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "5.3",
+"greek": "ἑαυτὸν",
+"lemma": "ἑαυτοῦ",
+"strongs": "G1438",
+"gloss": "himself, herself, itself"
+},
+{
+"ref": "5.3",
+"greek": "διέκρινεν.",
+"lemma": "διακρίνω",
+"strongs": "G1252",
+"gloss": "I distinguish, discern, doubt, hesitate"
+},
+{
+"ref": "5.3",
+"greek": "γέγραπται",
+"lemma": "γράφω",
+"strongs": "G1125",
+"gloss": "I write"
+},
+{
+"ref": "5.3",
+"greek": "γάρ·",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "5.3",
+"greek": "Ὑπερηφάνοις",
+"lemma": "Ὑπερηφάνοις",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "5.3",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.3",
+"greek": "θεὸς",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "5.3",
+"greek": "ἀντιτάσσεται,",
+"lemma": "ἀντιτάσσομαι",
+"strongs": "G498",
+"gloss": "I set myself against, resist"
+},
+{
+"ref": "5.3",
+"greek": "σπουδάσωμεν",
+"lemma": "σπουδάζω",
+"strongs": "G4704",
+"gloss": "I hasten"
+},
+{
+"ref": "5.3",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "5.3",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "5.3",
+"greek": "ἀντιτάσσεσθαι",
+"lemma": "ἀντιτάσσω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "5.3",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "5.3",
+"greek": "ἐπισκόπῳ,",
+"lemma": "ἐπίσκοπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "5.3",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "5.3",
+"greek": "ὦμεν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "5.3",
+"greek": "θεῷ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "5.3",
+"greek": "ὑποτασσόμενοι.",
+"lemma": "ὑποτάσσω",
+"strongs": "G5293",
+"gloss": "I place under, subject to"
+},
+{
+"ref": "6.1",
+"greek": "Καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "6.1",
+"greek": "ὅσον",
+"lemma": "ὅσος",
+"strongs": "G3745",
+"gloss": "how much, how great, how many"
+},
+{
+"ref": "6.1",
+"greek": "βλέπει",
+"lemma": "βλέπω",
+"strongs": "G991",
+"gloss": "I look, see"
+},
+{
+"ref": "6.1",
+"greek": "τις",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "6.1",
+"greek": "σιγῶντα",
+"lemma": "σιγάω",
+"strongs": "G4601",
+"gloss": "I keep silent"
+},
+{
+"ref": "6.1",
+"greek": "ἐπίσκοπον,",
+"lemma": "ἐπίσκοπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "6.1",
+"greek": "πλειόνως",
+"lemma": "πλειόνως",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "6.1",
+"greek": "αὐτὸν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "6.1",
+"greek": "φοβείσθω·",
+"lemma": "φοβείομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "6.1",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "6.1",
+"greek": "γάρ,",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "6.1",
+"greek": "ὃν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "6.1",
+"greek": "πέμπει",
+"lemma": "πέμπω",
+"strongs": "G3992",
+"gloss": "I send"
+},
+{
+"ref": "6.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "6.1",
+"greek": "οἰκοδεσπότης",
+"lemma": "οἰκοδεσπότης",
+"strongs": "G3617",
+"gloss": "a head of a household"
+},
+{
+"ref": "6.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "6.1",
+"greek": "ἰδίαν",
+"lemma": "ἴδιος",
+"strongs": "G2398",
+"gloss": "one's own, private, personal"
+},
+{
+"ref": "6.1",
+"greek": "οἰκονομίαν,",
+"lemma": "οἰκονομία",
+"strongs": "G3622",
+"gloss": "stewardship"
+},
+{
+"ref": "6.1",
+"greek": "οὕτως",
+"lemma": "οὕτω(ς)",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "6.1",
+"greek": "δεῖ",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "6.1",
+"greek": "ἡμᾶς",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "6.1",
+"greek": "αὐτὸν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "6.1",
+"greek": "δέχεσθαι,",
+"lemma": "δέχομαι",
+"strongs": "G1209",
+"gloss": "I take, receive, accept, welcome"
+},
+{
+"ref": "6.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "6.1",
+"greek": "αὐτὸν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "6.1",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "6.1",
+"greek": "πέμψαντα.",
+"lemma": "πέμπω",
+"strongs": "G3992",
+"gloss": "I send"
+},
+{
+"ref": "6.1",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "6.1",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "6.1",
+"greek": "ἐπίσκοπον",
+"lemma": "ἐπίσκοπος",
+"strongs": "G1985",
+"gloss": "overseer, supervisor, ruler"
+},
+{
+"ref": "6.1",
+"greek": "δῆλον",
+"lemma": "δῆλος",
+"strongs": "G1212",
+"gloss": "clear, manifest, evident"
+},
+{
+"ref": "6.1",
+"greek": "ὅτι",
+"lemma": "ὅτι",
+"strongs": "G3754",
+"gloss": "that, since, because"
+},
+{
+"ref": "6.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "6.1",
+"greek": "αὐτὸν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "6.1",
+"greek": "κύριον",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "6.1",
+"greek": "δεῖ",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "6.1",
+"greek": "προσβλέπειν.",
+"lemma": "προσβλέπω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "6.2",
+"greek": "αὐτὸς",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "6.2",
+"greek": "μὲν",
+"lemma": "μέν",
+"strongs": "G3303",
+"gloss": "truly, indeed"
+},
+{
+"ref": "6.2",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "6.2",
+"greek": "Ὀνήσιμος",
+"lemma": "Ὀνήσιμος",
+"strongs": "G3682",
+"gloss": "Onesimus"
+},
+{
+"ref": "6.2",
+"greek": "ὑπερεπαινεῖ",
+"lemma": "ὑπερεπαινέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "6.2",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "6.2",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "6.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "6.2",
+"greek": "θεῷ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "6.2",
+"greek": "εὐταξίαν,",
+"lemma": "εὐταξία",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "6.2",
+"greek": "ὅτι",
+"lemma": "ὅτι",
+"strongs": "G3754",
+"gloss": "that, since, because"
+},
+{
+"ref": "6.2",
+"greek": "πάντες",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "6.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "6.2",
+"greek": "ἀλήθειαν",
+"lemma": "ἀλήθεια",
+"strongs": "G225",
+"gloss": "truth"
+},
+{
+"ref": "6.2",
+"greek": "ζῆτε",
+"lemma": "ζάω",
+"strongs": "G2198",
+"gloss": "I live"
+},
+{
+"ref": "6.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "6.2",
+"greek": "ὅτι",
+"lemma": "ὅτι",
+"strongs": "G3754",
+"gloss": "that, since, because"
+},
+{
+"ref": "6.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "6.2",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "6.2",
+"greek": "οὐδεμία",
+"lemma": "οὐδείς",
+"strongs": "G3762",
+"gloss": "no one, none, nothing"
+},
+{
+"ref": "6.2",
+"greek": "αἵρεσις",
+"lemma": "αἵρεσις",
+"strongs": "G139",
+"gloss": "a self-chosen opinion, a sect"
+},
+{
+"ref": "6.2",
+"greek": "κατοικεῖ·",
+"lemma": "κατοικέω",
+"strongs": "G2730",
+"gloss": "I dwell in, settle in, inhabit"
+},
+{
+"ref": "6.2",
+"greek": "ἀλλ’",
+"lemma": "ἀλλ",
+"strongs": "G235",
+"gloss": "but, except"
+},
+{
+"ref": "6.2",
+"greek": "οὐδὲ",
+"lemma": "οὐδέ",
+"strongs": "G3761",
+"gloss": "neither, nor, not even"
+},
+{
+"ref": "6.2",
+"greek": "ἀκούετέ",
+"lemma": "ἀκούω",
+"strongs": "G191",
+"gloss": "I hear, listen"
+},
+{
+"ref": "6.2",
+"greek": "τινος",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "6.2",
+"greek": "πλέον,",
+"lemma": "πολύς",
+"strongs": "G4183",
+"gloss": "much, many, often"
+},
+{
+"ref": "6.2",
+"greek": "ἢ",
+"lemma": "ἤ",
+"strongs": "G2229",
+"gloss": "truly, surely"
+},
+{
+"ref": "6.2",
+"greek": "περὶ",
+"lemma": "περί",
+"strongs": "G4012",
+"gloss": "about, concerning, around"
+},
+{
+"ref": "6.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "6.2",
+"greek": "Χριστοῦ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "6.2",
+"greek": "λαλοῦντος",
+"lemma": "λαλέω",
+"strongs": "G2980",
+"gloss": "I speak, say"
+},
+{
+"ref": "6.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "6.2",
+"greek": "ἀληθείᾳ.",
+"lemma": "ἀλήθεια",
+"strongs": "G225",
+"gloss": "truth"
+},
+{
+"ref": "7.1",
+"greek": "Εἰώθασιν",
+"lemma": "Εἰώθασιν",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "7.1",
+"greek": "γάρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "7.1",
+"greek": "τινες",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "7.1",
+"greek": "δόλῳ",
+"lemma": "δόλος",
+"strongs": "G1388",
+"gloss": "deceit, guile, treachery"
+},
+{
+"ref": "7.1",
+"greek": "πονηρῷ",
+"lemma": "πονηρός",
+"strongs": "G4190",
+"gloss": "evil, bad, wicked"
+},
+{
+"ref": "7.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "7.1",
+"greek": "ὄνομα",
+"lemma": "ὄνομα",
+"strongs": "G3686",
+"gloss": "name, character, reputation"
+},
+{
+"ref": "7.1",
+"greek": "περιφέρειν,",
+"lemma": "περιφέρω",
+"strongs": "G4064",
+"gloss": "I carry around, am driven to and fro"
+},
+{
+"ref": "7.1",
+"greek": "ἄλλα",
+"lemma": "ἄλλος",
+"strongs": "G243",
+"gloss": "other, another, different"
+},
+{
+"ref": "7.1",
+"greek": "τινὰ",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "7.1",
+"greek": "πράσσοντες",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "7.1",
+"greek": "ἀνάξια",
+"lemma": "ἀνάξιος",
+"strongs": "G370",
+"gloss": "unworthy, inadequate"
+},
+{
+"ref": "7.1",
+"greek": "θεοῦ·",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "7.1",
+"greek": "οὓς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "7.1",
+"greek": "δεῖ",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "7.1",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "7.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "7.1",
+"greek": "θηρία",
+"lemma": "θηρίον",
+"strongs": "G2342",
+"gloss": "a wild beast, animal"
+},
+{
+"ref": "7.1",
+"greek": "ἐκκλίνειν·",
+"lemma": "ἐκκλίνω",
+"strongs": "G1578",
+"gloss": "I fall away from, turn away"
+},
+{
+"ref": "7.1",
+"greek": "εἰσὶν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "7.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "7.1",
+"greek": "κύνες",
+"lemma": "κύων",
+"strongs": "G2965",
+"gloss": "a dog"
+},
+{
+"ref": "7.1",
+"greek": "λυσσῶντες,",
+"lemma": "λυσσάω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "7.1",
+"greek": "λαθροδῆκται·",
+"lemma": "λαθροδῆκτης",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "7.1",
+"greek": "οὓς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "7.1",
+"greek": "δεῖ",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "7.1",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "7.1",
+"greek": "φυλάσσεσθαι",
+"lemma": "φυλάσσω",
+"strongs": "G5442",
+"gloss": "I keep, guard, observe"
+},
+{
+"ref": "7.1",
+"greek": "ὄντας",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "7.1",
+"greek": "δυσθεραπεύτους.",
+"lemma": "δυσθεραπεῦτος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "7.2",
+"greek": "εἷς",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "7.2",
+"greek": "ἰατρός",
+"lemma": "ἰατρός",
+"strongs": "G2395",
+"gloss": "a physician"
+},
+{
+"ref": "7.2",
+"greek": "ἐστιν,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "7.2",
+"greek": "σαρκικός",
+"lemma": "σαρκικός",
+"strongs": "G4559",
+"gloss": "fleshly, carnal"
+},
+{
+"ref": "7.2",
+"greek": "τε",
+"lemma": "τέ",
+"strongs": "G5037",
+"gloss": "and, both"
+},
+{
+"ref": "7.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "7.2",
+"greek": "πνευματικός,",
+"lemma": "πνευματικός",
+"strongs": "G4152",
+"gloss": "spiritual"
+},
+{
+"ref": "7.2",
+"greek": "γεννητὸς",
+"lemma": "γεννητός",
+"strongs": "G1084",
+"gloss": "begotten, born"
+},
+{
+"ref": "7.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "7.2",
+"greek": "ἀγέννητος,",
+"lemma": "ἀγέννητος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "7.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "7.2",
+"greek": "ἀνθρώπῳ",
+"lemma": "ἄνθρωπος",
+"strongs": "G444",
+"gloss": "a man, one of the human race"
+},
+{
+"ref": "7.2",
+"greek": "θεός,",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "7.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "7.2",
+"greek": "θανάτῳ",
+"lemma": "θάνατος",
+"strongs": "G2288",
+"gloss": "death"
+},
+{
+"ref": "7.2",
+"greek": "ζωὴ",
+"lemma": "ζωή",
+"strongs": "G2222",
+"gloss": "life"
+},
+{
+"ref": "7.2",
+"greek": "ἀληθινή,",
+"lemma": "ἀληθινός",
+"strongs": "G228",
+"gloss": "true, real, genuine"
+},
+{
+"ref": "7.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "7.2",
+"greek": "ἐκ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "7.2",
+"greek": "Μαρίας",
+"lemma": "Μαρία",
+"strongs": "G3137",
+"gloss": "Mary, Miriam"
+},
+{
+"ref": "7.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "7.2",
+"greek": "ἐκ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "7.2",
+"greek": "θεοῦ,",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "7.2",
+"greek": "πρῶτον",
+"lemma": "πρῶτος",
+"strongs": "G4413",
+"gloss": "first, before"
+},
+{
+"ref": "7.2",
+"greek": "παθητὸς",
+"lemma": "παθητός",
+"strongs": "G3805",
+"gloss": "destined to suffer"
+},
+{
+"ref": "7.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "7.2",
+"greek": "τότε",
+"lemma": "τότε",
+"strongs": "G5119",
+"gloss": "then"
+},
+{
+"ref": "7.2",
+"greek": "ἀπαθής,",
+"lemma": "ἀπαθής",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "7.2",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "7.2",
+"greek": "Χριστὸς",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "7.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "7.2",
+"greek": "κύριος",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "7.2",
+"greek": "ἡμῶν.",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "8.1",
+"greek": "Μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "8.1",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "8.1",
+"greek": "τις",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "8.1",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "8.1",
+"greek": "ἐξαπατάτω,",
+"lemma": "ἐξαπατάω",
+"strongs": "G1818",
+"gloss": "I deceive thoroughly"
+},
+{
+"ref": "8.1",
+"greek": "ὥσπερ",
+"lemma": "ὥσπερ",
+"strongs": "G5618",
+"gloss": "just as, as"
+},
+{
+"ref": "8.1",
+"greek": "οὐδὲ",
+"lemma": "οὐδέ",
+"strongs": "G3761",
+"gloss": "neither, nor, not even"
+},
+{
+"ref": "8.1",
+"greek": "ἐξαπατᾶσθε,",
+"lemma": "ἐξαπατάω",
+"strongs": "G1818",
+"gloss": "I deceive thoroughly"
+},
+{
+"ref": "8.1",
+"greek": "ὅλοι",
+"lemma": "ὅλος",
+"strongs": "G3650",
+"gloss": "all, the whole, entire"
+},
+{
+"ref": "8.1",
+"greek": "ὄντες",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "8.1",
+"greek": "θεοῦ.",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "8.1",
+"greek": "ὅταν",
+"lemma": "ὅταν",
+"strongs": "G3752",
+"gloss": "when, whensoever"
+},
+{
+"ref": "8.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "8.1",
+"greek": "μηδεμία",
+"lemma": "μηδείς",
+"strongs": "G3367",
+"gloss": "no one, nothing"
+},
+{
+"ref": "8.1",
+"greek": "ἔρις",
+"lemma": "ἔρις",
+"strongs": "G2054",
+"gloss": "contention, strife"
+},
+{
+"ref": "8.1",
+"greek": "ἐνήρεισται",
+"lemma": "ἐνήρειστος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "8.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "8.1",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "8.1",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.1",
+"greek": "δυναμένη",
+"lemma": "δύναμαι",
+"strongs": "G1410",
+"gloss": "I am powerful, am able"
+},
+{
+"ref": "8.1",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "8.1",
+"greek": "βασανίσαι,",
+"lemma": "βασανίζω",
+"strongs": "G928",
+"gloss": "I torment, torture, buffet"
+},
+{
+"ref": "8.1",
+"greek": "ἄρα",
+"lemma": "ἄρα",
+"strongs": "G687",
+"gloss": "a particle asking a question, expecting a negative response"
+},
+{
+"ref": "8.1",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "8.1",
+"greek": "θεὸν",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "8.1",
+"greek": "ζῆτε.",
+"lemma": "ζάω",
+"strongs": "G2198",
+"gloss": "I live"
+},
+{
+"ref": "8.1",
+"greek": "περίψημα",
+"lemma": "περίψημα",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "8.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "8.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "8.1",
+"greek": "ἁγνίζομαι",
+"lemma": "ἁγνίζομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "8.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "8.1",
+"greek": "Ἐφεσίων,",
+"lemma": "Ἐφέσιος",
+"strongs": "G2180",
+"gloss": "Ephesian"
+},
+{
+"ref": "8.1",
+"greek": "ἐκκλησίας",
+"lemma": "ἐκκλησία",
+"strongs": "G1577",
+"gloss": "an assembly, congregation, church"
+},
+{
+"ref": "8.1",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.1",
+"greek": "διαβοήτου",
+"lemma": "διαβοήτης",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "8.1",
+"greek": "τοῖς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.1",
+"greek": "αἰῶσιν.",
+"lemma": "αἰών",
+"strongs": "G165",
+"gloss": "an age, a cycle of time"
+},
+{
+"ref": "8.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "σαρκικοὶ",
+"lemma": "σαρκικός",
+"strongs": "G4559",
+"gloss": "fleshly, carnal"
+},
+{
+"ref": "8.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "πνευματικὰ",
+"lemma": "πνευματικός",
+"strongs": "G4152",
+"gloss": "spiritual"
+},
+{
+"ref": "8.2",
+"greek": "πράσσειν",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "8.2",
+"greek": "οὐ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "8.2",
+"greek": "δύνανται,",
+"lemma": "δύναμαι",
+"strongs": "G1410",
+"gloss": "I am powerful, am able"
+},
+{
+"ref": "8.2",
+"greek": "οὐδὲ",
+"lemma": "οὐδέ",
+"strongs": "G3761",
+"gloss": "neither, nor, not even"
+},
+{
+"ref": "8.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "πνευματικοὶ",
+"lemma": "πνευματικός",
+"strongs": "G4152",
+"gloss": "spiritual"
+},
+{
+"ref": "8.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "σαρκικά,",
+"lemma": "σαρκικός",
+"strongs": "G4559",
+"gloss": "fleshly, carnal"
+},
+{
+"ref": "8.2",
+"greek": "ὥσπερ",
+"lemma": "ὥσπερ",
+"strongs": "G5618",
+"gloss": "just as, as"
+},
+{
+"ref": "8.2",
+"greek": "οὐδὲ",
+"lemma": "οὐδέ",
+"strongs": "G3761",
+"gloss": "neither, nor, not even"
+},
+{
+"ref": "8.2",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "πίστις",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "8.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "ἀπιστίας",
+"lemma": "ἀπιστία",
+"strongs": "G570",
+"gloss": "unbelief, unfaithfulness, distrust"
+},
+{
+"ref": "8.2",
+"greek": "οὐδὲ",
+"lemma": "οὐδέ",
+"strongs": "G3761",
+"gloss": "neither, nor, not even"
+},
+{
+"ref": "8.2",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "ἀπιστία",
+"lemma": "ἀπιστία",
+"strongs": "G570",
+"gloss": "unbelief, unfaithfulness, distrust"
+},
+{
+"ref": "8.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "8.2",
+"greek": "πίστεως.",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "8.2",
+"greek": "ἃ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "8.2",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "8.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "8.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "8.2",
+"greek": "σάρκα",
+"lemma": "σάρξ",
+"strongs": "G4561",
+"gloss": "flesh, body"
+},
+{
+"ref": "8.2",
+"greek": "πράσσετε,",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "8.2",
+"greek": "ταῦτα",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "8.2",
+"greek": "πνευματικά",
+"lemma": "πνευματικός",
+"strongs": "G4152",
+"gloss": "spiritual"
+},
+{
+"ref": "8.2",
+"greek": "ἐστιν·",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "8.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "8.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "8.2",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "8.2",
+"greek": "Χριστῷ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "8.2",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "8.2",
+"greek": "πράσσετε.",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "9.1",
+"greek": "Ἔγνων",
+"lemma": "Ἔγονες",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "9.1",
+"greek": "παροδεύσαντάς",
+"lemma": "παροδεύσαντής",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "τινας",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "9.1",
+"greek": "ἐκεῖθεν,",
+"lemma": "ἐκεῖθεν",
+"strongs": "G1564",
+"gloss": "thence, from that place"
+},
+{
+"ref": "9.1",
+"greek": "ἔχοντας",
+"lemma": "ἔχω",
+"strongs": "G2192",
+"gloss": "I have, hold, possess"
+},
+{
+"ref": "9.1",
+"greek": "κακὴν",
+"lemma": "κακός",
+"strongs": "G2556",
+"gloss": "bad, evil"
+},
+{
+"ref": "9.1",
+"greek": "διδαχήν·",
+"lemma": "διδαχή",
+"strongs": "G1322",
+"gloss": "teaching, doctrine"
+},
+{
+"ref": "9.1",
+"greek": "οὓς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "9.1",
+"greek": "οὐκ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "9.1",
+"greek": "εἰάσατε",
+"lemma": "εἰάω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "σπεῖραι",
+"lemma": "σπείρω",
+"strongs": "G4687",
+"gloss": "I sow, spread, scatter"
+},
+{
+"ref": "9.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "9.1",
+"greek": "ὑμᾶς,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "9.1",
+"greek": "βύσαντες",
+"lemma": "βύω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "ὦτα,",
+"lemma": "οὖς",
+"strongs": "G3775",
+"gloss": "the ear"
+},
+{
+"ref": "9.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "9.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "9.1",
+"greek": "παραδέξασθαι",
+"lemma": "παραδείκνυμι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "σπειρόμενα",
+"lemma": "σπείρω",
+"strongs": "G4687",
+"gloss": "I sow, spread, scatter"
+},
+{
+"ref": "9.1",
+"greek": "ὑπ’",
+"lemma": "ὑπ",
+"strongs": "G5259",
+"gloss": "by, under, about"
+},
+{
+"ref": "9.1",
+"greek": "αὐτῶν,",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "9.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "9.1",
+"greek": "ὄντες",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "9.1",
+"greek": "λίθοι",
+"lemma": "λίθος",
+"strongs": "G3037",
+"gloss": "a stone"
+},
+{
+"ref": "9.1",
+"greek": "ναοῦ",
+"lemma": "ναός",
+"strongs": "G3485",
+"gloss": "a temple, shrine"
+},
+{
+"ref": "9.1",
+"greek": "πατρός,",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "9.1",
+"greek": "ἡτοιμασμένοι",
+"lemma": "ἑτοιμάζω",
+"strongs": "G2090",
+"gloss": "I make ready, prepare"
+},
+{
+"ref": "9.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "9.1",
+"greek": "οἰκοδομὴν",
+"lemma": "οἰκοδομή",
+"strongs": "G3619",
+"gloss": "the act of building, a building, edification"
+},
+{
+"ref": "9.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "9.1",
+"greek": "πατρός,",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "9.1",
+"greek": "ἀναφερόμενοι",
+"lemma": "ἀναφέρω",
+"strongs": "G399",
+"gloss": "I carry up, lead up, offer up"
+},
+{
+"ref": "9.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "9.1",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "ὕψη",
+"lemma": "ὕψος",
+"strongs": "G5311",
+"gloss": "height, heaven"
+},
+{
+"ref": "9.1",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "9.1",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "μηχανῆς",
+"lemma": "μηχανή",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "9.1",
+"greek": "Χριστοῦ,",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "9.1",
+"greek": "ὅς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "9.1",
+"greek": "ἐστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "9.1",
+"greek": "σταυρός,",
+"lemma": "σταυρός",
+"strongs": "G4716",
+"gloss": "a cross"
+},
+{
+"ref": "9.1",
+"greek": "σχοινίῳ",
+"lemma": "σχοινίῳ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "χρώμενοι",
+"lemma": "χράομαι",
+"strongs": "G5530",
+"gloss": "I use, make use of, deal with"
+},
+{
+"ref": "9.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "πνεύματι",
+"lemma": "πνεῦμα",
+"strongs": "G4151",
+"gloss": "wind, breath, spirit"
+},
+{
+"ref": "9.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "ἁγίῳ·",
+"lemma": "ἅγιος",
+"strongs": "G40",
+"gloss": "set apart, holy, sacred"
+},
+{
+"ref": "9.1",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "9.1",
+"greek": "πίστις",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "9.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "9.1",
+"greek": "ἀναγωγεὺς",
+"lemma": "ἀναγωγεύς",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.1",
+"greek": "ὑμῶν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "9.1",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "9.1",
+"greek": "ἀγάπη",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "9.1",
+"greek": "ὁδὸς",
+"lemma": "ὁδός",
+"strongs": "G3598",
+"gloss": "a way, road, journey"
+},
+{
+"ref": "9.1",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.1",
+"greek": "ἀναφέρουσα",
+"lemma": "ἀναφέρω",
+"strongs": "G399",
+"gloss": "I carry up, lead up, offer up"
+},
+{
+"ref": "9.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "9.1",
+"greek": "θεόν.",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "9.2",
+"greek": "ἐστὲ",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "9.2",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "9.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "9.2",
+"greek": "σύνοδοι",
+"lemma": "σύνοδος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "πάντες,",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "9.2",
+"greek": "θεοφόροι",
+"lemma": "θεοφόρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "9.2",
+"greek": "ναοφόροι,",
+"lemma": "ναοφόρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "χριστοφόροι,",
+"lemma": "χριστοφόρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "ἁγιοφόροι,",
+"lemma": "ἁγιοφόρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "9.2",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "9.2",
+"greek": "κεκοσμημένοι",
+"lemma": "κοσμέω",
+"strongs": "G2885",
+"gloss": "I put into order, adorn"
+},
+{
+"ref": "9.2",
+"greek": "ἐντολαῖς",
+"lemma": "ἐντολή",
+"strongs": "G1785",
+"gloss": "an ordinance, injunction, command"
+},
+{
+"ref": "9.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "9.2",
+"greek": "Χριστοῦ·",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "9.2",
+"greek": "οἷς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "9.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "9.2",
+"greek": "ἀγαλλιώμενος",
+"lemma": "ἀγαλλιάω",
+"strongs": "G21",
+"gloss": "I exult, am full of joy"
+},
+{
+"ref": "9.2",
+"greek": "ἠξιώθην",
+"lemma": "ἀξιόω",
+"strongs": "G515",
+"gloss": "I account or treat as worthy"
+},
+{
+"ref": "9.2",
+"greek": "δι’",
+"lemma": "δι",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "9.2",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "9.2",
+"greek": "γράφω",
+"lemma": "γράφω",
+"strongs": "G1125",
+"gloss": "I write"
+},
+{
+"ref": "9.2",
+"greek": "προσομιλῆσαι",
+"lemma": "προσομιλέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "9.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "9.2",
+"greek": "συγχαρῆναι,",
+"lemma": "συγχαρήνη",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "ὅτι",
+"lemma": "ὅτι",
+"strongs": "G3754",
+"gloss": "that, since, because"
+},
+{
+"ref": "9.2",
+"greek": "κατ’",
+"lemma": "κατ",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "9.2",
+"greek": "ἀνθρώπων",
+"lemma": "ἄνθρωπος",
+"strongs": "G444",
+"gloss": "a man, one of the human race"
+},
+{
+"ref": "9.2",
+"greek": "βίον",
+"lemma": "βίος",
+"strongs": "G979",
+"gloss": "life, manner of life, livelihood"
+},
+{
+"ref": "9.2",
+"greek": "οὐδὲν",
+"lemma": "οὐδείς",
+"strongs": "G3762",
+"gloss": "no one, none, nothing"
+},
+{
+"ref": "9.2",
+"greek": "ἀγαπᾶτε",
+"lemma": "ἀγαπάω",
+"strongs": "G25",
+"gloss": "I love"
+},
+{
+"ref": "9.2",
+"greek": "εἰ",
+"lemma": "εἰ",
+"strongs": "G1488",
+"gloss": null
+},
+{
+"ref": "9.2",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "9.2",
+"greek": "μόνον",
+"lemma": "μόνος",
+"strongs": "G3441",
+"gloss": "only, solitary, desolate"
+},
+{
+"ref": "9.2",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "9.2",
+"greek": "θεόν.",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "10.1",
+"greek": "Καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "10.1",
+"greek": "ὑπὲρ",
+"lemma": "ὑπέρ",
+"strongs": "G5228",
+"gloss": "in behalf of, above"
+},
+{
+"ref": "10.1",
+"greek": "τῶν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.1",
+"greek": "ἄλλων",
+"lemma": "ἄλλος",
+"strongs": "G243",
+"gloss": "other, another, different"
+},
+{
+"ref": "10.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "10.1",
+"greek": "ἀνθρώπων",
+"lemma": "ἄνθρωπος",
+"strongs": "G444",
+"gloss": "a man, one of the human race"
+},
+{
+"ref": "10.1",
+"greek": "ἀδιαλείπτως",
+"lemma": "ἀδιαλείπτως",
+"strongs": "G89",
+"gloss": "unceasingly"
+},
+{
+"ref": "10.1",
+"greek": "προσεύχεσθε,",
+"lemma": "προσεύχομαι",
+"strongs": "G4336",
+"gloss": "I pray, pray for"
+},
+{
+"ref": "10.1",
+"greek": "ἔστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "10.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "10.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "10.1",
+"greek": "αὐτοῖς",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.1",
+"greek": "ἐλπὶς",
+"lemma": "ἐλπίς",
+"strongs": "G1680",
+"gloss": "hope, expectation"
+},
+{
+"ref": "10.1",
+"greek": "μετανοίας,",
+"lemma": "μετάνοια",
+"strongs": "G3341",
+"gloss": "repentance, a change of mind"
+},
+{
+"ref": "10.1",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "10.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "10.1",
+"greek": "τύχωσιν.",
+"lemma": "τυγχάνω",
+"strongs": "G5177",
+"gloss": "I obtain, I happen, perhaps"
+},
+{
+"ref": "10.1",
+"greek": "ἐπιτρέψατε",
+"lemma": "ἐπιτρέπω",
+"strongs": "G2010",
+"gloss": "I allow, permit"
+},
+{
+"ref": "10.1",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "10.1",
+"greek": "αὐτοῖς",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.1",
+"greek": "κἂν",
+"lemma": "κἄν",
+"strongs": "G2579",
+"gloss": "and if, even if"
+},
+{
+"ref": "10.1",
+"greek": "ἐκ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "10.1",
+"greek": "τῶν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.1",
+"greek": "ἔργων",
+"lemma": "ἔργον",
+"strongs": "G2041",
+"gloss": "work, labor, action, deed"
+},
+{
+"ref": "10.1",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "10.1",
+"greek": "μαθητευθῆναι.",
+"lemma": "μαθητεύω",
+"strongs": "G3100",
+"gloss": "I make disciples, make into disciples"
+},
+{
+"ref": "10.2",
+"greek": "πρὸς",
+"lemma": "πρός",
+"strongs": "G4314",
+"gloss": "to, towards, with"
+},
+{
+"ref": "10.2",
+"greek": "τὰς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.2",
+"greek": "ὀργὰς",
+"lemma": "ὀργή",
+"strongs": "G3709",
+"gloss": "anger, wrath, passion"
+},
+{
+"ref": "10.2",
+"greek": "αὐτῶν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.2",
+"greek": "ὑμεῖς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "10.2",
+"greek": "πραεῖς,",
+"lemma": "πραΰς",
+"strongs": "G4239",
+"gloss": "mild, gentle"
+},
+{
+"ref": "10.2",
+"greek": "πρὸς",
+"lemma": "πρός",
+"strongs": "G4314",
+"gloss": "to, towards, with"
+},
+{
+"ref": "10.2",
+"greek": "τὰς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.2",
+"greek": "μεγαλορημοσύνας",
+"lemma": "μεγαλορημοσύνη",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "10.2",
+"greek": "αὐτῶν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.2",
+"greek": "ὑμεῖς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "10.2",
+"greek": "ταπεινόφρονες,",
+"lemma": "ταπεινόφρων",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "10.2",
+"greek": "πρὸς",
+"lemma": "πρός",
+"strongs": "G4314",
+"gloss": "to, towards, with"
+},
+{
+"ref": "10.2",
+"greek": "τὰς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.2",
+"greek": "βλασφημίας",
+"lemma": "βλασφημία",
+"strongs": "G988",
+"gloss": "abusive or scurrilous language, blasphemy"
+},
+{
+"ref": "10.2",
+"greek": "αὐτῶν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.2",
+"greek": "ὑμεῖς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "10.2",
+"greek": "τὰς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.2",
+"greek": "προσευχάς,",
+"lemma": "προσευχή",
+"strongs": "G4335",
+"gloss": "prayer, a place for prayer"
+},
+{
+"ref": "10.2",
+"greek": "πρὸς",
+"lemma": "πρός",
+"strongs": "G4314",
+"gloss": "to, towards, with"
+},
+{
+"ref": "10.2",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.2",
+"greek": "πλάνην",
+"lemma": "πλάνη",
+"strongs": "G4106",
+"gloss": "a wandering, error"
+},
+{
+"ref": "10.2",
+"greek": "αὐτῶν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.2",
+"greek": "ὑμεῖς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "10.2",
+"greek": "ἑδραῖοι",
+"lemma": "ἑδραῖος",
+"strongs": "G1476",
+"gloss": "firm, steadfast"
+},
+{
+"ref": "10.2",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.2",
+"greek": "πίστει,",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "10.2",
+"greek": "πρὸς",
+"lemma": "πρός",
+"strongs": "G4314",
+"gloss": "to, towards, with"
+},
+{
+"ref": "10.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.2",
+"greek": "ἄγριον",
+"lemma": "ἄγριος",
+"strongs": "G66",
+"gloss": "wild, fierce"
+},
+{
+"ref": "10.2",
+"greek": "αὐτῶν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.2",
+"greek": "ὑμεῖς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "10.2",
+"greek": "ἥμεροι,",
+"lemma": "ἥμερος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "10.2",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "10.2",
+"greek": "σπουδάζοντες",
+"lemma": "σπουδάζω",
+"strongs": "G4704",
+"gloss": "I hasten"
+},
+{
+"ref": "10.2",
+"greek": "ἀντιμιμήσασθαι",
+"lemma": "ἀντιμιμέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "10.2",
+"greek": "αὐτούς.",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.3",
+"greek": "ἀδελφοὶ",
+"lemma": "ἀδελφός",
+"strongs": "G80",
+"gloss": "a brother"
+},
+{
+"ref": "10.3",
+"greek": "αὐτῶν",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "10.3",
+"greek": "εὑρεθῶμεν",
+"lemma": "εὑρεθῶ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "10.3",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.3",
+"greek": "ἐπιεικείᾳ·",
+"lemma": "ἐπιείκεια",
+"strongs": "G1932",
+"gloss": "considerateness, forbearance, fairness"
+},
+{
+"ref": "10.3",
+"greek": "μιμηταὶ",
+"lemma": "μιμητής",
+"strongs": "G3402",
+"gloss": "an imitator"
+},
+{
+"ref": "10.3",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "10.3",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.3",
+"greek": "κυρίου",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "10.3",
+"greek": "σπουδάζωμεν",
+"lemma": "σπουδάζω",
+"strongs": "G4704",
+"gloss": "I hasten"
+},
+{
+"ref": "10.3",
+"greek": "εἶναι,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "10.3",
+"greek": "τίς",
+"lemma": "τίς",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "10.3",
+"greek": "πλέον",
+"lemma": "πολύς",
+"strongs": "G4183",
+"gloss": "much, many, often"
+},
+{
+"ref": "10.3",
+"greek": "ἀδικηθῇ,",
+"lemma": "ἀδικέω",
+"strongs": "G91",
+"gloss": "I act unjustly towards"
+},
+{
+"ref": "10.3",
+"greek": "τίς",
+"lemma": "τίς",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "10.3",
+"greek": "ἀποστερηθῇ,",
+"lemma": "ἀποστερέω",
+"strongs": "G650",
+"gloss": "I deprive one of something, rob"
+},
+{
+"ref": "10.3",
+"greek": "τίς",
+"lemma": "τίς",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "10.3",
+"greek": "ἀθετηθῇ·",
+"lemma": "ἀθετάομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "10.3",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "10.3",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "10.3",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "10.3",
+"greek": "διαβόλου",
+"lemma": "διάβολος",
+"strongs": "G1228",
+"gloss": "slanderous, the Slanderer, the Devil"
+},
+{
+"ref": "10.3",
+"greek": "βοτάνη",
+"lemma": "βοτάνος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "10.3",
+"greek": "τις",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "10.3",
+"greek": "εὑρεθῇ",
+"lemma": "εὑρίσκω",
+"strongs": "G2147",
+"gloss": "I find"
+},
+{
+"ref": "10.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "10.3",
+"greek": "ὑμῖν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "10.3",
+"greek": "ἀλλ’",
+"lemma": "ἀλλ",
+"strongs": "G235",
+"gloss": "but, except"
+},
+{
+"ref": "10.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "10.3",
+"greek": "πάσῃ",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "10.3",
+"greek": "ἁγνείᾳ",
+"lemma": "ἁγνεία",
+"strongs": "G47",
+"gloss": "purity, chastity"
+},
+{
+"ref": "10.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "10.3",
+"greek": "σωφροσύνῃ",
+"lemma": "σωφροσύνη",
+"strongs": "G4997",
+"gloss": "sanity, sobriety"
+},
+{
+"ref": "10.3",
+"greek": "μένητε",
+"lemma": "μένω",
+"strongs": "G3306",
+"gloss": "I remain, abide"
+},
+{
+"ref": "10.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "10.3",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "10.3",
+"greek": "Χριστῷ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "10.3",
+"greek": "σαρκικῶς",
+"lemma": "σαρκικός",
+"strongs": "G4559",
+"gloss": "fleshly, carnal"
+},
+{
+"ref": "10.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "10.3",
+"greek": "πνευματικῶς.",
+"lemma": "πνευματικῶς",
+"strongs": "G4153",
+"gloss": "spiritually"
+},
+{
+"ref": "11.1",
+"greek": "Ἔσχατοι",
+"lemma": "Ἔσχατος",
+"strongs": "G2078",
+"gloss": "last, at the last, finally"
+},
+{
+"ref": "11.1",
+"greek": "καιροί.",
+"lemma": "καιρός",
+"strongs": "G2540",
+"gloss": "fitting season, opportunity, time"
+},
+{
+"ref": "11.1",
+"greek": "λοιπὸν",
+"lemma": "λοιπός",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "11.1",
+"greek": "αἰσχυνθῶμεν,",
+"lemma": "αἰσχύνομαι",
+"strongs": "G153",
+"gloss": "I am ashamed, am put to shame"
+},
+{
+"ref": "11.1",
+"greek": "φοβηθῶμεν",
+"lemma": "φοβηθέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "11.1",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.1",
+"greek": "μακροθυμίαν",
+"lemma": "μακροθυμία",
+"strongs": "G3115",
+"gloss": "patience, forbearance"
+},
+{
+"ref": "11.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.1",
+"greek": "θεοῦ,",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "11.1",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "11.1",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "11.1",
+"greek": "ἡμῖν",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "11.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "11.1",
+"greek": "κρίμα",
+"lemma": "κρίμα",
+"strongs": "G2917",
+"gloss": "a judgment, verdict, lawsuit"
+},
+{
+"ref": "11.1",
+"greek": "γένηται.",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "11.1",
+"greek": "ἢ",
+"lemma": "ἤ",
+"strongs": "G2229",
+"gloss": "truly, surely"
+},
+{
+"ref": "11.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "11.1",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.1",
+"greek": "μέλλουσαν",
+"lemma": "μέλλω",
+"strongs": "G3195",
+"gloss": "I am about to"
+},
+{
+"ref": "11.1",
+"greek": "ὀργὴν",
+"lemma": "ὀργή",
+"strongs": "G3709",
+"gloss": "anger, wrath, passion"
+},
+{
+"ref": "11.1",
+"greek": "φοβηθῶμεν,",
+"lemma": "φοβηθῶμεν",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "11.1",
+"greek": "ἢ",
+"lemma": "ἤ",
+"strongs": "G2229",
+"gloss": "truly, surely"
+},
+{
+"ref": "11.1",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.1",
+"greek": "ἐνεστῶσαν",
+"lemma": "ἐνίστημι",
+"strongs": "G1764",
+"gloss": "I place in or upon, am at hand, am present, threaten"
+},
+{
+"ref": "11.1",
+"greek": "χάριν",
+"lemma": "χάρις",
+"strongs": "G5485",
+"gloss": "grace, favor, kindness"
+},
+{
+"ref": "11.1",
+"greek": "ἀγαπήσωμεν,",
+"lemma": "ἀγαπέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "11.1",
+"greek": "ἓν",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "11.1",
+"greek": "τῶν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.1",
+"greek": "δύο·",
+"lemma": "δύο",
+"strongs": "G1417",
+"gloss": "two"
+},
+{
+"ref": "11.1",
+"greek": "μόνον",
+"lemma": "μόνος",
+"strongs": "G3441",
+"gloss": "only, solitary, desolate"
+},
+{
+"ref": "11.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "11.1",
+"greek": "Χριστῷ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "11.1",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "11.1",
+"greek": "εὑρεθῆναι",
+"lemma": "εὑρίσκω",
+"strongs": "G2147",
+"gloss": "I find"
+},
+{
+"ref": "11.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "11.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.1",
+"greek": "ἀληθινὸν",
+"lemma": "ἀληθινός",
+"strongs": "G228",
+"gloss": "true, real, genuine"
+},
+{
+"ref": "11.1",
+"greek": "ζῆν.",
+"lemma": "ζάω",
+"strongs": "G2198",
+"gloss": "I live"
+},
+{
+"ref": "11.2",
+"greek": "χωρὶς",
+"lemma": "χωρίς",
+"strongs": "G5565",
+"gloss": "apart from, without"
+},
+{
+"ref": "11.2",
+"greek": "τούτου",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "11.2",
+"greek": "μηδὲν",
+"lemma": "μηδείς",
+"strongs": "G3367",
+"gloss": "no one, nothing"
+},
+{
+"ref": "11.2",
+"greek": "ὑμῖν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "11.2",
+"greek": "πρεπέτω,",
+"lemma": "πρέπω",
+"strongs": "G4241",
+"gloss": "it becomes, is fitting to"
+},
+{
+"ref": "11.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "11.2",
+"greek": "ᾧ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "11.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.2",
+"greek": "δεσμὰ",
+"lemma": "δεσμόν",
+"strongs": "G1199",
+"gloss": "a bond, chain"
+},
+{
+"ref": "11.2",
+"greek": "περιφέρω,",
+"lemma": "περιφέρω",
+"strongs": "G4064",
+"gloss": "I carry around, am driven to and fro"
+},
+{
+"ref": "11.2",
+"greek": "τοὺς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.2",
+"greek": "πνευματικοὺς",
+"lemma": "πνευματικός",
+"strongs": "G4152",
+"gloss": "spiritual"
+},
+{
+"ref": "11.2",
+"greek": "μαργαρίτας,",
+"lemma": "μαργαρίτης",
+"strongs": "G3135",
+"gloss": "a pearl"
+},
+{
+"ref": "11.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "11.2",
+"greek": "οἷς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "11.2",
+"greek": "γένοιτό",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "11.2",
+"greek": "μοι",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "11.2",
+"greek": "ἀναστῆναι",
+"lemma": "ἀνίστημι",
+"strongs": "G450",
+"gloss": "I raise up, set up, rise from"
+},
+{
+"ref": "11.2",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.2",
+"greek": "προσευχῇ",
+"lemma": "προσευχή",
+"strongs": "G4335",
+"gloss": "prayer, a place for prayer"
+},
+{
+"ref": "11.2",
+"greek": "ὑμῶν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "11.2",
+"greek": "ἧς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "11.2",
+"greek": "γένοιτό",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "11.2",
+"greek": "μοι",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "11.2",
+"greek": "ἀεὶ",
+"lemma": "ἀεί",
+"strongs": "G104",
+"gloss": "always"
+},
+{
+"ref": "11.2",
+"greek": "μέτοχον",
+"lemma": "μέτοχος",
+"strongs": "G3353",
+"gloss": "a sharer, partner"
+},
+{
+"ref": "11.2",
+"greek": "εἶναι,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "11.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "11.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "11.2",
+"greek": "κλήρῳ",
+"lemma": "κλῆρος",
+"strongs": "G2819",
+"gloss": "a lot, portion"
+},
+{
+"ref": "11.2",
+"greek": "Ἐφεσίων",
+"lemma": "Ἐφέσιος",
+"strongs": "G2180",
+"gloss": "Ephesian"
+},
+{
+"ref": "11.2",
+"greek": "εὑρεθῶ",
+"lemma": "εὑρίσκω",
+"strongs": "G2147",
+"gloss": "I find"
+},
+{
+"ref": "11.2",
+"greek": "τῶν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.2",
+"greek": "Χριστιανῶν,",
+"lemma": "Χριστιανῶς",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "11.2",
+"greek": "οἳ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "11.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "11.2",
+"greek": "τοῖς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "11.2",
+"greek": "ἀποστόλοις",
+"lemma": "ἀπόστολος",
+"strongs": "G652",
+"gloss": "an apostle, a messenger, an envoy, a delegate"
+},
+{
+"ref": "11.2",
+"greek": "πάντοτε",
+"lemma": "πάντοτε",
+"strongs": "G3842",
+"gloss": "always, at all times"
+},
+{
+"ref": "11.2",
+"greek": "συνῄνεσαν",
+"lemma": "συναινέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "11.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "11.2",
+"greek": "δυνάμει",
+"lemma": "δύναμις",
+"strongs": "G1411",
+"gloss": "might, power, marvelous works"
+},
+{
+"ref": "11.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "11.2",
+"greek": "Χριστοῦ.",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "12.1",
+"greek": "Οἶδα,",
+"lemma": "οἶδα",
+"strongs": "G1492",
+"gloss": "I know, remember"
+},
+{
+"ref": "12.1",
+"greek": "τίς",
+"lemma": "τίς",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "12.1",
+"greek": "εἰμι",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "12.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "12.1",
+"greek": "τίσιν",
+"lemma": "τίς",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "12.1",
+"greek": "γράφω.",
+"lemma": "γράφω",
+"strongs": "G1125",
+"gloss": "I write"
+},
+{
+"ref": "12.1",
+"greek": "ἐγὼ",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "12.1",
+"greek": "κατάκριτος,",
+"lemma": "κατάκριτος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "12.1",
+"greek": "ὑμεῖς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "12.1",
+"greek": "ἠλεημένοι·",
+"lemma": "ἐλεάω",
+"strongs": "G1653",
+"gloss": "I pity, have mercy on"
+},
+{
+"ref": "12.1",
+"greek": "ἐγὼ",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "12.1",
+"greek": "ὑπὸ",
+"lemma": "ὑπό",
+"strongs": "G5259",
+"gloss": "by, under, about"
+},
+{
+"ref": "12.1",
+"greek": "κίνδυνον,",
+"lemma": "κίνδυνος",
+"strongs": "G2794",
+"gloss": "danger, peril, risk"
+},
+{
+"ref": "12.1",
+"greek": "ὑμεῖς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "12.1",
+"greek": "ἐστηριγμένοι·",
+"lemma": "ἐστηριγμένοι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "12.2",
+"greek": "πάροδός",
+"lemma": "πάροδος",
+"strongs": "G3938",
+"gloss": "a passing by or through"
+},
+{
+"ref": "12.2",
+"greek": "ἐστε",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "12.2",
+"greek": "τῶν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "12.2",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "12.2",
+"greek": "θεὸν",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "12.2",
+"greek": "ἀναιρουμένων,",
+"lemma": "ἀναιρέω",
+"strongs": "G337",
+"gloss": "I take up, abolish, murder"
+},
+{
+"ref": "12.2",
+"greek": "Παύλου",
+"lemma": "Παῦλος",
+"strongs": "G3972",
+"gloss": "Paul"
+},
+{
+"ref": "12.2",
+"greek": "συμμύσται",
+"lemma": "συμμύστης",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "12.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "12.2",
+"greek": "ἡγιασμένου.",
+"lemma": "ἡγιαάσ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "12.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "12.2",
+"greek": "μεμαρτυρημένου,",
+"lemma": "μεμαρτυρημένου",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "12.2",
+"greek": "ἀξιομακαρίστου,",
+"lemma": "ἀξιομακαρίστης",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "12.2",
+"greek": "οὗ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "12.2",
+"greek": "γένοιτό",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "12.2",
+"greek": "μοι",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "12.2",
+"greek": "ὑπὸ",
+"lemma": "ὑπό",
+"strongs": "G5259",
+"gloss": "by, under, about"
+},
+{
+"ref": "12.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "12.2",
+"greek": "ἴχνη",
+"lemma": "ἴχνος",
+"strongs": "G2487",
+"gloss": "a track, footstep"
+},
+{
+"ref": "12.2",
+"greek": "εὑρεθῆναι,",
+"lemma": "εὑρίσκω",
+"strongs": "G2147",
+"gloss": "I find"
+},
+{
+"ref": "12.2",
+"greek": "ὅταν",
+"lemma": "ὅταν",
+"strongs": "G3752",
+"gloss": "when, whensoever"
+},
+{
+"ref": "12.2",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "12.2",
+"greek": "ἐπιτύχω,",
+"lemma": "ἐπιτύχω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "12.2",
+"greek": "ὃς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "12.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "12.2",
+"greek": "πάσῃ",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "12.2",
+"greek": "ἐπιστολῇ",
+"lemma": "ἐπιστολή",
+"strongs": "G1992",
+"gloss": "a letter, dispatch, epistle"
+},
+{
+"ref": "12.2",
+"greek": "μνημονεύει",
+"lemma": "μνημονεύω",
+"strongs": "G3421",
+"gloss": "I remember, make mention of"
+},
+{
+"ref": "12.2",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "12.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "12.2",
+"greek": "Χριστῷ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "12.2",
+"greek": "Ἰησοῦ.",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "13.1",
+"greek": "Σπουδάζετε",
+"lemma": "Σπουδάζετε",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "13.1",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "13.1",
+"greek": "πυκνότερον",
+"lemma": "πυκνός",
+"strongs": "G4437",
+"gloss": "frequent, often"
+},
+{
+"ref": "13.1",
+"greek": "συνέρχεσθαι",
+"lemma": "συνέρχω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "13.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "13.1",
+"greek": "εὐχαριστίαν",
+"lemma": "εὐχαριστία",
+"strongs": "G2169",
+"gloss": "thankfulness, gratitude"
+},
+{
+"ref": "13.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "13.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "13.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "13.1",
+"greek": "δόξαν.",
+"lemma": "δόξα",
+"strongs": "G1391",
+"gloss": "honor, renown, glory splendor"
+},
+{
+"ref": "13.1",
+"greek": "ὅταν",
+"lemma": "ὅταν",
+"strongs": "G3752",
+"gloss": "when, whensoever"
+},
+{
+"ref": "13.1",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "13.1",
+"greek": "πυκνῶς",
+"lemma": "πυκνός",
+"strongs": "G4437",
+"gloss": "frequent, often"
+},
+{
+"ref": "13.1",
+"greek": "ἐπὶ",
+"lemma": "ἐπί",
+"strongs": "G1909",
+"gloss": "on, to, against, on the basis of, at"
+},
+{
+"ref": "13.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "13.1",
+"greek": "αὐτὸ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "13.1",
+"greek": "γίνεσθε,",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "13.1",
+"greek": "καθαιροῦνται",
+"lemma": "καθαιρέω",
+"strongs": "G2507",
+"gloss": "I take down, depose, destroy"
+},
+{
+"ref": "13.1",
+"greek": "αἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "13.1",
+"greek": "δυνάμεις",
+"lemma": "δύναμις",
+"strongs": "G1411",
+"gloss": "might, power, marvelous works"
+},
+{
+"ref": "13.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "13.1",
+"greek": "Σατανᾶ,",
+"lemma": "Σατανᾶς",
+"strongs": "G4567",
+"gloss": "an adversary, Satan"
+},
+{
+"ref": "13.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "13.1",
+"greek": "λύεται",
+"lemma": "λύομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "13.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "13.1",
+"greek": "ὄλεθρος",
+"lemma": "ὄλεθρος",
+"strongs": "G3639",
+"gloss": "ruin, doom, destruction"
+},
+{
+"ref": "13.1",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "13.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "13.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "13.1",
+"greek": "ὁμονοίᾳ",
+"lemma": "ὁμόνοια",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "13.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "13.1",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "13.1",
+"greek": "πίστεως.",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "13.2",
+"greek": "οὐδέν",
+"lemma": "οὐδείς",
+"strongs": "G3762",
+"gloss": "no one, none, nothing"
+},
+{
+"ref": "13.2",
+"greek": "ἐστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "13.2",
+"greek": "ἄμεινον",
+"lemma": "ἀγαθός",
+"strongs": "G18",
+"gloss": "good"
+},
+{
+"ref": "13.2",
+"greek": "εἰρήνης,",
+"lemma": "εἰρήνη",
+"strongs": "G1515",
+"gloss": "peace, peace of mind"
+},
+{
+"ref": "13.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "13.2",
+"greek": "ᾗ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "13.2",
+"greek": "πᾶς",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "13.2",
+"greek": "πόλεμος",
+"lemma": "πόλεμος",
+"strongs": "G4171",
+"gloss": "a war, battle, strife"
+},
+{
+"ref": "13.2",
+"greek": "καταργεῖται",
+"lemma": "καταργέω",
+"strongs": "G2673",
+"gloss": "I bring to naught, sever, abolish"
+},
+{
+"ref": "13.2",
+"greek": "ἐπουρανίων",
+"lemma": "ἐπουράνιος",
+"strongs": "G2032",
+"gloss": "heavenly, celestial"
+},
+{
+"ref": "13.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "13.2",
+"greek": "ἐπιγείων.",
+"lemma": "ἐπίγειος",
+"strongs": "G1919",
+"gloss": "earthly"
+},
+{
+"ref": "14.1",
+"greek": "Ὧν",
+"lemma": "Ὧν",
+"strongs": "G5607",
+"gloss": null
+},
+{
+"ref": "14.1",
+"greek": "οὐδὲν",
+"lemma": "οὐδείς",
+"strongs": "G3762",
+"gloss": "no one, none, nothing"
+},
+{
+"ref": "14.1",
+"greek": "λανθάνει",
+"lemma": "λανθάνω",
+"strongs": "G2990",
+"gloss": "I am hidden, escape notice"
+},
+{
+"ref": "14.1",
+"greek": "ὑμᾶς,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "14.1",
+"greek": "ἐὰν",
+"lemma": "ἐάν",
+"strongs": "G1437",
+"gloss": "if"
+},
+{
+"ref": "14.1",
+"greek": "τελείως",
+"lemma": "τελείως",
+"strongs": "G5049",
+"gloss": "perfectly"
+},
+{
+"ref": "14.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "14.1",
+"greek": "Ἰησοῦν",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "14.1",
+"greek": "Χριστὸν",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "14.1",
+"greek": "ἔχητε",
+"lemma": "ἔχω",
+"strongs": "G2192",
+"gloss": "I have, hold, possess"
+},
+{
+"ref": "14.1",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.1",
+"greek": "πίστιν",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "14.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "14.1",
+"greek": "τὴν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.1",
+"greek": "ἀγάπην,",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "14.1",
+"greek": "ἥτις",
+"lemma": "ὅστις",
+"strongs": "G3748",
+"gloss": "whosoever, whichsoever, whatsoever"
+},
+{
+"ref": "14.1",
+"greek": "ἐστὶν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "14.1",
+"greek": "ἀρχὴ",
+"lemma": "ἀρχή",
+"strongs": "G746",
+"gloss": "ruler, beginning"
+},
+{
+"ref": "14.1",
+"greek": "ζωῆς",
+"lemma": "ζωή",
+"strongs": "G2222",
+"gloss": "life"
+},
+{
+"ref": "14.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "14.1",
+"greek": "τέλος·",
+"lemma": "τέλος",
+"strongs": "G5056",
+"gloss": "an end, purpose, tax"
+},
+{
+"ref": "14.1",
+"greek": "ἀρχὴ",
+"lemma": "ἀρχή",
+"strongs": "G746",
+"gloss": "ruler, beginning"
+},
+{
+"ref": "14.1",
+"greek": "μὲν",
+"lemma": "μέν",
+"strongs": "G3303",
+"gloss": "truly, indeed"
+},
+{
+"ref": "14.1",
+"greek": "πίστις,",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "14.1",
+"greek": "τέλος",
+"lemma": "τέλος",
+"strongs": "G5056",
+"gloss": "an end, purpose, tax"
+},
+{
+"ref": "14.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "14.1",
+"greek": "ἀγάπη.",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "14.1",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "14.1",
+"greek": "δύο",
+"lemma": "δύο",
+"strongs": "G1417",
+"gloss": "two"
+},
+{
+"ref": "14.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "14.1",
+"greek": "ἑνότητι",
+"lemma": "ἑνότης",
+"strongs": "G1775",
+"gloss": "oneness, unity"
+},
+{
+"ref": "14.1",
+"greek": "γενόμενα",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "14.1",
+"greek": "θεός",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "14.1",
+"greek": "ἐστιν,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "14.1",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "14.1",
+"greek": "ἄλλα",
+"lemma": "ἄλλος",
+"strongs": "G243",
+"gloss": "other, another, different"
+},
+{
+"ref": "14.1",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "14.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "14.1",
+"greek": "καλοκἀγαθίαν",
+"lemma": "καλοκἀγαθία",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "14.1",
+"greek": "ἀκόλουθά",
+"lemma": "ἀκόλουθός",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "14.1",
+"greek": "ἐστιν.",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "14.2",
+"greek": "οὐδεὶς",
+"lemma": "οὐδείς",
+"strongs": "G3762",
+"gloss": "no one, none, nothing"
+},
+{
+"ref": "14.2",
+"greek": "πίστιν",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "14.2",
+"greek": "ἐπαγγελλόμενος",
+"lemma": "ἐπαγγέλλω",
+"strongs": "G1861",
+"gloss": "I promise, profess"
+},
+{
+"ref": "14.2",
+"greek": "ἁμαρτάνει,",
+"lemma": "ἁμαρτάνω",
+"strongs": "G264",
+"gloss": "I sin"
+},
+{
+"ref": "14.2",
+"greek": "οὐδὲ",
+"lemma": "οὐδέ",
+"strongs": "G3761",
+"gloss": "neither, nor, not even"
+},
+{
+"ref": "14.2",
+"greek": "ἀγάπην",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "14.2",
+"greek": "κεκτημένος",
+"lemma": "κτάομαι",
+"strongs": "G2932",
+"gloss": "I win, get, buy, possess"
+},
+{
+"ref": "14.2",
+"greek": "μισεῖ.",
+"lemma": "μισέω",
+"strongs": "G3404",
+"gloss": "I hate, detest"
+},
+{
+"ref": "14.2",
+"greek": "φανερὸν",
+"lemma": "φανερός",
+"strongs": "G5318",
+"gloss": "apparent, clear, visible, manifest, clearly"
+},
+{
+"ref": "14.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.2",
+"greek": "δένδρον",
+"lemma": "δένδρον",
+"strongs": "G1186",
+"gloss": "a tree"
+},
+{
+"ref": "14.2",
+"greek": "ἀπὸ",
+"lemma": "ἀπό",
+"strongs": "G575",
+"gloss": "from, away from"
+},
+{
+"ref": "14.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.2",
+"greek": "καρποῦ",
+"lemma": "καρπός",
+"strongs": "G2591",
+"gloss": "Carpus"
+},
+{
+"ref": "14.2",
+"greek": "αὐτοῦ.",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "14.2",
+"greek": "οὕτως",
+"lemma": "οὕτω(ς)",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "14.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.2",
+"greek": "ἐπαγγελλόμενοι",
+"lemma": "ἐπαγγέλλομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "14.2",
+"greek": "Χριστοῦ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "14.2",
+"greek": "εἶναι",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "14.2",
+"greek": "δι’",
+"lemma": "δι",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "14.2",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "14.2",
+"greek": "πράσσουσιν",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "14.2",
+"greek": "ὀφθήσονται.",
+"lemma": "ὀφθάνω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "14.2",
+"greek": "οὐ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "14.2",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "14.2",
+"greek": "νῦν",
+"lemma": "νῦν",
+"strongs": "G3568",
+"gloss": "now, already, at present"
+},
+{
+"ref": "14.2",
+"greek": "ἐπαγγελίας",
+"lemma": "ἐπαγγελία",
+"strongs": "G1860",
+"gloss": "a promise"
+},
+{
+"ref": "14.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "14.2",
+"greek": "ἔργον,",
+"lemma": "ἔργον",
+"strongs": "G2041",
+"gloss": "work, labor, action, deed"
+},
+{
+"ref": "14.2",
+"greek": "ἀλλ’",
+"lemma": "ἀλλ",
+"strongs": "G235",
+"gloss": "but, except"
+},
+{
+"ref": "14.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "14.2",
+"greek": "δυνάμει",
+"lemma": "δύναμις",
+"strongs": "G1411",
+"gloss": "might, power, marvelous works"
+},
+{
+"ref": "14.2",
+"greek": "πίστεως",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "14.2",
+"greek": "ἐάν",
+"lemma": "ἐάν",
+"strongs": "G1437",
+"gloss": "if"
+},
+{
+"ref": "14.2",
+"greek": "τις",
+"lemma": "τις",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "14.2",
+"greek": "εὑρεθῇ",
+"lemma": "εὑρίσκω",
+"strongs": "G2147",
+"gloss": "I find"
+},
+{
+"ref": "14.2",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "14.2",
+"greek": "τέλος.",
+"lemma": "τέλος",
+"strongs": "G5056",
+"gloss": "an end, purpose, tax"
+},
+{
+"ref": "15.1",
+"greek": "Ἄμεινόν",
+"lemma": "Ἄμεινος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "15.1",
+"greek": "ἐστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.1",
+"greek": "σιωπᾶν",
+"lemma": "σιωπάω",
+"strongs": "G4623",
+"gloss": "I keep silence"
+},
+{
+"ref": "15.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.1",
+"greek": "εἶναι,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.1",
+"greek": "ἢ",
+"lemma": "ἤ",
+"strongs": "G2229",
+"gloss": "truly, surely"
+},
+{
+"ref": "15.1",
+"greek": "λαλοῦντα",
+"lemma": "λαλέω",
+"strongs": "G2980",
+"gloss": "I speak, say"
+},
+{
+"ref": "15.1",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "15.1",
+"greek": "εἶναι.",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.1",
+"greek": "καλὸν",
+"lemma": "καλός",
+"strongs": "G2570",
+"gloss": "beautiful, good, worthy"
+},
+{
+"ref": "15.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "15.1",
+"greek": "διδάσκειν,",
+"lemma": "διδάσκω",
+"strongs": "G1321",
+"gloss": "I teach"
+},
+{
+"ref": "15.1",
+"greek": "ἐὰν",
+"lemma": "ἐάν",
+"strongs": "G1437",
+"gloss": "if"
+},
+{
+"ref": "15.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "15.1",
+"greek": "λέγων",
+"lemma": "λέγω",
+"strongs": "G3004",
+"gloss": "I say, speak"
+},
+{
+"ref": "15.1",
+"greek": "ποιῇ.",
+"lemma": "ποιέω",
+"strongs": "G4160",
+"gloss": "I do, make"
+},
+{
+"ref": "15.1",
+"greek": "εἷς",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "15.1",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "15.1",
+"greek": "διδάσκαλος,",
+"lemma": "διδάσκαλος",
+"strongs": "G1320",
+"gloss": "a teacher"
+},
+{
+"ref": "15.1",
+"greek": "ὃς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "15.1",
+"greek": "εἶπεν,",
+"lemma": "λέγω",
+"strongs": "G3004",
+"gloss": "I say, speak"
+},
+{
+"ref": "15.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.1",
+"greek": "ἐγένετο·",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "15.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.1",
+"greek": "ἃ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "15.1",
+"greek": "σιγῶν",
+"lemma": "σιγάω",
+"strongs": "G4601",
+"gloss": "I keep silent"
+},
+{
+"ref": "15.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "15.1",
+"greek": "πεποίηκεν",
+"lemma": "ποιέω",
+"strongs": "G4160",
+"gloss": "I do, make"
+},
+{
+"ref": "15.1",
+"greek": "ἄξια",
+"lemma": "ἄξιος",
+"strongs": "G514",
+"gloss": "worthy, worthy of, deserving"
+},
+{
+"ref": "15.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "15.1",
+"greek": "πατρός",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "15.1",
+"greek": "ἐστιν.",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "15.2",
+"greek": "λόγον",
+"lemma": "λόγος",
+"strongs": "G3056",
+"gloss": "a word, speech, divine utterance, analogy"
+},
+{
+"ref": "15.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "15.2",
+"greek": "κεκτημένος",
+"lemma": "κτάομαι",
+"strongs": "G2932",
+"gloss": "I win, get, buy, possess"
+},
+{
+"ref": "15.2",
+"greek": "ἀληθῶς",
+"lemma": "ἀληθῶς",
+"strongs": "G230",
+"gloss": "truly, really, certainly"
+},
+{
+"ref": "15.2",
+"greek": "δύναται",
+"lemma": "δύναμαι",
+"strongs": "G1410",
+"gloss": "I am powerful, am able"
+},
+{
+"ref": "15.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.2",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "15.2",
+"greek": "ἡσυχίας",
+"lemma": "ἡσυχία",
+"strongs": "G2271",
+"gloss": "quietness, silence"
+},
+{
+"ref": "15.2",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "15.2",
+"greek": "ἀκούειν,",
+"lemma": "ἀκούω",
+"strongs": "G191",
+"gloss": "I hear, listen"
+},
+{
+"ref": "15.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "15.2",
+"greek": "τέλειος",
+"lemma": "τέλειος",
+"strongs": "G5046",
+"gloss": "perfect, full-grown"
+},
+{
+"ref": "15.2",
+"greek": "ᾖ,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "15.2",
+"greek": "δι’",
+"lemma": "δι",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "15.2",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "15.2",
+"greek": "λαλεῖ",
+"lemma": "λαλέω",
+"strongs": "G2980",
+"gloss": "I speak, say"
+},
+{
+"ref": "15.2",
+"greek": "πράσσῃ",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "15.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.2",
+"greek": "δι’",
+"lemma": "δι",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "15.2",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "15.2",
+"greek": "σιγᾷ",
+"lemma": "σιγή",
+"strongs": "G4602",
+"gloss": "silence"
+},
+{
+"ref": "15.2",
+"greek": "γινώσκηται.",
+"lemma": "γινώσκω",
+"strongs": "G1097",
+"gloss": "I come to know, learn, realize"
+},
+{
+"ref": "15.3",
+"greek": "οὐδὲν",
+"lemma": "οὐδείς",
+"strongs": "G3762",
+"gloss": "no one, none, nothing"
+},
+{
+"ref": "15.3",
+"greek": "λανθάνει",
+"lemma": "λανθάνω",
+"strongs": "G2990",
+"gloss": "I am hidden, escape notice"
+},
+{
+"ref": "15.3",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "15.3",
+"greek": "κύριον,",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "15.3",
+"greek": "ἀλλὰ",
+"lemma": "ἀλλά",
+"strongs": "G235",
+"gloss": "but, except"
+},
+{
+"ref": "15.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.3",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "15.3",
+"greek": "κρυπτὰ",
+"lemma": "κρυπτός",
+"strongs": "G2927",
+"gloss": "hidden, secret"
+},
+{
+"ref": "15.3",
+"greek": "ἡμῶν",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "15.3",
+"greek": "ἐγγὺς",
+"lemma": "ἐγγύς",
+"strongs": "G1451",
+"gloss": "near"
+},
+{
+"ref": "15.3",
+"greek": "αὐτῷ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "15.3",
+"greek": "ἐστιν.",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.3",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "15.3",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "15.3",
+"greek": "ποιῶμεν",
+"lemma": "ποιέω",
+"strongs": "G4160",
+"gloss": "I do, make"
+},
+{
+"ref": "15.3",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "15.3",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "15.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "15.3",
+"greek": "ἡμῖν",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "15.3",
+"greek": "κατοικοῦντος,",
+"lemma": "κατοικέω",
+"strongs": "G2730",
+"gloss": "I dwell in, settle in, inhabit"
+},
+{
+"ref": "15.3",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "15.3",
+"greek": "ὦμεν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.3",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "15.3",
+"greek": "ναοὶ",
+"lemma": "ναός",
+"strongs": "G3485",
+"gloss": "a temple, shrine"
+},
+{
+"ref": "15.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.3",
+"greek": "αὐτὸς",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "15.3",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "15.3",
+"greek": "ἡμῖν",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "15.3",
+"greek": "θεὸς",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "15.3",
+"greek": "ἡμῶν·",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "15.3",
+"greek": "ὅπερ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "15.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.3",
+"greek": "ἔστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "15.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "15.3",
+"greek": "φανήσεται",
+"lemma": "φαίνω",
+"strongs": "G5316",
+"gloss": "I shine, appear, seem"
+},
+{
+"ref": "15.3",
+"greek": "πρὸ",
+"lemma": "πρό",
+"strongs": "G4253",
+"gloss": "before"
+},
+{
+"ref": "15.3",
+"greek": "προσώπου",
+"lemma": "πρόσωπον",
+"strongs": "G4383",
+"gloss": "the face, countenance, surface"
+},
+{
+"ref": "15.3",
+"greek": "ἡμῶν,",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "15.3",
+"greek": "ἐξ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "15.3",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "15.3",
+"greek": "δικαίως",
+"lemma": "δικαίως",
+"strongs": "G1346",
+"gloss": "justly, righteously"
+},
+{
+"ref": "15.3",
+"greek": "ἀγαπῶμεν",
+"lemma": "ἀγαπάω",
+"strongs": "G25",
+"gloss": "I love"
+},
+{
+"ref": "15.3",
+"greek": "αὐτόν.",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "16.1",
+"greek": "Μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "16.1",
+"greek": "πλανᾶσθε,",
+"lemma": "πλανάω",
+"strongs": "G4105",
+"gloss": "I lead astray, deceive"
+},
+{
+"ref": "16.1",
+"greek": "ἀδελφοί",
+"lemma": "ἀδελφός",
+"strongs": "G80",
+"gloss": "a brother"
+},
+{
+"ref": "16.1",
+"greek": "μου·",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "16.1",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "16.1",
+"greek": "οἰκοφθόροι",
+"lemma": "οἰκοφθόρος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "16.1",
+"greek": "βασιλείαν",
+"lemma": "βασιλεία",
+"strongs": "G932",
+"gloss": "kingship, sovereignty, authority, rule, kingdom"
+},
+{
+"ref": "16.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "16.1",
+"greek": "οὐ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "16.1",
+"greek": "κληρονομήσουσιν.",
+"lemma": "κληρονομέω",
+"strongs": "G2816",
+"gloss": "I inherit, obtain"
+},
+{
+"ref": "16.2",
+"greek": "εἰ",
+"lemma": "εἰ",
+"strongs": "G1488",
+"gloss": null
+},
+{
+"ref": "16.2",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "16.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "16.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "16.2",
+"greek": "σάρκα",
+"lemma": "σάρξ",
+"strongs": "G4561",
+"gloss": "flesh, body"
+},
+{
+"ref": "16.2",
+"greek": "ταῦτα",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "16.2",
+"greek": "πράσσοντες",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "16.2",
+"greek": "ἀπέθανον,",
+"lemma": "ἀποθνῄσκω",
+"strongs": "G599",
+"gloss": "I am dying, am about to die"
+},
+{
+"ref": "16.2",
+"greek": "πόσῳ",
+"lemma": "πόσος",
+"strongs": "G4214",
+"gloss": "how much, how great, how many"
+},
+{
+"ref": "16.2",
+"greek": "μᾶλλον,",
+"lemma": "μᾶλλον",
+"strongs": "G3123",
+"gloss": "more, rather"
+},
+{
+"ref": "16.2",
+"greek": "ἐὰν",
+"lemma": "ἐάν",
+"strongs": "G1437",
+"gloss": "if"
+},
+{
+"ref": "16.2",
+"greek": "πίστιν",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "16.2",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "16.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "16.2",
+"greek": "κακῇ",
+"lemma": "κακός",
+"strongs": "G2556",
+"gloss": "bad, evil"
+},
+{
+"ref": "16.2",
+"greek": "διδασκαλίᾳ",
+"lemma": "διδασκαλία",
+"strongs": "G1319",
+"gloss": "instruction, teaching"
+},
+{
+"ref": "16.2",
+"greek": "φθείρῃ,",
+"lemma": "φθεῖρα",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "16.2",
+"greek": "ὑπὲρ",
+"lemma": "ὑπέρ",
+"strongs": "G5228",
+"gloss": "in behalf of, above"
+},
+{
+"ref": "16.2",
+"greek": "ἧς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "16.2",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "16.2",
+"greek": "Χριστὸς",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "16.2",
+"greek": "ἐσταυρώθη;",
+"lemma": "σταυρόω",
+"strongs": "G4717",
+"gloss": "I crucify"
+},
+{
+"ref": "16.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "16.2",
+"greek": "τοιοῦτος",
+"lemma": "τοιοῦτος",
+"strongs": "G5108",
+"gloss": "of such a kind, such"
+},
+{
+"ref": "16.2",
+"greek": "ῥυπαρὸς",
+"lemma": "ῥυπαρός",
+"strongs": "G4508",
+"gloss": "filthy, defiled"
+},
+{
+"ref": "16.2",
+"greek": "γενόμενος,",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "16.2",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "16.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "16.2",
+"greek": "πῦρ",
+"lemma": "πῦρ",
+"strongs": "G4442",
+"gloss": "fire, trials"
+},
+{
+"ref": "16.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "16.2",
+"greek": "ἄσβεστον",
+"lemma": "ἄσβεστος",
+"strongs": "G762",
+"gloss": "inextinguishable, unquenchable"
+},
+{
+"ref": "16.2",
+"greek": "χωρήσει,",
+"lemma": "χωρέω",
+"strongs": "G5562",
+"gloss": "I make room, go, receive"
+},
+{
+"ref": "16.2",
+"greek": "ὁμοίως",
+"lemma": "ὁμοίως",
+"strongs": "G3668",
+"gloss": "in like manner"
+},
+{
+"ref": "16.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "16.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "16.2",
+"greek": "ἀκούων",
+"lemma": "ἀκούω",
+"strongs": "G191",
+"gloss": "I hear, listen"
+},
+{
+"ref": "16.2",
+"greek": "αὐτοῦ.",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "17.1",
+"greek": "Διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "17.1",
+"greek": "τοῦτο",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "17.1",
+"greek": "μύρον",
+"lemma": "μύρον",
+"strongs": "G3464",
+"gloss": "anointing-oil, ointment"
+},
+{
+"ref": "17.1",
+"greek": "ἔλαβεν",
+"lemma": "λαμβάνω",
+"strongs": "G2983",
+"gloss": "I receive, take"
+},
+{
+"ref": "17.1",
+"greek": "ἐπὶ",
+"lemma": "ἐπί",
+"strongs": "G1909",
+"gloss": "on, to, against, on the basis of, at"
+},
+{
+"ref": "17.1",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.1",
+"greek": "κεφαλῆς",
+"lemma": "κεφαλή",
+"strongs": "G2776",
+"gloss": "the head"
+},
+{
+"ref": "17.1",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "17.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.1",
+"greek": "κύριος,",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "17.1",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "17.1",
+"greek": "πνέῃ",
+"lemma": "πνέω",
+"strongs": "G4154",
+"gloss": "I blow"
+},
+{
+"ref": "17.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.1",
+"greek": "ἐκκλησίᾳ",
+"lemma": "ἐκκλησία",
+"strongs": "G1577",
+"gloss": "an assembly, congregation, church"
+},
+{
+"ref": "17.1",
+"greek": "ἀφθαρσίαν.",
+"lemma": "ἀφθαρσία",
+"strongs": "G861",
+"gloss": "indestructibility, incorruptibility, immortality"
+},
+{
+"ref": "17.1",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "17.1",
+"greek": "ἀλείφεσθε",
+"lemma": "ἀλείφω",
+"strongs": "G218",
+"gloss": "I anoint"
+},
+{
+"ref": "17.1",
+"greek": "δυσωδίαν",
+"lemma": "δυσωδία",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "17.1",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.1",
+"greek": "διδασκαλίας",
+"lemma": "διδασκαλία",
+"strongs": "G1319",
+"gloss": "instruction, teaching"
+},
+{
+"ref": "17.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.1",
+"greek": "ἄρχοντος",
+"lemma": "ἄρχων",
+"strongs": "G758",
+"gloss": "a ruler, prince, leader"
+},
+{
+"ref": "17.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.1",
+"greek": "αἰῶνος",
+"lemma": "αἰών",
+"strongs": "G165",
+"gloss": "an age, a cycle of time"
+},
+{
+"ref": "17.1",
+"greek": "τούτου,",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "17.1",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "17.1",
+"greek": "αἰχμαλωτίσῃ",
+"lemma": "αἰχμαλωτίζω",
+"strongs": "G163",
+"gloss": "I take captive, subdue, ensnare"
+},
+{
+"ref": "17.1",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "17.1",
+"greek": "ἐκ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "17.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.1",
+"greek": "προκειμένου",
+"lemma": "πρόκειμαι",
+"strongs": "G4295",
+"gloss": "I am set before"
+},
+{
+"ref": "17.1",
+"greek": "ζῆν.",
+"lemma": "ζάω",
+"strongs": "G2198",
+"gloss": "I live"
+},
+{
+"ref": "17.2",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "17.2",
+"greek": "τί",
+"lemma": "τίς",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "17.2",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "17.2",
+"greek": "οὐ",
+"lemma": "οὐ",
+"strongs": "G3756",
+"gloss": "no, not"
+},
+{
+"ref": "17.2",
+"greek": "πάντες",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "17.2",
+"greek": "φρόνιμοι",
+"lemma": "φρόνιμος",
+"strongs": "G5429",
+"gloss": "intelligent, prudent"
+},
+{
+"ref": "17.2",
+"greek": "γινόμεθα",
+"lemma": "γίγνομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "17.2",
+"greek": "λαβόντες",
+"lemma": "λαμβάνω",
+"strongs": "G2983",
+"gloss": "I receive, take"
+},
+{
+"ref": "17.2",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "17.2",
+"greek": "γνῶσιν,",
+"lemma": "γνῶσις",
+"strongs": "G1108",
+"gloss": "knowledge, doctrine, wisdom"
+},
+{
+"ref": "17.2",
+"greek": "ὅ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "17.2",
+"greek": "ἐστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "17.2",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "17.2",
+"greek": "Χριστός;",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "17.2",
+"greek": "τί",
+"lemma": "τίς",
+"strongs": "G5100",
+"gloss": "any one, some one"
+},
+{
+"ref": "17.2",
+"greek": "μωρῶς",
+"lemma": "μωρός",
+"strongs": "G3474",
+"gloss": "stupid, foolish"
+},
+{
+"ref": "17.2",
+"greek": "ἀπολλύμεθα,",
+"lemma": "ἀπόλλυμι",
+"strongs": "G622",
+"gloss": "I destroy, lose, am perishing"
+},
+{
+"ref": "17.2",
+"greek": "ἀγνοοῦντες",
+"lemma": "ἀγνοέω",
+"strongs": "G50",
+"gloss": "I do not know, am ignorant of"
+},
+{
+"ref": "17.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.2",
+"greek": "χάρισμα,",
+"lemma": "χάρισμα",
+"strongs": "G5486",
+"gloss": "an undeserved favor"
+},
+{
+"ref": "17.2",
+"greek": "ὃ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "17.2",
+"greek": "πέπομφεν",
+"lemma": "πέπομφεν",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "17.2",
+"greek": "ἀληθῶς",
+"lemma": "ἀληθῶς",
+"strongs": "G230",
+"gloss": "truly, really, certainly"
+},
+{
+"ref": "17.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "17.2",
+"greek": "κύριος;",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "18.1",
+"greek": "Περίψημα",
+"lemma": "Περίψημα",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "18.1",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.1",
+"greek": "ἐμὸν",
+"lemma": "ἐμός",
+"strongs": "G1699",
+"gloss": "mine"
+},
+{
+"ref": "18.1",
+"greek": "πνεῦμα",
+"lemma": "πνεῦμα",
+"strongs": "G4151",
+"gloss": "wind, breath, spirit"
+},
+{
+"ref": "18.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.1",
+"greek": "σταυροῦ,",
+"lemma": "σταυρός",
+"strongs": "G4716",
+"gloss": "a cross"
+},
+{
+"ref": "18.1",
+"greek": "ὅ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "18.1",
+"greek": "ἐστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "18.1",
+"greek": "σκάνδαλον",
+"lemma": "σκάνδαλον",
+"strongs": "G4625",
+"gloss": "a snare, stumbling-block"
+},
+{
+"ref": "18.1",
+"greek": "τοῖς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.1",
+"greek": "ἀπιστοῦσιν,",
+"lemma": "ἀπιστέω",
+"strongs": "G569",
+"gloss": "I am unfaithful, I disbelieve"
+},
+{
+"ref": "18.1",
+"greek": "ἡμῖν",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "18.1",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "18.1",
+"greek": "σωτηρία",
+"lemma": "σωτηρία",
+"strongs": "G4991",
+"gloss": "deliverance, salvation"
+},
+{
+"ref": "18.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "18.1",
+"greek": "ζωὴ",
+"lemma": "ζωή",
+"strongs": "G2222",
+"gloss": "life"
+},
+{
+"ref": "18.1",
+"greek": "αἰώνιος.",
+"lemma": "αἰώνιος",
+"strongs": "G166",
+"gloss": "eternal, unending"
+},
+{
+"ref": "18.1",
+"greek": "ποῦ",
+"lemma": "ποῦ",
+"strongs": "G4226",
+"gloss": "where, whither"
+},
+{
+"ref": "18.1",
+"greek": "σοφός;",
+"lemma": "σοφός",
+"strongs": "G4680",
+"gloss": "wise"
+},
+{
+"ref": "18.1",
+"greek": "ποῦ",
+"lemma": "ποῦ",
+"strongs": "G4226",
+"gloss": "where, whither"
+},
+{
+"ref": "18.1",
+"greek": "συζητητής;",
+"lemma": "συζητητής",
+"strongs": "G4804",
+"gloss": "a disputer"
+},
+{
+"ref": "18.1",
+"greek": "ποῦ",
+"lemma": "ποῦ",
+"strongs": "G4226",
+"gloss": "where, whither"
+},
+{
+"ref": "18.1",
+"greek": "καύχησις",
+"lemma": "καύχησις",
+"strongs": "G2746",
+"gloss": "the act of boasting, exultation"
+},
+{
+"ref": "18.1",
+"greek": "τῶν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.1",
+"greek": "λεγομένων",
+"lemma": "λέγω",
+"strongs": "G3004",
+"gloss": "I say, speak"
+},
+{
+"ref": "18.1",
+"greek": "συνετῶν;",
+"lemma": "συνετός",
+"strongs": "G4908",
+"gloss": "intelligent, prudent, wise"
+},
+{
+"ref": "18.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.2",
+"greek": "γὰρ",
+"lemma": "γάρ",
+"strongs": "G1063",
+"gloss": "for"
+},
+{
+"ref": "18.2",
+"greek": "θεὸς",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "18.2",
+"greek": "ἡμῶν",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "18.2",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "18.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.2",
+"greek": "Χριστὸς",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "18.2",
+"greek": "ἐκυοφορήθη",
+"lemma": "κυοφορέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "18.2",
+"greek": "ὑπὸ",
+"lemma": "ὑπό",
+"strongs": "G5259",
+"gloss": "by, under, about"
+},
+{
+"ref": "18.2",
+"greek": "Μαρίας",
+"lemma": "Μαρία",
+"strongs": "G3137",
+"gloss": "Mary, Miriam"
+},
+{
+"ref": "18.2",
+"greek": "κατ’",
+"lemma": "κατ",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "18.2",
+"greek": "οἰκονομίαν",
+"lemma": "οἰκονομία",
+"strongs": "G3622",
+"gloss": "stewardship"
+},
+{
+"ref": "18.2",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "18.2",
+"greek": "ἐκ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "18.2",
+"greek": "σπέρματος",
+"lemma": "σπέρμα",
+"strongs": "G4690",
+"gloss": "seed, offspring"
+},
+{
+"ref": "18.2",
+"greek": "μὲν",
+"lemma": "μέν",
+"strongs": "G3303",
+"gloss": "truly, indeed"
+},
+{
+"ref": "18.2",
+"greek": "Δαυείδ,",
+"lemma": "Δαυίδ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "18.2",
+"greek": "πνεύματος",
+"lemma": "πνεῦμα",
+"strongs": "G4151",
+"gloss": "wind, breath, spirit"
+},
+{
+"ref": "18.2",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "18.2",
+"greek": "ἁγίου·",
+"lemma": "ἅγιος",
+"strongs": "G40",
+"gloss": "set apart, holy, sacred"
+},
+{
+"ref": "18.2",
+"greek": "ὃς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "18.2",
+"greek": "ἐγεννήθη",
+"lemma": "γεννάω",
+"strongs": "G1080",
+"gloss": "I beget, bring forth, give birth to"
+},
+{
+"ref": "18.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "18.2",
+"greek": "ἐβαπτίσθη,",
+"lemma": "βαπτίζω",
+"strongs": "G907",
+"gloss": "I dip, submerge, baptize"
+},
+{
+"ref": "18.2",
+"greek": "ἵνα",
+"lemma": "ἵνα",
+"strongs": "G2443",
+"gloss": "in order that, so that"
+},
+{
+"ref": "18.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.2",
+"greek": "πάθει",
+"lemma": "πάθος",
+"strongs": "G3806",
+"gloss": "suffering, emotion, depraved passion, lust"
+},
+{
+"ref": "18.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "18.2",
+"greek": "ὕδωρ",
+"lemma": "ὕδωρ",
+"strongs": "G5204",
+"gloss": "water"
+},
+{
+"ref": "18.2",
+"greek": "καθαρίσῃ.",
+"lemma": "καθαρίζω",
+"strongs": "G2511",
+"gloss": "I make clean"
+},
+{
+"ref": "19.1",
+"greek": "Καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "19.1",
+"greek": "ἔλαθεν",
+"lemma": "λανθάνω",
+"strongs": "G2990",
+"gloss": "I am hidden, escape notice"
+},
+{
+"ref": "19.1",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.1",
+"greek": "ἄρχοντα",
+"lemma": "ἄρχων",
+"strongs": "G758",
+"gloss": "a ruler, prince, leader"
+},
+{
+"ref": "19.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.1",
+"greek": "αἰῶνος",
+"lemma": "αἰών",
+"strongs": "G165",
+"gloss": "an age, a cycle of time"
+},
+{
+"ref": "19.1",
+"greek": "τούτου",
+"lemma": "οὗτος",
+"strongs": "G3778",
+"gloss": "this, he, she, it"
+},
+{
+"ref": "19.1",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.1",
+"greek": "παρθενία",
+"lemma": "παρθενία",
+"strongs": "G3932",
+"gloss": "virginity"
+},
+{
+"ref": "19.1",
+"greek": "Μαρίας",
+"lemma": "Μαρία",
+"strongs": "G3137",
+"gloss": "Mary, Miriam"
+},
+{
+"ref": "19.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "19.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.1",
+"greek": "τοκετὸς",
+"lemma": "τοκετός",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.1",
+"greek": "αὐτῆς,",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "19.1",
+"greek": "ὁμοίως",
+"lemma": "ὁμοίως",
+"strongs": "G3668",
+"gloss": "in like manner"
+},
+{
+"ref": "19.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "19.1",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.1",
+"greek": "θάνατος",
+"lemma": "θάνατος",
+"strongs": "G2288",
+"gloss": "death"
+},
+{
+"ref": "19.1",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.1",
+"greek": "κυρίου·",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "19.1",
+"greek": "τρία",
+"lemma": "τρεῖς",
+"strongs": "G5140",
+"gloss": "three"
+},
+{
+"ref": "19.1",
+"greek": "μυστήρια",
+"lemma": "μυστήριον",
+"strongs": "G3466",
+"gloss": "anything hidden, a mystery"
+},
+{
+"ref": "19.1",
+"greek": "κραυγῆς,",
+"lemma": "κραυγή",
+"strongs": "G2906",
+"gloss": "a shout, clamor, outcry"
+},
+{
+"ref": "19.1",
+"greek": "ἅτινα",
+"lemma": "ὅστις",
+"strongs": "G3748",
+"gloss": "whosoever, whichsoever, whatsoever"
+},
+{
+"ref": "19.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "19.1",
+"greek": "ἡσυχίᾳ",
+"lemma": "ἡσυχία",
+"strongs": "G2271",
+"gloss": "quietness, silence"
+},
+{
+"ref": "19.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "19.1",
+"greek": "ἐπράχθη.",
+"lemma": "πράσσω",
+"strongs": "G4238",
+"gloss": "I do, fare, require"
+},
+{
+"ref": "19.2",
+"greek": "πῶς",
+"lemma": "πῶς",
+"strongs": "G4459",
+"gloss": "how, in what manner"
+},
+{
+"ref": "19.2",
+"greek": "οὖν",
+"lemma": "οὖν",
+"strongs": "G3767",
+"gloss": "therefore, then"
+},
+{
+"ref": "19.2",
+"greek": "ἐφανερώθη",
+"lemma": "φανερόω",
+"strongs": "G5319",
+"gloss": "I make clear, visible, or manifest"
+},
+{
+"ref": "19.2",
+"greek": "τοῖς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "αἰῶσιν;",
+"lemma": "αἰών",
+"strongs": "G165",
+"gloss": "an age, a cycle of time"
+},
+{
+"ref": "19.2",
+"greek": "ἀστὴρ",
+"lemma": "ἀστήρ",
+"strongs": "G792",
+"gloss": "a star"
+},
+{
+"ref": "19.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "19.2",
+"greek": "οὐρανῷ",
+"lemma": "οὐρανός",
+"strongs": "G3772",
+"gloss": "the sky, the heaven"
+},
+{
+"ref": "19.2",
+"greek": "ἔλαμψεν",
+"lemma": "λάμπω",
+"strongs": "G2989",
+"gloss": "I shine"
+},
+{
+"ref": "19.2",
+"greek": "ὑπὲρ",
+"lemma": "ὑπέρ",
+"strongs": "G5228",
+"gloss": "in behalf of, above"
+},
+{
+"ref": "19.2",
+"greek": "πάντας",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "19.2",
+"greek": "τοὺς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "ἀστέρας,",
+"lemma": "ἀστήρ",
+"strongs": "G792",
+"gloss": "a star"
+},
+{
+"ref": "19.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "19.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "φῶς",
+"lemma": "φῶς",
+"strongs": "G5457",
+"gloss": "light, a source of light"
+},
+{
+"ref": "19.2",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "19.2",
+"greek": "ἀνεκλάλητον",
+"lemma": "ἀνεκλάλητος",
+"strongs": "G412",
+"gloss": "unspeakable"
+},
+{
+"ref": "19.2",
+"greek": "ἦν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "19.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "19.2",
+"greek": "ξενισμὸν",
+"lemma": "ξενισμός",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.2",
+"greek": "παρεῖχεν",
+"lemma": "παρέχω",
+"strongs": "G3930",
+"gloss": "I offer, provide"
+},
+{
+"ref": "19.2",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "καινότης",
+"lemma": "καινότης",
+"strongs": "G2538",
+"gloss": "freshness, newness"
+},
+{
+"ref": "19.2",
+"greek": "αὐτοῦ,",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "19.2",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "19.2",
+"greek": "λοιπὰ",
+"lemma": "λοιπός",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.2",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "19.2",
+"greek": "ἄστρα",
+"lemma": "ἄστρον",
+"strongs": "G798",
+"gloss": "a star"
+},
+{
+"ref": "19.2",
+"greek": "ἅμα",
+"lemma": "ἅμα",
+"strongs": "G260",
+"gloss": "at the same time, along with"
+},
+{
+"ref": "19.2",
+"greek": "ἡλίῳ",
+"lemma": "ἥλιος",
+"strongs": "G2246",
+"gloss": "the sun, sunlight"
+},
+{
+"ref": "19.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "19.2",
+"greek": "σελήνῃ",
+"lemma": "σελήνη",
+"strongs": "G4582",
+"gloss": "the moon"
+},
+{
+"ref": "19.2",
+"greek": "χορὸς",
+"lemma": "χορός",
+"strongs": "G5525",
+"gloss": "a dance, dancing"
+},
+{
+"ref": "19.2",
+"greek": "ἐγένετο",
+"lemma": "γίνομαι",
+"strongs": "G1096",
+"gloss": "I come into being, am born"
+},
+{
+"ref": "19.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "ἀστέρι,",
+"lemma": "ἀστήρ",
+"strongs": "G792",
+"gloss": "a star"
+},
+{
+"ref": "19.2",
+"greek": "αὐτὸς",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "19.2",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "19.2",
+"greek": "ἦν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "19.2",
+"greek": "ὑπερβάλλων",
+"lemma": "ὑπερβάλλω",
+"strongs": "G5235",
+"gloss": "I surpass"
+},
+{
+"ref": "19.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "φῶς",
+"lemma": "φῶς",
+"strongs": "G5457",
+"gloss": "light, a source of light"
+},
+{
+"ref": "19.2",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "19.2",
+"greek": "ὑπὲρ",
+"lemma": "ὑπέρ",
+"strongs": "G5228",
+"gloss": "in behalf of, above"
+},
+{
+"ref": "19.2",
+"greek": "πάντα·",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "19.2",
+"greek": "ταραχή",
+"lemma": "ταραχή",
+"strongs": "G5016",
+"gloss": "a disturbance, tumult, sedition"
+},
+{
+"ref": "19.2",
+"greek": "τε",
+"lemma": "τέ",
+"strongs": "G5037",
+"gloss": "and, both"
+},
+{
+"ref": "19.2",
+"greek": "ἦν,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "19.2",
+"greek": "πόθεν",
+"lemma": "πόθεν",
+"strongs": "G4159",
+"gloss": "whence"
+},
+{
+"ref": "19.2",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "καινότης",
+"lemma": "καινότης",
+"strongs": "G2538",
+"gloss": "freshness, newness"
+},
+{
+"ref": "19.2",
+"greek": "ἡ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.2",
+"greek": "ἀνόμοιος",
+"lemma": "ἀνόμοιος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.2",
+"greek": "αὐτοῖς.",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "19.3",
+"greek": "ὅθεν",
+"lemma": "ὅθεν",
+"strongs": "G3606",
+"gloss": "whence, wherefore"
+},
+{
+"ref": "19.3",
+"greek": "ἐλύετο",
+"lemma": "λύω",
+"strongs": "G3089",
+"gloss": "I loose, untie, release, destroy"
+},
+{
+"ref": "19.3",
+"greek": "πᾶσα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "19.3",
+"greek": "μαγεία",
+"lemma": "μαγεία",
+"strongs": "G3095",
+"gloss": "magic"
+},
+{
+"ref": "19.3",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "19.3",
+"greek": "πᾶς",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "19.3",
+"greek": "δεσμὸς",
+"lemma": "δεσμός",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.3",
+"greek": "ἠφανίζετο",
+"lemma": "ἀφανίζομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.3",
+"greek": "κακίας·",
+"lemma": "κακία",
+"strongs": "G2549",
+"gloss": "evil, wickedness, malice"
+},
+{
+"ref": "19.3",
+"greek": "ἄγνοια",
+"lemma": "ἄγνοια",
+"strongs": "G52",
+"gloss": "ignorance"
+},
+{
+"ref": "19.3",
+"greek": "καθῃρεῖτο,",
+"lemma": "καθαιρέω",
+"strongs": "G2507",
+"gloss": "I take down, depose, destroy"
+},
+{
+"ref": "19.3",
+"greek": "παλαιὰ",
+"lemma": "παλαιός",
+"strongs": "G3820",
+"gloss": "old, ancient, worn out"
+},
+{
+"ref": "19.3",
+"greek": "βασιλεία",
+"lemma": "βασιλεία",
+"strongs": "G932",
+"gloss": "kingship, sovereignty, authority, rule, kingdom"
+},
+{
+"ref": "19.3",
+"greek": "διεφθείρετο",
+"lemma": "διαφθείρω",
+"strongs": "G1311",
+"gloss": "I destroy, waste, corrupt"
+},
+{
+"ref": "19.3",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "19.3",
+"greek": "ἀνθρωπίνως",
+"lemma": "ἀνθρώπινος",
+"strongs": "G442",
+"gloss": "belonging to human beings, human"
+},
+{
+"ref": "19.3",
+"greek": "φανερουμένου",
+"lemma": "φανερέω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.3",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "19.3",
+"greek": "καινότητα",
+"lemma": "καινότης",
+"strongs": "G2538",
+"gloss": "freshness, newness"
+},
+{
+"ref": "19.3",
+"greek": "ἀϊδίου",
+"lemma": "ἀϊδίου",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.3",
+"greek": "ζωῆς·",
+"lemma": "ζωή",
+"strongs": "G2222",
+"gloss": "life"
+},
+{
+"ref": "19.3",
+"greek": "ἀρχὴν",
+"lemma": "ἀρχή",
+"strongs": "G746",
+"gloss": "ruler, beginning"
+},
+{
+"ref": "19.3",
+"greek": "δὲ",
+"lemma": "δέ",
+"strongs": "G1161",
+"gloss": "but, on the other hand, and"
+},
+{
+"ref": "19.3",
+"greek": "ἐλάμβανεν",
+"lemma": "λαμβάνω",
+"strongs": "G2983",
+"gloss": "I receive, take"
+},
+{
+"ref": "19.3",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.3",
+"greek": "παρὰ",
+"lemma": "παρά",
+"strongs": "G3844",
+"gloss": "from, in the presence of"
+},
+{
+"ref": "19.3",
+"greek": "θεῷ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "19.3",
+"greek": "ἀπηρτισμένον.",
+"lemma": "ἀπηρτισμένος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.3",
+"greek": "ἔνθεν",
+"lemma": "ἔνθεν",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.3",
+"greek": "τὰ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.3",
+"greek": "πάντα",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "19.3",
+"greek": "συνεκινεῖτο",
+"lemma": "συνεκινεῖτο",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "19.3",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "19.3",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "19.3",
+"greek": "μελετᾶσθαι",
+"lemma": "μελετάω",
+"strongs": "G3191",
+"gloss": "I devise, plan"
+},
+{
+"ref": "19.3",
+"greek": "θανάτου",
+"lemma": "θάνατος",
+"strongs": "G2288",
+"gloss": "death"
+},
+{
+"ref": "19.3",
+"greek": "κατάλυσιν.",
+"lemma": "κατάλυσις",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.1",
+"greek": "Ἐάν",
+"lemma": "ἐάν",
+"strongs": "G1437",
+"gloss": "if"
+},
+{
+"ref": "20.1",
+"greek": "με",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "20.1",
+"greek": "καταξιώσῃ",
+"lemma": "καταξιόω",
+"strongs": "G2661",
+"gloss": "I deem worthy"
+},
+{
+"ref": "20.1",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "20.1",
+"greek": "Χριστὸς",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "20.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.1",
+"greek": "προσευχῇ",
+"lemma": "προσευχή",
+"strongs": "G4335",
+"gloss": "prayer, a place for prayer"
+},
+{
+"ref": "20.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "20.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "20.1",
+"greek": "θέλημα",
+"lemma": "θέλημα",
+"strongs": "G2307",
+"gloss": "will, wish, desire"
+},
+{
+"ref": "20.1",
+"greek": "ᾖ,",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "20.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.1",
+"greek": "δευτέρῳ",
+"lemma": "δεύτερος",
+"strongs": "G1208",
+"gloss": "second, in the second place, for the second time"
+},
+{
+"ref": "20.1",
+"greek": "βιβλιδίῳ,",
+"lemma": "βιβλιδίον",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.1",
+"greek": "ὃ",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "20.1",
+"greek": "μέλλω",
+"lemma": "μέλλω",
+"strongs": "G3195",
+"gloss": "I am about to"
+},
+{
+"ref": "20.1",
+"greek": "γράφειν",
+"lemma": "γράφω",
+"strongs": "G1125",
+"gloss": "I write"
+},
+{
+"ref": "20.1",
+"greek": "ὑμῖν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "20.1",
+"greek": "προσδηλώσω",
+"lemma": "προσδηλόω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.1",
+"greek": "ὑμῖν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "20.1",
+"greek": "ἧς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "20.1",
+"greek": "ἠρξάμην",
+"lemma": "ἄρχω",
+"strongs": "G757",
+"gloss": "I reign, rule"
+},
+{
+"ref": "20.1",
+"greek": "οἰκονομίας",
+"lemma": "οἰκονομία",
+"strongs": "G3622",
+"gloss": "stewardship"
+},
+{
+"ref": "20.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "20.1",
+"greek": "τὸν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.1",
+"greek": "καινὸν",
+"lemma": "καινός",
+"strongs": "G2537",
+"gloss": "fresh, new"
+},
+{
+"ref": "20.1",
+"greek": "ἄνθρωπον",
+"lemma": "ἄνθρωπος",
+"strongs": "G444",
+"gloss": "a man, one of the human race"
+},
+{
+"ref": "20.1",
+"greek": "Ἰησοῦν",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "20.1",
+"greek": "Χριστόν,",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "20.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.1",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "20.1",
+"greek": "πίστει",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "20.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "20.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.1",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.1",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "20.1",
+"greek": "ἀγάπῃ,",
+"lemma": "ἀγάπη",
+"strongs": "G26",
+"gloss": "love"
+},
+{
+"ref": "20.1",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.1",
+"greek": "πάθει",
+"lemma": "πάθος",
+"strongs": "G3806",
+"gloss": "suffering, emotion, depraved passion, lust"
+},
+{
+"ref": "20.1",
+"greek": "αὐτοῦ",
+"lemma": "αὐτός",
+"strongs": "G846",
+"gloss": "he, she, it, they, them, same"
+},
+{
+"ref": "20.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "20.1",
+"greek": "ἀναστάσει·",
+"lemma": "ἀνάστασις",
+"strongs": "G386",
+"gloss": "a rising again, resurrection"
+},
+{
+"ref": "20.2",
+"greek": "μάλιστα",
+"lemma": "μάλιστα",
+"strongs": "G3122",
+"gloss": "most of all, especially"
+},
+{
+"ref": "20.2",
+"greek": "ἐὰν",
+"lemma": "ἐάν",
+"strongs": "G1437",
+"gloss": "if"
+},
+{
+"ref": "20.2",
+"greek": "ὁ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "κύριός",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "20.2",
+"greek": "μοι",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "20.2",
+"greek": "ἀποκαλύψῃ,",
+"lemma": "ἀποκαλύψω",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.2",
+"greek": "ὅτι",
+"lemma": "ὅτι",
+"strongs": "G3754",
+"gloss": "that, since, because"
+},
+{
+"ref": "20.2",
+"greek": "οἱ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "κατ’",
+"lemma": "κατ",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "20.2",
+"greek": "ἄνδρα",
+"lemma": "ἀνήρ",
+"strongs": "G435",
+"gloss": "a male human being, a man"
+},
+{
+"ref": "20.2",
+"greek": "κοινῇ",
+"lemma": "κοινός",
+"strongs": "G2839",
+"gloss": "common, shared, unclean"
+},
+{
+"ref": "20.2",
+"greek": "πάντες",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "20.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.2",
+"greek": "χάριτι",
+"lemma": "χάρις",
+"strongs": "G5485",
+"gloss": "grace, favor, kindness"
+},
+{
+"ref": "20.2",
+"greek": "ἐξ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "20.2",
+"greek": "ὀνόματος",
+"lemma": "ὄνομα",
+"strongs": "G3686",
+"gloss": "name, character, reputation"
+},
+{
+"ref": "20.2",
+"greek": "συνέρχεσθε",
+"lemma": "συνέρχομαι",
+"strongs": "G4905",
+"gloss": "I come or go with, accompany, assemble"
+},
+{
+"ref": "20.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.2",
+"greek": "μιᾷ",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "20.2",
+"greek": "πίστει",
+"lemma": "πίστις",
+"strongs": "G4102",
+"gloss": "faith, belief, trust"
+},
+{
+"ref": "20.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "20.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "20.2",
+"greek": "Χριστῷ,",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "20.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "κατὰ",
+"lemma": "κατά",
+"strongs": "G2596",
+"gloss": "down from, against, according to, throughout, during"
+},
+{
+"ref": "20.2",
+"greek": "σάρκα",
+"lemma": "σάρξ",
+"strongs": "G4561",
+"gloss": "flesh, body"
+},
+{
+"ref": "20.2",
+"greek": "ἐκ",
+"lemma": "ἐκ",
+"strongs": "G1537",
+"gloss": "from out, out from among, from"
+},
+{
+"ref": "20.2",
+"greek": "γένους",
+"lemma": "γένος",
+"strongs": "G1085",
+"gloss": "offspring, family, race, kind"
+},
+{
+"ref": "20.2",
+"greek": "Δαυείδ,",
+"lemma": "Δαυίδ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "υἱῷ",
+"lemma": "υἱός",
+"strongs": "G5207",
+"gloss": "a son, descendent"
+},
+{
+"ref": "20.2",
+"greek": "ἀνθρώπου",
+"lemma": "ἄνθρωπος",
+"strongs": "G444",
+"gloss": "a man, one of the human race"
+},
+{
+"ref": "20.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "20.2",
+"greek": "υἱῷ",
+"lemma": "υἱός",
+"strongs": "G5207",
+"gloss": "a son, descendent"
+},
+{
+"ref": "20.2",
+"greek": "θεοῦ,",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "20.2",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "20.2",
+"greek": "τὸ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "ὑπακούειν",
+"lemma": "ὑπακούω",
+"strongs": "G5219",
+"gloss": "I listen, obey"
+},
+{
+"ref": "20.2",
+"greek": "ὑμᾶς",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "20.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "ἐπισκόπῳ",
+"lemma": "ἐπισκόπῳ",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "20.2",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "πρεσβυτερίῳ",
+"lemma": "πρεσβυτέριον",
+"strongs": "G4244",
+"gloss": "an assembly of elders"
+},
+{
+"ref": "20.2",
+"greek": "ἀπερισπάστῳ",
+"lemma": "ἀπερισπάων",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.2",
+"greek": "διανοίᾳ,",
+"lemma": "διάνοια",
+"strongs": "G1271",
+"gloss": "understanding, intellect, mind"
+},
+{
+"ref": "20.2",
+"greek": "ἕνα",
+"lemma": "εἷς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "20.2",
+"greek": "ἄρτον",
+"lemma": "ἄρτος",
+"strongs": "G740",
+"gloss": "bread, a loaf, food"
+},
+{
+"ref": "20.2",
+"greek": "κλῶντες,",
+"lemma": "κλάω",
+"strongs": "G2806",
+"gloss": "I break"
+},
+{
+"ref": "20.2",
+"greek": "ὅς",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "20.2",
+"greek": "ἐστιν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "20.2",
+"greek": "φάρμακον",
+"lemma": "φάρμακον",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.2",
+"greek": "ἀθανασίας,",
+"lemma": "ἀθανασίας",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.2",
+"greek": "ἀντίδοτος",
+"lemma": "ἀντίδοτος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "20.2",
+"greek": "τοῦ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "20.2",
+"greek": "μὴ",
+"lemma": "μή",
+"strongs": "G3361",
+"gloss": "not, lest"
+},
+{
+"ref": "20.2",
+"greek": "ἀποθανεῖν,",
+"lemma": "ἀποθνῄσκω",
+"strongs": "G599",
+"gloss": "I am dying, am about to die"
+},
+{
+"ref": "20.2",
+"greek": "ἀλλὰ",
+"lemma": "ἀλλά",
+"strongs": "G235",
+"gloss": "but, except"
+},
+{
+"ref": "20.2",
+"greek": "ζῆν",
+"lemma": "ζάω",
+"strongs": "G2198",
+"gloss": "I live"
+},
+{
+"ref": "20.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "20.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "20.2",
+"greek": "Χριστῷ",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "20.2",
+"greek": "διὰ",
+"lemma": "διά",
+"strongs": "G1223",
+"gloss": "through, on account of"
+},
+{
+"ref": "20.2",
+"greek": "παντός.",
+"lemma": "πᾶς",
+"strongs": "G3956",
+"gloss": "all, the whole, every kind of"
+},
+{
+"ref": "21.1",
+"greek": "Ἀντίψυχον",
+"lemma": "Ἀντίψυχος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "21.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "21.1",
+"greek": "ἐγὼ",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "21.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "21.1",
+"greek": "ὧν",
+"lemma": "ὅς",
+"strongs": "G3739",
+"gloss": "who, which, what, that"
+},
+{
+"ref": "21.1",
+"greek": "ἐπέμψατε",
+"lemma": "πέμπω",
+"strongs": "G3992",
+"gloss": "I send"
+},
+{
+"ref": "21.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "21.1",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "21.1",
+"greek": "τιμὴν",
+"lemma": "τιμή",
+"strongs": "G5092",
+"gloss": "a price, honor"
+},
+{
+"ref": "21.1",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "21.1",
+"greek": "Σμύρναν,",
+"lemma": "Σμύρνα",
+"strongs": "G4667",
+"gloss": "Smyrna"
+},
+{
+"ref": "21.1",
+"greek": "ὅθεν",
+"lemma": "ὅθεν",
+"strongs": "G3606",
+"gloss": "whence, wherefore"
+},
+{
+"ref": "21.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "21.1",
+"greek": "γράφω",
+"lemma": "γράφω",
+"strongs": "G1125",
+"gloss": "I write"
+},
+{
+"ref": "21.1",
+"greek": "ὑμῖν,",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "21.1",
+"greek": "εὐχαριστῶν",
+"lemma": "εὐχαριστέω",
+"strongs": "G2168",
+"gloss": "I thank, give thanks"
+},
+{
+"ref": "21.1",
+"greek": "τῷ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "21.1",
+"greek": "κυρίῳ,",
+"lemma": "κύριος",
+"strongs": "G2962",
+"gloss": "lord, Lord, master, sir"
+},
+{
+"ref": "21.1",
+"greek": "ἀγαπῶν",
+"lemma": "ἀγαπάω",
+"strongs": "G25",
+"gloss": "I love"
+},
+{
+"ref": "21.1",
+"greek": "Πολύκαρπον",
+"lemma": "Πολύκαρπος",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "21.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "21.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "21.1",
+"greek": "ὑμᾶς·",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "21.1",
+"greek": "μνημονεύετέ",
+"lemma": "μνημονεύω",
+"strongs": "G3421",
+"gloss": "I remember, make mention of"
+},
+{
+"ref": "21.1",
+"greek": "μου,",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+},
+{
+"ref": "21.1",
+"greek": "ὡς",
+"lemma": "ὡς",
+"strongs": "G5613",
+"gloss": "as, like as, how, while, so that"
+},
+{
+"ref": "21.1",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "21.1",
+"greek": "ὑμῶν",
+"lemma": "σύ",
+"strongs": "G4771",
+"gloss": "you"
+},
+{
+"ref": "21.1",
+"greek": "Ἰησοῦς",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "21.1",
+"greek": "Χριστός.",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "21.2",
+"greek": "προσεύχεσθε",
+"lemma": "προσεύχομαι",
+"strongs": "G4336",
+"gloss": "I pray, pray for"
+},
+{
+"ref": "21.2",
+"greek": "ὑπὲρ",
+"lemma": "ὑπέρ",
+"strongs": "G5228",
+"gloss": "in behalf of, above"
+},
+{
+"ref": "21.2",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "21.2",
+"greek": "ἐκκλησίας",
+"lemma": "ἐκκλησία",
+"strongs": "G1577",
+"gloss": "an assembly, congregation, church"
+},
+{
+"ref": "21.2",
+"greek": "τῆς",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "21.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "21.2",
+"greek": "Συρίᾳ,",
+"lemma": "Συρία",
+"strongs": "G4947",
+"gloss": "Syria"
+},
+{
+"ref": "21.2",
+"greek": "ὅθεν",
+"lemma": "ὅθεν",
+"strongs": "G3606",
+"gloss": "whence, wherefore"
+},
+{
+"ref": "21.2",
+"greek": "δεδεμένος",
+"lemma": "δέω",
+"strongs": "G1210",
+"gloss": "I bind"
+},
+{
+"ref": "21.2",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "21.2",
+"greek": "Ῥώμην",
+"lemma": "Ῥώμη",
+"strongs": "G4516",
+"gloss": "Rome"
+},
+{
+"ref": "21.2",
+"greek": "ἀπάγομαι,",
+"lemma": "ἀπάγομαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "21.2",
+"greek": "ἔσχατος",
+"lemma": "ἔσχατος",
+"strongs": "G2078",
+"gloss": "last, at the last, finally"
+},
+{
+"ref": "21.2",
+"greek": "ὢν",
+"lemma": "εἰμί",
+"strongs": "G1510",
+"gloss": "I am, exist"
+},
+{
+"ref": "21.2",
+"greek": "τῶν",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "21.2",
+"greek": "ἐκεῖ",
+"lemma": "ἐκεῖ",
+"strongs": "G1563",
+"gloss": "there, yonder, thither"
+},
+{
+"ref": "21.2",
+"greek": "πιστῶν,",
+"lemma": "πιστός",
+"strongs": "G4103",
+"gloss": "trustworthy, faithful, believing"
+},
+{
+"ref": "21.2",
+"greek": "ὥσπερ",
+"lemma": "ὥσπερ",
+"strongs": "G5618",
+"gloss": "just as, as"
+},
+{
+"ref": "21.2",
+"greek": "ἠξιώθην",
+"lemma": "ἀξιόω",
+"strongs": "G515",
+"gloss": "I account or treat as worthy"
+},
+{
+"ref": "21.2",
+"greek": "εἰς",
+"lemma": "εἰς",
+"strongs": "G1520",
+"gloss": "one"
+},
+{
+"ref": "21.2",
+"greek": "τιμὴν",
+"lemma": "τιμή",
+"strongs": "G5092",
+"gloss": "a price, honor"
+},
+{
+"ref": "21.2",
+"greek": "θεοῦ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "21.2",
+"greek": "εὑρεθῆναι.",
+"lemma": "εὑρίσκω",
+"strongs": "G2147",
+"gloss": "I find"
+},
+{
+"ref": "21.2",
+"greek": "ἔρρωσθε",
+"lemma": "ῥώννυμαι",
+"strongs": null,
+"gloss": null
+},
+{
+"ref": "21.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "21.2",
+"greek": "θεῷ",
+"lemma": "θεός",
+"strongs": "G2316",
+"gloss": "God, a god"
+},
+{
+"ref": "21.2",
+"greek": "πατρὶ",
+"lemma": "πατήρ",
+"strongs": "G3962",
+"gloss": "father, Father, ancestor"
+},
+{
+"ref": "21.2",
+"greek": "καὶ",
+"lemma": "καί",
+"strongs": "G2532",
+"gloss": "and, even, also, namely"
+},
+{
+"ref": "21.2",
+"greek": "ἐν",
+"lemma": "ἐν",
+"strongs": "G1722",
+"gloss": "in, on, among"
+},
+{
+"ref": "21.2",
+"greek": "Ἰησοῦ",
+"lemma": "Ἰησοῦς",
+"strongs": "G2424",
+"gloss": "Jesus"
+},
+{
+"ref": "21.2",
+"greek": "Χριστῷ,",
+"lemma": "Χριστός",
+"strongs": "G5547",
+"gloss": "anointed, the Messiah, the Christ"
+},
+{
+"ref": "21.2",
+"greek": "τῇ",
+"lemma": "ὁ",
+"strongs": "G3588",
+"gloss": "the"
+},
+{
+"ref": "21.2",
+"greek": "κοινῇ",
+"lemma": "κοινός",
+"strongs": "G2839",
+"gloss": "common, shared, unclean"
+},
+{
+"ref": "21.2",
+"greek": "ἐλπίδι",
+"lemma": "ἐλπίς",
+"strongs": "G1680",
+"gloss": "hope, expectation"
+},
+{
+"ref": "21.2",
+"greek": "ἡμῶν.",
+"lemma": "ἐγώ",
+"strongs": "G1473",
+"gloss": "I"
+}
+]

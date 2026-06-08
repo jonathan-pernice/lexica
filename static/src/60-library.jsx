@@ -413,8 +413,21 @@ const NONCANON = [
   // file is added (e.g. 1 Enoch ch 1–32 from the Akhmim papyrus).
   // Apostolic Fathers — Greek-tagged interlinear (Brannan/Lake Greek + Lightfoot English).
   // NOT englishOnly: these have the full Greek word-study layer like the Bible text.
-  { id: "didache", name: "Didache", abbr: "Did", chapters: 16, group: "Apostolic Fathers" },
-  { id: "clement2", name: "2 Clement", abbr: "2Clem", chapters: 20, group: "Apostolic Fathers" },
+  // (Polycarp ch 10-14 survive only in Latin -> English shows there, no Greek chips.)
+  { id: "didache",   name: "Didache",                        abbr: "Did",   chapters: 16, group: "Apostolic Fathers" },
+  { id: "clement1",  name: "1 Clement",                      abbr: "1Clem", chapters: 65, group: "Apostolic Fathers" },
+  { id: "clement2",  name: "2 Clement",                      abbr: "2Clem", chapters: 20, group: "Apostolic Fathers" },
+  { id: "ign_eph",   name: "Ignatius to the Ephesians",      abbr: "IgEph", chapters: 21, group: "Apostolic Fathers" },
+  { id: "ign_mag",   name: "Ignatius to the Magnesians",     abbr: "IgMag", chapters: 15, group: "Apostolic Fathers" },
+  { id: "ign_tral",  name: "Ignatius to the Trallians",      abbr: "IgTra", chapters: 13, group: "Apostolic Fathers" },
+  { id: "ign_rom",   name: "Ignatius to the Romans",         abbr: "IgRom", chapters: 10, group: "Apostolic Fathers" },
+  { id: "ign_phld",  name: "Ignatius to the Philadelphians", abbr: "IgPhl", chapters: 11, group: "Apostolic Fathers" },
+  { id: "ign_smyrn", name: "Ignatius to the Smyrnaeans",     abbr: "IgSmy", chapters: 13, group: "Apostolic Fathers" },
+  { id: "ign_pol",   name: "Ignatius to Polycarp",           abbr: "IgPol", chapters: 8,  group: "Apostolic Fathers" },
+  { id: "polycarp",  name: "Polycarp to the Philippians",    abbr: "Pol",   chapters: 14, group: "Apostolic Fathers" },
+  { id: "mpolycarp", name: "Martyrdom of Polycarp",          abbr: "MPol",  chapters: 22, group: "Apostolic Fathers" },
+  { id: "barnabas",  name: "Epistle of Barnabas",            abbr: "Barn",  chapters: 21, group: "Apostolic Fathers" },
+  { id: "diognetus", name: "Epistle to Diognetus",           abbr: "Diog",  chapters: 12, group: "Apostolic Fathers" },
   { id: "enoch", name: "1 Enoch", abbr: "1En", chapters: 108, englishOnly: true, group: "Pseudepigrapha" },
   { id: "enoch2", name: "2 Enoch", abbr: "2En", chapters: 68, englishOnly: true, group: "Pseudepigrapha" },
   { id: "jubilees", name: "Jubilees", abbr: "Jub", chapters: 50, englishOnly: true, group: "Pseudepigrapha" },
