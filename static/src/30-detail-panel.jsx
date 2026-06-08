@@ -1,13 +1,14 @@
 // ============================================================
-// SUMMARY PANEL — Library right-pane DEFAULT (desktop only)
+// SUMMARY PANEL — Library right-pane DEFAULT (desktop) / bottom sheet (mobile)
 // ------------------------------------------------------------
-// Resting content of the right sidebar when no word/verse is selected: a short
-// Berean book blurb + a pericope-aware chapter summary for whatever the reader is
-// on. Reuses the .detail-side shell so its width matches the word-study panel
-// exactly. A word click (DetailPanel) or verse-# click (CrossRefPanel) replaces
-// it; closing those returns here. Never shown on mobile.
+// A short Berean book blurb + a pericope-aware chapter summary for whatever the
+// reader is on. On DESKTOP it's the resting content of the right sidebar (reuses
+// the .detail-side shell); a word/verse click replaces it and closing returns
+// here. On MOBILE it opens on demand as a bottom sheet from the reading cockpit's
+// ⓘ button (isMobile + onClose), riding the same .detail-sheet rails as the
+// word-study sheet.
 // ============================================================
-function SummaryPanel({ book, chapter, bookLabel }) {
+function SummaryPanel({ book, chapter, bookLabel, isMobile, onClose }) {
   // Remembers fetched summaries across remounts (the panel unmounts whenever a
   // word/verse takes over the slot) so re-opening the same chapter is instant
   // instead of flashing the loading line again.
@@ -31,32 +32,59 @@ function SummaryPanel({ book, chapter, bookLabel }) {
   const bookText = data && data.book_summary;
   const chapText = data && data.chapter_summary;
   const nothing = !loading && !bookText && !chapText;
+  const title = (bookLabel || book) + (chapter ? " " + chapter : "");
 
+  const body = (
+    <div className="detail-body">
+      {loading && <div className="summary-loading">Reading the chapter…</div>}
+      {!loading && bookText && (
+        <div className="detail-section">
+          <div className="detail-h">About</div>
+          <p className="detail-p">{bookText}</p>
+        </div>
+      )}
+      {!loading && chapText && (
+        <div className="detail-section last">
+          <div className="detail-h">This chapter</div>
+          <p className="detail-p">{chapText}</p>
+        </div>
+      )}
+      {nothing && (
+        <div className="summary-loading">No overview available for this passage.</div>
+      )}
+    </div>
+  );
+
+  // Mobile: bottom sheet opened from the reading cockpit (tap scrim / X to close).
+  if (isMobile) {
+    return (
+      <>
+        <div className="sheet-scrim" onClick={onClose}/>
+        <aside className="detail detail-sheet summary-sheet" role="dialog" aria-label="Reading overview">
+          <div className="sheet-drag-zone" onClick={onClose} aria-hidden="true"><div className="sheet-handle"></div></div>
+          <div className="detail-head">
+            <div className="detail-head-l">
+              <span className="detail-pos summary-pos">{title}</span>
+            </div>
+            <button className="detail-close" onClick={onClose} aria-label="Close">
+              <Icon.Close/>
+            </button>
+          </div>
+          {body}
+        </aside>
+      </>
+    );
+  }
+
+  // Desktop: resting content of the right sidebar.
   return (
     <aside className="detail detail-side summary-side" role="complementary" aria-label="Reading overview">
       <div className="detail-head">
         <div className="detail-head-l">
-          <span className="detail-pos summary-pos">{(bookLabel || book)}{chapter ? " " + chapter : ""}</span>
+          <span className="detail-pos summary-pos">{title}</span>
         </div>
       </div>
-      <div className="detail-body">
-        {loading && <div className="summary-loading">Reading the chapter…</div>}
-        {!loading && bookText && (
-          <div className="detail-section">
-            <div className="detail-h">About</div>
-            <p className="detail-p">{bookText}</p>
-          </div>
-        )}
-        {!loading && chapText && (
-          <div className="detail-section last">
-            <div className="detail-h">This chapter</div>
-            <p className="detail-p">{chapText}</p>
-          </div>
-        )}
-        {nothing && (
-          <div className="summary-loading">No overview available for this passage.</div>
-        )}
-      </div>
+      {body}
     </aside>
   );
 }

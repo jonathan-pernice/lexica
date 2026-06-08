@@ -682,6 +682,25 @@ const Icon = {
     width: "7.5",
     height: "16",
     rx: "1"
+  })),
+  // Overview / summary → info circle
+  Info: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "20",
+    height: "20",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("circle", {
+    cx: "12",
+    cy: "12",
+    r: "9"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 11v5"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 8h.01"
   }))
 };
 
@@ -1022,18 +1041,21 @@ function LeafletMap({
 }
 
 // ============================================================
-// SUMMARY PANEL — Library right-pane DEFAULT (desktop only)
+// SUMMARY PANEL — Library right-pane DEFAULT (desktop) / bottom sheet (mobile)
 // ------------------------------------------------------------
-// Resting content of the right sidebar when no word/verse is selected: a short
-// Berean book blurb + a pericope-aware chapter summary for whatever the reader is
-// on. Reuses the .detail-side shell so its width matches the word-study panel
-// exactly. A word click (DetailPanel) or verse-# click (CrossRefPanel) replaces
-// it; closing those returns here. Never shown on mobile.
+// A short Berean book blurb + a pericope-aware chapter summary for whatever the
+// reader is on. On DESKTOP it's the resting content of the right sidebar (reuses
+// the .detail-side shell); a word/verse click replaces it and closing returns
+// here. On MOBILE it opens on demand as a bottom sheet from the reading cockpit's
+// ⓘ button (isMobile + onClose), riding the same .detail-sheet rails as the
+// word-study sheet.
 // ============================================================
 function SummaryPanel({
   book,
   chapter,
-  bookLabel
+  bookLabel,
+  isMobile,
+  onClose
 }) {
   // Remembers fetched summaries across remounts (the panel unmounts whenever a
   // word/verse takes over the slot) so re-opening the same chapter is instant
@@ -1071,17 +1093,8 @@ function SummaryPanel({
   const bookText = data && data.book_summary;
   const chapText = data && data.chapter_summary;
   const nothing = !loading && !bookText && !chapText;
-  return /*#__PURE__*/React.createElement("aside", {
-    className: "detail detail-side summary-side",
-    role: "complementary",
-    "aria-label": "Reading overview"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "detail-head"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "detail-head-l"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "detail-pos summary-pos"
-  }, bookLabel || book, chapter ? " " + chapter : ""))), /*#__PURE__*/React.createElement("div", {
+  const title = (bookLabel || book) + (chapter ? " " + chapter : "");
+  const body = /*#__PURE__*/React.createElement("div", {
     className: "detail-body"
   }, loading && /*#__PURE__*/React.createElement("div", {
     className: "summary-loading"
@@ -1099,7 +1112,48 @@ function SummaryPanel({
     className: "detail-p"
   }, chapText)), nothing && /*#__PURE__*/React.createElement("div", {
     className: "summary-loading"
-  }, "No overview available for this passage.")));
+  }, "No overview available for this passage."));
+
+  // Mobile: bottom sheet opened from the reading cockpit (tap scrim / X to close).
+  if (isMobile) {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      className: "sheet-scrim",
+      onClick: onClose
+    }), /*#__PURE__*/React.createElement("aside", {
+      className: "detail detail-sheet summary-sheet",
+      role: "dialog",
+      "aria-label": "Reading overview"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "sheet-drag-zone",
+      onClick: onClose,
+      "aria-hidden": "true"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "sheet-handle"
+    })), /*#__PURE__*/React.createElement("div", {
+      className: "detail-head"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "detail-head-l"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "detail-pos summary-pos"
+    }, title)), /*#__PURE__*/React.createElement("button", {
+      className: "detail-close",
+      onClick: onClose,
+      "aria-label": "Close"
+    }, /*#__PURE__*/React.createElement(Icon.Close, null))), body));
+  }
+
+  // Desktop: resting content of the right sidebar.
+  return /*#__PURE__*/React.createElement("aside", {
+    className: "detail detail-side summary-side",
+    role: "complementary",
+    "aria-label": "Reading overview"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "detail-head-l"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "detail-pos summary-pos"
+  }, title))), body);
 }
 SummaryPanel._cache = {};
 
