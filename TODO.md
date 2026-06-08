@@ -58,13 +58,10 @@ purely about which word you land on when you click. Most of this project is alre
 
 ---
 
-## Lexicon tab — finish & polish
+## Lexicon tab — done; ongoing polish only
 
-You flagged this as under-attended. Start by reading the current code before planning anything.
-- Tighten the flow: search → word profile → gloss chips → book distribution → verse list.
-- Visual polish — spacing, hierarchy, match the Library reading view; it currently looks unfinished.
-- Hunt for dead ends and missing states; decide what "done" looks like.
-- `code: LexiconView in static/src/80-lexicon.jsx; /api/lexicon/* in views_lexicon.py; memory project_lexicon_tab`
+Essentially finished. Leave as a small footnote: tweak spacing/hierarchy as you notice rough edges,
+nothing structural left. `code: LexiconView in static/src/80-lexicon.jsx; /api/lexicon/* in views_lexicon.py`
 
 ## AI search — needs a real pass
 
@@ -74,13 +71,6 @@ look right? Audit first, then propose.
 `code: Search tab in static/src/70-search.jsx; /api/search (views_search.py) + /api/ai-search (ai.py); memory project_ai_search_architecture`
 
 > Note: you revisit these two on your own schedule — Claude shouldn't keep pitching them as "next steps."
-
-## Search results — make them look like the Library
-
-The search result verses don't match the polished Library look. Target: plain word chips in reading
-order, no Strong's clutter, brackets kept, gold highlights kept — same as Library's chip mode. Also
-stop re-fetching verse words one-by-one; the AI search response can include them since the server
-already builds them. (Strong's numbers are already hidden on AI results — that part's done.)
 
 ---
 
@@ -231,6 +221,14 @@ to jump back). Maps cleanly onto our word-position data. Needs somewhere to keep
 browser's local storage (one device only, no login) for a quick version, or real accounts (below) to
 sync across devices. `code: new notes store keyed to words-table positions; render layer paints matches`
 
+**Browser-first is NOT throwaway — notes migrate cleanly to a login later** if two things are done up
+front: (1) store the browser notes in the EXACT same shape the server will use (the word-position
+anchor), so moving them up is a straight copy, not a conversion; (2) give each note its own id when it's
+CREATED, not when it's saved — so "already uploaded" vs "new" is obvious, two devices merge without
+duplicates, and a half-finished upload is safe to re-run. Then adding accounts = a one-time "found N
+notes on this device, save them to your account?" handoff. Build browser-only now, design the note's
+shape as if the login already exists, and nothing is wasted.
+
 ### Free user accounts
 Sign-up-yourself free accounts. Main payoff is syncing highlights/notes across a reader's devices, and
 it opens the door to an email campaign later (announcements, reading plans). We're currently a no-login
@@ -268,3 +266,18 @@ place for the existing place sidebar, so this is smaller than it looks.
   (ESV is likely licensed — check before importing.)
 - **Extra-biblical texts** referenced in scripture (1 Enoch, cited in Jude; Dead Sea Scrolls variants)
   as a separate "Apocrypha" section, never mixed into the canon. Research good digital sources first.
+
+### Dead Sea Scrolls — wanted, but the hardest one (why it's still not done)
+Deliberately skipped so far, not an oversight. The blockers are real:
+- **No public-domain English exists.** The readable translations everyone cites (Vermes,
+  Wise-Abegg-Cook, García Martínez) are all modern and copyrighted — nothing free to drop in the way
+  Charles/Lightfoot/Brenton were. What IS free is photos + academic transcriptions (Leon Levy digital
+  library), not a ready-to-read English text.
+- **The scrolls are mostly Hebrew/Aramaic fragments** — broken, gap-ridden, not a clean verse-by-verse
+  book. And our interlinear is wired for Greek (G-numbers); a Hebrew original-language view needs the
+  BDB / H-number / right-to-left plumbing flagged as the known gap above.
+- **The realistic angle isn't "another book to read" — it's a compare view.** The Great Isaiah Scroll
+  (1QIsaa) is complete and famous, and its value is showing WHERE it differs from the standard Hebrew
+  (Masoretic) text. That's a side-by-side "variants vs the MT" feature, bigger and different from the
+  apocrypha plumbing. Best first step if/when we tackle it. `code: would need a clean PD/licensed
+  transcription + a verse-aligned variant layer, not the load_extra path`

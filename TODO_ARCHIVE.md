@@ -28,6 +28,23 @@ checklist in CLAUDE.md.
 
 ---
 
+## Search results now match the Library look — done
+
+The AI search result verses were restyled to match the polished Library reading view: plain word
+chips in reading order, no Strong's clutter, brackets kept, gold highlights kept (same as Library's
+chip mode). Also stopped re-fetching each verse's words one at a time — the search response now
+carries the words the server already built. `code: Search results in static/src/70-search.jsx`
+
+---
+
+## Lexicon tab — finished (ongoing polish only)
+
+The word-study flow (search → word profile → gloss chips → book distribution → verse list) is done
+and reads cleanly, matched to the Library look. Anything left is minor spacing/hierarchy polish done
+as noticed — nothing structural. `code: LexiconView in static/src/80-lexicon.jsx`
+
+---
+
 ## Full corpus audit — done, corpus is sound (2026-06-05)
 
 Checked all ~624k words against independent reference texts. **Verdict: the corpus is sound.**
