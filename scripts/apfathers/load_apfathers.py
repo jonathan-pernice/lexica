@@ -29,7 +29,7 @@ BOOKS = [
     "mpolycarp",  # Martyrdom of Polycarp
     "barnabas",   # Epistle of Barnabas
     "diognetus",  # Epistle to Diognetus
-    # Shepherd of Hermas held back (Vision/Mandate/Similitude structure)
+    "shepherd",   # Shepherd of Hermas (110 continuous chapters; Vision/Mandate/Similitude)
 ]
 
 

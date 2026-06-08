@@ -3074,6 +3074,12 @@ const NONCANON = [
   chapters: 12,
   group: "Apostolic Fathers"
 }, {
+  id: "shepherd",
+  name: "Shepherd of Hermas",
+  abbr: "Herm",
+  chapters: 110,
+  group: "Apostolic Fathers"
+}, {
   id: "enoch",
   name: "1 Enoch",
   abbr: "1En",
