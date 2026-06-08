@@ -1673,9 +1673,11 @@ input { font-family: inherit; }
   border-radius: 8px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
   padding: 6px;
-  min-width: 150px;
+  min-width: 170px;
   max-height: 70vh;
   overflow-y: auto;
+  /* keep the wheel inside the menu — don't scroll the text behind it at the edges */
+  overscroll-behavior: contain;
 }
 .lib-other-head {
   font-size: 10px;
@@ -1684,10 +1686,40 @@ input { font-family: inherit; }
   color: var(--ink-3);
   padding: 4px 8px 6px;
 }
-.lib-other-head:not(:first-child) {
-  margin-top: 4px;
+/* collapsible group header (click to open/close) */
+.lib-other-head-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 7px 8px;
+  font: inherit;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+.lib-other-head-btn:hover { color: var(--ink); }
+.lib-other-head-caret {
+  font-size: 9px;
+  transition: transform 0.12s ease;
+  display: inline-block;
+}
+.lib-other-head-btn.open .lib-other-head-caret { transform: rotate(90deg); }
+.lib-other-head-lbl { flex: 1; text-align: left; }
+.lib-other-head-count {
+  font-size: 10px;
+  color: var(--ink-3);
+  background: var(--bg-sunk);
+  border-radius: 9px;
+  padding: 1px 7px;
+}
+.lib-other-head-btn:not(:first-child) {
+  margin-top: 2px;
   border-top: 1px solid var(--rule);
-  padding-top: 8px;
 }
 .lib-other-item {
   display: block;

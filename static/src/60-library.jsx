@@ -134,6 +134,14 @@ const _BOOK_DIV = {
 function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible }) {
   const [query, setQuery] = useState("");
   const [otherOpen, setOtherOpen] = useState(false);
+  // "Other" menu groups start collapsed (the list is long) — except the group of the
+  // text that's currently open, so the active pick stays visible.
+  const [openGroups, setOpenGroups] = useState(() => new Set(nonCanon ? [nonCanon.group] : []));
+  const toggleGroup = (g) => setOpenGroups(s => {
+    const n = new Set(s);
+    n.has(g) ? n.delete(g) : n.add(g);
+    return n;
+  });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -197,16 +205,24 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
                 <>
                   <div className="lib-other-scrim" onClick={() => setOtherOpen(false)} />
                   <div className="lib-other-menu">
-                    {nonCanonGroups(nonCanonList).map(grp => (
-                      <React.Fragment key={grp.group}>
-                        <div className="lib-other-head">{grp.group}</div>
-                        {grp.items.map(t => (
-                          <button key={t.id}
-                            className={"lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : "")}
-                            onClick={() => { onPickNonCanon(t); setOtherOpen(false); if (isOverlay) onClose(); }}>{t.name}</button>
-                        ))}
-                      </React.Fragment>
-                    ))}
+                    {nonCanonGroups(nonCanonList).map(grp => {
+                      const open = openGroups.has(grp.group);
+                      return (
+                        <React.Fragment key={grp.group}>
+                          <button className={"lib-other-head lib-other-head-btn" + (open ? " open" : "")}
+                            onClick={() => toggleGroup(grp.group)} aria-expanded={open}>
+                            <span className="lib-other-head-caret">▸</span>
+                            <span className="lib-other-head-lbl">{grp.group}</span>
+                            <span className="lib-other-head-count">{grp.items.length}</span>
+                          </button>
+                          {open && grp.items.map(t => (
+                            <button key={t.id}
+                              className={"lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : "")}
+                              onClick={() => { onPickNonCanon(t); setOtherOpen(false); if (isOverlay) onClose(); }}>{t.name}</button>
+                          ))}
+                        </React.Fragment>
+                      );
+                    })}
                   </div>
                 </>
               )}
