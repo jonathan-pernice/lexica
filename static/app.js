@@ -2545,6 +2545,14 @@ function LibNavPanel({
 }) {
   const [query, setQuery] = useState("");
   const [otherOpen, setOtherOpen] = useState(false);
+  // "Other" menu groups start collapsed (the list is long) — except the group of the
+  // text that's currently open, so the active pick stays visible.
+  const [openGroups, setOpenGroups] = useState(() => new Set(nonCanon ? [nonCanon.group] : []));
+  const toggleGroup = g => setOpenGroups(s => {
+    const n = new Set(s);
+    n.has(g) ? n.delete(g) : n.add(g);
+    return n;
+  });
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return books;
@@ -2630,19 +2638,30 @@ function LibNavPanel({
     onClick: () => setOtherOpen(false)
   }), /*#__PURE__*/React.createElement("div", {
     className: "lib-other-menu"
-  }, nonCanonGroups(nonCanonList).map(grp => /*#__PURE__*/React.createElement(React.Fragment, {
-    key: grp.group
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lib-other-head"
-  }, grp.group), grp.items.map(t => /*#__PURE__*/React.createElement("button", {
-    key: t.id,
-    className: "lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : ""),
-    onClick: () => {
-      onPickNonCanon(t);
-      setOtherOpen(false);
-      if (isOverlay) onClose();
-    }
-  }, t.name))))))))), /*#__PURE__*/React.createElement("div", {
+  }, nonCanonGroups(nonCanonList).map(grp => {
+    const open = openGroups.has(grp.group);
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: grp.group
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "lib-other-head lib-other-head-btn" + (open ? " open" : ""),
+      onClick: () => toggleGroup(grp.group),
+      "aria-expanded": open
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "lib-other-head-caret"
+    }, "\u25B8"), /*#__PURE__*/React.createElement("span", {
+      className: "lib-other-head-lbl"
+    }, grp.group), /*#__PURE__*/React.createElement("span", {
+      className: "lib-other-head-count"
+    }, grp.items.length)), open && grp.items.map(t => /*#__PURE__*/React.createElement("button", {
+      key: t.id,
+      className: "lib-other-item" + (nonCanon && nonCanon.id === t.id ? " on" : ""),
+      onClick: () => {
+        onPickNonCanon(t);
+        setOtherOpen(false);
+        if (isOverlay) onClose();
+      }
+    }, t.name)));
+  })))))), /*#__PURE__*/React.createElement("div", {
     className: "nav-scroll"
   }, nonCanon && nonCanonActive, !nonCanon && groups.map(g => /*#__PURE__*/React.createElement("div", {
     className: "nav-group",
