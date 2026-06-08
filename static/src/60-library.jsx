@@ -417,6 +417,8 @@ const NONCANON = [
   { id: "jubilees", name: "Jubilees", abbr: "Jub", chapters: 50, englishOnly: true, group: "Pseudepigrapha" },
   { id: "baruch2", name: "2 Baruch", abbr: "2Bar", chapters: 85, englishOnly: true, group: "Pseudepigrapha" },
   { id: "apocabr", name: "Apocalypse of Abraham", abbr: "ApAb", chapters: 32, englishOnly: true, group: "Pseudepigrapha" },
+  // chapter-level only: no freely-reachable copy is versified (see parse_assummoses.py)
+  { id: "assummoses", name: "Assumption of Moses", abbr: "AsMos", chapters: 12, englishOnly: true, group: "Pseudepigrapha" },
 
   // Testaments of the Twelve Patriarchs (R.H. Charles, APOT) -- twelve short books,
   // each cited on its own (T. Reuben 1:1 ...), so each is a separate entry.

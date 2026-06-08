@@ -27,6 +27,7 @@ BOOKS = [
     "enoch2",     # 2 Enoch (Slavonic, Morfill) -- 68 chapters
     "baruch2",    # 2 Baruch (Syriac Apocalypse, Charles) -- 85 chapters
     "apocabr",    # Apocalypse of Abraham (translation 1) -- 32 chapters
+    "assummoses", # Assumption of Moses (Charles) -- 12 chapters, chapter-level only
     # Testaments of the Twelve Patriarchs (R.H. Charles) -- 12 separate books
     "treuben", "tsimeon", "tlevi", "tjudah", "tissachar", "tzebulun",
     "tdan", "tnaphtali", "tgad", "tasher", "tjoseph", "tbenjamin",

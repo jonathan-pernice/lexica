@@ -2969,6 +2969,15 @@ const NONCANON = [
   englishOnly: true,
   group: "Pseudepigrapha"
 },
+// chapter-level only: no freely-reachable copy is versified (see parse_assummoses.py)
+{
+  id: "assummoses",
+  name: "Assumption of Moses",
+  abbr: "AsMos",
+  chapters: 12,
+  englishOnly: true,
+  group: "Pseudepigrapha"
+},
 // Testaments of the Twelve Patriarchs (R.H. Charles, APOT) -- twelve short books,
 // each cited on its own (T. Reuben 1:1 ...), so each is a separate entry.
 {
