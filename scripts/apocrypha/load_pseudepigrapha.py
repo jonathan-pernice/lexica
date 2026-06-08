@@ -29,6 +29,7 @@ BOOKS = [
     "baruch2",    # 2 Baruch (Syriac Apocalypse, Charles) -- 85 chapters
     "apocabr",    # Apocalypse of Abraham (translation 1) -- 32 chapters
     "assummoses", # Assumption of Moses (Charles) -- 12 chapters, chapter-level only
+    "adameve",    # Life of Adam and Eve / Vita Adae et Evae (Charles) -- 51 chapters
     # Testaments of the Twelve Patriarchs (R.H. Charles) -- 12 separate books
     "treuben", "tsimeon", "tlevi", "tjudah", "tissachar", "tzebulun",
     "tdan", "tnaphtali", "tgad", "tasher", "tjoseph", "tbenjamin",

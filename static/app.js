@@ -3166,6 +3166,15 @@ const NONCANON = [
   englishOnly: true,
   group: "Pseudepigrapha"
 },
+// Latin Vita Adae et Evae (Charles APOT, public domain) -- 51 chapters.
+{
+  id: "adameve",
+  name: "Life of Adam and Eve",
+  abbr: "LAE",
+  chapters: 51,
+  englishOnly: true,
+  group: "Pseudepigrapha"
+},
 // Testaments of the Twelve Patriarchs (R.H. Charles, APOT) -- twelve short books,
 // each cited on its own (T. Reuben 1:1 ...), so each is a separate entry.
 {
@@ -3403,6 +3412,7 @@ function LibraryView({
   const [didLoading, setDidLoading] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   const [fontOpen, setFontOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false); // mobile: overview sheet
   const nonCanon = NONCANON.find(t => t.id === corpus) || null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
@@ -4407,26 +4417,11 @@ function LibraryView({
     onClick: () => changeFontSize(+1)
   }, "A+"))))))) : /*#__PURE__*/React.createElement("div", {
     className: "lib-toolbar"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mbar-logo-btn",
-    "aria-hidden": "true"
-  }, /*#__PURE__*/React.createElement("svg", {
-    width: "20",
-    height: "20",
-    viewBox: "0 0 24 24",
-    fill: "none"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3",
-    stroke: "currentColor",
-    strokeWidth: "1.6",
-    strokeLinecap: "round",
-    strokeLinejoin: "round"
-  }), /*#__PURE__*/React.createElement("path", {
-    d: "M11 7v6M14 10h-6",
-    stroke: "currentColor",
-    strokeWidth: "1.6",
-    strokeLinecap: "round"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mbar-overview",
+    onClick: () => setSummaryOpen(true),
+    "aria-label": "Chapter overview"
+  }, /*#__PURE__*/React.createElement(Icon.Info, null)), /*#__PURE__*/React.createElement("div", {
     className: "mbar-center"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mbar-ch-nav",
@@ -4575,6 +4570,12 @@ function LibraryView({
     className: "lib-flow-vnum",
     onClick: handleVerseNum ? () => handleVerseNum(v.verse) : undefined
   }, v.verse), renderProseWords(v))))))), showSummary && (selBook || nonCanon) && /*#__PURE__*/React.createElement(SummaryPanel, {
+    book: nonCanon ? nonCanon.id : selBook.abbrev,
+    chapter: selChapter,
+    bookLabel: nonCanon ? nonCanon.name : BOOK_LABELS[selBook.abbrev] || selBook.abbrev
+  }), isMobile && summaryOpen && (selBook || nonCanon) && /*#__PURE__*/React.createElement(SummaryPanel, {
+    isMobile: true,
+    onClose: () => setSummaryOpen(false),
     book: nonCanon ? nonCanon.id : selBook.abbrev,
     chapter: selChapter,
     bookLabel: nonCanon ? nonCanon.name : BOOK_LABELS[selBook.abbrev] || selBook.abbrev

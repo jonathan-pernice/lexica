@@ -500,6 +500,8 @@ const NONCANON = [
   { id: "apocabr", name: "Apocalypse of Abraham", abbr: "ApAb", chapters: 32, englishOnly: true, group: "Pseudepigrapha" },
   // chapter-level only: no freely-reachable copy is versified (see parse_assummoses.py)
   { id: "assummoses", name: "Assumption of Moses", abbr: "AsMos", chapters: 12, englishOnly: true, group: "Pseudepigrapha" },
+  // Latin Vita Adae et Evae (Charles APOT, public domain) -- 51 chapters.
+  { id: "adameve", name: "Life of Adam and Eve", abbr: "LAE", chapters: 51, englishOnly: true, group: "Pseudepigrapha" },
 
   // Testaments of the Twelve Patriarchs (R.H. Charles, APOT) -- twelve short books,
   // each cited on its own (T. Reuben 1:1 ...), so each is a separate entry.
@@ -575,6 +577,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [didLoading, setDidLoading] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   const [fontOpen, setFontOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);   // mobile: overview sheet
   const nonCanon = NONCANON.find(t => t.id === corpus) || null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
@@ -1352,12 +1355,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
         </div>
       ) : (
         <div className="lib-toolbar">
-          <div className="mbar-logo-btn" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M5 4.5A2.5 2.5 0 0 1 7.5 2H19v17H7.5a2.5 2.5 0 0 0 0 5H19v-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M11 7v6M14 10h-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-            </svg>
-          </div>
+          <button className="mbar-overview" onClick={() => setSummaryOpen(true)} aria-label="Chapter overview">
+            <Icon.Info/>
+          </button>
           <div className="mbar-center">
             <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Previous chapter">‹</button>
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
@@ -1486,6 +1486,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       </div>
       {showSummary && (selBook || nonCanon) && (
         <SummaryPanel
+          book={nonCanon ? nonCanon.id : selBook.abbrev}
+          chapter={selChapter}
+          bookLabel={nonCanon ? nonCanon.name : (BOOK_LABELS[selBook.abbrev] || selBook.abbrev)}
+        />
+      )}
+      {isMobile && summaryOpen && (selBook || nonCanon) && (
+        <SummaryPanel
+          isMobile
+          onClose={() => setSummaryOpen(false)}
           book={nonCanon ? nonCanon.id : selBook.abbrev}
           chapter={selChapter}
           bookLabel={nonCanon ? nonCanon.name : (BOOK_LABELS[selBook.abbrev] || selBook.abbrev)}
