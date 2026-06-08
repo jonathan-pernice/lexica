@@ -623,6 +623,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     if (!nav || !nav.book || !books.length) return;
     const b = books.find(b => b.abbrev === nav.book);
     if (b) {
+      // Only react to a REAL destination change. The scroll-to-highlight step writes a
+      // `scroll: false` self-update back to nav (same book + chapter); without this guard
+      // that re-fires the reset below, wiping the just-loaded verses — and since the book
+      // and chapter didn't change, the chapter loader never refetches → blank chapter.
+      if (corpus === "bible" && selBook?.abbrev === b.abbrev && selChapter === (nav.chapter || 1)) return;
       setCorpus("bible");   // a verse reference is a Bible verse — leave any open non-canonical text
       setOtherOpen(false);  // close the "Other" picker if it was open
       // clear the old chapter's verses so the scroll-to-highlight waits for the NEW
@@ -836,7 +841,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   };
 
   const renderVerse = (v, skipHeading = false) => {
-    const isHighlight = nav && nav.highlight === v.verse;
+    const isHighlight = nav && nav.highlight === v.verse && (nav.chapter == null || nav.chapter === selChapter);
 
     const makeEntry = (w) => {
       const snum = w.strongs_base === "*" ? "*" : (w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base);
