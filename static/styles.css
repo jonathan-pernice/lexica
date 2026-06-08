@@ -670,11 +670,13 @@ input { font-family: inherit; }
 .detail-sheet {
   position: fixed;
   left: 0; right: 0;
-  bottom: calc(58px + env(safe-area-inset-bottom, 0px));
-  /* Rise no further than the bottom of the top menu (.mobile-tabs, 56px):
-     full height = viewport − top menu − bottom anchor (58px). */
-  max-height: calc(100vh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  max-height: calc(100dvh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  /* Default: sit flush at the bottom. Only the Library tab has a fixed reading
+     cockpit pinned to the bottom; other tabs (Lexicon, Search) have nothing
+     there, so anchoring above 0 left an empty gap below the sheet. */
+  bottom: env(safe-area-inset-bottom, 0px);
+  /* Rise no further than the bottom of the top menu (.mobile-tabs, 56px). */
+  max-height: calc(100vh - 56px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 56px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   overscroll-behavior: contain;
   background: var(--paper);
   border-top-left-radius: 18px;
@@ -684,6 +686,13 @@ input { font-family: inherit; }
   box-shadow: 0 -20px 60px rgba(15, 23, 42, 0.25);
   animation: slide-up 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
+}
+/* Library tab keeps a fixed reading cockpit at the bottom (≈58px) — lift the
+   sheet above it there, and shorten its max height to match. */
+.app.view-library .detail-sheet {
+  bottom: calc(58px + env(safe-area-inset-bottom, 0px));
+  max-height: calc(100vh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  max-height: calc(100dvh - 114px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
 }
 .detail-sheet .detail-body,
 .detail-sheet .xref-body { overscroll-behavior: contain; }
