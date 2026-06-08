@@ -1662,12 +1662,12 @@ input { font-family: inherit; }
 
 /* ----- "Other" non-canonical texts picker (desktop lib bar popup) ----- */
 .lib-other-wrap { position: relative; display: inline-flex; }
-.lib-other-scrim { position: fixed; inset: 0; z-index: 40; }
+.lib-other-scrim { position: fixed; inset: 0; z-index: 90; }
 .lib-other-menu {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 50;
+  z-index: 100;
   background: var(--paper);
   border: 1px solid var(--rule-2);
   border-radius: 8px;
@@ -2393,7 +2393,9 @@ input { font-family: inherit; }
   position: sticky;
   top: 64px;
   height: calc(100vh - 64px);
-  overflow: hidden;
+  /* visible (not hidden) so the "Other" dropdown can open past the panel edge over
+     the reading column; the book list scrolls on its own (.nav-scroll). */
+  overflow: visible;
 }
 .nav-top {
   display: flex; align-items: center; justify-content: space-between;
