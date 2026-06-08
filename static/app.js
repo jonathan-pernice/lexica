@@ -2969,6 +2969,93 @@ const NONCANON = [
   englishOnly: true,
   group: "Pseudepigrapha"
 },
+// Testaments of the Twelve Patriarchs (R.H. Charles, APOT) -- twelve short books,
+// each cited on its own (T. Reuben 1:1 ...), so each is a separate entry.
+{
+  id: "treuben",
+  name: "Testament of Reuben",
+  abbr: "TReu",
+  chapters: 7,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tsimeon",
+  name: "Testament of Simeon",
+  abbr: "TSim",
+  chapters: 9,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tlevi",
+  name: "Testament of Levi",
+  abbr: "TLevi",
+  chapters: 19,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tjudah",
+  name: "Testament of Judah",
+  abbr: "TJud",
+  chapters: 26,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tissachar",
+  name: "Testament of Issachar",
+  abbr: "TIss",
+  chapters: 7,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tzebulun",
+  name: "Testament of Zebulun",
+  abbr: "TZeb",
+  chapters: 10,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tdan",
+  name: "Testament of Dan",
+  abbr: "TDan",
+  chapters: 7,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tnaphtali",
+  name: "Testament of Naphtali",
+  abbr: "TNaph",
+  chapters: 9,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tgad",
+  name: "Testament of Gad",
+  abbr: "TGad",
+  chapters: 8,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tasher",
+  name: "Testament of Asher",
+  abbr: "TAsh",
+  chapters: 8,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tjoseph",
+  name: "Testament of Joseph",
+  abbr: "TJos",
+  chapters: 20,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+}, {
+  id: "tbenjamin",
+  name: "Testament of Benjamin",
+  abbr: "TBen",
+  chapters: 12,
+  englishOnly: true,
+  group: "Testaments (12 Patriarchs)"
+},
 // Septuagint Apocrypha — Brenton's 1851 public-domain English LXX (ebible.org USFM),
 // verse-perfect. English-only; the Greek isn't Strong's-tagged so no interlinear.
 {
