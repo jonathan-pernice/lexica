@@ -27,6 +27,7 @@ BOOKS = [
     "jubilees",
     "enoch2",     # 2 Enoch (Slavonic, Morfill) -- 68 chapters
     "baruch2",    # 2 Baruch (Syriac Apocalypse, Charles) -- 85 chapters
+    "baruch3",    # 3 Baruch (Greek Apocalypse, Charles) -- 17 ch + Prologue (ch 0)
     "apocabr",    # Apocalypse of Abraham (translation 1) -- 32 chapters
     "assummoses", # Assumption of Moses (Charles) -- 12 chapters, chapter-level only
     "adameve",    # Life of Adam and Eve / Vita Adae et Evae (Charles) -- 51 chapters

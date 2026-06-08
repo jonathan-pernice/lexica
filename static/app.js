@@ -3203,6 +3203,15 @@ const NONCANON = [
   chapters: 85,
   englishOnly: true,
   group: "Pseudepigrapha"
+},
+// 3 Baruch / Greek Apocalypse of Baruch (Charles APOT, public domain) -- 17 ch + Prologue (ch 0).
+{
+  id: "baruch3",
+  name: "3 Baruch",
+  abbr: "3Bar",
+  chapters: 17,
+  englishOnly: true,
+  group: "Pseudepigrapha"
 }, {
   id: "apocabr",
   name: "Apocalypse of Abraham",
