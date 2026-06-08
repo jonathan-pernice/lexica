@@ -1,0 +1,42 @@
+# Lexica CI — runs on every push and pull request.
+# Two cheap checks, no database needed:
+#   1. tests   — the invariant tests (they build their own fake data in memory)
+#   2. frontend — rebuild app.js from source and confirm the committed copy matches
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run invariant tests
+        run: |
+          python tests/test_strongs_join.py
+          python tests/test_build_invariants.py
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install build tools
+        run: npm ci
+      - name: Rebuild app.js
+        run: npm run build
+      - name: Check the committed app.js is up to date
+        run: |
+          if ! git diff --quiet -- static/app.js; then
+            echo "::error::static/app.js is stale — run 'npm run build' and commit the result."
+            git diff -- static/app.js
+            exit 1
+          fi
+          echo "app.js matches the source. Good."
