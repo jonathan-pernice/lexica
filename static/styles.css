@@ -1668,10 +1668,10 @@ input { font-family: inherit; }
   top: calc(100% + 6px);
   left: 0;
   z-index: 50;
-  background: #fff;
-  border: 1px solid var(--rule);
+  background: var(--navy);
+  border: 1px solid var(--navy-edge);
   border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 28px rgba(10, 20, 36, 0.4);
   padding: 6px;
   min-width: 170px;
   max-height: 70vh;
@@ -1700,9 +1700,9 @@ input { font-family: inherit; }
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, 0.55);
 }
-.lib-other-head-btn:hover { color: var(--ink); }
+.lib-other-head-btn:hover { color: #fff; }
 .lib-other-head-caret {
   font-size: 9px;
   transition: transform 0.12s ease;
@@ -1712,14 +1712,14 @@ input { font-family: inherit; }
 .lib-other-head-lbl { flex: 1; text-align: left; }
 .lib-other-head-count {
   font-size: 10px;
-  color: var(--ink-3);
-  background: var(--bg-sunk);
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 9px;
   padding: 1px 7px;
 }
 .lib-other-head-btn:not(:first-child) {
   margin-top: 2px;
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 .lib-other-item {
   display: block;
@@ -1728,13 +1728,13 @@ input { font-family: inherit; }
   padding: 7px 10px;
   border-radius: 6px;
   font-size: 13px;
-  color: var(--ink);
+  color: rgba(255, 255, 255, 0.88);
   background: none;
   border: none;
   cursor: pointer;
 }
-.lib-other-item:hover { background: var(--bg-sunk); }
-.lib-other-item.on { color: var(--accent); font-weight: 500; }
+.lib-other-item:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.lib-other-item.on { color: var(--gold-soft); font-weight: 600; }
 
 /* Compact text-size button + its little popover (replaces the inline A−/A+ seg) */
 .lib-font-btn { font-size: 13px; letter-spacing: 0.01em; }
