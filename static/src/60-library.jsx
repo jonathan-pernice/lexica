@@ -131,9 +131,8 @@ const _BOOK_DIV = {
   Jud:"General Epistles",Rev:"Apocalyptic",
 };
 
-function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible }) {
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible, otherOpen, setOtherOpen }) {
   const [query, setQuery] = useState("");
-  const [otherOpen, setOtherOpen] = useState(false);
   // "Other" menu groups start collapsed (the list is long) — except the group of the
   // text that's currently open, so the active pick stays visible.
   const [openGroups, setOpenGroups] = useState(() => new Set(nonCanon ? [nonCanon.group] : []));
@@ -596,6 +595,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     const b = books.find(b => b.abbrev === nav.book);
     if (b) {
       setCorpus("bible");   // a verse reference is a Bible verse — leave any open non-canonical text
+      setOtherOpen(false);  // close the "Other" picker if it was open
       // clear the old chapter's verses so the scroll-to-highlight waits for the NEW
       // chapter (otherwise it can fire on a stale same-numbered verse and burn its flag)
       setVerses([]);
@@ -1244,6 +1244,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           translation={translation}
           corpus={corpus}
           pickBible={pickBible}
+          otherOpen={otherOpen}
+          setOtherOpen={setOtherOpen}
         />
       )}
       {!navVisible && mobileNavOpen && (
