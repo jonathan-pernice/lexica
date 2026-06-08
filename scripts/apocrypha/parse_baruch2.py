@@ -57,8 +57,12 @@ def clean(text):
 def main():
     lines = to_lines(RAW.read_text(encoding="utf-8", errors="replace"))
     start = next(i for i, l in enumerate(lines) if l == "Chapter 1")
+    # the chapter-1 section title sits just before the "Chapter 1" marker -> include it
+    if start and HEADING.match(lines[start - 1]):
+        start -= 1
 
     english = {}
+    headings = {}
     ch = v = None
     buf = []
 
@@ -77,6 +81,12 @@ def main():
             ch, v, buf = int(mc.group(1)), None, []
             continue
         if HEADING.match(l):
+            # harvest the section title; its leading reference is the anchor verse
+            # ("1-4. Announcement" -> 1.1, "4:2-7. The heavenly Jerusalem" -> 4.2)
+            mh = re.match(r"^\s*(\d+)(?::(\d+))?[\d:,\-–—\s]*\.\s+(.+)$", l)
+            if mh:
+                key = f"{int(mh.group(1))}.{int(mh.group(2)) if mh.group(2) else 1}"
+                headings.setdefault(key, mh.group(3).strip())
             continue
         if ALT.match(l):       # Oxyrhynchus fragment alternate -> drop until next real verse
             flush()
@@ -93,7 +103,10 @@ def main():
 
     (HERE / "baruch2_english.json").write_text(
         json.dumps(english, ensure_ascii=False, indent=0), encoding="utf-8")
-    (HERE / "baruch2_headings.json").write_text("{}", encoding="utf-8")
+    # keep only headings whose anchor verse actually exists in the text
+    headings = {k: t for k, t in headings.items() if k in english}
+    (HERE / "baruch2_headings.json").write_text(
+        json.dumps(headings, ensure_ascii=False, indent=0), encoding="utf-8")
     (HERE / "baruch2_tagged_full.json").write_text("[]", encoding="utf-8")
 
     chs = sorted({int(k.split('.')[0]) for k in english})
