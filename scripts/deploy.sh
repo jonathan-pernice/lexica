@@ -9,33 +9,39 @@ set -e
 cd ~/bible-db
 
 echo "==> Pulling latest code..."
+before=$(git rev-parse HEAD)
 git pull
+after=$(git rev-parse HEAD)
+changed=$(git diff --name-only "$before" "$after")
 
 echo "==> Running invariant tests..."
 python3 tests/test_strongs_join.py >/dev/null
 python3 tests/test_build_invariants.py >/dev/null
 echo "    tests passed."
 
-# Load the non-canonical texts (Apostolic Fathers, apocrypha, pseudepigrapha, etc.).
-# Each loader only rebuilds its OWN <book>_words/<book>_verses tables and is safe to
-# re-run, so this just keeps every book current — no need to run them by hand when a
-# new book is added. A loader hiccup warns but does NOT block the site reload.
-echo "==> Loading non-canonical books..."
+# Load non-canonical texts ONLY when this pull changed their files (a new book, or a
+# fix to a book's text). The data already lives in the database between deploys, so
+# re-loading unchanged books is just busywork. Each loader rebuilds only its OWN
+# <book>_words/<book>_verses tables; a hiccup warns but never blocks the reload.
+echo "==> Checking for changed non-canonical books..."
 set +e
-for loader in \
-    scripts/apocrypha/load_apocrypha.py \
-    scripts/apocrypha/load_pseudepigrapha.py \
-    scripts/apfathers/load_apfathers.py \
-    scripts/enoch/load_enoch.py \
-    scripts/didache_proof/load_didache.py ; do
-  if [ -f "$loader" ]; then
+run_if_changed() {  # $1 = folder to watch; rest = loaders to run if anything there changed
+  local prefix="$1"; shift
+  echo "$changed" | grep -q "^$prefix" || return 0
+  for loader in "$@"; do
+    [ -f "$loader" ] || continue
     if python3 "$loader" bible.db >/dev/null 2>&1 ; then
       echo "    ok: $loader"
     else
       echo "    WARNING: $loader failed (skipped)"
     fi
-  fi
-done
+  done
+}
+run_if_changed "scripts/apocrypha/"     scripts/apocrypha/load_apocrypha.py scripts/apocrypha/load_pseudepigrapha.py
+run_if_changed "scripts/apfathers/"     scripts/apfathers/load_apfathers.py
+run_if_changed "scripts/enoch/"         scripts/enoch/load_enoch.py
+run_if_changed "scripts/didache_proof/" scripts/didache_proof/load_didache.py
+[ -z "$changed" ] && echo "    (no code pulled — nothing to load)"
 set -e
 
 echo "==> Reloading the live site..."
