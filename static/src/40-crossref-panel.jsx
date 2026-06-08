@@ -55,7 +55,7 @@ function CrossRefPanel({ source, onClose, onNavigate, isMobile, translation, onA
         {overviewBack && !isMobile ? (
           <button className="detail-back" onClick={onClose} aria-label="Back to overview">‹ Overview</button>
         ) : (
-          <button className="detail-close" onClick={onClose} aria-label="Close">✕</button>
+          <button className="detail-close" onClick={onClose} aria-label="Close"><Icon.Close/></button>
         )}
       </div>
       <div className="xref-body" ref={isMobile ? scrollRef : null}>

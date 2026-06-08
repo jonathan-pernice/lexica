@@ -1965,7 +1965,7 @@ function CrossRefPanel({
     className: "detail-close",
     onClick: onClose,
     "aria-label": "Close"
-  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon.Close, null))), /*#__PURE__*/React.createElement("div", {
     className: "xref-body",
     ref: isMobile ? scrollRef : null
   }, /*#__PURE__*/React.createElement("h3", {
