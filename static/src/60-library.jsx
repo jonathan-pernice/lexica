@@ -411,7 +411,10 @@ const NONCANON = [
   // englishOnly: no Greek interlinear in our pipeline, so the reader stays in Prose
   // (chip / parallel-Greek views would be blank). Drop the flag once a tagged Greek
   // file is added (e.g. 1 Enoch ch 1–32 from the Akhmim papyrus).
-  { id: "didache", name: "Didache", abbr: "Did", chapters: 16, group: "Early Church" },
+  // Apostolic Fathers — Greek-tagged interlinear (Brannan/Lake Greek + Lightfoot English).
+  // NOT englishOnly: these have the full Greek word-study layer like the Bible text.
+  { id: "didache", name: "Didache", abbr: "Did", chapters: 16, group: "Apostolic Fathers" },
+  { id: "clement2", name: "2 Clement", abbr: "2Clem", chapters: 20, group: "Apostolic Fathers" },
   { id: "enoch", name: "1 Enoch", abbr: "1En", chapters: 108, englishOnly: true, group: "Pseudepigrapha" },
   { id: "enoch2", name: "2 Enoch", abbr: "2En", chapters: 68, englishOnly: true, group: "Pseudepigrapha" },
   { id: "jubilees", name: "Jubilees", abbr: "Jub", chapters: 50, englishOnly: true, group: "Pseudepigrapha" },
