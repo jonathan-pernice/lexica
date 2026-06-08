@@ -503,7 +503,10 @@ def lexicon_verses(strongs, book):
                 return jsonify({"verses": [], "glosses": []})
             # Render full verses from positioned tokens; highlight ONLY the words
             # actually tagged with the target strongs (exact, not by gloss match).
-            # EXISTS restricts to verses that contain the strongs at least once.
+            # The matching verses are found ONCE via the IN list below — the old
+            # correlated EXISTS re-ran a join for every word in the book (slow on
+            # big books); this resolves the verse set a single time, like the ABP
+            # branch.
             word_rows = conn.execute("""
                 SELECT kw.chapter, kw.verse_num AS verse, kw.verse_pos,
                        kw.word, kw.italic, kw.punc,
@@ -511,17 +514,16 @@ def lexicon_verses(strongs, book):
                 FROM kjv_words kw
                 LEFT JOIN kjv_strongs ks ON ks.word_id = kw.word_id
                 WHERE kw.book_id = ?
-                  AND EXISTS (
-                      SELECT 1 FROM kjv_words kw2
+                  AND (kw.chapter, kw.verse_num) IN (
+                      SELECT kw2.chapter, kw2.verse_num
+                      FROM kjv_words kw2
                       JOIN kjv_strongs ks2 ON ks2.word_id = kw2.word_id
-                      WHERE kw2.book_id = kw.book_id
-                        AND kw2.chapter = kw.chapter
-                        AND kw2.verse_num = kw.verse_num
+                      WHERE kw2.book_id = ?
                         AND ks2.strongs_id = ?
                   )
                 GROUP BY kw.word_id
                 ORDER BY kw.chapter, kw.verse_num, kw.verse_pos
-            """, (sid, book_id, sid)).fetchall()
+            """, (sid, book_id, book_id, sid)).fetchall()
         else:
             word_rows = conn.execute("""
                 SELECT v.chapter, v.verse, v.text AS prose, w.english AS word, w.italic,
