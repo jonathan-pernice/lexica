@@ -301,7 +301,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
           </div>
           {groupings.map(g => (
             <button key={g.strongs} className="lexicon-result-row"
-              onClick={() => loadProfile(g.strongs)}>
+              onClick={() => loadProfile(g.strongs, corpus === "all" ? undefined : corpus)}>
               <span className="lexicon-match-strongs">{g.strongs}</span>
               {g.lemma && <span className="lexicon-match-lemma" dir={g.strongs[0] === "H" ? "rtl" : undefined}>{g.lemma}</span>}
               {g.translit && <span className="lexicon-match-translit">{g.translit}</span>}
