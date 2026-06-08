@@ -1,0 +1,21 @@
+# Dependabot — GitHub's built-in dependency watcher.
+# Opens a pull request when a Python or Node package you use has an update
+# (security fixes get flagged automatically). Zero maintenance after this.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

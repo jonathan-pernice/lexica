@@ -1,0 +1,28 @@
+#!/bin/sh
+# Lexica pre-commit hook — the local twin of .github/workflows/ci.yml.
+# Runs automatically on every `git commit`. Two jobs:
+#   1. If you staged a frontend source file (static/src/*.jsx) but forgot to
+#      rebuild, it rebuilds static/app.js for you and stages it.
+#   2. Runs the invariant tests; if they fail, the commit is blocked.
+#
+# Installed via:  git config core.hooksPath scripts/githooks
+# Skip it for one commit with:  git commit --no-verify
+
+set -e
+
+# --- 1. frontend: rebuild app.js if any source .jsx (or the builder) is staged
+staged_src=$(git diff --cached --name-only | grep -E '^static/src/.*\.jsx$|^scripts/build-frontend\.js$' || true)
+if [ -n "$staged_src" ]; then
+  echo "pre-commit: frontend source changed — rebuilding app.js..."
+  npm run build --silent
+  if ! git diff --quiet -- static/app.js; then
+    echo "pre-commit: app.js was stale — rebuilt and staged it for you."
+    git add static/app.js
+  fi
+fi
+
+# --- 2. tests: block the commit if an invariant breaks
+echo "pre-commit: running invariant tests..."
+python tests/test_strongs_join.py >/dev/null
+python tests/test_build_invariants.py >/dev/null
+echo "pre-commit: all checks passed."
