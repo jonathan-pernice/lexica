@@ -362,6 +362,9 @@ function ModesSheet({
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
   const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly);   // English-only: no Greek toggles
   const [otherShown, setOtherShown] = useState(!!activeNonCanon);
+  // groups start collapsed (long list); the active text's group opens
+  const [openGroups, setOpenGroups] = useState(() => new Set(activeNonCanon ? [activeNonCanon.group] : []));
+  const toggleGroup = (g) => setOpenGroups(s => { const n = new Set(s); n.has(g) ? n.delete(g) : n.add(g); return n; });
   const gray = proseLocked ? { opacity: 0.35, cursor: "default" } : undefined;
   return (
     <>
@@ -395,15 +398,23 @@ function ModesSheet({
                 </button>
                 {otherShown && (
                   <div className="other-acc-list">
-                    {nonCanonGroups(nonCanonList).map(grp => (
-                      <React.Fragment key={grp.group}>
-                        <div className="other-acc-grp">{grp.group}</div>
-                        {grp.items.map(t => (
-                          <button key={t.id} className={"other-acc-item"+(corpus===t.id?" on":"")}
-                            onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
-                        ))}
-                      </React.Fragment>
-                    ))}
+                    {nonCanonGroups(nonCanonList).map(grp => {
+                      const open = openGroups.has(grp.group);
+                      return (
+                        <React.Fragment key={grp.group}>
+                          <button className={"other-acc-grp other-acc-grp-btn"+(open?" open":"")}
+                            onClick={()=>toggleGroup(grp.group)} aria-expanded={open}>
+                            <span className="other-acc-grp-chev">▸</span>
+                            <span className="other-acc-grp-lbl">{grp.group}</span>
+                            <span className="other-acc-grp-count">{grp.items.length}</span>
+                          </button>
+                          {open && grp.items.map(t => (
+                            <button key={t.id} className={"other-acc-item"+(corpus===t.id?" on":"")}
+                              onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
+                          ))}
+                        </React.Fragment>
+                      );
+                    })}
                   </div>
                 )}
               </div>

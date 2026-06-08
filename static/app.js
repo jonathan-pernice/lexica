@@ -2832,6 +2832,13 @@ function ModesSheet({
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
   const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly); // English-only: no Greek toggles
   const [otherShown, setOtherShown] = useState(!!activeNonCanon);
+  // groups start collapsed (long list); the active text's group opens
+  const [openGroups, setOpenGroups] = useState(() => new Set(activeNonCanon ? [activeNonCanon.group] : []));
+  const toggleGroup = g => setOpenGroups(s => {
+    const n = new Set(s);
+    n.has(g) ? n.delete(g) : n.add(g);
+    return n;
+  });
   const gray = proseLocked ? {
     opacity: 0.35,
     cursor: "default"
@@ -2893,18 +2900,29 @@ function ModesSheet({
     className: "other-acc-chev" + (otherShown ? " open" : "")
   }, "\u25BE"))), otherShown && /*#__PURE__*/React.createElement("div", {
     className: "other-acc-list"
-  }, nonCanonGroups(nonCanonList).map(grp => /*#__PURE__*/React.createElement(React.Fragment, {
-    key: grp.group
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "other-acc-grp"
-  }, grp.group), grp.items.map(t => /*#__PURE__*/React.createElement("button", {
-    key: t.id,
-    className: "other-acc-item" + (corpus === t.id ? " on" : ""),
-    onClick: () => {
-      pickNonCanon(t);
-      onClose();
-    }
-  }, t.name))))))), /*#__PURE__*/React.createElement("div", {
+  }, nonCanonGroups(nonCanonList).map(grp => {
+    const open = openGroups.has(grp.group);
+    return /*#__PURE__*/React.createElement(React.Fragment, {
+      key: grp.group
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "other-acc-grp other-acc-grp-btn" + (open ? " open" : ""),
+      onClick: () => toggleGroup(grp.group),
+      "aria-expanded": open
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "other-acc-grp-chev"
+    }, "\u25B8"), /*#__PURE__*/React.createElement("span", {
+      className: "other-acc-grp-lbl"
+    }, grp.group), /*#__PURE__*/React.createElement("span", {
+      className: "other-acc-grp-count"
+    }, grp.items.length)), open && grp.items.map(t => /*#__PURE__*/React.createElement("button", {
+      key: t.id,
+      className: "other-acc-item" + (corpus === t.id ? " on" : ""),
+      onClick: () => {
+        pickNonCanon(t);
+        onClose();
+      }
+    }, t.name)));
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"

@@ -2000,6 +2000,21 @@ input { font-family: inherit; }
   border-top: 1px solid var(--rule);
 }
 .other-acc-grp:first-child { border-top: none; }
+/* collapsible group header (tap to open/close) */
+.other-acc-grp-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  border: none; border-top: 1px solid var(--rule); cursor: pointer;
+  padding: 10px 14px; font: inherit; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-4);
+  background: var(--bg-sunk);
+}
+.other-acc-grp-chev { font-size: 10px; transition: transform 0.12s ease; }
+.other-acc-grp-btn.open .other-acc-grp-chev { transform: rotate(90deg); }
+.other-acc-grp-lbl { flex: 1; text-align: left; }
+.other-acc-grp-count {
+  color: var(--gold); background: var(--gold-soft);
+  border-radius: 9px; padding: 1px 7px; letter-spacing: 0;
+}
 .display-row { display: flex; gap: 10px; align-items: stretch; }
 .display-row .mseg { flex: 1 1 0; min-width: 0; }
 .display-row .font-picker .mseg-b { flex: 1 1 0; }
