@@ -2686,11 +2686,18 @@ function MobileBookPicker({
   books,
   selBook,
   selChapter,
+  nonCanon,
+  nonCanonList,
   onDone,
   onClose
 }) {
-  const [screen, setScreen] = useState("book");
-  const [pickedBook, setPickedBook] = useState(null);
+  // A non-canonical book is identified by its `id`; a Bible book by its `abbrev`.
+  const isNC = b => !!(b && b.id);
+  // If a non-canonical text is already open, jump straight to its chapter grid so the
+  // reader can change chapter (this is the bug it fixes: the picker used to show only
+  // the Bible books, stranding you on whatever Bible book was last selected).
+  const [screen, setScreen] = useState(nonCanon ? "chapter" : "book");
+  const [pickedBook, setPickedBook] = useState(nonCanon || null);
   // Same swipe-down-to-close + at-top scroll arming as the hero / xref sheets.
   // ONE stable root so the refs survive the book→chapter screen switch.
   const {
@@ -2700,6 +2707,7 @@ function MobileBookPicker({
   const otBooks = books.filter(b => !NT_BOOKS.has(b.abbrev));
   const ntBooks = books.filter(b => NT_BOOKS.has(b.abbrev));
   const onChapter = screen === "chapter";
+  const isActive = b => isNC(b) ? nonCanon && nonCanon.id === b.id : selBook && b.abbrev === selBook.abbrev;
   return /*#__PURE__*/React.createElement("div", {
     className: "mpick",
     ref: sheetRef
@@ -2728,7 +2736,7 @@ function MobileBookPicker({
   }, Array.from({
     length: pickedBook.chapters
   }, (_, i) => i + 1).map(n => {
-    const active = selBook && pickedBook.abbrev === selBook.abbrev && n === selChapter;
+    const active = isActive(pickedBook) && n === selChapter;
     return /*#__PURE__*/React.createElement("button", {
       key: n,
       className: "mpick-btn" + (active ? " on" : ""),
@@ -2743,12 +2751,26 @@ function MobileBookPicker({
     className: "mpick-grid"
   }, bks.map(b => /*#__PURE__*/React.createElement("button", {
     key: b.abbrev,
-    className: "mpick-btn" + (selBook && b.abbrev === selBook.abbrev ? " on" : ""),
+    className: "mpick-btn" + (isActive(b) ? " on" : ""),
     onClick: () => {
       setPickedBook(b);
       setScreen("chapter");
     }
-  }, b.abbrev.toUpperCase())))))));
+  }, b.abbrev.toUpperCase()))))).concat((nonCanonList || []).length ? nonCanonGroups(nonCanonList).map(grp => /*#__PURE__*/React.createElement("div", {
+    key: grp.group,
+    className: "mpick-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mpick-sec-label"
+  }, grp.group), /*#__PURE__*/React.createElement("div", {
+    className: "mpick-grid"
+  }, grp.items.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: "mpick-btn mpick-btn-nc" + (isActive(t) ? " on" : ""),
+    onClick: () => {
+      setPickedBook(t);
+      setScreen("chapter");
+    }
+  }, t.name))))) : [])));
 }
 
 // ============================================================
@@ -4162,8 +4184,10 @@ function LibraryView({
     books: books,
     selBook: selBook,
     selChapter: selChapter,
+    nonCanon: nonCanon,
+    nonCanonList: NONCANON,
     onDone: (b, n) => {
-      setSelBook(b);
+      if (b.id) pickNonCanon(b);else selectBook(b);
       setSelChapter(n);
       setMobileNavOpen(false);
     },

@@ -2330,6 +2330,14 @@ input { font-family: inherit; }
 .mpick-btn:hover { color: var(--ink); }
 .mpick-btn:active { color: var(--accent); }
 .mpick-btn.on { color: var(--accent); font-weight: 800; font-size: 15px; }
+/* non-canonical books: full-width rows with the readable name (not a cramped abbr) */
+.mpick-btn-nc {
+  grid-column: 1 / -1;
+  text-align: left;
+  font-family: var(--f-sans);
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--line, #eee);
+}
 
 .nav {
   border-right: 1px solid var(--rule);

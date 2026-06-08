@@ -256,9 +256,14 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
 // ============================================================
 // MOBILE BOOK PICKER — full-screen, two-screen (book grid → chapter grid)
 // ============================================================
-function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
-  const [screen, setScreen] = useState("book");
-  const [pickedBook, setPickedBook] = useState(null);
+function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, onDone, onClose }) {
+  // A non-canonical book is identified by its `id`; a Bible book by its `abbrev`.
+  const isNC = b => !!(b && b.id);
+  // If a non-canonical text is already open, jump straight to its chapter grid so the
+  // reader can change chapter (this is the bug it fixes: the picker used to show only
+  // the Bible books, stranding you on whatever Bible book was last selected).
+  const [screen, setScreen] = useState(nonCanon ? "chapter" : "book");
+  const [pickedBook, setPickedBook] = useState(nonCanon || null);
   // Same swipe-down-to-close + at-top scroll arming as the hero / xref sheets.
   // ONE stable root so the refs survive the book→chapter screen switch.
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
@@ -266,6 +271,8 @@ function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
   const otBooks = books.filter(b => !NT_BOOKS.has(b.abbrev));
   const ntBooks = books.filter(b => NT_BOOKS.has(b.abbrev));
   const onChapter = screen === "chapter";
+  const isActive = b => isNC(b) ? (nonCanon && nonCanon.id === b.id)
+                                : (selBook && b.abbrev === selBook.abbrev);
 
   return (
     <div className="mpick" ref={sheetRef}>
@@ -281,7 +288,7 @@ function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
         {onChapter ? (
           <div className="mpick-grid">
             {Array.from({ length: pickedBook.chapters }, (_, i) => i + 1).map(n => {
-              const active = selBook && pickedBook.abbrev === selBook.abbrev && n === selChapter;
+              const active = isActive(pickedBook) && n === selChapter;
               return <button key={n} className={"mpick-btn" + (active ? " on" : "")} onClick={() => onDone(pickedBook, n)}>{n}</button>;
             })}
           </div>
@@ -291,13 +298,24 @@ function MobileBookPicker({ books, selBook, selChapter, onDone, onClose }) {
               <div className="mpick-sec-label">{label}</div>
               <div className="mpick-grid">
                 {bks.map(b => (
-                  <button key={b.abbrev} className={"mpick-btn" + (selBook && b.abbrev === selBook.abbrev ? " on" : "")} onClick={() => { setPickedBook(b); setScreen("chapter"); }}>
+                  <button key={b.abbrev} className={"mpick-btn" + (isActive(b) ? " on" : "")} onClick={() => { setPickedBook(b); setScreen("chapter"); }}>
                     {b.abbrev.toUpperCase()}
                   </button>
                 ))}
               </div>
             </div>
-          ))
+          )).concat((nonCanonList || []).length ? nonCanonGroups(nonCanonList).map(grp => (
+            <div key={grp.group} className="mpick-section">
+              <div className="mpick-sec-label">{grp.group}</div>
+              <div className="mpick-grid">
+                {grp.items.map(t => (
+                  <button key={t.id} className={"mpick-btn mpick-btn-nc" + (isActive(t) ? " on" : "")} onClick={() => { setPickedBook(t); setScreen("chapter"); }}>
+                    {t.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )) : [])
         )}
       </div>
     </div>
@@ -1192,7 +1210,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           books={books}
           selBook={selBook}
           selChapter={selChapter}
-          onDone={(b, n) => { setSelBook(b); setSelChapter(n); setMobileNavOpen(false); }}
+          nonCanon={nonCanon}
+          nonCanonList={NONCANON}
+          onDone={(b, n) => {
+            if (b.id) pickNonCanon(b); else selectBook(b);
+            setSelChapter(n);
+            setMobileNavOpen(false);
+          }}
           onClose={() => setMobileNavOpen(false)}
         />
       )}
