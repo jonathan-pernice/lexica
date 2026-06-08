@@ -1666,7 +1666,7 @@ input { font-family: inherit; }
 .lib-other-menu {
   position: absolute;
   top: calc(100% + 6px);
-  right: 0;
+  left: 0;
   z-index: 50;
   background: #fff;
   border: 1px solid var(--rule);
