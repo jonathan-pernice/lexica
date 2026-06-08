@@ -2717,6 +2717,13 @@ function MobileBookPicker({
   // the Bible books, stranding you on whatever Bible book was last selected).
   const [screen, setScreen] = useState(nonCanon ? "chapter" : "book");
   const [pickedBook, setPickedBook] = useState(nonCanon || null);
+  // non-canonical groups start collapsed (long list); the active text's group opens.
+  const [openGroups, setOpenGroups] = useState(() => new Set(nonCanon ? [nonCanon.group] : []));
+  const toggleGroup = g => setOpenGroups(s => {
+    const n = new Set(s);
+    n.has(g) ? n.delete(g) : n.add(g);
+    return n;
+  });
   // Same swipe-down-to-close + at-top scroll arming as the hero / xref sheets.
   // ONE stable root so the refs survive the book→chapter screen switch.
   const {
@@ -2775,21 +2782,32 @@ function MobileBookPicker({
       setPickedBook(b);
       setScreen("chapter");
     }
-  }, b.abbrev.toUpperCase()))))).concat((nonCanonList || []).length ? nonCanonGroups(nonCanonList).map(grp => /*#__PURE__*/React.createElement("div", {
-    key: grp.group,
-    className: "mpick-section"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mpick-sec-label"
-  }, grp.group), /*#__PURE__*/React.createElement("div", {
-    className: "mpick-grid"
-  }, grp.items.map(t => /*#__PURE__*/React.createElement("button", {
-    key: t.id,
-    className: "mpick-btn mpick-btn-nc" + (isActive(t) ? " on" : ""),
-    onClick: () => {
-      setPickedBook(t);
-      setScreen("chapter");
-    }
-  }, t.name))))) : [])));
+  }, b.abbrev.toUpperCase()))))).concat((nonCanonList || []).length ? nonCanonGroups(nonCanonList).map(grp => {
+    const open = openGroups.has(grp.group);
+    return /*#__PURE__*/React.createElement("div", {
+      key: grp.group,
+      className: "mpick-section"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "mpick-sec-label mpick-sec-btn" + (open ? " open" : ""),
+      onClick: () => toggleGroup(grp.group),
+      "aria-expanded": open
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "mpick-sec-caret"
+    }, "\u25B8"), /*#__PURE__*/React.createElement("span", {
+      className: "mpick-sec-name"
+    }, grp.group), /*#__PURE__*/React.createElement("span", {
+      className: "mpick-sec-count"
+    }, grp.items.length)), open && /*#__PURE__*/React.createElement("div", {
+      className: "mpick-grid"
+    }, grp.items.map(t => /*#__PURE__*/React.createElement("button", {
+      key: t.id,
+      className: "mpick-btn mpick-btn-nc" + (isActive(t) ? " on" : ""),
+      onClick: () => {
+        setPickedBook(t);
+        setScreen("chapter");
+      }
+    }, t.name))));
+  }) : [])));
 }
 
 // ============================================================

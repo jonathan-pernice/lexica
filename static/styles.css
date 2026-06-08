@@ -2347,6 +2347,20 @@ input { font-family: inherit; }
   color: var(--gold); background: var(--gold-soft); display: inline-block;
   padding: 1px 6px; border-radius: 3px; margin-bottom: 10px;
 }
+/* collapsible non-canonical group header in the mobile picker */
+.mpick-sec-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  background: var(--gold-soft); border: none; cursor: pointer;
+  margin-bottom: 0; padding: 8px 10px; border-radius: 5px;
+}
+.mpick-sec-btn.open { margin-bottom: 10px; }
+.mpick-sec-caret { font-size: 10px; transition: transform 0.12s ease; }
+.mpick-sec-btn.open .mpick-sec-caret { transform: rotate(90deg); }
+.mpick-sec-name { flex: 1; text-align: left; }
+.mpick-sec-count {
+  font-weight: 600; color: var(--gold);
+  background: #fff; border-radius: 9px; padding: 0 7px; letter-spacing: 0;
+}
 .mpick-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);

@@ -280,6 +280,13 @@ function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, 
   // the Bible books, stranding you on whatever Bible book was last selected).
   const [screen, setScreen] = useState(nonCanon ? "chapter" : "book");
   const [pickedBook, setPickedBook] = useState(nonCanon || null);
+  // non-canonical groups start collapsed (long list); the active text's group opens.
+  const [openGroups, setOpenGroups] = useState(() => new Set(nonCanon ? [nonCanon.group] : []));
+  const toggleGroup = (g) => setOpenGroups(s => {
+    const n = new Set(s);
+    n.has(g) ? n.delete(g) : n.add(g);
+    return n;
+  });
   // Same swipe-down-to-close + at-top scroll arming as the hero / xref sheets.
   // ONE stable root so the refs survive the book→chapter screen switch.
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
@@ -320,18 +327,27 @@ function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, 
                 ))}
               </div>
             </div>
-          )).concat((nonCanonList || []).length ? nonCanonGroups(nonCanonList).map(grp => (
-            <div key={grp.group} className="mpick-section">
-              <div className="mpick-sec-label">{grp.group}</div>
-              <div className="mpick-grid">
-                {grp.items.map(t => (
-                  <button key={t.id} className={"mpick-btn mpick-btn-nc" + (isActive(t) ? " on" : "")} onClick={() => { setPickedBook(t); setScreen("chapter"); }}>
-                    {t.name}
-                  </button>
-                ))}
+          )).concat((nonCanonList || []).length ? nonCanonGroups(nonCanonList).map(grp => {
+            const open = openGroups.has(grp.group);
+            return (
+              <div key={grp.group} className="mpick-section">
+                <button className={"mpick-sec-label mpick-sec-btn" + (open ? " open" : "")} onClick={() => toggleGroup(grp.group)} aria-expanded={open}>
+                  <span className="mpick-sec-caret">▸</span>
+                  <span className="mpick-sec-name">{grp.group}</span>
+                  <span className="mpick-sec-count">{grp.items.length}</span>
+                </button>
+                {open && (
+                  <div className="mpick-grid">
+                    {grp.items.map(t => (
+                      <button key={t.id} className={"mpick-btn mpick-btn-nc" + (isActive(t) ? " on" : "")} onClick={() => { setPickedBook(t); setScreen("chapter"); }}>
+                        {t.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          )) : [])
+            );
+          }) : [])
         )}
       </div>
     </div>
