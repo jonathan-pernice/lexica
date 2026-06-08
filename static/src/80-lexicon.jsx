@@ -59,7 +59,11 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     onPendingStrongsConsumed?.();
     setGroupings(null);
     setMatches(null);
-    loadProfile(pendingStrongs);
+    // pendingStrongs may be a bare Strong's or { strongs, corpus } (from an
+    // ABP/KJV "occurrences" link) — drill in to the corpus the link named.
+    const s = typeof pendingStrongs === "string" ? pendingStrongs : pendingStrongs.strongs;
+    const c = typeof pendingStrongs === "string" ? undefined : pendingStrongs.corpus;
+    loadProfile(s, c);
   }, [pendingStrongs]);
 
   const loadProfile = async (strongs, corpusOverride) => {

@@ -1639,7 +1639,7 @@ function DetailPanel({
           className: "sec-t"
         }, entry.isExtra ? "Occurrences in Scripture" : "ABP Occurrences")), /*#__PURE__*/React.createElement("button", {
           className: "occ-link",
-          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw)
+          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs_raw, "abp")
         }, /*#__PURE__*/React.createElement("b", null, abpCount), "\xD7 in LXX ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
       case "extraOcc":
         return /*#__PURE__*/React.createElement("section", {
@@ -1662,7 +1662,7 @@ function DetailPanel({
           className: "sec-t"
         }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
           className: "occ-link",
-          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
+          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs, "kjv")
         }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
       case "pnOcc":
         return /*#__PURE__*/React.createElement("section", {
@@ -1686,7 +1686,7 @@ function DetailPanel({
           className: "sec-t"
         }, "KJV Occurrences")), /*#__PURE__*/React.createElement("button", {
           className: "occ-link",
-          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs)
+          onClick: () => onNavigateToLexicon && onNavigateToLexicon(entry.strongs, "kjv")
         }, /*#__PURE__*/React.createElement("b", null, kjvCount), "\xD7 in KJV ", /*#__PURE__*/React.createElement(Icon.ArrowRight, null)));
       case "derivation":
         return /*#__PURE__*/React.createElement("section", {
@@ -4815,7 +4815,11 @@ function LexiconView({
     onPendingStrongsConsumed?.();
     setGroupings(null);
     setMatches(null);
-    loadProfile(pendingStrongs);
+    // pendingStrongs may be a bare Strong's or { strongs, corpus } (from an
+    // ABP/KJV "occurrences" link) — drill in to the corpus the link named.
+    const s = typeof pendingStrongs === "string" ? pendingStrongs : pendingStrongs.strongs;
+    const c = typeof pendingStrongs === "string" ? undefined : pendingStrongs.corpus;
+    loadProfile(s, c);
   }, [pendingStrongs]);
   const loadProfile = async (strongs, corpusOverride) => {
     setLoading(true);
@@ -5338,11 +5342,14 @@ function App() {
     }
     setMainView(view);
   };
-  const handleNavigateToLexicon = strongs => {
+  const handleNavigateToLexicon = (strongs, corpus) => {
     if (!strongs) return;
     setActiveEntry(null); // close the word panel (bottom sheet on mobile) before showing the lexicon
     setLibCrossRef(null);
-    setLexiconPendingStrongs(strongs);
+    setLexiconPendingStrongs({
+      strongs,
+      corpus
+    }); // corpus: "abp" | "kjv" | undefined (default by language)
     handleNavChange("lexicon");
   };
   const handleAiSearch = async overrideQ => {

@@ -115,11 +115,11 @@ function App() {
     setMainView(view);
   };
 
-  const handleNavigateToLexicon = (strongs) => {
+  const handleNavigateToLexicon = (strongs, corpus) => {
     if (!strongs) return;
     setActiveEntry(null);   // close the word panel (bottom sheet on mobile) before showing the lexicon
     setLibCrossRef(null);
-    setLexiconPendingStrongs(strongs);
+    setLexiconPendingStrongs({ strongs, corpus });   // corpus: "abp" | "kjv" | undefined (default by language)
     handleNavChange("lexicon");
   };
 
