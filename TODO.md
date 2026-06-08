@@ -87,20 +87,27 @@ already builds them. (Strong's numbers are already hidden on AI results — that
 ## Non-canonical texts (generic "extra texts" plumbing DONE 2026-06-07)
 
 **STATUS 2026-06-07 — a large library now LIVE** (all in `NONCANON`, auto-loaded by deploy.sh):
-- Septuagint Apocrypha (16, English-only), Pseudepigrapha (1-2 Enoch, Jubilees, 2 Baruch,
-  Apocalypse of Abraham, Assumption of Moses — English-only), Testaments of the Twelve Patriarchs
-  (12, English-only), and the **Apostolic Fathers (14) with FULL GREEK INTERLINEAR** (Didache,
-  1-2 Clement, 7 Ignatius, Polycarp, Mart. Polycarp, Barnabas, Diognetus, Shepherd of Hermas).
+- Septuagint Apocrypha (16, English-only), Pseudepigrapha (1-2 Enoch, Jubilees, 2-3 Baruch,
+  Apocalypse of Abraham, Assumption of Moses, 2 Esdras/4 Ezra, Life of Adam and Eve, Psalms of
+  Solomon, Letter of Aristeas, Ascension of Isaiah, Sibylline Oracles — all English-only),
+  Testaments of the Twelve Patriarchs (12, English-only), and the **Apostolic Fathers (14) with
+  FULL GREEK INTERLINEAR** (Didache, 1-2 Clement, 7 Ignatius, Polycarp, Mart. Polycarp, Barnabas,
+  Diognetus, Shepherd of Hermas).
 - Greek-interlinear pipeline = `scripts/apfathers/build_af.py` (+ `build_hermas.py`): Brannan/Lake
   Greek+lemma (CC-BY-SA) → Strong's via openscriptures + Dodson glosses → Lightfoot English.
   Memory `project_noncanonical_texts` has the full recipe + source URLs.
 - "Other" picker (desktop dropdown, mobile book-picker, mobile reading-options sheet) all have
   COLLAPSIBLE groups, ordered: Septuagint Apocrypha → Pseudepigrapha → Testaments → Apostolic Fathers.
-- **NEXT books to consider** (user's interest, eschatology/Berean): **2 Esdras / 4 Ezra** (strong
-  pick), Life of Adam and Eve, Psalms of Solomon, 3 Baruch, Letter of Aristeas, Ascension of Isaiah,
-  Sibylline Oracles. English-only ones drop in fast via the apocrypha/pseudepigrapha loaders.
-- Headings: only 1 Enoch, Didache, 2 Baruch (harvested), and the Apostolic Fathers (Hermas section
-  titles) have section headings; the rest could get hand-written ones if wanted (user said "later").
+- **Added 2026-06-07 (English-only, all 7 of the prior shortlist):** 2 Esdras / 4 Ezra (WEB
+  Apocrypha), Life of Adam and Eve (Vita, Charles), Psalms of Solomon (Gray), 3 Baruch (Charles),
+  Letter of Aristeas (Andrews), Ascension of Isaiah (Charles), Sibylline Oracles (Terry — chapter =
+  book, verse = line; books 9 & 10 carry a "no such book" note). Each has its own `parse_*.py` in
+  `scripts/apocrypha/`; sources + the per-book parsing quirks are in memory `project_noncanonical_texts`.
+- **Possible NEXT** (not started): Book of Jasher (Moses Samuel 1840 — beware the pseudo-Jasher);
+  4 Baruch (Paraleipomena Jeremiou); Apocalypse of Zephaniah; Joseph and Aseneth.
+- Headings: 1 Enoch, Didache, 2-3 Baruch, Psalms of Solomon, Sibylline Oracles (harvested), and the
+  Apostolic Fathers (Hermas section titles) have section headings; the rest could get hand-written
+  ones if wanted (user said "later").
 
 The Library can now carry non-canonical texts (Didache first) as their own picks, reached via an
 "Other" menu, walled off from Bible search and word counts. ABP stays the anchor. The plumbing is
