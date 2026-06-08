@@ -744,11 +744,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
       if (dx < 0 && selChapter < maxChap) {
         const c = selChapter + 1;
         setSelChapter(c);
-        onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null });
+        if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null });
       } else if (dx > 0 && selChapter > 1) {
         const c = selChapter - 1;
         setSelChapter(c);
-        onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null });
+        if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null });
       }
     },
   } : {};
@@ -1299,14 +1299,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <button
                 className="ch-nav"
                 disabled={selChapter <= 1}
-                onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
+                onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
                 aria-label="Previous chapter"
               >‹</button>
               <span className="ch-lbl ch-cur" title="Current chapter — pick any chapter from the book list at left">{selChapter}</span>
               <button
                 className="ch-nav"
                 disabled={selChapter >= maxChap}
-                onClick={() => { const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
+                onClick={() => { const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
                 aria-label="Next chapter"
               >›</button>
             </div>
@@ -1356,12 +1356,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             </svg>
           </div>
           <div className="mbar-center">
-            <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Previous chapter">‹</button>
+            <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Previous chapter">‹</button>
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
               <span className="mbar-loc-name">{nonCanon ? nonCanon.name : (selBook ? selBook.name : "")}</span>
               <span className="mbar-loc-ch">{selChapter}</span>
             </button>
-            <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => { const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Next chapter">›</button>
+            <button className="mbar-ch-nav" disabled={selChapter >= maxChap} onClick={() => { const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Next chapter">›</button>
           </div>
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
             {nonCanon ? (nonCanon.abbr || nonCanon.name) : translation === "parallel" ? "Par" : translation.toUpperCase()}

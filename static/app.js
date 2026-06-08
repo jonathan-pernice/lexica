@@ -3606,7 +3606,7 @@ function LibraryView({
       if (dx < 0 && selChapter < maxChap) {
         const c = selChapter + 1;
         setSelChapter(c);
-        onNavChange?.({
+        if (!nonCanon) onNavChange?.({
           ...nav,
           book: selBook?.abbrev,
           chapter: c,
@@ -3615,7 +3615,7 @@ function LibraryView({
       } else if (dx > 0 && selChapter > 1) {
         const c = selChapter - 1;
         setSelChapter(c);
-        onNavChange?.({
+        if (!nonCanon) onNavChange?.({
           ...nav,
           book: selBook?.abbrev,
           chapter: c,
@@ -4289,7 +4289,7 @@ function LibraryView({
     onClick: () => {
       const c = Math.max(1, selChapter - 1);
       setSelChapter(c);
-      onNavChange?.({
+      if (!nonCanon) onNavChange?.({
         ...nav,
         book: selBook?.abbrev,
         chapter: c,
@@ -4306,7 +4306,7 @@ function LibraryView({
     onClick: () => {
       const c = Math.min(maxChap, selChapter + 1);
       setSelChapter(c);
-      onNavChange?.({
+      if (!nonCanon) onNavChange?.({
         ...nav,
         book: selBook?.abbrev,
         chapter: c,
@@ -4425,7 +4425,7 @@ function LibraryView({
     onClick: () => {
       const c = Math.max(1, selChapter - 1);
       setSelChapter(c);
-      onNavChange?.({
+      if (!nonCanon) onNavChange?.({
         ...nav,
         book: selBook?.abbrev,
         chapter: c,
@@ -4446,7 +4446,7 @@ function LibraryView({
     onClick: () => {
       const c = Math.min(maxChap, selChapter + 1);
       setSelChapter(c);
-      onNavChange?.({
+      if (!nonCanon) onNavChange?.({
         ...nav,
         book: selBook?.abbrev,
         chapter: c,
