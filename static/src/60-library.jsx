@@ -511,6 +511,9 @@ const NONCANON = [
   { id: "aristeas", name: "Letter of Aristeas", abbr: "Arist", chapters: 1, englishOnly: true, group: "Pseudepigrapha" },
   // Ascension of Isaiah (R.H. Charles, public domain) -- Martyrdom (1-5) + Vision (6-11).
   { id: "ascisaiah", name: "Ascension of Isaiah", abbr: "AscIsa", chapters: 11, englishOnly: true, group: "Pseudepigrapha" },
+  // Sibylline Oracles (Milton Terry, public domain) -- chapter = book, verse = line. The
+  // collection numbers its books 1-8 and 11-14 (chapters 9 & 10 carry a "no such book" note).
+  { id: "sibylline", name: "Sibylline Oracles", abbr: "SibOr", chapters: 14, englishOnly: true, group: "Pseudepigrapha" },
 
   // Testaments of the Twelve Patriarchs (R.H. Charles, APOT) -- twelve short books,
   // each cited on its own (T. Reuben 1:1 ...), so each is a separate entry.

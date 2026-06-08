@@ -3266,6 +3266,16 @@ const NONCANON = [
   englishOnly: true,
   group: "Pseudepigrapha"
 },
+// Sibylline Oracles (Milton Terry, public domain) -- chapter = book, verse = line. The
+// collection numbers its books 1-8 and 11-14 (chapters 9 & 10 carry a "no such book" note).
+{
+  id: "sibylline",
+  name: "Sibylline Oracles",
+  abbr: "SibOr",
+  chapters: 14,
+  englishOnly: true,
+  group: "Pseudepigrapha"
+},
 // Testaments of the Twelve Patriarchs (R.H. Charles, APOT) -- twelve short books,
 // each cited on its own (T. Reuben 1:1 ...), so each is a separate entry.
 {

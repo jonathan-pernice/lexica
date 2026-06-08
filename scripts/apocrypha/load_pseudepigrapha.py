@@ -34,6 +34,7 @@ BOOKS = [
     "psolomon",   # Psalms of Solomon (Gray, Charles APOT) -- 18 psalms
     "aristeas",   # Letter of Aristeas (Andrews, Charles APOT) -- 1 ch, sections 1-322
     "ascisaiah",  # Ascension of Isaiah (Charles) -- 11 chapters
+    "sibylline",  # Sibylline Oracles (Terry) -- books 1-8, 11-14 as chapters; verse = line
     # Testaments of the Twelve Patriarchs (R.H. Charles) -- 12 separate books
     "treuben", "tsimeon", "tlevi", "tjudah", "tissachar", "tzebulun",
     "tdan", "tnaphtali", "tgad", "tasher", "tjoseph", "tbenjamin",
