@@ -2479,11 +2479,9 @@ function NotesView({
     className: "notes-item-bm"
   }, "\u2605"), n.refLabel || n.book + " " + n.chapter), n.snippet && /*#__PURE__*/React.createElement("div", {
     className: "notes-item-snippet"
-  }, "\u201C", n.snippet, "\u201D"), /*#__PURE__*/React.createElement("div", {
+  }, "\u201C", n.snippet, "\u201D"), n.body && /*#__PURE__*/React.createElement("div", {
     className: "notes-item-body"
-  }, n.body ? n.body : /*#__PURE__*/React.createElement("span", {
-    className: "notes-item-empty"
-  }, "(empty)"))))));
+  }, n.body)))));
 }
 
 // ============================================================

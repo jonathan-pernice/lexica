@@ -249,9 +249,7 @@ function NotesView({ onOpen }) {
                 {n.refLabel || (n.book + " " + n.chapter)}
               </div>
               {n.snippet && <div className="notes-item-snippet">“{n.snippet}”</div>}
-              <div className="notes-item-body">
-                {n.body ? n.body : <span className="notes-item-empty">(empty)</span>}
-              </div>
+              {n.body && <div className="notes-item-body">{n.body}</div>}
             </li>
           ))}
         </ul>
