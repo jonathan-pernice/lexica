@@ -766,24 +766,30 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     setTranslation(next);
     onTranslationChange?.(next);
   };
-  // In-text search: which reading text to search. Only Bible texts (not the
-  // non-canonical readers); Parallel searches the English (KJV) column.
-  const readCorpus = corpus !== "bible" ? null : (translation === "parallel" ? "kjv" : translation);
+  // In-text search: which text to search. Bible → the active edition (Parallel
+  // searches the English/KJV column); a non-canonical reader → that text's id.
+  const readCorpus = corpus === "bible" ? (translation === "parallel" ? "kjv" : translation) : corpus;
   const canSearch = !!readCorpus;
+  const searchName = corpus === "bible" ? readCorpus.toUpperCase() : (nonCanon ? nonCanon.name : "");
   const runTextSearch = () => {
     const q = searchQ.trim();
     if (!q || !readCorpus) return;
     setSearchLoading(true);
     setSearchResults(null);
-    api.textSearch(q, readCorpus, "phrase", searchScope === "book" ? (selBook?.abbrev || "") : "")
+    const bookFilter = (corpus === "bible" && searchScope === "book") ? (selBook?.abbrev || "") : "";
+    api.textSearch(q, readCorpus, "phrase", bookFilter)
       .then(d => { setSearchResults(d.results || []); setSearchLoading(false); })
       .catch(() => { setSearchResults([]); setSearchLoading(false); });
   };
-  // Jump to a hit — reuse the shared nav path (loads the chapter, highlights +
-  // scrolls to the verse), then close the search panel.
+  // Jump to a hit. Bible → the shared nav path (loads chapter, highlights +
+  // scrolls). Non-canonical → same text, just switch to that chapter.
   const jumpToResult = (r) => {
     setSearchOpen(false);
-    onNavChange?.({ book: r.book, chapter: r.chapter, highlight: r.verse, scroll: true, translation });
+    if (corpus === "bible") {
+      onNavChange?.({ book: r.book, chapter: r.chapter, highlight: r.verse, scroll: true, translation });
+    } else {
+      setSelChapter(r.chapter);
+    }
   };
   const showStrongs     = libOptions.showStrongs     || false;
   const showInterlinear = libOptions.showInterlinear || false;
@@ -1471,7 +1477,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                 className="lib-search-input"
                 type="text"
                 autoFocus
-                placeholder={`Search ${readCorpus.toUpperCase()}${searchScope === "book" && selBook ? " · " + selBook.name : ""}…`}
+                placeholder={`Search ${searchName}${corpus === "bible" && searchScope === "book" && selBook ? " · " + selBook.name : ""}…`}
                 value={searchQ}
                 onChange={(e) => setSearchQ(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") runTextSearch(); if (e.key === "Escape") setSearchOpen(false); }}
@@ -1479,10 +1485,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               <button className="lib-search-go" onClick={runTextSearch} aria-label="Search">Go</button>
               <button className="lib-search-x" onClick={() => setSearchOpen(false)} aria-label="Close search">✕</button>
             </div>
-            <div className="lib-search-scope seg">
-              <button className={"seg-b" + (searchScope === "all" ? " on" : "")} onClick={() => setSearchScope("all")}>Whole Bible</button>
-              <button className={"seg-b" + (searchScope === "book" ? " on" : "")} onClick={() => setSearchScope("book")}>This book</button>
-            </div>
+            {corpus === "bible" && (
+              <div className="lib-search-scope seg">
+                <button className={"seg-b" + (searchScope === "all" ? " on" : "")} onClick={() => setSearchScope("all")}>Whole Bible</button>
+                <button className={"seg-b" + (searchScope === "book" ? " on" : "")} onClick={() => setSearchScope("book")}>This book</button>
+              </div>
+            )}
             <div className="lib-search-results">
               {searchLoading ? (
                 <div className="lib-search-status">Searching…</div>
@@ -1495,7 +1503,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                   <div className="lib-search-status">{searchResults.length}{searchResults.length === 1000 ? "+" : ""} match{searchResults.length === 1 ? "" : "es"}</div>
                   {searchResults.map((r, i) => (
                     <button key={i} className="lib-search-hit" onClick={() => jumpToResult(r)}>
-                      <span className="lib-search-hit-ref">{BOOK_LABELS[r.book] || r.book} {r.chapter}:{r.verse}</span>
+                      <span className="lib-search-hit-ref">{(corpus === "bible" ? (BOOK_LABELS[r.book] || r.book) : searchName)} {r.chapter}:{r.verse}</span>
                       <span className="lib-search-hit-text">{r.text}</span>
                     </button>
                   ))}

@@ -9,6 +9,7 @@ KJV results come from the _kjv_strongs_search / _kjv_word_search helpers.
 """
 from collections import Counter
 import json
+import re
 import sqlite3
 
 from flask import Blueprint, Response, jsonify, request
@@ -32,23 +33,39 @@ _TEXT_CORPORA = {
     "bsb": ("bsb_verses", "book_id", "chapter", "verse_num", "verse_text", True),
 }
 
+# Non-canonical texts live in their own <id>_verses(chapter, verse, english)
+# tables. This guard keeps the dynamic table name safe to interpolate.
+_EXTRA_BOOK_RE = re.compile(r"^[a-z0-9_]+$")
+
 
 @bp.route("/api/text-search")
 def text_search():
     """eSword-style plain-text verse search over a single reading text.
 
     q       — the search text
-    corpus  — 'bsb' (default) | 'kjv' | 'abp' — which reading text to search
+    corpus  — 'bsb' (default) | 'kjv' | 'abp', OR a non-canonical text id
+              (e.g. 'enoch', 'didache') — searches that text's English line
     mode    — 'phrase' (default: words together) | 'all' (every word, any order)
     book    — optional book abbreviation (e.g. 'Joh') to limit to one book
+              (ignored for non-canonical texts, which are a single book)
     """
     q = request.args.get("q", "").strip()
     corpus = request.args.get("corpus", "bsb").lower()
-    if not q or corpus not in _TEXT_CORPORA:
+    if not q:
         return jsonify({"results": [], "count": 0})
     mode = request.args.get("mode", "phrase")
     book = request.args.get("book", "").strip()
-    tbl, bcol, ccol, vcol, tcol, book_is_id = _TEXT_CORPORA[corpus]
+
+    if corpus in _TEXT_CORPORA:
+        tbl, bcol, ccol, vcol, tcol, book_is_id = _TEXT_CORPORA[corpus]
+        non_canon = False
+    elif _EXTRA_BOOK_RE.match(corpus):
+        # Non-canonical text: single book, readable text in the `english` column.
+        tbl, bcol, ccol, vcol, tcol, book_is_id = f"{corpus}_verses", None, "chapter", "verse", "english", False
+        non_canon = True
+        book = ""
+    else:
+        return jsonify({"results": [], "count": 0})
 
     where, params = [], []
     if mode == "all":
@@ -68,10 +85,12 @@ def text_search():
             where.append(f"{bcol} = ?")
             params.append(book)
 
+    select_bk = f"{bcol} AS bk, " if bcol else ""
+    order_bk = f"{bcol}, " if bcol else ""
     sql = (
-        f"SELECT {bcol} AS bk, {ccol} AS ch, {vcol} AS vs, {tcol} AS txt "
+        f"SELECT {select_bk}{ccol} AS ch, {vcol} AS vs, {tcol} AS txt "
         f"FROM {tbl} WHERE " + " AND ".join(where) +
-        f" ORDER BY {bcol}, {ccol}, {vcol} LIMIT 1000"
+        f" ORDER BY {order_bk}{ccol}, {vcol} LIMIT 1000"
     )
     conn = db_ro()
     try:
@@ -83,7 +102,10 @@ def text_search():
 
     results = []
     for r in rows:
-        abbrev = r["bk"] if not book_is_id else _KJV_BOOK_ID_REV.get(r["bk"], "")
+        if non_canon:
+            abbrev = corpus
+        else:
+            abbrev = r["bk"] if not book_is_id else _KJV_BOOK_ID_REV.get(r["bk"], "")
         results.append({
             "ref": f"{abbrev} {r['ch']}:{r['vs']}",
             "book": abbrev,
