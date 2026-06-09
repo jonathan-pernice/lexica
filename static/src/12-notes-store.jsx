@@ -21,7 +21,7 @@ const NOTE_COLOR_CSS = {
 const NotesStore = (function () {
   const KEY = "lexica.notes.v1";
   const DEVKEY = "lexica.device.v1";
-  const SYNCKEY = "lexica.sync.v1";   // the sync code, if turned on
+  const AUTHKEY = "lexica.auth.v1";   // { token, email } when signed in
   const listeners = new Set();
   let cache = null;
 
@@ -78,44 +78,59 @@ const NotesStore = (function () {
     return { added, updated, skipped };
   }
 
-  // --- sync code (the only identity; long + unguessable) ---
-  function getCode() { try { return localStorage.getItem(SYNCKEY) || null; } catch (e) { return null; } }
-  function genCode() {
-    const a = new Uint8Array(15);
-    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a);
-    else for (let i = 0; i < a.length; i++) a[i] = Math.floor(Math.random() * 256);
-    let s = "";
-    for (let i = 0; i < a.length; i++) s += String.fromCharCode(a[i]);
-    return btoa(s).replace(/[+/=]/g, "").slice(0, 20);
+  // --- account (email + password) ---
+  function getAuth() { try { return JSON.parse(localStorage.getItem(AUTHKEY)) || null; } catch (e) { return null; } }
+  function setAuth(a) {
+    try { a ? localStorage.setItem(AUTHKEY, JSON.stringify(a)) : localStorage.removeItem(AUTHKEY); } catch (e) {}
+    listeners.forEach(fn => { try { fn(); } catch (e) {} });
   }
+  function notify() { listeners.forEach(fn => { try { fn(); } catch (e) {} }); }
+
   function scheduleSync() {
-    if (applyingRemote || !getCode()) return;
+    const a = getAuth();
+    if (applyingRemote || !a || !a.token) return;
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => { syncNow(); }, 2500);
   }
   async function syncNow() {
-    const code = getCode();
-    if (!code) return { ok: false, reason: "off" };
-    syncing = true;
-    listeners.forEach(fn => { try { fn(); } catch (e) {} });
+    const a = getAuth();
+    if (!a || !a.token) return { ok: false, reason: "off" };
+    syncing = true; notify();
     try {
       const res = await fetch("/api/notes/sync", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, notes: load() }),
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + a.token },
+        body: JSON.stringify({ notes: load() }),
       });
-      if (!res.ok) { syncing = false; return { ok: false, status: res.status }; }
+      if (res.status === 401) { setAuth(null); return { ok: false, reason: "signed-out" }; }
+      if (!res.ok) return { ok: false, status: res.status };
       const data = await res.json();
       applyingRemote = true;
-      merge(data.notes || []);     // fold the server's copy back in (no re-schedule)
+      merge(data.notes || []);     // fold the account's copy back in (no re-schedule)
       applyingRemote = false;
       lastSync = Date.now();
       return { ok: true };
     } catch (e) {
       return { ok: false, error: String(e) };
     } finally {
-      syncing = false;
-      listeners.forEach(fn => { try { fn(); } catch (e) {} });
+      syncing = false; notify();
+    }
+  }
+  // POST to an auth endpoint; on success store {token,email} and push/pull notes.
+  async function authPost(path, email, password) {
+    try {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return { ok: false, error: data.error || "Something went wrong." };
+      setAuth({ token: data.token, email: data.email });
+      syncNow();   // push local notes up + pull the account's down
+      return { ok: true, email: data.email };
+    } catch (e) {
+      return { ok: false, error: "Network error." };
     }
   }
 
@@ -177,29 +192,25 @@ const NotesStore = (function () {
     },
     importMerge(incoming) { return merge(incoming); },
 
-    // --- sync API ---
-    syncCode: getCode,
-    syncInfo() { return { code: getCode(), syncing, last: lastSync }; },
-    genCode,
-    // Turn on / connect to a code (validates), then pull immediately.
-    setCode(code) {
-      const c = (code || "").trim();
-      if (!/^[A-Za-z0-9_-]{12,64}$/.test(c)) return { ok: false, reason: "bad" };
-      try { localStorage.setItem(SYNCKEY, c); } catch (e) {}
-      listeners.forEach(fn => { try { fn(); } catch (e) {} });
-      return syncNow();
-    },
-    clearCode() {
-      try { localStorage.removeItem(SYNCKEY); } catch (e) {}
+    // --- account API ---
+    auth: getAuth,
+    authInfo() { const a = getAuth(); return { email: a && a.email, token: a && a.token, syncing, last: lastSync }; },
+    signup(email, password) { return authPost("/api/auth/signup", email, password); },
+    login(email, password) { return authPost("/api/auth/login", email, password); },
+    logout() {
+      const a = getAuth();
+      if (a && a.token) {
+        fetch("/api/auth/logout", { method: "POST", headers: { "Authorization": "Bearer " + a.token } }).catch(() => {});
+      }
       clearTimeout(syncTimer);
-      listeners.forEach(fn => { try { fn(); } catch (e) {} });
+      setAuth(null);
     },
     syncNow,
   };
 })();
 
-// On load, if sync is on, pull once so this device catches up.
-if (NotesStore.syncCode()) { setTimeout(() => NotesStore.syncNow(), 400); }
+// On load, if signed in, pull once so this device catches up.
+if (NotesStore.auth()) { setTimeout(() => NotesStore.syncNow(), 400); }
 
 // Re-render a component whenever the note store changes.
 function useNotesVersion() {

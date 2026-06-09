@@ -181,9 +181,9 @@ function NotesView({ onOpen }) {
   const [group, setGroup] = useState(false);      // group by book
   const [collapsed, setCollapsed] = useState(() => new Set());   // collapsed book keys
   const toggleSection = (key) => setCollapsed(s => { const n = new Set(s); n.has(key) ? n.delete(key) : n.add(key); return n; });
-  const [codeInput, setCodeInput] = useState("");
-  const [showEnter, setShowEnter] = useState(false);
-  const sync = NotesStore.syncInfo();
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const acct = NotesStore.authInfo();
   const fileRef = useRef(null);
   let notes = NotesStore.search(q);               // already newest-first
   if (filter === "bookmark") notes = notes.filter(n => n.bookmark);
@@ -264,33 +264,25 @@ function NotesView({ onOpen }) {
         </div>
         {msg && <div className="notes-msg">{msg}</div>}
         <div className="notes-sync">
-          {sync.code ? (
+          {acct.email ? (
             <>
-              <span className="notes-sync-label">Sync on:</span>
-              <code className="notes-sync-code">{sync.code}</code>
-              <button className="notes-tool-btn" onClick={() => { try { navigator.clipboard && navigator.clipboard.writeText(sync.code); setMsg("Code copied."); } catch (e) {} }}>Copy</button>
-              <button className="notes-tool-btn" onClick={() => NotesStore.syncNow()} disabled={sync.syncing}>{sync.syncing ? "Syncing…" : "Sync now"}</button>
-              <button className="notes-tool-btn" onClick={() => { if (confirm("Turn off sync on this device? Your notes stay here; they just stop syncing.")) NotesStore.clearCode(); }}>Turn off</button>
-            </>
-          ) : showEnter ? (
-            <>
-              <input className="notes-sync-input" placeholder="Paste your sync code" value={codeInput} onChange={(e) => setCodeInput(e.target.value)} />
-              <button className="notes-tool-btn" onClick={async () => {
-                const r = await NotesStore.setCode(codeInput);
-                if (r && r.reason === "bad") setMsg("That code doesn't look right.");
-                else { setShowEnter(false); setCodeInput(""); setMsg("Connected — syncing."); }
-              }}>Connect</button>
-              <button className="notes-tool-btn" onClick={() => { setShowEnter(false); setCodeInput(""); }}>Cancel</button>
+              <span className="notes-sync-label">Signed in:</span>
+              <span className="notes-acct-email">{acct.email}</span>
+              <button className="notes-tool-btn" onClick={() => NotesStore.syncNow()} disabled={acct.syncing}>{acct.syncing ? "Syncing…" : "Sync now"}</button>
+              <button className="notes-tool-btn" onClick={() => NotesStore.logout()}>Log out</button>
             </>
           ) : (
-            <>
-              <span className="notes-sync-label">Sync across devices:</span>
-              <button className="notes-tool-btn" onClick={() => NotesStore.setCode(NotesStore.genCode())}>Turn on</button>
-              <button className="notes-tool-btn" onClick={() => setShowEnter(true)}>Enter a code</button>
-            </>
+            <form className="notes-auth" onSubmit={(e) => e.preventDefault()}>
+              <input className="notes-sync-input" type="email" placeholder="Email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input className="notes-sync-input" type="password" placeholder="Password" autoComplete="current-password" value={pass} onChange={(e) => setPass(e.target.value)} />
+              <button className="notes-tool-btn" onClick={async () => { const r = await NotesStore.login(email, pass); setMsg(r.ok ? "Signed in — syncing." : r.error); if (r.ok) { setEmail(""); setPass(""); } }}>Log in</button>
+              <button className="notes-tool-btn" onClick={async () => { const r = await NotesStore.signup(email, pass); setMsg(r.ok ? "Account created — syncing." : r.error); if (r.ok) { setEmail(""); setPass(""); } }}>Sign up</button>
+            </form>
           )}
         </div>
-        {sync.code && <div className="notes-sync-hint">Open this code on another device to see the same notes. Keep it safe — it’s the only key, and lost codes can’t be recovered.</div>}
+        {acct.email
+          ? <div className="notes-sync-hint">Your notes sync to this account on every device you log into.</div>
+          : <div className="notes-sync-hint">Optional — sign in to sync your notes across devices. Notes work fine without an account.</div>}
         <input
           className="notes-search"
           type="text"

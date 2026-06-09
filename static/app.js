@@ -777,7 +777,7 @@ const NOTE_COLOR_CSS = {
 const NotesStore = function () {
   const KEY = "lexica.notes.v1";
   const DEVKEY = "lexica.device.v1";
-  const SYNCKEY = "lexica.sync.v1"; // the sync code, if turned on
+  const AUTHKEY = "lexica.auth.v1"; // { token, email } when signed in
   const listeners = new Set();
   let cache = null;
 
@@ -865,61 +865,72 @@ const NotesStore = function () {
     };
   }
 
-  // --- sync code (the only identity; long + unguessable) ---
-  function getCode() {
+  // --- account (email + password) ---
+  function getAuth() {
     try {
-      return localStorage.getItem(SYNCKEY) || null;
+      return JSON.parse(localStorage.getItem(AUTHKEY)) || null;
     } catch (e) {
       return null;
     }
   }
-  function genCode() {
-    const a = new Uint8Array(15);
-    if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a);else for (let i = 0; i < a.length; i++) a[i] = Math.floor(Math.random() * 256);
-    let s = "";
-    for (let i = 0; i < a.length; i++) s += String.fromCharCode(a[i]);
-    return btoa(s).replace(/[+/=]/g, "").slice(0, 20);
+  function setAuth(a) {
+    try {
+      a ? localStorage.setItem(AUTHKEY, JSON.stringify(a)) : localStorage.removeItem(AUTHKEY);
+    } catch (e) {}
+    listeners.forEach(fn => {
+      try {
+        fn();
+      } catch (e) {}
+    });
+  }
+  function notify() {
+    listeners.forEach(fn => {
+      try {
+        fn();
+      } catch (e) {}
+    });
   }
   function scheduleSync() {
-    if (applyingRemote || !getCode()) return;
+    const a = getAuth();
+    if (applyingRemote || !a || !a.token) return;
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => {
       syncNow();
     }, 2500);
   }
   async function syncNow() {
-    const code = getCode();
-    if (!code) return {
+    const a = getAuth();
+    if (!a || !a.token) return {
       ok: false,
       reason: "off"
     };
     syncing = true;
-    listeners.forEach(fn => {
-      try {
-        fn();
-      } catch (e) {}
-    });
+    notify();
     try {
       const res = await fetch("/api/notes/sync", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + a.token
         },
         body: JSON.stringify({
-          code,
           notes: load()
         })
       });
-      if (!res.ok) {
-        syncing = false;
+      if (res.status === 401) {
+        setAuth(null);
         return {
           ok: false,
-          status: res.status
+          reason: "signed-out"
         };
       }
+      if (!res.ok) return {
+        ok: false,
+        status: res.status
+      };
       const data = await res.json();
       applyingRemote = true;
-      merge(data.notes || []); // fold the server's copy back in (no re-schedule)
+      merge(data.notes || []); // fold the account's copy back in (no re-schedule)
       applyingRemote = false;
       lastSync = Date.now();
       return {
@@ -932,11 +943,41 @@ const NotesStore = function () {
       };
     } finally {
       syncing = false;
-      listeners.forEach(fn => {
-        try {
-          fn();
-        } catch (e) {}
+      notify();
+    }
+  }
+  // POST to an auth endpoint; on success store {token,email} and push/pull notes.
+  async function authPost(path, email, password) {
+    try {
+      const res = await fetch(path, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) return {
+        ok: false,
+        error: data.error || "Something went wrong."
+      };
+      setAuth({
+        token: data.token,
+        email: data.email
+      });
+      syncNow(); // push local notes up + pull the account's down
+      return {
+        ok: true,
+        email: data.email
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: "Network error."
+      };
     }
   }
   return {
@@ -1018,50 +1059,42 @@ const NotesStore = function () {
     importMerge(incoming) {
       return merge(incoming);
     },
-    // --- sync API ---
-    syncCode: getCode,
-    syncInfo() {
+    // --- account API ---
+    auth: getAuth,
+    authInfo() {
+      const a = getAuth();
       return {
-        code: getCode(),
+        email: a && a.email,
+        token: a && a.token,
         syncing,
         last: lastSync
       };
     },
-    genCode,
-    // Turn on / connect to a code (validates), then pull immediately.
-    setCode(code) {
-      const c = (code || "").trim();
-      if (!/^[A-Za-z0-9_-]{12,64}$/.test(c)) return {
-        ok: false,
-        reason: "bad"
-      };
-      try {
-        localStorage.setItem(SYNCKEY, c);
-      } catch (e) {}
-      listeners.forEach(fn => {
-        try {
-          fn();
-        } catch (e) {}
-      });
-      return syncNow();
+    signup(email, password) {
+      return authPost("/api/auth/signup", email, password);
     },
-    clearCode() {
-      try {
-        localStorage.removeItem(SYNCKEY);
-      } catch (e) {}
+    login(email, password) {
+      return authPost("/api/auth/login", email, password);
+    },
+    logout() {
+      const a = getAuth();
+      if (a && a.token) {
+        fetch("/api/auth/logout", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + a.token
+          }
+        }).catch(() => {});
+      }
       clearTimeout(syncTimer);
-      listeners.forEach(fn => {
-        try {
-          fn();
-        } catch (e) {}
-      });
+      setAuth(null);
     },
     syncNow
   };
 }();
 
-// On load, if sync is on, pull once so this device catches up.
-if (NotesStore.syncCode()) {
+// On load, if signed in, pull once so this device catches up.
+if (NotesStore.auth()) {
   setTimeout(() => NotesStore.syncNow(), 400);
 }
 
@@ -2537,9 +2570,9 @@ function NotesView({
     n.has(key) ? n.delete(key) : n.add(key);
     return n;
   });
-  const [codeInput, setCodeInput] = useState("");
-  const [showEnter, setShowEnter] = useState(false);
-  const sync = NotesStore.syncInfo();
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const acct = NotesStore.authInfo();
   const fileRef = useRef(null);
   let notes = NotesStore.search(q); // already newest-first
   if (filter === "bookmark") notes = notes.filter(n => n.bookmark);else if (filter === "highlight") notes = notes.filter(n => n.color);else if (filter === "note") notes = notes.filter(n => n.body && n.body.trim());
@@ -2649,59 +2682,59 @@ function NotesView({
     className: "notes-msg"
   }, msg), /*#__PURE__*/React.createElement("div", {
     className: "notes-sync"
-  }, sync.code ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+  }, acct.email ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
     className: "notes-sync-label"
-  }, "Sync on:"), /*#__PURE__*/React.createElement("code", {
-    className: "notes-sync-code"
-  }, sync.code), /*#__PURE__*/React.createElement("button", {
-    className: "notes-tool-btn",
-    onClick: () => {
-      try {
-        navigator.clipboard && navigator.clipboard.writeText(sync.code);
-        setMsg("Code copied.");
-      } catch (e) {}
-    }
-  }, "Copy"), /*#__PURE__*/React.createElement("button", {
+  }, "Signed in:"), /*#__PURE__*/React.createElement("span", {
+    className: "notes-acct-email"
+  }, acct.email), /*#__PURE__*/React.createElement("button", {
     className: "notes-tool-btn",
     onClick: () => NotesStore.syncNow(),
-    disabled: sync.syncing
-  }, sync.syncing ? "Syncing…" : "Sync now"), /*#__PURE__*/React.createElement("button", {
+    disabled: acct.syncing
+  }, acct.syncing ? "Syncing…" : "Sync now"), /*#__PURE__*/React.createElement("button", {
     className: "notes-tool-btn",
-    onClick: () => {
-      if (confirm("Turn off sync on this device? Your notes stay here; they just stop syncing.")) NotesStore.clearCode();
-    }
-  }, "Turn off")) : showEnter ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("input", {
+    onClick: () => NotesStore.logout()
+  }, "Log out")) : /*#__PURE__*/React.createElement("form", {
+    className: "notes-auth",
+    onSubmit: e => e.preventDefault()
+  }, /*#__PURE__*/React.createElement("input", {
     className: "notes-sync-input",
-    placeholder: "Paste your sync code",
-    value: codeInput,
-    onChange: e => setCodeInput(e.target.value)
+    type: "email",
+    placeholder: "Email",
+    autoComplete: "username",
+    value: email,
+    onChange: e => setEmail(e.target.value)
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "notes-sync-input",
+    type: "password",
+    placeholder: "Password",
+    autoComplete: "current-password",
+    value: pass,
+    onChange: e => setPass(e.target.value)
   }), /*#__PURE__*/React.createElement("button", {
     className: "notes-tool-btn",
     onClick: async () => {
-      const r = await NotesStore.setCode(codeInput);
-      if (r && r.reason === "bad") setMsg("That code doesn't look right.");else {
-        setShowEnter(false);
-        setCodeInput("");
-        setMsg("Connected — syncing.");
+      const r = await NotesStore.login(email, pass);
+      setMsg(r.ok ? "Signed in — syncing." : r.error);
+      if (r.ok) {
+        setEmail("");
+        setPass("");
       }
     }
-  }, "Connect"), /*#__PURE__*/React.createElement("button", {
+  }, "Log in"), /*#__PURE__*/React.createElement("button", {
     className: "notes-tool-btn",
-    onClick: () => {
-      setShowEnter(false);
-      setCodeInput("");
+    onClick: async () => {
+      const r = await NotesStore.signup(email, pass);
+      setMsg(r.ok ? "Account created — syncing." : r.error);
+      if (r.ok) {
+        setEmail("");
+        setPass("");
+      }
     }
-  }, "Cancel")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-    className: "notes-sync-label"
-  }, "Sync across devices:"), /*#__PURE__*/React.createElement("button", {
-    className: "notes-tool-btn",
-    onClick: () => NotesStore.setCode(NotesStore.genCode())
-  }, "Turn on"), /*#__PURE__*/React.createElement("button", {
-    className: "notes-tool-btn",
-    onClick: () => setShowEnter(true)
-  }, "Enter a code"))), sync.code && /*#__PURE__*/React.createElement("div", {
+  }, "Sign up"))), acct.email ? /*#__PURE__*/React.createElement("div", {
     className: "notes-sync-hint"
-  }, "Open this code on another device to see the same notes. Keep it safe \u2014 it\u2019s the only key, and lost codes can\u2019t be recovered."), /*#__PURE__*/React.createElement("input", {
+  }, "Your notes sync to this account on every device you log into.") : /*#__PURE__*/React.createElement("div", {
+    className: "notes-sync-hint"
+  }, "Optional \u2014 sign in to sync your notes across devices. Notes work fine without an account."), /*#__PURE__*/React.createElement("input", {
     className: "notes-search",
     type: "text",
     placeholder: "Search your notes\u2026",
