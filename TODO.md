@@ -50,6 +50,16 @@ Still open:
    spike) via the local read-only test loop before pushing. (Surfaced 2026-06-08 — the Gen 6 summary
    got stuck because summaries lacked auto-refresh; added a manual `_SUMMARY_VER` as a stopgap.)
    `code: ai.py ~741-805, views_summary.py cache helpers, views_crossref.py ~94-285`
+   **PAIR WITH:** unify the AI prompt STYLE too. Every blurb should share one "house style" snippet
+   (plain language, short one-idea sentences, no run-ons, no jargon, budget by WORD COUNT not sentence
+   count — a sentence cap makes Haiku cram events into long run-ons). Put the snippet in `core.py`; each
+   prompt = its own task + its own word budget (chapter ~90-140w, xref shorter, person/place card
+   shorter) + the shared snippet. This belongs WITH the cache-fingerprint work because once prompts are
+   fingerprinted, editing the shared style auto-refreshes every cache (otherwise you bump N versions by
+   hand). Chapter summary already converted to word-budget + short-sentences (`views_summary.py`,
+   `_SUMMARY_VER=6`); the cross-ref ("3-sentence synthesis") and person/place ("1-2 sentences") prompts
+   still cap by sentence count and should move to the shared snippet.
+   `code: + views_crossref.py system prompt, ai.py metav/lsj prompts, new shared snippet in core.py`
 
 ---
 
