@@ -2702,8 +2702,10 @@ input { font-family: inherit; }
 .note-popover-mobile .note-swatch { width: 28px; height: 28px; }
 .note-popover-mobile .note-popover-btn { font-size: 15px; padding: 9px 16px; }
 
-/* Highlight paint on words / verses (matched in the same reading text) */
-.lib-hi { border-radius: 3px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+/* Highlight paint on words / verses (matched in the same reading text).
+   Square corners + flush chips (column-gap is 0) make a run read as one
+   continuous bar instead of a string of separate pills. */
+.lib-hi { border-radius: 0; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .lib-hi-yellow { background: #ffe89e; }
 .lib-hi-green  { background: #bdeec0; }
 .lib-hi-blue   { background: #bfe0ff; }
