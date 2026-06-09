@@ -2445,7 +2445,7 @@ function NoteAddPopover({
   }))), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onAdd
-  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Note"), onCopy && /*#__PURE__*/React.createElement("button", {
+  }, "\u270E Note"), onCopy && /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onCopy
   }, "Copy"), onJournal && /*#__PURE__*/React.createElement("button", {
@@ -2505,16 +2505,16 @@ function VerseNoteMenu({
   }))), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onNote
-  }, "\u270E Note"), /*#__PURE__*/React.createElement("button", {
-    className: "note-popover-btn",
-    onClick: onBookmark
-  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Bookmark"), onCopy && /*#__PURE__*/React.createElement("button", {
+  }, "\u270E Note"), onCopy && /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onCopy
   }, "Copy"), onJournal && /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onJournal
-  }, "Journal")));
+  }, "Journal"), /*#__PURE__*/React.createElement("button", {
+    className: "note-popover-btn",
+    onClick: onBookmark
+  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Bookmark")));
 }
 
 // A row of color swatches + a clear button, for the editor.
