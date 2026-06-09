@@ -632,6 +632,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const navVisible = !isMobile;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [modesOpen, setModesOpen] = useState(false);
+  // In-text search ("find in the text you're reading")
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQ, setSearchQ] = useState("");
+  const [searchResults, setSearchResults] = useState(null);   // null = no search run yet
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchScope, setSearchScope] = useState("all");      // "all" | "book" (current book only)
 
   useEffect(() => {
     api.books().then(data => {
@@ -759,6 +765,25 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
     const next = translation === "parallel" ? "abp" : "parallel";
     setTranslation(next);
     onTranslationChange?.(next);
+  };
+  // In-text search: which reading text to search. Only Bible texts (not the
+  // non-canonical readers); Parallel searches the English (KJV) column.
+  const readCorpus = corpus !== "bible" ? null : (translation === "parallel" ? "kjv" : translation);
+  const canSearch = !!readCorpus;
+  const runTextSearch = () => {
+    const q = searchQ.trim();
+    if (!q || !readCorpus) return;
+    setSearchLoading(true);
+    setSearchResults(null);
+    api.textSearch(q, readCorpus, "phrase", searchScope === "book" ? (selBook?.abbrev || "") : "")
+      .then(d => { setSearchResults(d.results || []); setSearchLoading(false); })
+      .catch(() => { setSearchResults([]); setSearchLoading(false); });
+  };
+  // Jump to a hit — reuse the shared nav path (loads the chapter, highlights +
+  // scrolls to the verse), then close the search panel.
+  const jumpToResult = (r) => {
+    setSearchOpen(false);
+    onNavChange?.({ book: r.book, chapter: r.chapter, highlight: r.verse, scroll: true, translation });
   };
   const showStrongs     = libOptions.showStrongs     || false;
   const showInterlinear = libOptions.showInterlinear || false;
@@ -1393,6 +1418,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
               >Prose</button>
             </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
+            {canSearch && (
+              <button className={"lib-toggle lib-toggle-icon" + (searchOpen ? " on" : "")} title="Search this text" aria-label="Search this text" aria-pressed={searchOpen} onClick={() => setSearchOpen(o => !o)}><Icon.Search/></button>
+            )}
             <div className="lib-other-wrap">
               <button className="lib-toggle lib-font-btn" onClick={() => setFontOpen(o => !o)} title="Text size" aria-label="Text size">Aa ▾</button>
               {fontOpen && (
@@ -1415,6 +1443,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
           <button className="mbar-overview" onClick={() => setSummaryOpen(true)} aria-label="Chapter overview">
             <Icon.Info/>
           </button>
+          {canSearch && (
+            <button className="mbar-overview mbar-search" onClick={() => setSearchOpen(o => !o)} aria-label="Search this text">
+              <Icon.Search/>
+            </button>
+          )}
           <div className="mbar-center">
             <button className="mbar-ch-nav" disabled={selChapter <= 1} onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }} aria-label="Previous chapter">‹</button>
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
@@ -1427,6 +1460,50 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
             {nonCanon ? (nonCanon.abbr || nonCanon.name) : translation === "parallel" ? "Par" : translation.toUpperCase()}
           </button>
         </div>
+      )}
+
+      {searchOpen && canSearch && (
+        <>
+          <div className="lib-search-scrim" onClick={() => setSearchOpen(false)} />
+          <div className="lib-search-panel">
+            <div className="lib-search-row">
+              <input
+                className="lib-search-input"
+                type="text"
+                autoFocus
+                placeholder={`Search ${readCorpus.toUpperCase()}${searchScope === "book" && selBook ? " · " + selBook.name : ""}…`}
+                value={searchQ}
+                onChange={(e) => setSearchQ(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") runTextSearch(); if (e.key === "Escape") setSearchOpen(false); }}
+              />
+              <button className="lib-search-go" onClick={runTextSearch} aria-label="Search">Go</button>
+              <button className="lib-search-x" onClick={() => setSearchOpen(false)} aria-label="Close search">✕</button>
+            </div>
+            <div className="lib-search-scope seg">
+              <button className={"seg-b" + (searchScope === "all" ? " on" : "")} onClick={() => setSearchScope("all")}>Whole Bible</button>
+              <button className={"seg-b" + (searchScope === "book" ? " on" : "")} onClick={() => setSearchScope("book")}>This book</button>
+            </div>
+            <div className="lib-search-results">
+              {searchLoading ? (
+                <div className="lib-search-status">Searching…</div>
+              ) : searchResults == null ? (
+                <div className="lib-search-status">Type words and press Enter.</div>
+              ) : searchResults.length === 0 ? (
+                <div className="lib-search-status">No matches.</div>
+              ) : (
+                <>
+                  <div className="lib-search-status">{searchResults.length}{searchResults.length === 1000 ? "+" : ""} match{searchResults.length === 1 ? "" : "es"}</div>
+                  {searchResults.map((r, i) => (
+                    <button key={i} className="lib-search-hit" onClick={() => jumpToResult(r)}>
+                      <span className="lib-search-hit-ref">{BOOK_LABELS[r.book] || r.book} {r.chapter}:{r.verse}</span>
+                      <span className="lib-search-hit-text">{r.text}</span>
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+        </>
       )}
 
       <div className={"lib-reading" + (showInterlinear ? " lib-interlinear-on" : "")} style={{...(translation === "parallel" ? {paddingTop: 0} : {}), "--lib-font-size": libFontSize + "px"}} {...swipeHandlers}>

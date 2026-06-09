@@ -48,8 +48,9 @@ const api = {
     fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   bsbChapter: (book, ch) =>
     fetch(`/api/bsb/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
-  bsbSearch: (q, mode, book) =>
-    fetch(`/api/bsb/search?q=${encodeURIComponent(q)}&mode=${encodeURIComponent(mode || "phrase")}` +
+  textSearch: (q, corpus, mode, book) =>
+    fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` +
+          `&mode=${encodeURIComponent(mode || "phrase")}` +
           (book ? `&book=${encodeURIComponent(book)}` : "")).then(r => r.json()),
   summary: (book, ch) =>
     fetch(`/api/summary/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),

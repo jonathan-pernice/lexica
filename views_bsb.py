@@ -16,7 +16,7 @@ import sqlite3
 
 from flask import Blueprint, jsonify, request
 
-from core import db_ro, _KJV_BOOK_ID, _KJV_BOOK_ID_REV
+from core import db_ro, _KJV_BOOK_ID
 
 bp = Blueprint("bsb", __name__)
 
@@ -51,57 +51,5 @@ def bsb_chapter(book, chapter):
         for r in rows
     ])
 
-
-@bp.route("/api/bsb/search")
-def bsb_search():
-    """Plain-text verse search over the BSB.
-
-    q     — the search text
-    mode  — 'phrase' (default: the words appear together) or 'all' (every word
-            appears somewhere in the verse, any order)
-    book  — optional book abbreviation (e.g. 'Joh') to limit the search
-    """
-    q = request.args.get("q", "").strip()
-    if not q:
-        return jsonify({"results": [], "count": 0})
-    mode = request.args.get("mode", "phrase")
-    book = request.args.get("book", "").strip()
-
-    where, params = [], []
-    if mode == "all":
-        for w in q.split():
-            where.append("word_boundary(verse_text, ?)")
-            params.append(w)
-    else:
-        where.append("verse_text LIKE ? COLLATE NOCASE")
-        params.append(f"%{q}%")
-    if book:
-        bid = _KJV_BOOK_ID.get(book)
-        if bid:
-            where.append("book_id = ?")
-            params.append(bid)
-
-    sql = (
-        "SELECT book_id, chapter, verse_num, verse_text FROM bsb_verses "
-        "WHERE " + " AND ".join(where) +
-        " ORDER BY book_id, chapter, verse_num LIMIT 1000"
-    )
-    conn = db_ro()
-    try:
-        rows = conn.execute(sql, params).fetchall()
-    except sqlite3.OperationalError:
-        return jsonify({"results": [], "count": 0})
-    finally:
-        conn.close()
-
-    results = [
-        {
-            "ref": f"{_KJV_BOOK_ID_REV.get(r['book_id'], '')} {r['chapter']}:{r['verse_num']}",
-            "book": _KJV_BOOK_ID_REV.get(r["book_id"], ""),
-            "chapter": r["chapter"],
-            "verse": r["verse_num"],
-            "text": r["verse_text"],
-        }
-        for r in rows
-    ]
-    return jsonify({"results": results, "count": len(results)})
+# NOTE: plain-text BSB search lives in views_search.py's generic /api/text-search
+# (corpus=bsb), which also covers KJV and ABP. No BSB-specific search route here.

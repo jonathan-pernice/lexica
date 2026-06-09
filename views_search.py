@@ -9,17 +9,89 @@ KJV results come from the _kjv_strongs_search / _kjv_word_search helpers.
 """
 from collections import Counter
 import json
+import sqlite3
 
 from flask import Blueprint, Response, jsonify, request
 
 from core import (
-    db, _strongs_num, _strip_accents, _clean_gloss,
-    _FUNCTION_STRONGS, _KJV_BOOK_ID_REV,
+    db, db_ro, _strongs_num, _strip_accents, _clean_gloss,
+    _FUNCTION_STRONGS, _KJV_BOOK_ID, _KJV_BOOK_ID_REV,
 )
 
 bp = Blueprint("search", __name__)
 
 _search_cache: dict = {}        # in-memory lexicon search cache (q → payload)
+
+# Per-corpus verse-text tables for the Library plain-text search. ABP keeps the
+# verse text in `verses` (Greek) keyed by book abbreviation; KJV/BSB keep English
+# verse text keyed by the 1-66 book_id.
+_TEXT_CORPORA = {
+    # corpus: (table, book_col, chapter_col, verse_col, text_col, book_is_id)
+    "abp": ("verses",     "book",    "chapter", "verse",     "text",       False),
+    "kjv": ("kjv_verses", "book_id", "chapter", "verse_num", "verse_text", True),
+    "bsb": ("bsb_verses", "book_id", "chapter", "verse_num", "verse_text", True),
+}
+
+
+@bp.route("/api/text-search")
+def text_search():
+    """eSword-style plain-text verse search over a single reading text.
+
+    q       — the search text
+    corpus  — 'bsb' (default) | 'kjv' | 'abp' — which reading text to search
+    mode    — 'phrase' (default: words together) | 'all' (every word, any order)
+    book    — optional book abbreviation (e.g. 'Joh') to limit to one book
+    """
+    q = request.args.get("q", "").strip()
+    corpus = request.args.get("corpus", "bsb").lower()
+    if not q or corpus not in _TEXT_CORPORA:
+        return jsonify({"results": [], "count": 0})
+    mode = request.args.get("mode", "phrase")
+    book = request.args.get("book", "").strip()
+    tbl, bcol, ccol, vcol, tcol, book_is_id = _TEXT_CORPORA[corpus]
+
+    where, params = [], []
+    if mode == "all":
+        for w in q.split():
+            where.append(f"word_boundary({tcol}, ?)")
+            params.append(w)
+    else:
+        where.append(f"{tcol} LIKE ? COLLATE NOCASE")
+        params.append(f"%{q}%")
+    if book:
+        if book_is_id:
+            bid = _KJV_BOOK_ID.get(book)
+            if bid:
+                where.append(f"{bcol} = ?")
+                params.append(bid)
+        else:
+            where.append(f"{bcol} = ?")
+            params.append(book)
+
+    sql = (
+        f"SELECT {bcol} AS bk, {ccol} AS ch, {vcol} AS vs, {tcol} AS txt "
+        f"FROM {tbl} WHERE " + " AND ".join(where) +
+        f" ORDER BY {bcol}, {ccol}, {vcol} LIMIT 1000"
+    )
+    conn = db_ro()
+    try:
+        rows = conn.execute(sql, params).fetchall()
+    except sqlite3.OperationalError:
+        return jsonify({"results": [], "count": 0})
+    finally:
+        conn.close()
+
+    results = []
+    for r in rows:
+        abbrev = r["bk"] if not book_is_id else _KJV_BOOK_ID_REV.get(r["bk"], "")
+        results.append({
+            "ref": f"{abbrev} {r['ch']}:{r['vs']}",
+            "book": abbrev,
+            "chapter": r["ch"],
+            "verse": r["vs"],
+            "text": r["txt"] or "",
+        })
+    return jsonify({"results": results, "count": len(results)})
 
 
 def _kjv_strongs_search(conn, sids, out_rows, out_groupings):
