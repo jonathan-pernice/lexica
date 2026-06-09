@@ -165,8 +165,21 @@ function useSwipeToDismiss(onClose) {
     const onEnd = () => {
       if (!active) return;
       active = false;
-      if (dragY > 90) { closeRef.current?.(); return; }
-      if (dragY) { el.style.transition = SNAP; el.style.transform = ''; }
+      if (dragY > 90) {                     // committed: slide the card fully down, THEN dismiss
+        el.style.transition = SNAP;
+        el.style.transform = 'translateY(100%)';
+        let done = false;
+        const finish = () => {
+          if (done) return; done = true;
+          el.removeEventListener('transitionend', finish);
+          closeRef.current?.();
+        };
+        el.addEventListener('transitionend', finish);
+        setTimeout(finish, 320);            // fallback if transitionend doesn't fire
+        dragY = 0;
+        return;
+      }
+      if (dragY) { el.style.transition = SNAP; el.style.transform = ''; }   // not far enough: snap back up
       dragY = 0;
     };
 
