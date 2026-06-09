@@ -1107,6 +1107,16 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     >{verse}</span>
   );
 
+  // Verse number for non-canonical texts: opens the note menu on right-click /
+  // long-press, but no cross-references (those texts have none). Left-click is a no-op
+  // (just swallows the click that follows a long-press).
+  const noteVnum = (verse, cls = "lib-vnum") => (
+    <span className={cls + " lib-vnum-click"}
+      title="Right-click / long-press: add a note"
+      onClick={() => { if (vnumPressRef.current.fired) vnumPressRef.current.fired = false; }}
+      {...vnumNoteHandlers(verse)}>{verse}</span>
+  );
+
   const joinProse = (words) => {
     const tokens = words.map(w => w.english).filter(Boolean);
     return tokens.reduce((acc, tok, i) => {
@@ -1531,7 +1541,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     };
     return (
       <span key={`d${i}`}
-        className={"lib-word" + (clickable ? " lib-word-clickable" : "")}
+        className={"lib-word" + (clickable ? " lib-word-clickable" : "") + hiClass(v.verse, null)}
         onClick={clickable ? () => onWordClick(entry) : undefined}>
         {showInterlinear && (w.lemma
           ? <span className="lib-iw-greek">{w.lemma}</span>
@@ -1549,9 +1559,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const renderDidacheVerse = (v) => (
     <React.Fragment key={v.verse}>
       {v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
-      <div className="lib-verse-row lib-did-row">
-        <span className="lib-vnum">{v.verse}</span>
-        <span className="lib-verse-content lib-verse-chips">{didChips(v)}</span>
+      <div className="lib-verse-row lib-did-row" data-note-verse={v.verse}>
+        {noteVnum(v.verse)}
+        <span className="lib-verse-content lib-verse-chips">{noteMarker(v.verse)}{didChips(v)}</span>
       </div>
     </React.Fragment>
   );
@@ -1562,9 +1572,18 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       {didVerses.map(v => (
         <React.Fragment key={v.verse}>
           {v.heading && <div className="pericope-heading">{v.heading}</div>}
-          <span className="lib-flow-verse">
-            <sup className="lib-flow-vnum">{v.verse}</sup>
-            {(v.english || "") + " "}
+          <span className="lib-flow-verse" data-note-verse={v.verse}>
+            <sup className="lib-flow-vnum"
+                 title="Right-click / long-press: add a note"
+                 onClick={() => { if (vnumPressRef.current.fired) vnumPressRef.current.fired = false; }}
+                 {...vnumNoteHandlers(v.verse)}>{v.verse}</sup>
+            {noteForVerse(v.verse) && (
+              <button className="lib-note-dot lib-note-dot-inline" title="Open note" aria-label="Open note"
+                onClick={(e) => { e.stopPropagation(); const n = noteForVerse(v.verse); onOpenNote && onOpenNote(n.id); }}>
+                <Icon.Bookmark/>
+              </button>
+            )}
+            <span className={hiClass(v.verse, null) || undefined}>{(v.english || "") + " "}</span>
           </span>
         </React.Fragment>
       ))}
@@ -1575,10 +1594,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const renderDidacheParallelVerse = (v) => (
     <React.Fragment key={v.verse}>
       {v.heading && <div className="lib-parallel-section-heading"><div className="pericope-heading">{v.heading}</div></div>}
-      <div className="lib-parallel-verse">
-        <div className="lib-parallel-vnum"><span className="lib-vnum">{v.verse}</span></div>
+      <div className="lib-parallel-verse" data-note-verse={v.verse}>
+        <div className="lib-parallel-vnum">{noteVnum(v.verse)}{noteMarker(v.verse)}</div>
         <div className="lib-parallel-col"><span className="lib-verse-chips">{didChips(v)}</span></div>
-        <div className="lib-parallel-col"><p className="lib-did-eng">{v.english}</p></div>
+        <div className="lib-parallel-col"><p className={"lib-did-eng" + hiClass(v.verse, null)}>{v.english}</p></div>
       </div>
     </React.Fragment>
   );

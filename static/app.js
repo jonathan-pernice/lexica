@@ -4816,6 +4816,17 @@ function LibraryView({
       handleVerseNum(verse);
     } : undefined
   }, vnumNoteHandlers(verse)), verse);
+
+  // Verse number for non-canonical texts: opens the note menu on right-click /
+  // long-press, but no cross-references (those texts have none). Left-click is a no-op
+  // (just swallows the click that follows a long-press).
+  const noteVnum = (verse, cls = "lib-vnum") => /*#__PURE__*/React.createElement("span", _extends({
+    className: cls + " lib-vnum-click",
+    title: "Right-click / long-press: add a note",
+    onClick: () => {
+      if (vnumPressRef.current.fired) vnumPressRef.current.fired = false;
+    }
+  }, vnumNoteHandlers(verse)), verse);
   const joinProse = words => {
     const tokens = words.map(w => w.english).filter(Boolean);
     return tokens.reduce((acc, tok, i) => {
@@ -5374,7 +5385,7 @@ function LibraryView({
       };
       return /*#__PURE__*/React.createElement("span", {
         key: `d${i}`,
-        className: "lib-word" + (clickable ? " lib-word-clickable" : ""),
+        className: "lib-word" + (clickable ? " lib-word-clickable" : "") + hiClass(v.verse, null),
         onClick: clickable ? () => onWordClick(entry) : undefined
       }, showInterlinear && (w.lemma ? /*#__PURE__*/React.createElement("span", {
         className: "lib-iw-greek"
@@ -5407,12 +5418,11 @@ function LibraryView({
   }), /*#__PURE__*/React.createElement("div", {
     className: "pericope-heading"
   }, v.heading)), /*#__PURE__*/React.createElement("div", {
-    className: "lib-verse-row lib-did-row"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lib-vnum"
-  }, v.verse), /*#__PURE__*/React.createElement("span", {
+    className: "lib-verse-row lib-did-row",
+    "data-note-verse": v.verse
+  }, noteVnum(v.verse), /*#__PURE__*/React.createElement("span", {
     className: "lib-verse-content lib-verse-chips"
-  }, didChips(v))));
+  }, noteMarker(v.verse), didChips(v))));
 
   // Prose view: our readable English as flowing text with verse numbers.
   const renderDidacheProse = () => /*#__PURE__*/React.createElement("div", {
@@ -5422,10 +5432,26 @@ function LibraryView({
   }, v.heading && /*#__PURE__*/React.createElement("div", {
     className: "pericope-heading"
   }, v.heading), /*#__PURE__*/React.createElement("span", {
-    className: "lib-flow-verse"
-  }, /*#__PURE__*/React.createElement("sup", {
-    className: "lib-flow-vnum"
-  }, v.verse), (v.english || "") + " "))));
+    className: "lib-flow-verse",
+    "data-note-verse": v.verse
+  }, /*#__PURE__*/React.createElement("sup", _extends({
+    className: "lib-flow-vnum",
+    title: "Right-click / long-press: add a note",
+    onClick: () => {
+      if (vnumPressRef.current.fired) vnumPressRef.current.fired = false;
+    }
+  }, vnumNoteHandlers(v.verse)), v.verse), noteForVerse(v.verse) && /*#__PURE__*/React.createElement("button", {
+    className: "lib-note-dot lib-note-dot-inline",
+    title: "Open note",
+    "aria-label": "Open note",
+    onClick: e => {
+      e.stopPropagation();
+      const n = noteForVerse(v.verse);
+      onOpenNote && onOpenNote(n.id);
+    }
+  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null)), /*#__PURE__*/React.createElement("span", {
+    className: hiClass(v.verse, null) || undefined
+  }, (v.english || "") + " ")))));
 
   // Parallel view: Greek interlinear | readable English (same shape as Bible parallel).
   const renderDidacheParallelVerse = v => /*#__PURE__*/React.createElement(React.Fragment, {
@@ -5435,19 +5461,18 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement("div", {
     className: "pericope-heading"
   }, v.heading)), /*#__PURE__*/React.createElement("div", {
-    className: "lib-parallel-verse"
+    className: "lib-parallel-verse",
+    "data-note-verse": v.verse
   }, /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel-vnum"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lib-vnum"
-  }, v.verse)), /*#__PURE__*/React.createElement("div", {
+  }, noteVnum(v.verse), noteMarker(v.verse)), /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel-col"
   }, /*#__PURE__*/React.createElement("span", {
     className: "lib-verse-chips"
   }, didChips(v))), /*#__PURE__*/React.createElement("div", {
     className: "lib-parallel-col"
   }, /*#__PURE__*/React.createElement("p", {
-    className: "lib-did-eng"
+    className: "lib-did-eng" + hiClass(v.verse, null)
   }, v.english))));
   return /*#__PURE__*/React.createElement("div", {
     className: "library"
