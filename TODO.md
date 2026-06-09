@@ -68,20 +68,22 @@ Still open:
   highlights in KJV/BSB, **password reset / set-password (needs SMTP — see below)**, Apple sign-in (if wanted).
 
 - **Notes — next-session follow-ups (one place to start from).** Memory `project_notes_highlights`
-  has the full design + gotchas. Three threads queued:
-  1. **Email / SMTP on PA — unlocks several things at once.** Get the site able to SEND mail, then:
-     password **reset** (mail a reset link), **set-a-password** for Google-only accounts (so they
-     aren't locked out of the email form), the nightly `health_check.py` email, and later the
-     announcements / reading-plan campaign. All blocked on this one piece. (PA SMTP creds + a small
-     send helper.)
-  2. **Free-form journal / notebook (e-Sword-style), as a SECOND note mode.** Our notes are *anchored*
-     to a verse (margin marker, jump-back) — great for "on this verse," weaker for a long essay that
-     spans passages. e-Sword's style is a big open editable page (a journal); Logos does anchored
-     notes organized into "notebooks" + tags + rich text. Plan: KEEP anchored notes, ADD an optional
-     free-form page (per-topic or one journal) that syncs the same way. Decide: plain text vs rich
-     text; one journal vs many notebooks; how it sits in the Notes tab.
-  3. **Highlight paint reach:** cross-translation (ABP highlight showing in KJV/BSB — word positions
-     differ, needs a verse+offset mapping) + word-level highlights in KJV/BSB (today verse-level only).
+  has the full design + gotchas.
+  1. **Email / SMTP on PA — PARKED until the app gets a custom domain (2026-06-09 decision).** Unlocks
+     password **reset**, **set-a-password** for Google-only accounts, the nightly `health_check.py`
+     email, and later campaigns. Deliberately deferred: a domain means doing the sender setup once,
+     properly (mail from `you@domain` + SPF/DKIM via a real service), instead of standing up a throwaway
+     Gmail now and redoing it. The send code is provider-agnostic plain SMTP, so when the domain lands
+     it's just env vars in the WSGI + a small send helper + the reset/set-password endpoints. Nothing
+     else is blocked by it.
+  2. ~~**Free-form journal as a SECOND note mode.**~~ **DONE 2026-06-09.** "Verse notes | Journal"
+     toggle in the Notes tab; plain-text titled pages, full-page editor that autosaves, ride the same
+     store/sync/Export-Import as anchored notes (`kind:"journal"`, no anchor). PLUS copy + "send verse
+     to journal" from the reader (drag-select bar AND the verse-number menu) into the page you have
+     open. See memory `project_notes_highlights`.
+  3. **Highlight paint reach** — cross-translation DONE 2026-06-09 (a highlight now shows in ABP/KJV/BSB;
+     exact words in its home text, rounds up to whole verse elsewhere). STILL OPEN (optional, lower
+     value): word-level highlights *within* KJV/BSB (today those two only paint a whole verse).
 - ~~**BSB (Berean Standard Bible).**~~ **DONE 2026-06-08.** Public-domain modern reading text
   alongside ABP/KJV. Loaded by `scripts/load_bsb.py` into `bsb_verses`; served by `views_bsb.py`
   (`/api/bsb/chapter`). Added as a third reading text in the Library toggle (commit `4c88501`), and

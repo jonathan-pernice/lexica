@@ -235,17 +235,33 @@ Full detail: memory `project_notes_highlights`. The headline facts:
   (Bookmark · Note · 5 colors). Mobile "Add note" bar pins to screen bottom (clear of the OS
   copy/share toolbar); `selectionchange` backstop. Inline bookmark marker at the start of any verse
   with a record (indents first line only).
-- Anchoring/painting is PER READING TEXT and NOW covers non-canon texts too. ABP captures exact
-  word-spots (`data-note-pos` on spans, `data-note-verse` on rows); KJV/BSB anchor at the whole
-  verse. Highlights paint only in the text they were made in (`translation` match); square corners +
-  flush chips make a multi-word highlight one continuous bar. Same-anchor reuse (no dupes) via
-  `NotesStore.findAnchor`.
-- Files: `static/src/12-notes-store.jsx` (`NotesStore` + sync/auth + `NOTE_COLORS`/`NOTE_COLOR_CSS`
-  + `useNotesVersion`), `static/src/35-notes.jsx` (`NoteAddPopover`, `VerseNoteMenu`, `NoteColorRow`,
-  `NotesPanel` editor, `NotesView` tab, `AuthModal`). Wiring in `60-library.jsx` (selection, paint,
-  markers, verse menu) + `90-app.jsx` (`activeNote` + panel + Notes tab). Notes tab: text search +
-  filters (All/Bookmarks/Highlights/Notes) + sort (Recent/Reference) + collapsible group-by-book +
-  Export/Import (JSON backup; merge-by-id) + the sign-in / sync row.
+- Anchoring is PER READING TEXT and covers non-canon texts too. ABP captures exact word-spots
+  (`data-note-pos` on spans, `data-note-verse` on rows); KJV/BSB anchor at the whole verse. Square
+  corners + flush chips make a multi-word highlight one continuous bar. Same-anchor reuse (no dupes)
+  via `NotesStore.findAnchor`.
+- **Highlights paint across ALL translations (verse-level), 2026-06-09.** A highlight shows in ABP,
+  KJV, and BSB alike — `chapterNotes` (`forChapter`) gathers every translation's records for the
+  book+chapter; `hiForWord` paints EXACT words only in the text it was made in (`n.translation ===
+  translation`) and ROUNDS UP to the whole verse in any other translation (words don't line up
+  cross-text). The old same-`translation`-only wall is gone. Word-level paint INSIDE KJV/BSB is still
+  not a thing (those two only ever paint whole verses) — that's the one open piece.
+- **Journal — free-form second note mode (LIVE 2026-06-09).** "Verse notes | Journal" toggle in the
+  Notes tab. A journal page is the SAME record shape with `kind:"journal"` + `title` + `body` and NO
+  anchor (no `.start`) — plain text, autosaving full-page editor, rides the same store/sync/Export-
+  Import. Store: `journals()`, `createJournal()`, `getActiveJournal()`/`setActiveJournal()` (the page
+  you last opened, in `localStorage` `lexica.journal.active.v1`), `appendToJournal()`. The merge guard
+  lets `kind:"journal"` through without an anchor; `all()` keeps journals OUT of the verse-note list.
+  Server per-page cap is bigger for journals (`_MAX_JOURNAL_BYTES` 64KB vs notes' 8KB).
+- **Copy + send-verse-to-journal from the reader.** The drag-select bar AND the verse-number menu both
+  carry Copy (verse text to clipboard) + Journal (appends `ref — text` to the OPEN journal page; if
+  none is open it flashes "Open a journal page first"). A small `lib-flash` toast confirms.
+- Files: `static/src/12-notes-store.jsx` (`NotesStore` + sync/auth + journal helpers + `NOTE_COLORS`/
+  `NOTE_COLOR_CSS` + `useNotesVersion`), `static/src/35-notes.jsx` (`NoteAddPopover`, `VerseNoteMenu`,
+  `NoteColorRow`, `NotesPanel` editor, `JournalView`/`JournalEditor`, `NotesView` tab, `AuthModal`).
+  Wiring in `60-library.jsx` (selection, paint, markers, verse menu, copy/journal, `flash`) + `90-app.jsx`
+  (`activeNote` + panel + Notes tab). Notes tab: text search + filters (All/Bookmarks/Highlights/Notes)
+  + sort (Recent/Reference) + collapsible group-by-book + Export/Import (JSON backup; merge-by-id) +
+  the sign-in / sync row + the Journal toggle.
 
 ## TSK Cross-Reference Panel
 - Endpoint: GET /api/cross-references/curated/<book>/<chapter>/<verse>
