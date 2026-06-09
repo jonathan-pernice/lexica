@@ -177,11 +177,49 @@ function NotesView({ onOpen }) {
   const [q, setQ] = useState("");
   const [msg, setMsg] = useState("");
   const [filter, setFilter] = useState("all");   // all | bookmark | highlight | note
+  const [sort, setSort] = useState("recent");     // recent | ref
+  const [group, setGroup] = useState(false);      // group by book
   const fileRef = useRef(null);
-  let notes = NotesStore.search(q);
+  let notes = NotesStore.search(q);               // already newest-first
   if (filter === "bookmark") notes = notes.filter(n => n.bookmark);
   else if (filter === "highlight") notes = notes.filter(n => n.color);
   else if (filter === "note") notes = notes.filter(n => n.body && n.body.trim());
+
+  // Canonical order: Bible books by BOOK_ORDER, non-canon after, by name.
+  const bookRank = (n) => (BOOK_ORDER[n.book] != null ? BOOK_ORDER[n.book] : 1000);
+  const byRef = (a, b) => {
+    const ra = bookRank(a), rb = bookRank(b);
+    if (ra !== rb) return ra - rb;
+    const na = a.bookName || a.book, nb = b.bookName || b.book;
+    if (ra === 1000 && na !== nb) return na.localeCompare(nb);
+    if (a.chapter !== b.chapter) return a.chapter - b.chapter;
+    return a.start.verse - b.start.verse;
+  };
+  if (sort === "ref") notes = [...notes].sort(byRef);
+
+  // Optional grouping by book (sections in canonical order, items by reference).
+  let sections = null;
+  if (group) {
+    const map = new Map();
+    for (const n of notes) {
+      if (!map.has(n.book)) map.set(n.book, { key: n.book, label: BOOK_LABELS[n.book] || n.bookName || n.book, rank: bookRank(n), items: [] });
+      map.get(n.book).items.push(n);
+    }
+    sections = [...map.values()].sort((a, b) => (a.rank - b.rank) || a.label.localeCompare(b.label));
+    sections.forEach(s => s.items.sort(byRef));
+  }
+
+  const renderItem = (n) => (
+    <li key={n.id} className="notes-item" onClick={() => onOpen(n)}>
+      <div className="notes-item-ref">
+        {n.color && <span className="notes-item-dot" style={{ background: NOTE_COLOR_CSS[n.color] }} />}
+        {n.bookmark && <span className="notes-item-bm">★</span>}
+        {n.refLabel || (n.book + " " + n.chapter)}
+      </div>
+      {n.snippet && <div className="notes-item-snippet">“{n.snippet}”</div>}
+      {n.body && <div className="notes-item-body">{n.body}</div>}
+    </li>
+  );
 
   const doExport = () => {
     const data = JSON.stringify(NotesStore.exportData(), null, 2);
@@ -227,32 +265,34 @@ function NotesView({ onOpen }) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
-        <div className="notes-filter seg">
-          {[["all", "All"], ["bookmark", "★ Bookmarks"], ["highlight", "🎨 Highlights"], ["note", "✎ Notes"]].map(([k, lbl]) => (
-            <button key={k} className={"seg-b" + (filter === k ? " on" : "")} onClick={() => setFilter(k)}>{lbl}</button>
-          ))}
+        <div className="notes-controls">
+          <div className="notes-filter seg">
+            {[["all", "All"], ["bookmark", "★ Bookmarks"], ["highlight", "🎨 Highlights"], ["note", "✎ Notes"]].map(([k, lbl]) => (
+              <button key={k} className={"seg-b" + (filter === k ? " on" : "")} onClick={() => setFilter(k)}>{lbl}</button>
+            ))}
+          </div>
+          <div className="seg">
+            <button className={"seg-b" + (sort === "recent" ? " on" : "")} onClick={() => setSort("recent")}>Recent</button>
+            <button className={"seg-b" + (sort === "ref" ? " on" : "")} onClick={() => setSort("ref")}>Reference</button>
+          </div>
+          <button className={"notes-tool-btn" + (group ? " on" : "")} onClick={() => setGroup(g => !g)}>Group by book</button>
         </div>
       </div>
       {notes.length === 0 ? (
         <div className="notes-empty">
-          {q
-            ? "No notes match that."
+          {q || filter !== "all"
+            ? "Nothing matches that."
             : "No notes yet. In the Library, select some text in a verse and choose “Add note.”"}
         </div>
+      ) : group ? (
+        sections.map(s => (
+          <div key={s.key} className="notes-group">
+            <div className="notes-group-head">{s.label}</div>
+            <ul className="notes-list">{s.items.map(renderItem)}</ul>
+          </div>
+        ))
       ) : (
-        <ul className="notes-list">
-          {notes.map(n => (
-            <li key={n.id} className="notes-item" onClick={() => onOpen(n)}>
-              <div className="notes-item-ref">
-                {n.color && <span className="notes-item-dot" style={{ background: NOTE_COLOR_CSS[n.color] }} />}
-                {n.bookmark && <span className="notes-item-bm">★</span>}
-                {n.refLabel || (n.book + " " + n.chapter)}
-              </div>
-              {n.snippet && <div className="notes-item-snippet">“{n.snippet}”</div>}
-              {n.body && <div className="notes-item-body">{n.body}</div>}
-            </li>
-          ))}
-        </ul>
+        <ul className="notes-list">{notes.map(renderItem)}</ul>
       )}
     </div>
   );

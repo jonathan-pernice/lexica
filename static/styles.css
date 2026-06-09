@@ -2735,8 +2735,15 @@ input { font-family: inherit; }
 .note-bm-toggle.on { color: var(--gold); }
 .note-bm-toggle:hover { color: var(--ink); }
 
-/* Notes tab filter chips */
-.notes-filter { margin-top: 10px; flex-wrap: wrap; }
+/* Notes tab filter chips + sort/group controls */
+.notes-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; }
+.notes-filter { flex-wrap: wrap; }
+.notes-tool-btn.on { border-color: var(--gold); color: var(--ink); background: var(--gold-soft); }
+.notes-group { margin-bottom: 18px; }
+.notes-group-head {
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--ink-3); margin: 6px 2px 8px; padding-bottom: 4px; border-bottom: 1px solid var(--rule);
+}
 
 /* Per-verse note marker — sits inline as the FIRST thing in the verse text, so
    it indents only the first line; wrapped lines fall back to the left edge. */
