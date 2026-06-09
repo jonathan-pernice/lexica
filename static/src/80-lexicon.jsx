@@ -187,6 +187,38 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
 
   const _isGreekHebrew = (s) => /[Ͱ-Ͽἀ-῿֐-׿]/.test(s);
 
+  // One "<Bible> renders this as" line. The active toggle's line is the
+  // interactive one (click a rendering to filter the books/verses below); the
+  // other Bible's line is shown read-only, just so you can see both at once.
+  const renderGlossLine = (lineCorpus, label, list) => {
+    if (!list || !list.length) return null;
+    const interactive = profileCorpus === lineCorpus;
+    return (
+      <div className="lexicon-glosses">
+        <div className="lexicon-gloss-label">{label}</div>
+        <div className="lexicon-dist-list">
+          {list.map((g, i) => (
+            <React.Fragment key={g.gloss}>
+              {i > 0 && <span className="lexicon-dist-sep"> · </span>}
+              {interactive ? (
+                <button
+                  className={"lexicon-dist-item" + (selectedGloss === g.gloss ? " selected" : "")}
+                  onClick={() => selectGloss(g.gloss)}
+                >
+                  {g.gloss}<span className="lexicon-dist-count">{g.count}</span>
+                </button>
+              ) : (
+                <span className="lexicon-dist-item lexicon-dist-item--ref">
+                  {g.gloss}<span className="lexicon-dist-count">{g.count}</span>
+                </span>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   // Light up every form of the focused word's Strong's in the verse list.
   const citedStrongs = useMemo(() => {
     if (!profile?.strongs) return new Set();
@@ -368,24 +400,31 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
             </div>
           )}
 
-          {(bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && (
-            <div className="lexicon-glosses">
-              <div className="lexicon-gloss-label">{selectedBook ? "In this book" : (profileCorpus === "kjv" ? "KJV renders this as" : "ABP renders this as")}</div>
-              <div className="lexicon-dist-list">
-                {(bookGlosses || profile.glosses).map((g, i) => (
-                  <React.Fragment key={g.gloss}>
-                    {i > 0 && <span className="lexicon-dist-sep"> · </span>}
-                    <button
-                      className={"lexicon-dist-item" + (selectedGloss === g.gloss ? " selected" : "")}
-                      onClick={() => selectGloss(g.gloss)}
-                    >
-                      {g.gloss}<span className="lexicon-dist-count">{g.count}</span>
-                    </button>
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          )}
+          {selectedBook
+            ? ((bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && (
+                <div className="lexicon-glosses">
+                  <div className="lexicon-gloss-label">In this book</div>
+                  <div className="lexicon-dist-list">
+                    {(bookGlosses || profile.glosses).map((g, i) => (
+                      <React.Fragment key={g.gloss}>
+                        {i > 0 && <span className="lexicon-dist-sep"> · </span>}
+                        <button
+                          className={"lexicon-dist-item" + (selectedGloss === g.gloss ? " selected" : "")}
+                          onClick={() => selectGloss(g.gloss)}
+                        >
+                          {g.gloss}<span className="lexicon-dist-count">{g.count}</span>
+                        </button>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              ))
+            : (
+                <>
+                  {renderGlossLine("abp", "ABP renders this as", profile.abp_glosses)}
+                  {renderGlossLine("kjv", "KJV renders this as", profile.kjv_glosses)}
+                </>
+              )}
 
           <div className="lexicon-distribution">
             <div className="lexicon-dist-header">

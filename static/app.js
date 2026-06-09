@@ -5317,6 +5317,34 @@ function LexiconView({
   };
   const _isGreekHebrew = s => /[Ͱ-Ͽἀ-῿֐-׿]/.test(s);
 
+  // One "<Bible> renders this as" line. The active toggle's line is the
+  // interactive one (click a rendering to filter the books/verses below); the
+  // other Bible's line is shown read-only, just so you can see both at once.
+  const renderGlossLine = (lineCorpus, label, list) => {
+    if (!list || !list.length) return null;
+    const interactive = profileCorpus === lineCorpus;
+    return /*#__PURE__*/React.createElement("div", {
+      className: "lexicon-glosses"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "lexicon-gloss-label"
+    }, label), /*#__PURE__*/React.createElement("div", {
+      className: "lexicon-dist-list"
+    }, list.map((g, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+      key: g.gloss
+    }, i > 0 && /*#__PURE__*/React.createElement("span", {
+      className: "lexicon-dist-sep"
+    }, " \xB7 "), interactive ? /*#__PURE__*/React.createElement("button", {
+      className: "lexicon-dist-item" + (selectedGloss === g.gloss ? " selected" : ""),
+      onClick: () => selectGloss(g.gloss)
+    }, g.gloss, /*#__PURE__*/React.createElement("span", {
+      className: "lexicon-dist-count"
+    }, g.count)) : /*#__PURE__*/React.createElement("span", {
+      className: "lexicon-dist-item lexicon-dist-item--ref"
+    }, g.gloss, /*#__PURE__*/React.createElement("span", {
+      className: "lexicon-dist-count"
+    }, g.count))))));
+  };
+
   // Light up every form of the focused word's Strong's in the verse list.
   const citedStrongs = useMemo(() => {
     if (!profile?.strongs) return new Set();
@@ -5513,11 +5541,11 @@ function LexiconView({
     dangerouslySetInnerHTML: {
       __html: lsjEntry.def_html
     }
-  }) /* AI down: raw LSJ */)), (bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && /*#__PURE__*/React.createElement("div", {
+  }) /* AI down: raw LSJ */)), selectedBook ? (bookGlosses || profile.glosses) && (bookGlosses || profile.glosses).length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "lexicon-glosses"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lexicon-gloss-label"
-  }, selectedBook ? "In this book" : profileCorpus === "kjv" ? "KJV renders this as" : "ABP renders this as"), /*#__PURE__*/React.createElement("div", {
+  }, "In this book"), /*#__PURE__*/React.createElement("div", {
     className: "lexicon-dist-list"
   }, (bookGlosses || profile.glosses).map((g, i) => /*#__PURE__*/React.createElement(React.Fragment, {
     key: g.gloss
@@ -5528,7 +5556,7 @@ function LexiconView({
     onClick: () => selectGloss(g.gloss)
   }, g.gloss, /*#__PURE__*/React.createElement("span", {
     className: "lexicon-dist-count"
-  }, g.count)))))), /*#__PURE__*/React.createElement("div", {
+  }, g.count)))))) : /*#__PURE__*/React.createElement(React.Fragment, null, renderGlossLine("abp", "ABP renders this as", profile.abp_glosses), renderGlossLine("kjv", "KJV renders this as", profile.kjv_glosses)), /*#__PURE__*/React.createElement("div", {
     className: "lexicon-distribution"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lexicon-dist-header"

@@ -391,42 +391,45 @@ def lexicon_profile(strongs):
                  for b, c in sorted(book_counts.items(), key=lambda x: -x[1])]
         total = sum(b["count"] for b in books)
 
-        gloss_rows = []
-        if corpus in ("abp", "all"):
-            gloss_rows += _abp_gloss_rows()
-        if corpus in ("kjv", "all"):
-            gloss_rows += _kjv_gloss_rows()
         # Function-word Strong's (ἐν, the article, οὐ, καί…): label by the
         # connector inside the phrase, not the content word english_head picked.
         is_func = (not is_heb) and snum in _FUNCTION_STRONGS
-        norm_counts = {}
-        for r in gloss_rows:
-            if not r["gloss"] or r["gloss"] in ("*", ""):
-                continue
-            key = _normalize_gloss(r["gloss"], is_func=is_func)
-            if key:
-                norm_counts[key] = norm_counts.get(key, 0) + r["cnt"]
-        items = sorted(norm_counts.items(), key=lambda x: -x[1])
-        # A few function-word rows carry a stray bare content gloss ("blessing")
-        # from bracket/gloss mis-splits. In a word used thousands of times a
-        # one-off rendering is noise, so drop singletons for function words.
-        # Content words keep everything — a rare rendering there is meaningful.
-        if is_func:
-            items = [(g, c) for g, c in items if c > 1]
-        else:
-            # Content word: a one-off rendering that is ITSELF nothing but a
-            # filler word ("and", "of") comes from a mis-tagged row with no
-            # content English for the cleaner to fall back to. Drop those
-            # singletons; a real one-off content rendering is still kept.
-            _filler = _GLOSS_FUNC | _GLOSS_STRONG | _GLOSS_WEAK
-            items = [(g, c) for g, c in items if not (c == 1 and g in _filler)]
-        glosses = [{"gloss": g, "count": c} for g, c in items]
+
+        def _norm_glosses(gloss_rows):
+            norm_counts = {}
+            for r in gloss_rows:
+                if not r["gloss"] or r["gloss"] in ("*", ""):
+                    continue
+                key = _normalize_gloss(r["gloss"], is_func=is_func)
+                if key:
+                    norm_counts[key] = norm_counts.get(key, 0) + r["cnt"]
+            items = sorted(norm_counts.items(), key=lambda x: -x[1])
+            # A few function-word rows carry a stray bare content gloss
+            # ("blessing") from bracket/gloss mis-splits. In a word used
+            # thousands of times a one-off rendering is noise, so drop
+            # singletons for function words. Content words keep everything —
+            # a rare rendering there is meaningful. (A one-off rendering that
+            # is ITSELF nothing but a filler word comes from a mis-tagged row
+            # with no content English to fall back to — drop those too.)
+            if is_func:
+                items = [(g, c) for g, c in items if c > 1]
+            else:
+                _filler = _GLOSS_FUNC | _GLOSS_STRONG | _GLOSS_WEAK
+                items = [(g, c) for g, c in items if not (c == 1 and g in _filler)]
+            return [{"gloss": g, "count": c} for g, c in items]
+
+        # Each Bible's own renderings, so the word page can show both at once
+        # (ABP says "phantom", KJV says "spirit"). The active toggle still drives
+        # `glosses` (the interactive list). Profile corpus is only ever abp/kjv.
+        abp_glosses = _norm_glosses(_abp_gloss_rows())
+        kjv_glosses = _norm_glosses(_kjv_gloss_rows())
+        glosses = abp_glosses if corpus == "abp" else kjv_glosses
         # Which corpora actually have this strongs (so the UI can gray unavailable
         # toggles). Checks real data — so backfilled proper-noun Hebrew (which DO
         # have ABP/words rows) keep ABP enabled.
         has_abp = conn.execute("SELECT 1 FROM words WHERE strongs_base = ? LIMIT 1", (sid,)).fetchone() is not None
         has_kjv = conn.execute("SELECT 1 FROM kjv_strongs WHERE strongs_id = ? LIMIT 1", (sid,)).fetchone() is not None
-        return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus, "glosses": glosses, "has_abp": has_abp, "has_kjv": has_kjv})
+        return jsonify({"strongs": strongs_id, "lemma": lemma, "translit": translit, "definition": definition, "total": total, "books": books, "corpus": corpus, "glosses": glosses, "abp_glosses": abp_glosses, "kjv_glosses": kjv_glosses, "has_abp": has_abp, "has_kjv": has_kjv})
     except Exception:
         return jsonify({"error": "Server error"}), 500
     finally:

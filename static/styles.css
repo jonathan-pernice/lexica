@@ -290,6 +290,9 @@ input { font-family: inherit; }
   border-radius: 4px;
   padding: 0 2px;
 }
+/* Read-only rendering chip — the non-active Bible's line on the word page */
+.lexicon-dist-item--ref { cursor: default; color: var(--ink-3); }
+@media (hover: hover) { .lexicon-dist-item--ref:hover { color: var(--ink-3); } }
 .lexicon-dist-count { color: var(--ink-3); font-size: 11px; font-family: var(--f-mono); margin-left: 3px; }
 .lexicon-dist-item.selected .lexicon-dist-count { color: var(--accent); }
 .lexicon-dist-sep { color: var(--ink-3); opacity: 0.5; user-select: none; }
