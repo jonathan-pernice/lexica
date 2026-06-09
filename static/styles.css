@@ -2769,7 +2769,16 @@ input { font-family: inherit; }
 /* Notes browse tab */
 .notes-view { max-width: 760px; margin: 0 auto; padding: 24px 20px 80px; }
 .notes-view-head { margin-bottom: 16px; }
-.notes-view-title { font-size: 22px; font-weight: 700; color: var(--ink); margin: 0 0 12px; }
+.notes-view-titlerow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.notes-view-title { font-size: 22px; font-weight: 700; color: var(--ink); margin: 0; }
+.notes-tools { display: flex; gap: 8px; }
+.notes-tool-btn {
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink-2);
+  border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.notes-tool-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--ink); }
+.notes-tool-btn:disabled { opacity: 0.4; cursor: default; }
+.notes-msg { color: var(--ink-2); font-size: 13px; margin-bottom: 10px; }
 .notes-search {
   width: 100%; box-sizing: border-box; border: 1px solid var(--rule);
   border-radius: 10px; padding: 10px 14px; font: inherit; font-size: 15px;

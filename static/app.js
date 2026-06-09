@@ -878,6 +878,50 @@ const NotesStore = function () {
     subscribe(fn) {
       listeners.add(fn);
       return () => listeners.delete(fn);
+    },
+    // Backup: the saved file IS the migration format (same shape a server uses).
+    exportData() {
+      return {
+        app: "lexica-notes",
+        version: 1,
+        exported: new Date().toISOString(),
+        notes: load()
+      };
+    },
+    // Restore / merge a backup. Each note carries its own id, so re-importing is
+    // safe: same id = keep the newer copy, new id = add, nothing duplicates.
+    importMerge(incoming) {
+      if (!Array.isArray(incoming)) return {
+        added: 0,
+        updated: 0,
+        skipped: 0
+      };
+      const cur = load();
+      const byId = new Map(cur.map(n => [n.id, n]));
+      let added = 0,
+        updated = 0,
+        skipped = 0;
+      for (const n of incoming) {
+        if (!n || !n.id || !n.start) {
+          skipped++;
+          continue;
+        }
+        const ex = byId.get(n.id);
+        if (!ex) {
+          cur.push(n);
+          byId.set(n.id, n);
+          added++;
+        } else if ((n.updated || "") > (ex.updated || "")) {
+          Object.assign(ex, n);
+          updated++;
+        } else skipped++;
+      }
+      persist();
+      return {
+        added,
+        updated,
+        skipped
+      };
     }
   };
 }();
@@ -2279,14 +2323,65 @@ function NotesView({
 }) {
   useNotesVersion();
   const [q, setQ] = useState("");
+  const [msg, setMsg] = useState("");
+  const fileRef = useRef(null);
   const notes = NotesStore.search(q);
+  const doExport = () => {
+    const data = JSON.stringify(NotesStore.exportData(), null, 2);
+    const url = URL.createObjectURL(new Blob([data], {
+      type: "application/json"
+    }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "lexica-notes-" + new Date().toISOString().slice(0, 10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const doImport = e => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        const list = Array.isArray(parsed) ? parsed : parsed.notes || [];
+        const r = NotesStore.importMerge(list);
+        setMsg(`Imported ${r.added} new, ${r.updated} updated${r.skipped ? ", " + r.skipped + " skipped" : ""}.`);
+      } catch (err) {
+        setMsg("Couldn't read that file.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ""; // let the same file be re-picked
+  };
   return /*#__PURE__*/React.createElement("div", {
     className: "notes-view"
   }, /*#__PURE__*/React.createElement("div", {
     className: "notes-view-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "notes-view-titlerow"
   }, /*#__PURE__*/React.createElement("h2", {
     className: "notes-view-title"
-  }, "My Notes"), /*#__PURE__*/React.createElement("input", {
+  }, "My Notes"), /*#__PURE__*/React.createElement("div", {
+    className: "notes-tools"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "notes-tool-btn",
+    onClick: doExport,
+    disabled: NotesStore.all().length === 0
+  }, "Export"), /*#__PURE__*/React.createElement("button", {
+    className: "notes-tool-btn",
+    onClick: () => fileRef.current && fileRef.current.click()
+  }, "Import"), /*#__PURE__*/React.createElement("input", {
+    ref: fileRef,
+    type: "file",
+    accept: "application/json,.json",
+    style: {
+      display: "none"
+    },
+    onChange: doImport
+  }))), msg && /*#__PURE__*/React.createElement("div", {
+    className: "notes-msg"
+  }, msg), /*#__PURE__*/React.createElement("input", {
     className: "notes-search",
     type: "text",
     placeholder: "Search your notes\u2026",

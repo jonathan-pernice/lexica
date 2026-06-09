@@ -137,11 +137,47 @@ function NotesPanel({ noteId, isMobile, onClose }) {
 function NotesView({ onOpen }) {
   useNotesVersion();
   const [q, setQ] = useState("");
+  const [msg, setMsg] = useState("");
+  const fileRef = useRef(null);
   const notes = NotesStore.search(q);
+
+  const doExport = () => {
+    const data = JSON.stringify(NotesStore.exportData(), null, 2);
+    const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "lexica-notes-" + new Date().toISOString().slice(0, 10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const doImport = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        const list = Array.isArray(parsed) ? parsed : (parsed.notes || []);
+        const r = NotesStore.importMerge(list);
+        setMsg(`Imported ${r.added} new, ${r.updated} updated${r.skipped ? ", " + r.skipped + " skipped" : ""}.`);
+      } catch (err) { setMsg("Couldn't read that file."); }
+    };
+    reader.readAsText(file);
+    e.target.value = "";   // let the same file be re-picked
+  };
+
   return (
     <div className="notes-view">
       <div className="notes-view-head">
-        <h2 className="notes-view-title">My Notes</h2>
+        <div className="notes-view-titlerow">
+          <h2 className="notes-view-title">My Notes</h2>
+          <div className="notes-tools">
+            <button className="notes-tool-btn" onClick={doExport} disabled={NotesStore.all().length === 0}>Export</button>
+            <button className="notes-tool-btn" onClick={() => fileRef.current && fileRef.current.click()}>Import</button>
+            <input ref={fileRef} type="file" accept="application/json,.json" style={{ display: "none" }} onChange={doImport} />
+          </div>
+        </div>
+        {msg && <div className="notes-msg">{msg}</div>}
         <input
           className="notes-search"
           type="text"

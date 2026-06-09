@@ -111,6 +111,27 @@ const NotesStore = (function () {
       );
     },
     subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
+    // Backup: the saved file IS the migration format (same shape a server uses).
+    exportData() {
+      return { app: "lexica-notes", version: 1, exported: new Date().toISOString(), notes: load() };
+    },
+    // Restore / merge a backup. Each note carries its own id, so re-importing is
+    // safe: same id = keep the newer copy, new id = add, nothing duplicates.
+    importMerge(incoming) {
+      if (!Array.isArray(incoming)) return { added: 0, updated: 0, skipped: 0 };
+      const cur = load();
+      const byId = new Map(cur.map(n => [n.id, n]));
+      let added = 0, updated = 0, skipped = 0;
+      for (const n of incoming) {
+        if (!n || !n.id || !n.start) { skipped++; continue; }
+        const ex = byId.get(n.id);
+        if (!ex) { cur.push(n); byId.set(n.id, n); added++; }
+        else if ((n.updated || "") > (ex.updated || "")) { Object.assign(ex, n); updated++; }
+        else skipped++;
+      }
+      persist();
+      return { added, updated, skipped };
+    },
   };
 })();
 
