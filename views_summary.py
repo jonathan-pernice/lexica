@@ -202,9 +202,11 @@ def reading_summary(book, chapter):
             text = _haiku(
                 _SUMMARY_SYSTEM,
                 f'Below is the opening of the book "{name}". In 1 to 2 sentences, '
-                f'orient a reader to what this book is and its overall concern, '
-                f'staying anchored to what the text plainly is. Do not retell the '
-                f'opening verses.\n\nOpening text:\n{opening}',
+                f'orient a reader to what this book is and its overall concern. Where '
+                f'it is well established, name the traditionally recognized author and '
+                f'intended audience (for example, the apostle John, or Paul writing to a '
+                f'church), even though the opening text may not name them. Do not retell '
+                f'the opening verses.\n\nOpening text:\n{opening}',
                 max_tokens=160,
             )
         else:
