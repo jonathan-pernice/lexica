@@ -2600,17 +2600,21 @@ input { font-family: inherit; }
 
 /* ── Library in-text search panel ─────────────────────────────── */
 .lib-search-scrim {
-  position: fixed; inset: 0; z-index: 60;
+  position: fixed; inset: 0; z-index: 209;
   background: rgba(20, 20, 30, 0.18);
 }
 .lib-search-panel {
-  position: fixed; z-index: 61;
+  position: fixed; z-index: 210;            /* above the mobile tab bar (z-index 200) */
   top: 12px; left: 50%; transform: translateX(-50%);
   width: min(640px, calc(100vw - 24px));
   max-height: 80vh; display: flex; flex-direction: column;
   background: var(--paper); border: 1px solid var(--line, #e4ded2);
   border-radius: 12px; box-shadow: 0 12px 40px rgba(34, 30, 24, 0.22);
   overflow: hidden;
+}
+/* On mobile the tab bar is fixed at the top (54px) — drop the panel below it. */
+@media (max-width: 1099px) {
+  .lib-search-panel { top: 62px; }
 }
 .lib-search-row { display: flex; gap: 6px; padding: 10px; border-bottom: 1px solid var(--line, #e4ded2); }
 .lib-search-input {
@@ -2625,7 +2629,14 @@ input { font-family: inherit; }
 }
 .lib-search-go { font-weight: 600; }
 .lib-search-go:hover, .lib-search-x:hover { background: var(--bg); }
-.lib-search-scope { margin: 8px 10px 2px; }
+.lib-search-scope { display: flex; gap: 0; margin: 8px 10px 2px; }
+.lib-search-scope .seg-b {
+  flex: 1; padding: 6px 10px; font-size: 13px; cursor: pointer;
+  border: 1px solid var(--line, #e4ded2); background: #fff; color: var(--ink-2);
+}
+.lib-search-scope .seg-b:first-child { border-radius: 8px 0 0 8px; }
+.lib-search-scope .seg-b:last-child { border-radius: 0 8px 8px 0; border-left: none; }
+.lib-search-scope .seg-b.on { background: var(--ink); color: #fff; border-color: var(--ink); }
 .lib-search-results { overflow-y: auto; padding: 6px 0 10px; }
 .lib-search-status { padding: 8px 14px; color: var(--ink-2); font-size: 13px; }
 .lib-search-hit {
