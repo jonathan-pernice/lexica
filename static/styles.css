@@ -223,14 +223,16 @@ input { font-family: inherit; }
 }
 .lexicon-result-count { font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .lexicon-result-chev { color: var(--ink-3); font-size: 16px; line-height: 1; }
-/* Mobile: let each rendering line scroll sideways so all are reachable by
-   swiping, instead of truncating at the screen edge. */
+/* Mobile: scroll BOTH lines together as one block (one swipe moves the ABP
+   and KJV lines in sync, keeping them aligned), instead of truncating. */
 @media (max-width: 1099px) {
-  .lex-prev-line {
-    overflow-x: auto; overflow-y: hidden; text-overflow: clip;
+  .lexicon-result-preview {
+    align-items: flex-start;
+    overflow-x: auto; overflow-y: hidden;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
-  .lex-prev-line::-webkit-scrollbar { display: none; }
+  .lexicon-result-preview::-webkit-scrollbar { display: none; }
+  .lex-prev-line { overflow: visible; text-overflow: clip; width: max-content; }
 }
 
 
