@@ -2,6 +2,25 @@
 // LIBRARY HELPERS
 // ============================================================
 
+// Wrap every occurrence of `term` in `text` with a highlight mark (for the
+// in-text search result snippets). Case-insensitive; returns React nodes.
+function highlightTerm(text, term) {
+  if (!text || !term) return text;
+  const lower = text.toLowerCase();
+  const t = term.toLowerCase();
+  if (lower.indexOf(t) === -1) return text;
+  const parts = [];
+  let i = 0, key = 0, pos = lower.indexOf(t, i);
+  while (pos !== -1) {
+    if (pos > i) parts.push(text.slice(i, pos));
+    parts.push(<mark key={key++} className="lib-search-mark">{text.slice(pos, pos + term.length)}</mark>);
+    i = pos + term.length;
+    pos = lower.indexOf(t, i);
+  }
+  if (i < text.length) parts.push(text.slice(i));
+  return parts;
+}
+
 // Reorder words for natural English reading:
 // within each bracket group sort by greek_pos ascending; non-bracket words keep position order.
 function getEnglishOrderWords(words) {
@@ -638,6 +657,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const [searchResults, setSearchResults] = useState(null);   // null = no search run yet
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchScope, setSearchScope] = useState("all");      // "all" | "book" (current book only)
+  const [searchTerm, setSearchTerm] = useState("");           // the term actually searched (for highlighting)
 
   useEffect(() => {
     api.books().then(data => {
@@ -774,6 +794,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const runTextSearch = () => {
     const q = searchQ.trim();
     if (!q || !readCorpus) return;
+    setSearchTerm(q);
     setSearchLoading(true);
     setSearchResults(null);
     const bookFilter = (corpus === "bible" && searchScope === "book") ? (selBook?.abbrev || "") : "";
@@ -1504,7 +1525,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
                   {searchResults.map((r, i) => (
                     <button key={i} className="lib-search-hit" onClick={() => jumpToResult(r)}>
                       <span className="lib-search-hit-ref">{(corpus === "bible" ? (BOOK_LABELS[r.book] || r.book) : searchName)} {r.chapter}:{r.verse}</span>
-                      <span className="lib-search-hit-text">{r.text}</span>
+                      <span className="lib-search-hit-text">{highlightTerm(r.text, searchTerm)}</span>
                     </button>
                   ))}
                 </>

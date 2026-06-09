@@ -2646,4 +2646,5 @@ input { font-family: inherit; }
 .lib-search-hit:hover { background: var(--bg); }
 .lib-search-hit-ref { display: block; font-weight: 600; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
 .lib-search-hit-text { display: block; color: var(--ink-2); font-size: 14px; line-height: 1.4; }
+.lib-search-mark { background: #ffe6a3; color: var(--ink); font-weight: 600; border-radius: 2px; padding: 0 1px; }
 .mbar-search { margin-left: 2px; }
