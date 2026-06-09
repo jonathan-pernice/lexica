@@ -219,6 +219,23 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
     );
   };
 
+  // A result row's rendering preview: an ABP line and a KJV line. The little
+  // ABP/KJV tag only shows when a word has both (so single-Bible words / the
+  // ABP|KJV filters read clean, untagged). Desktop caps each line at 6 with an
+  // ellipsis; mobile shows all and scrolls the line sideways (see styles.css).
+  const renderRowPreview = (g) => {
+    const abp = g.abp_glosses || [];
+    const kjv = g.kjv_glosses || [];
+    const both = abp.length > 0 && kjv.length > 0;
+    const line = (list, tag) => list.length === 0 ? null : (
+      <span className="lex-prev-line" key={tag}>
+        {both && <span className="lex-prev-tag">{tag}</span>}
+        {(isMobile ? list : list.slice(0, 6)).map(x => x.gloss).join(", ")}
+      </span>
+    );
+    return [line(abp, "ABP"), line(kjv, "KJV")];
+  };
+
   // Light up every form of the focused word's Strong's in the verse list.
   const citedStrongs = useMemo(() => {
     if (!profile?.strongs) return new Set();
@@ -343,9 +360,7 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
               <span className="lexicon-match-strongs">{g.strongs}</span>
               {g.lemma && <span className="lexicon-match-lemma" dir={g.strongs[0] === "H" ? "rtl" : undefined}>{g.lemma}</span>}
               {g.translit && <span className="lexicon-match-translit">{g.translit}</span>}
-              <span className="lexicon-result-preview">
-                {(isMobile ? (g.glosses || []) : (g.glosses || []).slice(0, 6)).map(x => x.gloss).join(", ")}
-              </span>
+              <span className="lexicon-result-preview">{renderRowPreview(g)}</span>
               <span className="lexicon-result-count">{g.count}</span>
               <span className="lexicon-result-chev">›</span>
             </button>

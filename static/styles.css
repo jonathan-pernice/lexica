@@ -214,18 +214,23 @@ input { font-family: inherit; }
 .lexicon-result-row .lexicon-match-translit { flex-shrink: 0; }
 .lexicon-result-preview {
   flex: 1; min-width: 0; color: var(--ink-3); font-size: 13px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.lex-prev-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.lex-prev-tag {
+  font-family: var(--f-mono); font-size: 10px; color: var(--ink-2);
+  background: var(--bg-sunk); border-radius: 3px; padding: 0 4px; margin-right: 6px;
 }
 .lexicon-result-count { font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .lexicon-result-chev { color: var(--ink-3); font-size: 16px; line-height: 1; }
-/* Mobile: let the rendering preview scroll sideways so all of them are
-   reachable by swiping, instead of truncating at the screen edge. */
+/* Mobile: let each rendering line scroll sideways so all are reachable by
+   swiping, instead of truncating at the screen edge. */
 @media (max-width: 1099px) {
-  .lexicon-result-preview {
+  .lex-prev-line {
     overflow-x: auto; overflow-y: hidden; text-overflow: clip;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
-  .lexicon-result-preview::-webkit-scrollbar { display: none; }
+  .lex-prev-line::-webkit-scrollbar { display: none; }
 }
 
 

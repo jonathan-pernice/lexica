@@ -273,28 +273,29 @@ def lexicon_english():
                                      and r["sbase"][1:] in _FUNCTION_STRONGS)]
 
         all_snums = [r["sbase"] for r in abp_rows] + [r["sbase"] for r in heb_rows]
-        # Row COUNT stays native-per-corpus (Greek from ABP, Hebrew from KJV — we
-        # do NOT sum those; summing double-counts the shared Greek NT). But the
-        # row's rendering PREVIEW merges BOTH Bibles' wordings for that number
-        # (ABP "phantom" + KJV "spirit") so each row shows the full sense at a
-        # glance. Counts here only order the preview; they're not displayed. The
-        # ABP/KJV filters stay single-Bible — only 'all' merges both maps.
+        # Each row carries BOTH Bibles' renderings as SEPARATE lists (the UI shows
+        # an ABP line + a KJV line). Row COUNT stays native-per-corpus (Greek from
+        # ABP, Hebrew from KJV — not summed; summing double-counts the shared Greek
+        # NT). The ABP/KJV filters gate which lists fill; 'all' fills both.
         abp_gmap = _top_glosses_abp(all_snums) if corpus in ("abp", "all") else {}
         kjv_gmap = _top_glosses_heb(all_snums) if corpus in ("kjv", "all") else {}
+
+        def _norm_list(rows):
+            gl = {}
+            for g in rows:
+                key = _normalize_gloss(g["gloss"])
+                if key:
+                    gl[key] = gl.get(key, 0) + g["count"]
+            return sorted(({"gloss": k, "count": c} for k, c in gl.items()),
+                          key=lambda x: -x["count"])[:8]
 
         results = []
         def _emit(rows):
             for r in rows:
-                gl = {}
-                for g in abp_gmap.get(r["sbase"], []) + kjv_gmap.get(r["sbase"], []):
-                    key = _normalize_gloss(g["gloss"])
-                    if key:
-                        gl[key] = gl.get(key, 0) + g["count"]
-                glosses = sorted(({"gloss": k, "count": c} for k, c in gl.items()),
-                                 key=lambda x: -x["count"])[:8]
                 results.append({"strongs": r["sbase"], "lemma": r["lemma"] or "",
                                 "translit": r["translit"] or "", "count": r["cnt"],
-                                "glosses": glosses})
+                                "abp_glosses": _norm_list(abp_gmap.get(r["sbase"], [])),
+                                "kjv_glosses": _norm_list(kjv_gmap.get(r["sbase"], []))})
         _emit(abp_rows)
         _emit(heb_rows)
         results.sort(key=lambda x: -x["count"])
