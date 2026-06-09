@@ -1489,6 +1489,16 @@ input { font-family: inherit; }
   user-select: none;
 }
 .lib-flow-vnum:hover { color: var(--accent); }
+@media (max-width: 1099px) {
+  /* Bigger, reliable tap / long-press target for the prose verse number. */
+  .lib-flow-vnum {
+    font-size: 0.66em;
+    display: inline-block;
+    padding: 6px 8px;
+    margin: -6px 0 -6px -4px;   /* pad the hit area without moving the text */
+    touch-action: manipulation;
+  }
+}
 
 /* Each verse: fixed number column + content column */
 .lib-verse-row {
