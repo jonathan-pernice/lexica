@@ -2461,6 +2461,7 @@ function VerseNoteMenu({
   onBookmark,
   onNote,
   onColor,
+  onJournal,
   onClose
 }) {
   if (!rect) return null;
@@ -2495,7 +2496,10 @@ function VerseNoteMenu({
   }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Bookmark"), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onNote
-  }, "\u270E Note"), /*#__PURE__*/React.createElement("div", {
+  }, "\u270E Note"), onJournal && /*#__PURE__*/React.createElement("button", {
+    className: "note-popover-btn",
+    onClick: onJournal
+  }, "Journal"), /*#__PURE__*/React.createElement("div", {
     className: "note-swatches"
   }, NOTE_COLORS.map(c => /*#__PURE__*/React.createElement("button", {
     key: c,
@@ -5443,6 +5447,19 @@ function LibraryView({
     });
     setVerseMenu(null);
   };
+  // Send the whole verse to the journal page currently open in the Notes tab.
+  const vmJournal = () => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el);
+    if (!a) return setVerseMenu(null);
+    setVerseMenu(null);
+    const id = NotesStore.getActiveJournal();
+    if (!id) {
+      flash("Open a journal page first");
+      return;
+    }
+    NotesStore.appendToJournal(id, a.refLabel + " — " + a.snippet);
+    flash("Added to journal");
+  };
   // Shared press handlers for a verse number: right-click + mobile long-press.
   const vnumPressRef = useRef({
     timer: null,
@@ -6559,6 +6576,7 @@ function LibraryView({
     onBookmark: vmBookmark,
     onNote: vmNote,
     onColor: vmColor,
+    onJournal: vmJournal,
     onClose: () => setVerseMenu(null)
   }), showSummary && (selBook || nonCanon) && /*#__PURE__*/React.createElement(SummaryPanel, {
     book: nonCanon ? nonCanon.id : selBook.abbrev,

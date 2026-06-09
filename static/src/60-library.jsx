@@ -1089,6 +1089,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     if (ex) NotesStore.update(ex.id, { color }); else NotesStore.create({ ...a, color });
     setVerseMenu(null);
   };
+  // Send the whole verse to the journal page currently open in the Notes tab.
+  const vmJournal = () => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el); if (!a) return setVerseMenu(null);
+    setVerseMenu(null);
+    const id = NotesStore.getActiveJournal();
+    if (!id) { flash("Open a journal page first"); return; }
+    NotesStore.appendToJournal(id, a.refLabel + " — " + a.snippet);
+    flash("Added to journal");
+  };
   // Shared press handlers for a verse number: right-click + mobile long-press.
   const vnumPressRef = useRef({ timer: null, fired: false });
   const vnumNoteHandlers = (verse) => ({
@@ -1941,7 +1950,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       </div>
       {noteSel && <NoteAddPopover rect={noteSel.rect} isMobile={isMobile} onAdd={addNoteFromSelection} onColor={addHighlightFromSelection} onCopy={copySelection} onJournal={journalFromSelection} />}
       {flashMsg && <div className="lib-flash">{flashMsg}</div>}
-      {verseMenu && <VerseNoteMenu rect={verseMenu.rect} isMobile={isMobile} onBookmark={vmBookmark} onNote={vmNote} onColor={vmColor} onClose={() => setVerseMenu(null)} />}
+      {verseMenu && <VerseNoteMenu rect={verseMenu.rect} isMobile={isMobile} onBookmark={vmBookmark} onNote={vmNote} onColor={vmColor} onJournal={vmJournal} onClose={() => setVerseMenu(null)} />}
       {showSummary && (selBook || nonCanon) && (
         <SummaryPanel
           book={nonCanon ? nonCanon.id : selBook.abbrev}
