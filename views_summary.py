@@ -47,6 +47,12 @@ _BOOK_AUTHORS = {
 }
 
 
+# Bump when the summary PROMPT or wording changes — it's baked into the cache
+# keys, so a bump makes every cached summary miss and lazily regenerate on next
+# view (old rows just go unreferenced; nothing is wiped). v2: tell Haiku not to
+# skip a chapter's distinctive/unusual events (Gen 6 sons of God / Nephilim).
+_SUMMARY_VER = 2
+
 _SUMMARY_SYSTEM = """\
 You are a textual scholar working from a Berean approach: the text speaks first. \
 Let the actual words of the passage anchor everything you write. Import no \
@@ -197,8 +203,8 @@ def reading_summary(book, chapter):
     if not _anthropic:
         return jsonify({"book_summary": None, "chapter_summary": None})
 
-    book_key = f"summary_book:{book}"
-    chap_key = f"summary_ch:{book}:{chapter}"
+    book_key = f"summary_book:v{_SUMMARY_VER}:{book}"
+    chap_key = f"summary_ch:v{_SUMMARY_VER}:{book}:{chapter}"
 
     book_payload = _cache_get(book_key)
     chap_payload = _cache_get(chap_key)
@@ -250,8 +256,12 @@ def reading_summary(book, chapter):
                 f'"[Section: ...]" are the natural section breaks in this chapter — '
                 f'let your summary follow those sections in order rather than fighting '
                 f'the chapter boundary. Write 3 to 4 sentences summarizing what '
-                f'happens in this chapter, anchored in the text. When you refer to the '
-                f'writer, use the author\'s name.\n\n{chap_block}',
+                f'happens in this chapter, anchored in the text. Do not skip or '
+                f'flatten the chapter\'s distinctive or unusual events into generic '
+                f'statements — reporting plainly what the text records (even '
+                f'surprising or supernatural details, like the sons of God or the '
+                f'Nephilim) is faithful to the text, not editorializing. When you '
+                f'refer to the writer, use the author\'s name.\n\n{chap_block}',
                 max_tokens=320,
             )
         else:
