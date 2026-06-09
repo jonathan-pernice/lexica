@@ -51,7 +51,7 @@ _BOOK_AUTHORS = {
 # keys, so a bump makes every cached summary miss and lazily regenerate on next
 # view (old rows just go unreferenced; nothing is wiped). v2: tell Haiku not to
 # skip a chapter's distinctive/unusual events (Gen 6 sons of God / Nephilim).
-_SUMMARY_VER = 3
+_SUMMARY_VER = 4
 
 _SUMMARY_SYSTEM = """\
 You are a textual scholar working from a Berean approach: the text speaks first. \
@@ -257,14 +257,12 @@ def reading_summary(book, chapter):
                 f'let your summary follow those sections in order rather than fighting '
                 f'the chapter boundary. Write 3 to 5 sentences summarizing what '
                 f'happens in this chapter, anchored in the text. Cover the chapter '
-                f'from its very first section onward — do not skip the opening. Name '
-                f'the specific notable people, beings, and events the text records, '
-                f'including strange or supernatural ones (for example, if the text '
-                f'speaks of the sons of God taking wives, or the Nephilim / giants, '
-                f'say so plainly) — reporting what the text actually says is faithful '
-                f'to it, never toning it down or flattening it into a generic '
-                f'statement. When you refer to the writer, use the author\'s name.'
-                f'\n\n{chap_block}',
+                f'from its very first section onward — do not skip the opening or '
+                f'collapse it into a generic line. Name the specific notable people, '
+                f'beings, and events the text actually records, including any that '
+                f'are strange or supernatural; report them plainly rather than '
+                f'softening or omitting them. When you refer to the writer, use the '
+                f'author\'s name.\n\n{chap_block}',
                 max_tokens=320,
             )
         else:
