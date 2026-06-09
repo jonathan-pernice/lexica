@@ -4277,6 +4277,22 @@ function LibraryView({
       return;
     }
     const refLabel = bookName + " " + selChapter + ":" + startV + (endV !== startV ? "–" + endV : "");
+    // In chip mode each word is its own chip with no space characters between
+    // them, so the raw selected text runs together ("Inthebeginning"). Rebuild
+    // the snippet from the visible English of the touched word chips instead;
+    // that also drops the verse number. Prose/BSB keep real spaces, so fall back.
+    let snippet = text;
+    if (sel.containsNode) {
+      const parts = [];
+      readingRef.current.querySelectorAll(".lib-word, .lib-kjv-word").forEach(el => {
+        if (sel.containsNode(el, true)) {
+          const eng = el.querySelector(".lib-iw-english");
+          const t = (eng ? eng.textContent : el.textContent).trim();
+          if (t) parts.push(t);
+        }
+      });
+      if (parts.length) snippet = parts.join(" ");
+    }
     const r = range.getBoundingClientRect();
     justSelectedRef.current = true;
     setNoteSel({
@@ -4300,7 +4316,7 @@ function LibraryView({
           verse: endV,
           pos: endP
         },
-        snippet: text.slice(0, 300),
+        snippet: snippet.slice(0, 300),
         refLabel
       }
     });
