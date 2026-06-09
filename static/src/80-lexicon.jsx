@@ -357,9 +357,13 @@ function LexiconView({ onNavigateToSearch, onNavigateToLibrary, onWordClick, pen
           {groupings.map(g => (
             <button key={g.strongs} className="lexicon-result-row"
               onClick={() => loadProfile(g.strongs, corpus === "all" ? undefined : corpus)}>
-              <span className="lexicon-match-strongs">{g.strongs}</span>
-              {g.lemma && <span className="lexicon-match-lemma" dir={g.strongs[0] === "H" ? "rtl" : undefined}>{g.lemma}</span>}
-              {g.translit && <span className="lexicon-match-translit">{g.translit}</span>}
+              <span className="lexicon-result-head">
+                <span className="lexicon-match-strongs">{g.strongs}</span>
+                <span className="lexicon-result-word">
+                  {g.lemma && <span className="lexicon-match-lemma" dir={g.strongs[0] === "H" ? "rtl" : undefined}>{g.lemma}</span>}
+                  {g.translit && <span className="lexicon-match-translit">{g.translit}</span>}
+                </span>
+              </span>
               <span className="lexicon-result-preview">{renderRowPreview(g)}</span>
               <span className="lexicon-result-end">
                 <span className="lexicon-result-count">{g.count}</span>

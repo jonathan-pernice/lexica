@@ -5494,13 +5494,17 @@ function LexiconView({
     className: "lexicon-result-row",
     onClick: () => loadProfile(g.strongs, corpus === "all" ? undefined : corpus)
   }, /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-result-head"
+  }, /*#__PURE__*/React.createElement("span", {
     className: "lexicon-match-strongs"
-  }, g.strongs), g.lemma && /*#__PURE__*/React.createElement("span", {
+  }, g.strongs), /*#__PURE__*/React.createElement("span", {
+    className: "lexicon-result-word"
+  }, g.lemma && /*#__PURE__*/React.createElement("span", {
     className: "lexicon-match-lemma",
     dir: g.strongs[0] === "H" ? "rtl" : undefined
   }, g.lemma), g.translit && /*#__PURE__*/React.createElement("span", {
     className: "lexicon-match-translit"
-  }, g.translit), /*#__PURE__*/React.createElement("span", {
+  }, g.translit))), /*#__PURE__*/React.createElement("span", {
     className: "lexicon-result-preview"
   }, renderRowPreview(g)), /*#__PURE__*/React.createElement("span", {
     className: "lexicon-result-end"

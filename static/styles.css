@@ -221,6 +221,8 @@ input { font-family: inherit; }
   font-family: var(--f-mono); font-size: 10px; color: var(--ink-2);
   background: var(--bg-sunk); border-radius: 3px; padding: 0 4px; margin-right: 6px;
 }
+.lexicon-result-head { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.lexicon-result-word { display: inline-flex; align-items: center; gap: 10px; }
 .lexicon-result-end { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .lexicon-result-count { font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .lexicon-result-chev { color: var(--ink-3); font-size: 16px; line-height: 1; }
@@ -234,6 +236,9 @@ input { font-family: inherit; }
   }
   .lexicon-results::-webkit-scrollbar { display: none; }
   .lexicon-result-row { width: max-content; min-width: 100%; }
+  /* Stack the Greek/Hebrew word under the Strong's number to narrow the left
+     side, leaving more room for the renderings (less sideways scroll). */
+  .lexicon-result-head { flex-direction: column; align-items: flex-start; gap: 2px; }
   .lexicon-result-preview { flex: 0 0 auto; }
   .lex-prev-line { overflow: visible; text-overflow: clip; width: max-content; }
   .lexicon-result-end {
