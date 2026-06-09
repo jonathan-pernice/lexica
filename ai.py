@@ -685,7 +685,7 @@ def _enrich_explanation_with_cross_refs(
     xref_block  = "\n".join(f"- {r['verse_text'][:200]}" for r in xrefs)
     try:
         msg = _anthropic.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model="claude-sonnet-4-6",
             max_tokens=250,
             temperature=0,
             system=_XREF_SYNTHESIS_SYSTEM,
