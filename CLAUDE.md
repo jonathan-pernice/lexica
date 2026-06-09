@@ -243,7 +243,7 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   `_CACHE_CODE_VER` salt). See "AI result cache" below.
 
 ## AI result cache (ai_search_cache) — unified prompt-fingerprint scheme (2026-06-09)
-- ALL four Haiku-backed syntheses cache here with `ver_key = "<category>:<sha1-of-its-own-prompt>"`:
+- ALL four AI syntheses cache here (the xref write-up is Sonnet; search/summary/pn stay Haiku) with `ver_key = "<category>:<sha1-of-its-own-prompt>"`:
   `search:` (ai.py), `summary:` (views_summary.py), `xref:` (views_crossref.py), `pn:` (views_metav.py).
   Editing a prompt changes only its category's hash, so just that cache lazily refreshes — no manual
   version bump. (Replaced the old hand-bumped `_SUMMARY_VER` + fixed `"xref"`/`"pn"` literal tags.)

@@ -46,9 +46,13 @@ Still open:
    cram). Put the snippet in `core.py`; each prompt = its own task + its own soft CEILING (not a fixed
    target: chapter ~150w, xref shorter, person/place shorter still) + the shared snippet. Now that the
    caches are fingerprinted, editing the shared snippet auto-refreshes every cache for free — that's why
-   this was paired with the cache work. Chapter summary already does adaptive length + short sentences;
-   the cross-ref ("3-sentence synthesis") and person/place ("1-2 sentences") prompts still cap by
-   sentence count and should move to the shared snippet. NOTE: changing these prompts is exactly what the
+   this was paired with the cache work. DONE 2026-06-09: cross-ref moved off the "3-sentence" cap to
+   adaptive length (and onto Sonnet — see memory project_ai_synthesis_quality), and the chapter summary
+   was further tightened (track the arc, not a line per section; ~150w / never >200). STILL OPEN:
+   person/place ("1-2 sentences") still caps by sentence count, and the central SHARED snippet in core.py
+   was never built — xref and chapter each carry their own adaptive wording. Next lever if huge chapter
+   summaries still run long on Haiku: move the chapter summary to Sonnet too (same one-line swap as xref).
+   NOTE: changing these prompts is exactly what the
    new fingerprint scheme watches, so each edit will lazily refresh that category's cache (expected).
    `code: shared snippet in core.py; views_crossref.py system prompts; views_metav.py _PN_SYSTEM;
    views_summary.py _SUMMARY_SYSTEM/_*_TMPL; ai.py LSJ prompt in views_lsj.py`
