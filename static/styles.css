@@ -237,7 +237,8 @@ input { font-family: inherit; }
   .lexicon-result-preview { flex: 0 0 auto; }
   .lex-prev-line { overflow: visible; text-overflow: clip; width: max-content; }
   .lexicon-result-end {
-    position: sticky; right: 0; background: var(--bg); padding-left: 12px;
+    position: sticky; right: 0; align-self: stretch;
+    background: var(--bg); padding-left: 12px;
     box-shadow: -10px 0 8px -6px rgba(0, 0, 0, 0.06);
   }
   /* Keep the "rendered as …" label put at the left while the table scrolls. */
