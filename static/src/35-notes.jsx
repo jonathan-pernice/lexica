@@ -35,8 +35,8 @@ function NoteAddPopover({ rect, isMobile, onAdd, onColor, onCopy, onJournal }) {
         ))}
       </div>
       <button className="note-popover-btn" onClick={onAdd}>✎ Note</button>
-      {onCopy && <button className="note-popover-btn" onClick={onCopy}>Copy</button>}
       {onJournal && <button className="note-popover-btn" onClick={onJournal}>Journal</button>}
+      {onCopy && <button className="note-popover-btn" onClick={onCopy}>Copy</button>}
     </div>
   );
 }
@@ -67,8 +67,8 @@ function VerseNoteMenu({ rect, isMobile, onBookmark, onNote, onColor, onCopy, on
           ))}
         </div>
         <button className="note-popover-btn" onClick={onNote}>✎ Note</button>
-        {onCopy && <button className="note-popover-btn" onClick={onCopy}>Copy</button>}
         {onJournal && <button className="note-popover-btn" onClick={onJournal}>Journal</button>}
+        {onCopy && <button className="note-popover-btn" onClick={onCopy}>Copy</button>}
         <button className="note-popover-btn" onClick={onBookmark}><Icon.Bookmark/> Bookmark</button>
       </div>
     </>

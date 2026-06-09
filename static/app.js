@@ -2445,13 +2445,13 @@ function NoteAddPopover({
   }))), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onAdd
-  }, "\u270E Note"), onCopy && /*#__PURE__*/React.createElement("button", {
-    className: "note-popover-btn",
-    onClick: onCopy
-  }, "Copy"), onJournal && /*#__PURE__*/React.createElement("button", {
+  }, "\u270E Note"), onJournal && /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onJournal
-  }, "Journal"));
+  }, "Journal"), onCopy && /*#__PURE__*/React.createElement("button", {
+    className: "note-popover-btn",
+    onClick: onCopy
+  }, "Copy"));
 }
 
 // Menu shown when you right-click / long-press a verse number: Bookmark · Note · colors.
@@ -2505,13 +2505,13 @@ function VerseNoteMenu({
   }))), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onNote
-  }, "\u270E Note"), onCopy && /*#__PURE__*/React.createElement("button", {
-    className: "note-popover-btn",
-    onClick: onCopy
-  }, "Copy"), onJournal && /*#__PURE__*/React.createElement("button", {
+  }, "\u270E Note"), onJournal && /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onJournal
-  }, "Journal"), /*#__PURE__*/React.createElement("button", {
+  }, "Journal"), onCopy && /*#__PURE__*/React.createElement("button", {
+    className: "note-popover-btn",
+    onClick: onCopy
+  }, "Copy"), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onBookmark
   }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Bookmark")));
