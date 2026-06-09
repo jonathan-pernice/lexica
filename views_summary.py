@@ -85,21 +85,20 @@ _BOOK_PROMPT_TMPL = (
 )
 _CHAP_PROMPT_TMPL = (
     'Below is one chapter of "{name}". {author_line}The lines marked '
-    '"[Section: ...]" are the natural section breaks in this chapter — '
-    'let your summary follow those sections in order rather than fighting '
-    'the chapter boundary. Summarize what happens in this chapter, '
-    'anchored in the text. Let the length fit the chapter — a short or '
-    'simple chapter needs only a sentence or two; a long, eventful one '
-    'can run a short paragraph (up to about 150 words). Do not pad to '
-    'reach a length, and do not cram to save space. Use plain, short '
-    'sentences, one idea each; never force several events into one long '
-    'run-on sentence. Cover the chapter '
-    'from its very first section onward — do not skip the opening or '
-    'collapse it into a generic line. Name the specific notable people, '
-    'beings, and events the text actually records, including any that '
-    'are strange or supernatural; report them plainly rather than '
-    'softening or omitting them. When you refer to the writer, use the '
-    "author's name.\n\n{chap_block}"
+    '"[Section: ...]" are the natural section breaks — use them to track the '
+    'chapter\'s arc, but do NOT write a line for every section. Summarize what '
+    'happens, anchored in the text, in a single tight paragraph: a short or '
+    'simple chapter needs only a sentence or two, and even the longest, most '
+    'eventful chapter should stay around 150 words and never exceed roughly 200, '
+    'no matter how many sections it has. Do not pad, and do not cram. For a long '
+    'chapter, give its overall arc and only the few most significant people, '
+    'beings, and events rather than narrating each section; group the rest. Name '
+    'those notable people, beings, and events specifically — including any that '
+    'are strange or supernatural, reported plainly rather than softened or '
+    'omitted. Use plain, short sentences, one idea each; never force several '
+    'events into one long run-on. Still open with the chapter\'s beginning — do '
+    'not skip it or collapse it into a generic line. When you refer to the '
+    "writer, use the author's name.\n\n{chap_block}"
 )
 
 # Shared template fingerprint: editing any prompt above changes this, so every
