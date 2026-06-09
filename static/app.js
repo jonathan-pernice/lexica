@@ -316,25 +316,50 @@ function decodeMorph(morph, lemma) {
   }
   return parts.filter(Boolean).join(" · ");
 }
-function makeEntry(r, idx) {
-  const snum = r.strongs_base === "*" ? "*" : r.strongs || r.strongs_base;
+
+// Which Strong's number a detail entry shows: a proper-noun slot ('*') stays '*';
+// otherwise prefer the bare `strongs`, falling back to `strongs_base`.
+function entrySnum(s) {
+  return s.strongs_base === "*" ? "*" : s.strongs && s.strongs !== "*" ? s.strongs : s.strongs_base;
+}
+
+// Shared core of a detail-panel word entry. Callers add their own `id`, `gloss`
+// source, and any extra fields (gloss_head, morph, is_primary, …).
+function wordEntryCore(src, {
+  ref,
+  book,
+  chapter,
+  verse,
+  gloss
+}) {
   return {
-    id: `${snum}-${r.book}-${r.chapter}-${r.verse}-${idx}`,
-    strongs: strongsTag(snum),
-    strongs_base: r.strongs_base,
-    strongs_raw: snum,
-    greek: r.lemma || "",
-    translit: r.translit || "",
-    gloss: r.gloss || "",
-    gloss_head: r.gloss_head || "",
-    ref: r.ref,
-    book: r.book,
-    chapter: r.chapter,
-    verse: r.verse,
-    definition: r.strongs_def || "",
-    derivation: r.derivation || "",
-    is_function: r.is_function || false,
-    is_pn: r.is_pn || false
+    strongs: strongsTag(entrySnum(src)),
+    strongs_base: src.strongs_base,
+    strongs_raw: entrySnum(src),
+    greek: src.lemma || "",
+    translit: src.translit || "",
+    gloss: gloss || "",
+    ref,
+    book,
+    chapter,
+    verse,
+    definition: src.strongs_def || "",
+    derivation: src.derivation || "",
+    is_function: src.is_function || false,
+    is_pn: src.is_pn || false
+  };
+}
+function makeEntry(r, idx) {
+  return {
+    id: `${entrySnum(r)}-${r.book}-${r.chapter}-${r.verse}-${idx}`,
+    ...wordEntryCore(r, {
+      ref: r.ref,
+      book: r.book,
+      chapter: r.chapter,
+      verse: r.verse,
+      gloss: r.gloss
+    }),
+    gloss_head: r.gloss_head || ""
   };
 }
 function flattenAiResults(verses) {
@@ -342,23 +367,15 @@ function flattenAiResults(verses) {
   let idx = 0;
   for (const v of verses) {
     for (const w of v.words || []) {
-      const snum = w.strongs_base === "*" ? "*" : w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base;
       entries.push({
-        id: `ai-${v.book}-${v.chapter}-${v.verse}-${snum}-${idx++}`,
-        strongs: strongsTag(snum),
-        strongs_base: w.strongs_base,
-        strongs_raw: snum,
-        greek: w.lemma || "",
-        translit: w.translit || "",
-        gloss: w.gloss || "",
-        ref: v.ref,
-        book: v.book,
-        chapter: v.chapter,
-        verse: v.verse,
-        definition: w.strongs_def || "",
-        derivation: w.derivation || "",
-        is_function: w.is_function || false,
-        is_pn: w.is_pn || false,
+        id: `ai-${v.book}-${v.chapter}-${v.verse}-${entrySnum(w)}-${idx++}`,
+        ...wordEntryCore(w, {
+          ref: v.ref,
+          book: v.book,
+          chapter: v.chapter,
+          verse: v.verse,
+          gloss: w.gloss
+        }),
         is_primary: v.is_primary || false,
         is_additional: v.is_additional || false
       });
@@ -3844,29 +3861,19 @@ function LibraryView({
   };
   const renderVerse = (v, skipHeading = false) => {
     const isHighlight = nav && nav.highlight === v.verse && (nav.chapter == null || nav.chapter === selChapter);
-    const makeEntry = w => {
-      const snum = w.strongs_base === "*" ? "*" : w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base;
-      return {
-        id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
-        strongs: strongsTag(snum),
-        strongs_base: w.strongs_base,
-        strongs_raw: snum,
-        greek: w.lemma || "",
-        translit: w.translit || "",
-        morph: w.morph || "",
-        gloss: w.english || "",
+    const makeEntry = w => ({
+      id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
+      ...wordEntryCore(w, {
         ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
         book: selBook.abbrev,
         chapter: selChapter,
         verse: v.verse,
-        definition: "",
-        derivation: "",
-        is_function: false,
-        is_pn: !!w.is_pn,
-        pn_type: w.pn_type || null,
-        pn_types: w.pn_types || null
-      };
-    };
+        gloss: w.english
+      }),
+      morph: w.morph || "",
+      pn_type: w.pn_type || null,
+      pn_types: w.pn_types || null
+    });
     const chipLabel = w => {
       return w.english_head && w.english?.includes(' ') ? w.english_head : w.english || w.english_head || "";
     };

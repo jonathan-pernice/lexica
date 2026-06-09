@@ -862,29 +862,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onTran
   const renderVerse = (v, skipHeading = false) => {
     const isHighlight = nav && nav.highlight === v.verse && (nav.chapter == null || nav.chapter === selChapter);
 
-    const makeEntry = (w) => {
-      const snum = w.strongs_base === "*" ? "*" : (w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base);
-      return {
+    const makeEntry = (w) => ({
       id: `lib-${selBook.abbrev}-${selChapter}-${v.verse}-${w.position}`,
-      strongs: strongsTag(snum),
-      strongs_base: w.strongs_base,
-      strongs_raw: snum,
-      greek: w.lemma || "",
-      translit: w.translit || "",
+      ...wordEntryCore(w, { ref: `${selBook.abbrev} ${selChapter}:${v.verse}`, book: selBook.abbrev, chapter: selChapter, verse: v.verse, gloss: w.english }),
       morph: w.morph || "",
-      gloss: w.english || "",
-      ref: `${selBook.abbrev} ${selChapter}:${v.verse}`,
-      book: selBook.abbrev,
-      chapter: selChapter,
-      verse: v.verse,
-      definition: "",
-      derivation: "",
-      is_function: false,
-      is_pn: !!w.is_pn,
       pn_type: w.pn_type || null,
       pn_types: w.pn_types || null,
-      };
-    };
+    });
 
     const chipLabel = (w) => {
       return (w.english_head && w.english?.includes(' ')) ? w.english_head : (w.english || w.english_head || "");
