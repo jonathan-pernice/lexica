@@ -61,8 +61,12 @@ Still open:
 
 ## New features
 
-- **Notes feature.** Let the user write and save their own study notes (per verse / passage),
-  viewable and searchable later. Design + storage TBD — next session.
+- ~~**Notes feature.**~~ **DONE 2026-06-09** (notes + highlights). Browser-only study notes &
+  color highlights in the Library; drag-select or right-click/long-press a verse number; Notes tab
+  with search + Export/Import backup. Browser-local (`localStorage`), no DB/login — built in the
+  migration-ready shape for a future account. See TODO_ARCHIVE + memory `project_notes_highlights`.
+  Open follow-ups: cross-translation highlight paint, word-level highlights in KJV/BSB, notes on the
+  non-canon texts, Notes-tab filters (color/book).
 - ~~**BSB (Berean Standard Bible).**~~ **DONE 2026-06-08.** Public-domain modern reading text
   alongside ABP/KJV. Loaded by `scripts/load_bsb.py` into `bsb_verses`; served by `views_bsb.py`
   (`/api/bsb/chapter`). Added as a third reading text in the Library toggle (commit `4c88501`), and
@@ -172,22 +176,14 @@ kept below.
 - **Toggle:** header button switches basic/advanced, remembered in the browser, only shown on wide screens.
 </details>
 
-### Highlighting + notes (Logos-style)
-Let a reader drag-select text, pick a color to highlight it, and attach a note. The trick Logos uses:
-the highlight isn't stored *inside* the text — it's a separate layer that *points at* a word range
-(book/chapter/verse + word position, which we already track). So the same highlight shows up in any
-view/translation, and all notes live in one searchable Notes panel (filter by color, tag, book; click
-to jump back). Maps cleanly onto our word-position data. Needs somewhere to keep the notes — the
-browser's local storage (one device only, no login) for a quick version, or real accounts (below) to
-sync across devices. `code: new notes store keyed to words-table positions; render layer paints matches`
-
-**Browser-first is NOT throwaway — notes migrate cleanly to a login later** if two things are done up
-front: (1) store the browser notes in the EXACT same shape the server will use (the word-position
-anchor), so moving them up is a straight copy, not a conversion; (2) give each note its own id when it's
-CREATED, not when it's saved — so "already uploaded" vs "new" is obvious, two devices merge without
-duplicates, and a half-finished upload is safe to re-run. Then adding accounts = a one-time "found N
-notes on this device, save them to your account?" handoff. Build browser-only now, design the note's
-shape as if the login already exists, and nothing is wasted.
+### Highlighting + notes (Logos-style) — CORE DONE 2026-06-09, follow-ups open
+Notes + color highlights are LIVE (browser-local, word-position anchor, drag-select + verse-number
+gestures, Export/Import backup). See TODO_ARCHIVE + memory `project_notes_highlights`. What's left:
+- **Cross-translation paint** — a highlight made in ABP doesn't show in KJV/BSB (word positions
+  differ per text). Today paint is matched to the text it was made in.
+- **Word-level highlights in KJV/BSB** — they anchor at the whole verse for now (no `data-note-pos`).
+- **Notes on the non-canon texts** (Enoch, Didache…) — their verse rows aren't tagged yet.
+- **Notes-tab filters** — by color and by book; maybe group-by-book.
 
 ### Free user accounts
 Sign-up-yourself free accounts. Main payoff is syncing highlights/notes across a reader's devices, and

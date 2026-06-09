@@ -6,6 +6,33 @@ few "leave it alone" verdicts worth keeping.
 
 ---
 
+## Notes & highlights (study notes) — DONE 2026-06-09
+
+Readers can now write study notes and paint color highlights right in the Library, and find them
+again later. Built and shipped in one session as small POCs, tweaked live against the user's testing.
+
+- **Where they're kept:** the browser only (`localStorage`) — no database, no login, nothing on
+  PythonAnywhere. Decided browser-first on purpose: the saved shape is exactly what a future
+  account/sync would use, so moving notes "up to the cloud" later is a straight copy, not a rewrite.
+  Each note gets its own id the moment it's created, so merging two devices later won't duplicate.
+- **How you make one:** drag-select words → a little bar with 5 highlight colors + a "Note" button;
+  or right-click a verse number (long-press on phones) for a whole-verse note. These don't fight the
+  existing clicks — a word still opens the lexicon, a verse number still opens cross-references.
+- **A note and a highlight are the same thing** — one record that can have text, a color, or both.
+- **Finding them:** a new Notes tab lists everything with text search, plus Export (downloads a
+  backup file) and Import (merges one back in, safe to re-run). A bookmark shows in the margin of
+  any verse that has one.
+
+Lessons / why certain choices: chip mode has no spaces between words, so the saved quote had to be
+rebuilt from the chips (not the raw selection). On mobile the browser's own copy/share toolbar fights
+a popup near the selection, so the "Add note" bar is pinned to the screen bottom there. The margin
+marker had to live *inside* the verse text (indent the first line only) or it shoved every wrapped
+line over. Highlights paint only in the text they were made in (ABP word-for-word; KJV/BSB whole
+verse) — true cross-translation paint is a known follow-up. Open follow-ups are listed in TODO.md;
+full detail in memory `project_notes_highlights`.
+
+---
+
 ## AI result cache — unified prompt-fingerprint scheme — DONE 2026-06-09
 
 The four Haiku-backed caches (AI search, reading summaries, TSK cross-refs, person/place blurbs) all

@@ -200,6 +200,33 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 - Clicking a verse number opens the TSK Cross-Reference Panel
 - Both word detail panel and xref panel trigger `has-detail` on `.app` → compacts `lib-reading` on desktop (desktop only, scoped to `min-width: 1100px`)
 
+## Notes & Highlights (study notes — LIVE 2026-06-09)
+- **Browser-only, NO database, NO server route, NO login.** Notes live in the visitor's browser
+  (`localStorage` key `lexica.notes.v1`). bible.db is untouched. Do NOT add a notes table / backend
+  route unless we build accounts/sync (separate future feature). Memory: `project_notes_highlights`.
+- One record = a word-position anchor + optional text + optional color. So a "note" and a
+  "highlight" are the SAME record: color set = highlight, text set = note, both = both. Shape is the
+  EXACT shape a future login/sync will use (migration = a straight copy): `{id, device, corpus,
+  translation, book, bookName, chapter, start:{verse,pos}, end:{verse,pos}, snippet, body, color,
+  created, updated}`. `id` is minted AT CREATION (clean device-merge later).
+- Files (all frontend): `static/src/12-notes-store.jsx` (the `NotesStore` localStorage store +
+  `NOTE_COLORS`/`NOTE_COLOR_CSS` palette + `useNotesVersion` hook), `static/src/35-notes.jsx`
+  (`NoteAddPopover`, `NoteColorRow`, `NotesPanel` editor, `NotesView` browse tab). Wiring lives in
+  `60-library.jsx` (selection capture, paint, markers) and `90-app.jsx` (`activeNote` state + panel
+  render + the Notes tab). Tab added to `20-shared-components.jsx` Header + mobile tabs in 90-app.
+- **Gestures — they DO NOT fight the existing clicks** (word-click = lexicon, verse-number = TSK):
+  drag-select text → floating "Add note" bar + 5 color swatches (a drag is suppressed from firing a
+  word-click); right-click a verse number (desktop) or long-press it (mobile) = whole-verse note.
+  On mobile the "Add note" bar is pinned to the screen bottom (clear of the OS copy/share toolbar)
+  and a `selectionchange` backstop drives it. A bookmark marker sits inline at the start of any
+  verse that has a record (indents only the first line); click it to reopen.
+- Anchoring/painting is PER READING TEXT: ABP captures exact word-spots (`data-note-pos` on word
+  spans, `data-note-verse` on rows); KJV/BSB anchor at the whole verse. Highlights paint only in the
+  text they were made in (matched on `translation`); verse-level ones paint the whole verse. Adding a
+  note/highlight on the SAME anchor reuses the existing record (no duplicates) via `NotesStore.findAnchor`.
+- Notes tab: list + text search + Export/Import (JSON backup; merge-by-id so re-import is safe — the
+  file IS the migration format). Non-canon texts can't take notes yet (verses there aren't tagged).
+
 ## TSK Cross-Reference Panel
 - Endpoint: GET /api/cross-references/curated/<book>/<chapter>/<verse>
 - Step 1: Haiku selects 8-10 strongest refs from full TSK list
