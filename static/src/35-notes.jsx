@@ -41,6 +41,38 @@ function NoteAddPopover({ rect, isMobile, onAdd, onColor }) {
   );
 }
 
+// Menu shown when you right-click / long-press a verse number: Bookmark · Note · colors.
+function VerseNoteMenu({ rect, isMobile, onBookmark, onNote, onColor, onClose }) {
+  if (!rect) return null;
+  let style;
+  if (isMobile) {
+    style = { position: "fixed", left: "50%", transform: "translateX(-50%)", bottom: 72, zIndex: 1000 };
+  } else {
+    const W = 270;
+    style = {
+      position: "fixed",
+      top: Math.min(window.innerHeight - 56, rect.top + rect.height + 6),
+      left: Math.min(window.innerWidth - W - 8, Math.max(8, rect.left)),
+      zIndex: 1000,
+    };
+  }
+  return (
+    <>
+      <div className="note-menu-scrim" onClick={onClose} />
+      <div className={"note-popover" + (isMobile ? " note-popover-mobile" : "")} style={style} onMouseDown={(e) => e.preventDefault()}>
+        <button className="note-popover-btn" onClick={onBookmark}><Icon.Bookmark/> Bookmark</button>
+        <button className="note-popover-btn" onClick={onNote}>✎ Note</button>
+        <div className="note-swatches">
+          {NOTE_COLORS.map(c => (
+            <button key={c} className="note-swatch" style={{ background: NOTE_COLOR_CSS[c] }}
+              title={"Highlight " + c} aria-label={"Highlight " + c} onClick={() => onColor(c)} />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
 // A row of color swatches + a clear button, for the editor.
 function NoteColorRow({ value, onPick }) {
   return (
@@ -63,23 +95,25 @@ function NotesPanel({ noteId, isMobile, onClose }) {
   const note = NotesStore.get(noteId);
   const [body, setBody] = useState(note ? (note.body || "") : "");
   const [color, setColor] = useState(note ? (note.color || null) : null);
+  const [bookmark, setBookmark] = useState(note ? !!note.bookmark : false);
   const taRef = useRef(null);
 
   useEffect(() => {
     setBody(note ? (note.body || "") : "");
     setColor(note ? (note.color || null) : null);
+    setBookmark(note ? !!note.bookmark : false);
     // Desktop: focus the box right away. Mobile: DON'T — auto-popping the
     // on-screen keyboard covers a freshly opened sheet. The user taps to type.
     if (!isMobile) requestAnimationFrame(() => taRef.current && taRef.current.focus());
   }, [noteId]);
 
-  const save = () => { NotesStore.update(noteId, { body, color }); onClose(); };
+  const save = () => { NotesStore.update(noteId, { body, color, bookmark }); onClose(); };
   const del = () => { NotesStore.remove(noteId); onClose(); };
-  // Closing a record that's both blank AND uncolored discards it (the id was
-  // minted on create — id-at-creation — so a thrown-away draft shouldn't linger).
+  // Closing a record that's blank AND uncolored AND not bookmarked discards it
+  // (id minted on create, so a thrown-away draft shouldn't linger).
   const close = () => {
-    if (!body.trim() && !color) NotesStore.remove(noteId);
-    else NotesStore.update(noteId, { body, color });
+    if (!body.trim() && !color && !bookmark) NotesStore.remove(noteId);
+    else NotesStore.update(noteId, { body, color, bookmark });
     onClose();
   };
   // Swipe-down-to-close on mobile (same hook the word / xref / summary sheets use).
@@ -92,6 +126,10 @@ function NotesPanel({ noteId, isMobile, onClose }) {
       <div className="detail-head-l">
         <span className="detail-pos">{note.refLabel || (note.book + " " + note.chapter)}</span>
       </div>
+      <button className={"note-bm-toggle" + (bookmark ? " on" : "")} onClick={() => setBookmark(b => !b)}
+        title={bookmark ? "Bookmarked" : "Bookmark this"} aria-label="Toggle bookmark" aria-pressed={bookmark}>
+        <Icon.Bookmark/>
+      </button>
       <button className="detail-close" onClick={close} aria-label="Close"><Icon.Close/></button>
     </div>
   );
@@ -138,8 +176,12 @@ function NotesView({ onOpen }) {
   useNotesVersion();
   const [q, setQ] = useState("");
   const [msg, setMsg] = useState("");
+  const [filter, setFilter] = useState("all");   // all | bookmark | highlight | note
   const fileRef = useRef(null);
-  const notes = NotesStore.search(q);
+  let notes = NotesStore.search(q);
+  if (filter === "bookmark") notes = notes.filter(n => n.bookmark);
+  else if (filter === "highlight") notes = notes.filter(n => n.color);
+  else if (filter === "note") notes = notes.filter(n => n.body && n.body.trim());
 
   const doExport = () => {
     const data = JSON.stringify(NotesStore.exportData(), null, 2);
@@ -185,6 +227,11 @@ function NotesView({ onOpen }) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
         />
+        <div className="notes-filter seg">
+          {[["all", "All"], ["bookmark", "★ Bookmarks"], ["highlight", "🎨 Highlights"], ["note", "✎ Notes"]].map(([k, lbl]) => (
+            <button key={k} className={"seg-b" + (filter === k ? " on" : "")} onClick={() => setFilter(k)}>{lbl}</button>
+          ))}
+        </div>
       </div>
       {notes.length === 0 ? (
         <div className="notes-empty">
@@ -198,6 +245,7 @@ function NotesView({ onOpen }) {
             <li key={n.id} className="notes-item" onClick={() => onOpen(n)}>
               <div className="notes-item-ref">
                 {n.color && <span className="notes-item-dot" style={{ background: NOTE_COLOR_CSS[n.color] }} />}
+                {n.bookmark && <span className="notes-item-bm">★</span>}
                 {n.refLabel || (n.book + " " + n.chapter)}
               </div>
               {n.snippet && <div className="notes-item-snippet">“{n.snippet}”</div>}

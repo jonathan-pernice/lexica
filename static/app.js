@@ -2193,6 +2193,61 @@ function NoteAddPopover({
   }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Note"));
 }
 
+// Menu shown when you right-click / long-press a verse number: Bookmark · Note · colors.
+function VerseNoteMenu({
+  rect,
+  isMobile,
+  onBookmark,
+  onNote,
+  onColor,
+  onClose
+}) {
+  if (!rect) return null;
+  let style;
+  if (isMobile) {
+    style = {
+      position: "fixed",
+      left: "50%",
+      transform: "translateX(-50%)",
+      bottom: 72,
+      zIndex: 1000
+    };
+  } else {
+    const W = 270;
+    style = {
+      position: "fixed",
+      top: Math.min(window.innerHeight - 56, rect.top + rect.height + 6),
+      left: Math.min(window.innerWidth - W - 8, Math.max(8, rect.left)),
+      zIndex: 1000
+    };
+  }
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "note-menu-scrim",
+    onClick: onClose
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "note-popover" + (isMobile ? " note-popover-mobile" : ""),
+    style: style,
+    onMouseDown: e => e.preventDefault()
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "note-popover-btn",
+    onClick: onBookmark
+  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Bookmark"), /*#__PURE__*/React.createElement("button", {
+    className: "note-popover-btn",
+    onClick: onNote
+  }, "\u270E Note"), /*#__PURE__*/React.createElement("div", {
+    className: "note-swatches"
+  }, NOTE_COLORS.map(c => /*#__PURE__*/React.createElement("button", {
+    key: c,
+    className: "note-swatch",
+    style: {
+      background: NOTE_COLOR_CSS[c]
+    },
+    title: "Highlight " + c,
+    "aria-label": "Highlight " + c,
+    onClick: () => onColor(c)
+  })))));
+}
+
 // A row of color swatches + a clear button, for the editor.
 function NoteColorRow({
   value,
@@ -2226,10 +2281,12 @@ function NotesPanel({
   const note = NotesStore.get(noteId);
   const [body, setBody] = useState(note ? note.body || "" : "");
   const [color, setColor] = useState(note ? note.color || null : null);
+  const [bookmark, setBookmark] = useState(note ? !!note.bookmark : false);
   const taRef = useRef(null);
   useEffect(() => {
     setBody(note ? note.body || "" : "");
     setColor(note ? note.color || null : null);
+    setBookmark(note ? !!note.bookmark : false);
     // Desktop: focus the box right away. Mobile: DON'T — auto-popping the
     // on-screen keyboard covers a freshly opened sheet. The user taps to type.
     if (!isMobile) requestAnimationFrame(() => taRef.current && taRef.current.focus());
@@ -2237,7 +2294,8 @@ function NotesPanel({
   const save = () => {
     NotesStore.update(noteId, {
       body,
-      color
+      color,
+      bookmark
     });
     onClose();
   };
@@ -2245,12 +2303,13 @@ function NotesPanel({
     NotesStore.remove(noteId);
     onClose();
   };
-  // Closing a record that's both blank AND uncolored discards it (the id was
-  // minted on create — id-at-creation — so a thrown-away draft shouldn't linger).
+  // Closing a record that's blank AND uncolored AND not bookmarked discards it
+  // (id minted on create, so a thrown-away draft shouldn't linger).
   const close = () => {
-    if (!body.trim() && !color) NotesStore.remove(noteId);else NotesStore.update(noteId, {
+    if (!body.trim() && !color && !bookmark) NotesStore.remove(noteId);else NotesStore.update(noteId, {
       body,
-      color
+      color,
+      bookmark
     });
     onClose();
   };
@@ -2267,6 +2326,12 @@ function NotesPanel({
   }, /*#__PURE__*/React.createElement("span", {
     className: "detail-pos"
   }, note.refLabel || note.book + " " + note.chapter)), /*#__PURE__*/React.createElement("button", {
+    className: "note-bm-toggle" + (bookmark ? " on" : ""),
+    onClick: () => setBookmark(b => !b),
+    title: bookmark ? "Bookmarked" : "Bookmark this",
+    "aria-label": "Toggle bookmark",
+    "aria-pressed": bookmark
+  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null)), /*#__PURE__*/React.createElement("button", {
     className: "detail-close",
     onClick: close,
     "aria-label": "Close"
@@ -2324,8 +2389,10 @@ function NotesView({
   useNotesVersion();
   const [q, setQ] = useState("");
   const [msg, setMsg] = useState("");
+  const [filter, setFilter] = useState("all"); // all | bookmark | highlight | note
   const fileRef = useRef(null);
-  const notes = NotesStore.search(q);
+  let notes = NotesStore.search(q);
+  if (filter === "bookmark") notes = notes.filter(n => n.bookmark);else if (filter === "highlight") notes = notes.filter(n => n.color);else if (filter === "note") notes = notes.filter(n => n.body && n.body.trim());
   const doExport = () => {
     const data = JSON.stringify(NotesStore.exportData(), null, 2);
     const url = URL.createObjectURL(new Blob([data], {
@@ -2387,7 +2454,13 @@ function NotesView({
     placeholder: "Search your notes\u2026",
     value: q,
     onChange: e => setQ(e.target.value)
-  })), notes.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "notes-filter seg"
+  }, [["all", "All"], ["bookmark", "★ Bookmarks"], ["highlight", "🎨 Highlights"], ["note", "✎ Notes"]].map(([k, lbl]) => /*#__PURE__*/React.createElement("button", {
+    key: k,
+    className: "seg-b" + (filter === k ? " on" : ""),
+    onClick: () => setFilter(k)
+  }, lbl)))), notes.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "notes-empty"
   }, q ? "No notes match that." : "No notes yet. In the Library, select some text in a verse and choose “Add note.”") : /*#__PURE__*/React.createElement("ul", {
     className: "notes-list"
@@ -2402,7 +2475,9 @@ function NotesView({
     style: {
       background: NOTE_COLOR_CSS[n.color]
     }
-  }), n.refLabel || n.book + " " + n.chapter), n.snippet && /*#__PURE__*/React.createElement("div", {
+  }), n.bookmark && /*#__PURE__*/React.createElement("span", {
+    className: "notes-item-bm"
+  }, "\u2605"), n.refLabel || n.book + " " + n.chapter), n.snippet && /*#__PURE__*/React.createElement("div", {
     className: "notes-item-snippet"
   }, "\u201C", n.snippet, "\u201D"), /*#__PURE__*/React.createElement("div", {
     className: "notes-item-body"
@@ -4607,12 +4682,11 @@ function LibraryView({
       }
     }, /*#__PURE__*/React.createElement(Icon.Bookmark, null));
   };
-  // Whole-verse note: right-click the verse number (desktop) or long-press it
-  // (mobile). Left-click / tap stays cross-references.
-  const makeVerseNote = (verse, fromEl) => {
+  // Build the whole-verse anchor (incl. a readable snippet) for a verse number.
+  const verseAnchor = (verse, fromEl) => {
     const bookId = nonCanon ? nonCanon.id : selBook ? selBook.abbrev : null;
     const bookName = nonCanon ? nonCanon.name : selBook ? selBook.name : "";
-    if (!bookId) return;
+    if (!bookId) return null;
     // Snippet = the verse's words. Chip rows pack words with no spaces, so pull
     // the visible English of each chip; otherwise read the verse text (works for
     // both the verse-row layout and the running-prose flow span, after dropping
@@ -4635,7 +4709,7 @@ function LibraryView({
         snippet = (clone.textContent || "").trim();
       }
     }
-    const anchor = {
+    return {
       corpus,
       translation,
       book: bookId,
@@ -4652,10 +4726,54 @@ function LibraryView({
       snippet: snippet.slice(0, 300),
       refLabel: bookName + " " + selChapter + ":" + verse
     };
-    // Reuse the verse's existing whole-verse note rather than stacking a new one.
-    const existing = NotesStore.findAnchor(anchor);
-    const note = existing || NotesStore.create(anchor);
+  };
+  // Right-click / long-press a verse number opens a small menu (Bookmark · Note ·
+  // colors). Left-click / tap stays cross-references.
+  const [verseMenu, setVerseMenu] = useState(null); // { rect, verse, el } | null
+  const openVerseMenu = (verse, el) => {
+    const r = el.getBoundingClientRect();
+    setVerseMenu({
+      rect: {
+        top: r.top,
+        left: r.left,
+        width: r.width,
+        height: r.height
+      },
+      verse,
+      el
+    });
+  };
+  const vmBookmark = () => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el);
+    if (!a) return setVerseMenu(null);
+    const ex = NotesStore.findAnchor(a);
+    if (ex) NotesStore.update(ex.id, {
+      bookmark: true
+    });else NotesStore.create({
+      ...a,
+      bookmark: true
+    });
+    setVerseMenu(null);
+  };
+  const vmNote = () => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el);
+    if (!a) return setVerseMenu(null);
+    const ex = NotesStore.findAnchor(a);
+    const note = ex || NotesStore.create(a);
+    setVerseMenu(null);
     onOpenNote && onOpenNote(note.id);
+  };
+  const vmColor = color => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el);
+    if (!a) return setVerseMenu(null);
+    const ex = NotesStore.findAnchor(a);
+    if (ex) NotesStore.update(ex.id, {
+      color
+    });else NotesStore.create({
+      ...a,
+      color
+    });
+    setVerseMenu(null);
   };
   // Shared press handlers for a verse number: right-click + mobile long-press.
   const vnumPressRef = useRef({
@@ -4665,7 +4783,7 @@ function LibraryView({
   const vnumNoteHandlers = verse => ({
     onContextMenu: e => {
       e.preventDefault();
-      makeVerseNote(verse, e.currentTarget);
+      openVerseMenu(verse, e.currentTarget);
     },
     onTouchStart: e => {
       const el = e.currentTarget;
@@ -4674,7 +4792,7 @@ function LibraryView({
       clearTimeout(st.timer);
       st.timer = setTimeout(() => {
         st.fired = true;
-        makeVerseNote(verse, el);
+        openVerseMenu(verse, el);
         if (navigator.vibrate) navigator.vibrate(12);
       }, 500);
     },
@@ -5738,6 +5856,13 @@ function LibraryView({
     isMobile: isMobile,
     onAdd: addNoteFromSelection,
     onColor: addHighlightFromSelection
+  }), verseMenu && /*#__PURE__*/React.createElement(VerseNoteMenu, {
+    rect: verseMenu.rect,
+    isMobile: isMobile,
+    onBookmark: vmBookmark,
+    onNote: vmNote,
+    onColor: vmColor,
+    onClose: () => setVerseMenu(null)
   }), showSummary && (selBook || nonCanon) && /*#__PURE__*/React.createElement(SummaryPanel, {
     book: nonCanon ? nonCanon.id : selBook.abbrev,
     chapter: selChapter,

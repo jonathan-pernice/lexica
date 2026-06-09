@@ -1009,12 +1009,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       </button>
     );
   };
-  // Whole-verse note: right-click the verse number (desktop) or long-press it
-  // (mobile). Left-click / tap stays cross-references.
-  const makeVerseNote = (verse, fromEl) => {
+  // Build the whole-verse anchor (incl. a readable snippet) for a verse number.
+  const verseAnchor = (verse, fromEl) => {
     const bookId = nonCanon ? nonCanon.id : (selBook ? selBook.abbrev : null);
     const bookName = nonCanon ? nonCanon.name : (selBook ? selBook.name : "");
-    if (!bookId) return;
+    if (!bookId) return null;
     // Snippet = the verse's words. Chip rows pack words with no spaces, so pull
     // the visible English of each chip; otherwise read the verse text (works for
     // both the verse-row layout and the running-prose flow span, after dropping
@@ -1033,20 +1032,42 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
         snippet = (clone.textContent || "").trim();
       }
     }
-    const anchor = {
+    return {
       corpus, translation, book: bookId, bookName, chapter: selChapter,
       start: { verse, pos: null }, end: { verse, pos: null },
       snippet: snippet.slice(0, 300), refLabel: bookName + " " + selChapter + ":" + verse,
     };
-    // Reuse the verse's existing whole-verse note rather than stacking a new one.
-    const existing = NotesStore.findAnchor(anchor);
-    const note = existing || NotesStore.create(anchor);
+  };
+  // Right-click / long-press a verse number opens a small menu (Bookmark · Note ·
+  // colors). Left-click / tap stays cross-references.
+  const [verseMenu, setVerseMenu] = useState(null);   // { rect, verse, el } | null
+  const openVerseMenu = (verse, el) => {
+    const r = el.getBoundingClientRect();
+    setVerseMenu({ rect: { top: r.top, left: r.left, width: r.width, height: r.height }, verse, el });
+  };
+  const vmBookmark = () => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el); if (!a) return setVerseMenu(null);
+    const ex = NotesStore.findAnchor(a);
+    if (ex) NotesStore.update(ex.id, { bookmark: true }); else NotesStore.create({ ...a, bookmark: true });
+    setVerseMenu(null);
+  };
+  const vmNote = () => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el); if (!a) return setVerseMenu(null);
+    const ex = NotesStore.findAnchor(a);
+    const note = ex || NotesStore.create(a);
+    setVerseMenu(null);
     onOpenNote && onOpenNote(note.id);
+  };
+  const vmColor = (color) => {
+    const a = verseAnchor(verseMenu.verse, verseMenu.el); if (!a) return setVerseMenu(null);
+    const ex = NotesStore.findAnchor(a);
+    if (ex) NotesStore.update(ex.id, { color }); else NotesStore.create({ ...a, color });
+    setVerseMenu(null);
   };
   // Shared press handlers for a verse number: right-click + mobile long-press.
   const vnumPressRef = useRef({ timer: null, fired: false });
   const vnumNoteHandlers = (verse) => ({
-    onContextMenu: (e) => { e.preventDefault(); makeVerseNote(verse, e.currentTarget); },
+    onContextMenu: (e) => { e.preventDefault(); openVerseMenu(verse, e.currentTarget); },
     onTouchStart: (e) => {
       const el = e.currentTarget;
       const st = vnumPressRef.current;
@@ -1054,7 +1075,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       clearTimeout(st.timer);
       st.timer = setTimeout(() => {
         st.fired = true;
-        makeVerseNote(verse, el);
+        openVerseMenu(verse, el);
         if (navigator.vibrate) navigator.vibrate(12);
       }, 500);
     },
@@ -1875,6 +1896,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       </div>
       </div>
       {noteSel && <NoteAddPopover rect={noteSel.rect} isMobile={isMobile} onAdd={addNoteFromSelection} onColor={addHighlightFromSelection} />}
+      {verseMenu && <VerseNoteMenu rect={verseMenu.rect} isMobile={isMobile} onBookmark={vmBookmark} onNote={vmNote} onColor={vmColor} onClose={() => setVerseMenu(null)} />}
       {showSummary && (selBook || nonCanon) && (
         <SummaryPanel
           book={nonCanon ? nonCanon.id : selBook.abbrev}
