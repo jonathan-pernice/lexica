@@ -902,10 +902,13 @@ function LsjSummary({
   }, data.summary);
 }
 
-// Google-Maps-style bottom-sheet dismissal: drag the WHOLE card down to close,
-// but only when the inner scroll area is already at the top — otherwise the body
-// scrolls normally. Uses native non-passive listeners so we can block page scroll
-// / pull-to-refresh while dragging (React's touch props are passive and can't).
+// Google-Maps-style bottom-sheet dismissal: drag the WHOLE card down to close.
+// Grabbing the card's top chrome (the handle/header — anything outside the
+// scrolling body) ALWAYS arms the drag, no matter where the body is scrolled.
+// Starting inside the body only arms when it's already scrolled to the top
+// (otherwise the body scrolls normally). Uses native non-passive listeners so we
+// can block page scroll / pull-to-refresh while dragging (React's touch props
+// are passive and can't).
 function useSwipeToDismiss(onClose) {
   const sheetRef = React.useRef(null);
   const scrollRef = React.useRef(null);
@@ -916,22 +919,25 @@ function useSwipeToDismiss(onClose) {
     if (!el) return;
     let startY = 0,
       dragY = 0,
-      active = false;
+      active = false,
+      fromChrome = false;
     const SNAP = 'transform 0.25s cubic-bezier(0.2,0.8,0.2,1)';
     const atTop = () => {
       const sc = scrollRef.current;
       return !sc || sc.scrollTop <= 0;
     };
     const onStart = e => {
-      active = atTop(); // only arm the drag if the body is scrolled to the top
+      const sc = scrollRef.current;
+      fromChrome = !(sc && sc.contains(e.target)); // touch began on the handle/header, not the scroll body
+      active = fromChrome || atTop(); // chrome always arms; body only when scrolled to top
       startY = e.touches[0].clientY;
       dragY = 0;
     };
     const onMove = e => {
       if (!active) return;
       const d = e.touches[0].clientY - startY;
-      if (d <= 0 || !atTop()) {
-        // pulling up, or body got scrolled → hand back to native scroll
+      if (d <= 0 || !fromChrome && !atTop()) {
+        // pulling up, or body-drag that got scrolled → hand back
         if (dragY) {
           el.style.transition = '';
           el.style.transform = '';
