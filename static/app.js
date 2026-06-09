@@ -5345,21 +5345,17 @@ function LexiconView({
     }, g.count))))));
   };
 
-  // A result row's rendering preview: an ABP line and a KJV line. The little
-  // ABP/KJV tag only shows when a word has both (so single-Bible words / the
-  // ABP|KJV filters read clean, untagged). Desktop caps each line at 6 with an
-  // ellipsis; mobile shows all and scrolls the line sideways (see styles.css).
+  // A result row's rendering preview: an ABP line and/or a KJV line, each
+  // labeled with its ABP/KJV tag (so a single-Bible word still says which one).
+  // Desktop caps each line at 6 renderings; mobile shows all (wraps).
   const renderRowPreview = g => {
-    const abp = g.abp_glosses || [];
-    const kjv = g.kjv_glosses || [];
-    const both = abp.length > 0 && kjv.length > 0;
-    const line = (list, tag) => list.length === 0 ? null : /*#__PURE__*/React.createElement("span", {
+    const line = (list, tag) => !list || list.length === 0 ? null : /*#__PURE__*/React.createElement("span", {
       className: "lex-prev-line",
       key: tag
-    }, both && /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "lex-prev-tag"
     }, tag), (isMobile ? list : list.slice(0, 6)).map(x => x.gloss).join(", "));
-    return [line(abp, "ABP"), line(kjv, "KJV")];
+    return [line(g.abp_glosses, "ABP"), line(g.kjv_glosses, "KJV")];
   };
 
   // Light up every form of the focused word's Strong's in the verse list.
