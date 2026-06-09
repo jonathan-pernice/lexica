@@ -57,6 +57,17 @@ const NotesStore = (function () {
       return load().slice().sort((a, b) => (b.updated || "").localeCompare(a.updated || ""));
     },
     get(id) { return load().find(n => n.id === id) || null; },
+    // An existing record pointing at the exact same words (same verse + word-spot
+    // range), so we reuse it instead of stacking duplicates on the same text.
+    findAnchor(a) {
+      const sp = a.start.pos ?? null, ep = (a.end && a.end.pos) ?? null;
+      const ev = (a.end && a.end.verse) || a.start.verse;
+      return load().find(n =>
+        n.corpus === a.corpus && n.book === a.book && n.chapter === a.chapter &&
+        n.start.verse === a.start.verse && ((n.end && n.end.verse) || n.start.verse) === ev &&
+        (n.start.pos ?? null) === sp && ((n.end && n.end.pos) ?? null) === ep
+      ) || null;
+    },
     // notes whose anchor lands in this chapter of this text
     forChapter(corpus, book, chapter) {
       return load().filter(n => n.corpus === corpus && n.book === book && n.chapter === chapter);

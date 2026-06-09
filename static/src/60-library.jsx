@@ -934,15 +934,20 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   };
   const addNoteFromSelection = () => {
     if (!noteSel) return;
-    const note = NotesStore.create(noteSel.anchor);
+    // Reuse a note already on this exact text instead of making a duplicate.
+    const existing = NotesStore.findAnchor(noteSel.anchor);
+    const note = existing || NotesStore.create(noteSel.anchor);
     setNoteSel(null);
     if (window.getSelection) window.getSelection().removeAllRanges();   // dismiss the OS selection toolbar
     onOpenNote && onOpenNote(note.id);
   };
   // A color swatch in the popover → make a highlight (no editor; the paint is it).
+  // If this exact text already has a record, just recolor it.
   const addHighlightFromSelection = (color) => {
     if (!noteSel) return;
-    NotesStore.create({ ...noteSel.anchor, color });
+    const existing = NotesStore.findAnchor(noteSel.anchor);
+    if (existing) NotesStore.update(existing.id, { color });
+    else NotesStore.create({ ...noteSel.anchor, color });
     setNoteSel(null);
     if (window.getSelection) window.getSelection().removeAllRanges();
   };
@@ -1028,11 +1033,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
         snippet = (clone.textContent || "").trim();
       }
     }
-    const note = NotesStore.create({
+    const anchor = {
       corpus, translation, book: bookId, bookName, chapter: selChapter,
       start: { verse, pos: null }, end: { verse, pos: null },
       snippet: snippet.slice(0, 300), refLabel: bookName + " " + selChapter + ":" + verse,
-    });
+    };
+    // Reuse the verse's existing whole-verse note rather than stacking a new one.
+    const existing = NotesStore.findAnchor(anchor);
+    const note = existing || NotesStore.create(anchor);
     onOpenNote && onOpenNote(note.id);
   };
   // Shared press handlers for a verse number: right-click + mobile long-press.
