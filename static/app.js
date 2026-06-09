@@ -5485,7 +5485,7 @@ function LexiconView({
     className: "lexicon-match-translit"
   }, g.translit), /*#__PURE__*/React.createElement("span", {
     className: "lexicon-result-preview"
-  }, (g.glosses || []).slice(0, isMobile ? 3 : 6).map(x => x.gloss).join(", ")), /*#__PURE__*/React.createElement("span", {
+  }, (isMobile ? g.glosses || [] : (g.glosses || []).slice(0, 6)).map(x => x.gloss).join(", ")), /*#__PURE__*/React.createElement("span", {
     className: "lexicon-result-count"
   }, g.count), /*#__PURE__*/React.createElement("span", {
     className: "lexicon-result-chev"

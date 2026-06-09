@@ -218,6 +218,15 @@ input { font-family: inherit; }
 }
 .lexicon-result-count { font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .lexicon-result-chev { color: var(--ink-3); font-size: 16px; line-height: 1; }
+/* Mobile: let the rendering preview scroll sideways so all of them are
+   reachable by swiping, instead of truncating at the screen edge. */
+@media (max-width: 1099px) {
+  .lexicon-result-preview {
+    overflow-x: auto; overflow-y: hidden; text-overflow: clip;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .lexicon-result-preview::-webkit-scrollbar { display: none; }
+}
 
 
 /* Back link from profile to groupings */
