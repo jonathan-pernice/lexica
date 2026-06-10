@@ -673,6 +673,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const [audioCur, setAudioCur] = useState(0);
   const [audioDur, setAudioDur] = useState(0);
   const audioRef = useRef(null);
+  const [viewCh, setViewCh] = useState(null);   // chrono: chapter currently scrolled into view (drives the toolbar play target)
   const [libOptions, setLibOptions] = useState({
     viewMode: "chip", showStrongs: false, showInterlinear: false,
   });
@@ -1082,12 +1083,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     const out = []; let lastCh = null;
     arr.forEach(v => {
       if (v._ch != null && v._ch !== lastCh) {
-        out.push(
-          <div key={`cm-${v._ch}`} className="lib-chrono-chapmark">
-            <span className="lib-chrono-chapmark-lbl">{selBook ? selBook.name : ""} {v._ch}</span>
-            {renderChronoAudio(v._ch)}
-          </div>
-        );
+        out.push(<div key={`cm-${v._ch}`} data-ch={v._ch} className="lib-chrono-chapmark">{selBook ? selBook.name : ""} {v._ch}</div>);
         lastCh = v._ch;
       }
       out.push(renderFn(v));
@@ -1098,23 +1094,24 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const kjvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : kjvLoading;
   const bsbShowLoading = chronoOn ? (chronoLoading || !chronoReady) : bsbLoading;
   const esvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : esvLoading;
-  // Chapter audio (BSB + ESV only). Audio is one file per WHOLE chapter.
-  //  - Canonical: a play/pause icon in the toolbar + a progress bar under the toolbar
-  //    (desktop AND mobile — same spot).
-  //  - Chronological: a play/pause + bar above EACH chapter's verses (renderChronoAudio,
-  //    placed at the chapter dividers); play auto-advances to the next chapter on end.
+  // Chapter audio (BSB + ESV only). Audio is one file per WHOLE chapter. ONE play/pause
+  // icon in the toolbar + a progress bar under the toolbar (desktop AND mobile, same
+  // spot). The button targets the chapter you're reading: canonical = the open chapter;
+  // chrono = whichever chapter is scrolled into view (viewCh). Press play and you get
+  // that chapter; it auto-advances to the next when one ends.
   const audioCapable = bsbMode || esvMode;
+  const audioTarget = audioCapable ? {
+    book: chronoOn ? (curPassage && curPassage.book) : (selBook && selBook.abbrev),
+    ch:   chronoOn ? (viewCh || (curPassage && curPassage.start_ch)) : selChapter,
+  } : null;
+  const targetKey = audioTarget && audioTarget.book ? (audioTarget.book + "-" + audioTarget.ch) : null;
+  const onTargetNow = !!targetKey && audioKey === targetKey;   // the target IS the loaded chapter
+  const showPause = onTargetNow && audioPlaying;               // pressing ⏸ pauses; ▶ plays/switches
   const onToolbarAudio = () => {
-    if (!audioCapable) return;
+    if (!audioTarget || !audioTarget.book || !audioTarget.ch) return;
     const a = audioRef.current;
-    if (audioUrl && a) { if (a.paused) a.play().catch(() => {}); else a.pause(); return; }
-    if (selBook) loadAudio(selBook.abbrev, selChapter);
-  };
-  // Toggle one specific chapter (used by the inline chrono controls).
-  const onChapterAudio = (book, ch) => {
-    const a = audioRef.current;
-    if (audioKey === (book + "-" + ch) && a) { if (a.paused) a.play().catch(() => {}); else a.pause(); }
-    else loadAudio(book, ch);
+    if (onTargetNow && a) { if (a.paused) a.play().catch(() => {}); else a.pause(); }
+    else loadAudio(audioTarget.book, audioTarget.ch);          // start / switch to the chapter in view
   };
   const onAudioEnded = () => {
     setAudioPlaying(false);
@@ -1130,41 +1127,40 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       onPlay={() => setAudioPlaying(true)} onPause={() => setAudioPlaying(false)}
       onEnded={onAudioEnded} />
   ) : null;
-  const audioProgress = (
-    <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
-      value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
+  const audioBar = !audioEl ? null : (
+    <div className="lib-audio-bar-row">
+      <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
+        value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
+      {audioEl}
+    </div>
   );
-  // Under-toolbar slot. Chrono keeps the bar inline per chapter, so here it just mounts
-  // the hidden player; canonical shows the progress bar (desktop + mobile alike).
-  const audioBar = !audioEl ? null : chronoOn ? audioEl : (
-    <div className="lib-audio-bar-row">{audioProgress}{audioEl}</div>
-  );
-  // Toolbar play/pause — canonical only (chrono uses the inline per-chapter controls).
-  const audioBtn = (audioCapable && !chronoOn) ? (
-    <button className={"lib-toggle lib-toggle-icon" + (audioPlaying ? " on" : "")}
+  const audioBtn = audioCapable ? (
+    <button className={"lib-toggle lib-toggle-icon" + (showPause ? " on" : "")}
       disabled={audioBusy}
-      title={audioPlaying ? "Pause audio" : "Play chapter audio"}
-      aria-label={audioPlaying ? "Pause audio" : "Play chapter audio"} aria-pressed={audioPlaying}
+      title={showPause ? "Pause audio" : "Play chapter audio"}
+      aria-label={showPause ? "Pause audio" : "Play chapter audio"} aria-pressed={showPause}
       onClick={onToolbarAudio}>
-      {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
+      {showPause ? <Icon.Pause/> : <Icon.Play/>}
     </button>
   ) : null;
-  // Inline control rendered at each chrono chapter divider (above that chapter's verses).
-  const renderChronoAudio = (ch) => {
-    if (!audioCapable || !curPassage) return null;
-    const book = curPassage.book;
-    const active = audioKey === (book + "-" + ch);
-    return (
-      <span className="lib-chrono-audio">
-        <button className={"lib-chrono-play" + (active && audioPlaying ? " on" : "")}
-          disabled={audioBusy} onClick={() => onChapterAudio(book, ch)}
-          aria-label={active && audioPlaying ? "Pause" : "Play chapter"}>
-          {active && audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
-        </button>
-        {active && audioUrl && audioProgress}
-      </span>
-    );
-  };
+  // Chrono: track which chapter is scrolled to the top, so the toolbar play button
+  // targets the chapter you're reading (no per-chapter buttons, no drill-down menu).
+  useEffect(() => {
+    if (!chronoOn || !audioCapable) { setViewCh(null); return; }
+    const compute = () => {
+      const root = readingRef.current; if (!root) return;
+      const marks = root.querySelectorAll(".lib-chrono-chapmark[data-ch]");
+      if (!marks.length) return;
+      let cur = parseInt(marks[0].dataset.ch, 10);
+      marks.forEach(m => { if (m.getBoundingClientRect().top <= 150) cur = parseInt(m.dataset.ch, 10); });
+      setViewCh(cur);
+    };
+    let raf = null;
+    const onScroll = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = null; compute(); }); };
+    compute();
+    window.addEventListener("scroll", onScroll, true);   // capture: also catches a nested scroll panel
+    return () => { window.removeEventListener("scroll", onScroll, true); if (raf) cancelAnimationFrame(raf); };
+  }, [chronoOn, audioCapable, chronoPos, translation, chronoReady, curPassage && curPassage.start_ch]);
 
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
@@ -2170,10 +2166,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               )}
             </button>
           </div>
-          {audioCapable && !chronoOn && (
-            <button className={"mbar-overview mbar-audio" + (audioPlaying ? " on" : "")} disabled={audioBusy}
-              onClick={onToolbarAudio} aria-label={audioPlaying ? "Pause audio" : "Play chapter audio"}>
-              {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
+          {audioCapable && (
+            <button className={"mbar-overview mbar-audio" + (showPause ? " on" : "")} disabled={audioBusy}
+              onClick={onToolbarAudio} aria-label={showPause ? "Pause audio" : "Play chapter audio"}>
+              {showPause ? <Icon.Pause/> : <Icon.Play/>}
             </button>
           )}
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
