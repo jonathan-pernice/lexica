@@ -66,7 +66,7 @@ function VerseNoteMenu({ rect, isMobile, onBookmark, onNote, onColor, onCopy, on
               title={"Highlight " + c} aria-label={"Highlight " + c} onClick={() => onColor(c)} />
           ))}
         </div>
-        <button className="note-popover-btn" onClick={onNote}>✎ Note</button>
+        <button className="note-popover-btn" onClick={onNote}><Icon.Note/><span className="note-btn-lbl">Note</span></button>
         {onJournal && <button className="note-popover-btn" onClick={onJournal}>Journal</button>}
         {onCopy && <button className="note-popover-btn" onClick={onCopy}>Copy</button>}
         <button className="note-popover-btn" onClick={onBookmark}><Icon.Bookmark/><span className="note-btn-lbl">Bookmark</span></button>

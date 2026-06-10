@@ -2622,7 +2622,9 @@ function VerseNoteMenu({
   }))), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onNote
-  }, "\u270E Note"), onJournal && /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Icon.Note, null), /*#__PURE__*/React.createElement("span", {
+    className: "note-btn-lbl"
+  }, "Note")), onJournal && /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onJournal
   }, "Journal"), onCopy && /*#__PURE__*/React.createElement("button", {

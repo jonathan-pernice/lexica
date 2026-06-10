@@ -2472,13 +2472,15 @@ input { font-family: inherit; }
 .nav-top:empty { display: none; }   /* desktop: drop the empty overlay-X row so the source bar starts at the top */
 .nav-source {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 0 10px;
+  padding: 0 6px;
   height: 59px; box-sizing: border-box;
   border-bottom: 1px solid var(--rule);
 }
-/* One unified 3-way segmented control [ ABP | KJV | Other ] for the mutually-
-   exclusive text sources. Content-sized so every label shows in full. */
+/* One unified segmented control [ ABP | KJV | BSB | (ESV) | Other ] for the
+   mutually-exclusive text sources. Compact padding so 5 buttons (with the owner's
+   ESV) still fit the fixed-width nav instead of overflowing off-screen. */
 .nav-source-seg { flex: 0 0 auto; }
+.nav-source-seg .seg-b { padding: 5px 7px; font-size: 12px; }
 .nav-other-wrap { position: relative; display: inline-flex; }
 .nav-other-seg { display: inline-flex; align-items: center; gap: 4px; }
 .nav-other-lbl { white-space: nowrap; }
@@ -2761,7 +2763,7 @@ input { font-family: inherit; }
 .note-popover-btn:hover { background: rgba(255,255,255,0.2); }
 /* Mobile: shrink the highlight menu so the colors + actions sit on one row
    instead of wrapping. Bookmark drops to icon-only to save the most width. */
-.note-popover-mobile { box-shadow: 0 4px 24px rgba(0,0,0,0.35); padding: 6px 8px; gap: 3px; }
+.note-popover-mobile { box-shadow: 0 4px 24px rgba(0,0,0,0.35); padding: 6px 8px; gap: 3px; flex-wrap: nowrap; max-width: calc(100vw - 10px); overflow-x: auto; }
 .note-popover-mobile .note-swatches { gap: 4px; margin-left: 2px; }
 .note-popover-mobile .note-swatch { width: 22px; height: 22px; }
 .note-popover-mobile .note-popover-btn { font-size: 12px; padding: 6px 9px; margin-left: 2px; }
