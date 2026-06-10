@@ -148,6 +148,7 @@ from views_crossref import bp as crossref_bp, prune_cache as _prune_xref_cache
 from views_lsj import bp as lsj_bp
 from views_kjv import bp as kjv_bp
 from views_bsb import bp as bsb_bp
+from views_esv import bp as esv_bp
 from views_lexicon import bp as lexicon_bp
 from views_library import bp as library_bp
 from views_search import bp as search_bp
@@ -172,6 +173,7 @@ app.register_blueprint(crossref_bp)
 app.register_blueprint(lsj_bp)
 app.register_blueprint(kjv_bp)
 app.register_blueprint(bsb_bp)
+app.register_blueprint(esv_bp)
 app.register_blueprint(lexicon_bp)
 app.register_blueprint(library_bp)
 app.register_blueprint(search_bp)

@@ -1446,6 +1446,28 @@ input { font-family: inherit; }
   padding: 40px 0;
 }
 
+/* ESV (owner-only) per-chapter audio control */
+.lib-esv-audio {
+  margin: 0 0 14px;
+}
+.lib-esv-listen {
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--bg-2, #f0ece4);
+  border: 1px solid var(--line, #ddd6c8);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.lib-esv-listen:hover { background: var(--bg-3, #e7e1d6); }
+.lib-esv-listen:disabled { opacity: 0.5; cursor: default; }
+.lib-esv-player {
+  width: 100%;
+  max-width: 420px;
+  height: 36px;
+}
+
 /* Verse reading container — all modes */
 .lib-text-words {
   font-family: var(--f-serif);

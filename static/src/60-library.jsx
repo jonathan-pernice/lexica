@@ -150,7 +150,7 @@ const _BOOK_DIV = {
   Jud:"General Epistles",Rev:"Apocalyptic",
 };
 
-function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible, otherOpen, setOtherOpen, chrono, orderMode, setOrder, chronoPos, onPickPassage }) {
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible, esvOwner, otherOpen, setOtherOpen, chrono, orderMode, setOrder, chronoPos, onPickPassage }) {
   const [query, setQuery] = useState("");
   const chronoMode = orderMode === "chronological" && chrono && !nonCanon;
   // The era a passage belongs to, so the active passage's era starts expanded.
@@ -226,6 +226,9 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
           <button className={"seg-b" + (!nonCanon && translation === "abp" ? " on" : "")} onClick={() => pickBible("abp")}>ABP</button>
           <button className={"seg-b" + (!nonCanon && translation === "kjv" ? " on" : "")} onClick={() => pickBible("kjv")}>KJV</button>
           <button className={"seg-b" + (!nonCanon && translation === "bsb" ? " on" : "")} onClick={() => pickBible("bsb")}>BSB</button>
+          {esvOwner && (
+            <button className={"seg-b" + (!nonCanon && translation === "esv" ? " on" : "")} onClick={() => pickBible("esv")}>ESV</button>
+          )}
           {nonCanonList && nonCanonList.length > 0 && (
             <button className={"seg-b nav-other-seg" + (nonCanon ? " on" : "")} onClick={() => setOtherOpen(o => !o)} aria-expanded={otherOpen}>
               <span className="nav-other-lbl">{nonCanon ? (nonCanon.abbr || nonCanon.name) : "Other"}</span>
@@ -454,13 +457,13 @@ function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, 
 // Compacted to three groups: Text · Study layer · Display.
 // ============================================================
 function ModesSheet({
-  corpus, translation, pickBible, toggleParallel, nonCanonList,
+  corpus, translation, pickBible, esvOwner, toggleParallel, nonCanonList,
   showStrongs, showInterlinear, setOpt, chipMode, libFontSize, changeFontSize, onClose,
   chrono, orderMode, setOrder,
 }) {
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
-  const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly) || translation === "bsb";   // English-only / BSB: no Greek toggles
+  const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly) || translation === "bsb" || translation === "esv";   // English-only / BSB / ESV: no Greek toggles
   const gray = proseLocked ? { opacity: 0.35, cursor: "default" } : undefined;
   return (
     <>
@@ -479,6 +482,9 @@ function ModesSheet({
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="abp"?" on":"")} onClick={()=>pickBible("abp")}>ABP</button>
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="bsb"?" on":"")} onClick={()=>pickBible("bsb")}>BSB</button>
+                {esvOwner && (
+                  <button className={"mseg-b"+(corpus==="bible"&&translation==="esv"?" on":"")} onClick={()=>pickBible("esv")}>ESV</button>
+                )}
               </div>
               {!activeNonCanon && (
                 <div className="mseg text-par">
@@ -650,9 +656,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const [verses, setVerses] = useState([]);
   const [kjvVerses, setKjvVerses] = useState([]);
   const [bsbVerses, setBsbVerses] = useState([]);
+  const [esvVerses, setEsvVerses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [kjvLoading, setKjvLoading] = useState(false);
   const [bsbLoading, setBsbLoading] = useState(false);
+  const [esvLoading, setEsvLoading] = useState(false);
+  // ESV is the owner's personal text: esvOwner (set by the server) gates the toggle.
+  const [esvOwner, setEsvOwner] = useState(false);
+  const [esvAudioUrl, setEsvAudioUrl] = useState(null);   // signed FCBH mp3 url, once "Listen" is pressed
+  const [esvAudioBusy, setEsvAudioBusy] = useState(false);
   const [libOptions, setLibOptions] = useState({
     viewMode: "chip", showStrongs: false, showInterlinear: false,
   });
@@ -695,6 +707,19 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     return a.refLabel + (tag ? " (" + tag + ")" : "") + " — " + a.snippet;
   };
   useNotesVersion();                                // re-render markers when notes change
+  // Who's signed in (re-read every render; setAuth notifies, so login/logout
+  // re-renders us). The ESV toggle only ever shows when the server says "owner".
+  const authEmail = (() => { try { return (NotesStore.authInfo() || {}).email || null; } catch (e) { return null; } })();
+  useEffect(() => {
+    let cancelled = false;
+    api.esvStatus().then(d => { if (!cancelled) setEsvOwner(!!(d && d.owner)); });
+    return () => { cancelled = true; };
+  }, [authEmail]);
+  // If the owner signs out (or it's revoked) while reading ESV, fall back to ABP
+  // so they're never stuck on a now-forbidden text showing blank.
+  useEffect(() => {
+    if (!esvOwner && translation === "esv") { setTranslation("abp"); onTranslationChange?.("abp"); }
+  }, [esvOwner, translation]);
 
   useEffect(() => {
     if (!nav?.book || !navBookRef.current || nav.book !== selBook?.abbrev) return;
@@ -832,6 +857,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       if (need.includes("abp")) jobs.push(api.chapter(book, c).then(d => ["abp", d]));
       if (need.includes("kjv")) jobs.push(api.kjvChapter(book, c).then(d => ["kjv", d]));
       if (need.includes("bsb")) jobs.push(api.bsbChapter(book, c).then(d => ["bsb", d]));
+      if (need.includes("esv")) jobs.push(api.esvChapter(book, c).then(d => ["esv", d]));
       return Promise.all(jobs).then(pairs => [c, Object.fromEntries(pairs)]);
     };
     Promise.all(chs.map(fetchChapter))
@@ -879,6 +905,36 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     return () => { cancelled = true; };
   }, [selBook && selBook.abbrev, selChapter, translation, corpus, chronoOn]);
 
+  // ESV chapter loader — owner-only reading text. Each fetch carries the login
+  // token; the server returns 404 (and api.esvChapter yields []) for non-owners.
+  useEffect(() => {
+    if (!selBook || nonCanon || chronoOn || translation !== "esv" || !esvOwner) return;
+    let cancelled = false;
+    setEsvLoading(true);
+    setEsvVerses([]);
+    api.esvChapter(selBook.abbrev, selChapter)
+      .then(data => { if (!cancelled) { setEsvVerses(data); setEsvLoading(false); } })
+      .catch(() => { if (!cancelled) setEsvLoading(false); });
+    return () => { cancelled = true; };
+  }, [selBook && selBook.abbrev, selChapter, translation, corpus, chronoOn, esvOwner]);
+
+  // Reset the ESV audio when the chapter/text changes — the old signed mp3 url is
+  // for the previous chapter. The owner presses Listen to fetch the new one.
+  useEffect(() => {
+    setEsvAudioUrl(null); setEsvAudioBusy(false);
+  }, [selBook && selBook.abbrev, selChapter, translation]);
+  const loadEsvAudio = () => {
+    if (!selBook) return;
+    setEsvAudioBusy(true);
+    api.esvAudio(selBook.abbrev, selChapter)
+      .then(d => {
+        setEsvAudioBusy(false);
+        if (d && d.url) setEsvAudioUrl(d.url);
+        else flash("No audio for this chapter");
+      })
+      .catch(() => { setEsvAudioBusy(false); flash("Audio unavailable"); });
+  };
+
   useEffect(() => {
     if (!nav?.scroll || loading || !verses.length) return;
     // Don't scroll while the requested chapter's verses are still the OLD chapter's —
@@ -908,7 +964,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     setCorpus(t.id);
     setSelChapter(1);
     setOtherOpen(false);
-    if (translation === "kjv" || translation === "bsb" || translation === "parallel") { setTranslation("abp"); onTranslationChange?.("abp"); }
+    if (translation === "kjv" || translation === "bsb" || translation === "esv" || translation === "parallel") { setTranslation("abp"); onTranslationChange?.("abp"); }
   };
   // Picking a Bible book from the nav returns to the Bible text.
   const selectBook = (b) => {
@@ -933,7 +989,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   // In-text search: which text to search. Bible → the active edition (Parallel
   // searches the English/KJV column); a non-canonical reader → that text's id.
   const readCorpus = corpus === "bible" ? (translation === "parallel" ? "kjv" : translation) : corpus;
-  const canSearch = !!readCorpus;
+  // ESV has no plain-text search route (owner-only reading text), so the reader's
+  // in-text find is off for it — every other text supports it.
+  const canSearch = !!readCorpus && translation !== "esv";
   const searchName = corpus === "bible" ? readCorpus.toUpperCase() : (nonCanon ? nonCanon.name : "");
   const runTextSearch = () => {
     const q = searchQ.trim();
@@ -965,7 +1023,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   // locked to Prose and the Greek-only toggles (Strong's / Interlinear / Parallel /
   // Chip) are disabled and grayed out.
   const bsbMode     = translation === "bsb";
-  const proseLocked = !!(nonCanon && nonCanon.englishOnly) || bsbMode;
+  const esvMode     = translation === "esv";
+  const proseLocked = !!(nonCanon && nonCanon.englishOnly) || bsbMode || esvMode;
   const chipMode    = !proseLocked && (viewMode === "chip" || showStrongs || showInterlinear);
   const wordMode    = chipMode;
   const kjvWordMode = chipMode;
@@ -994,6 +1053,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const abpView = chronoOn ? flattenSpan("abp") : verses;
   const kjvView = chronoOn ? flattenSpan("kjv") : kjvVerses;
   const bsbView = chronoOn ? flattenSpan("bsb") : bsbVerses;
+  const esvView = chronoOn ? flattenSpan("esv") : esvVerses;
   // Drop a chapter divider each time _ch changes; a plain map for canonical (no _ch).
   const withMarks = (arr, renderFn) => {
     const out = []; let lastCh = null;
@@ -1009,6 +1069,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const abpShowLoading = chronoOn ? (chronoLoading || !chronoReady) : loading;
   const kjvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : kjvLoading;
   const bsbShowLoading = chronoOn ? (chronoLoading || !chronoReady) : bsbLoading;
+  const esvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : esvLoading;
 
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
@@ -1743,6 +1804,22 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     );
   };
 
+  // ESV reader — plain English, owner-only (same shape as BSB; no Greek/Strong's).
+  const renderEsvVerse = (v) => {
+    const ch = v._ch ?? selChapter;
+    const isHighlight = nav && nav.highlight === v.verse && (nav.chapter == null || nav.chapter === ch);
+    return (
+      <React.Fragment key={`${ch}-${v.verse}`}>
+        {v.heading && <div className="lib-verse-row pericope-row"><span className="lib-vnum" aria-hidden="true"/><div className="pericope-heading">{v.heading}</div></div>}
+        <div ref={isHighlight ? highlightRef : null} data-note-verse={v.verse} data-note-chapter={ch}
+          className={"lib-verse-row" + (isHighlight ? " lib-highlight" : "")}>
+          {vnumEl(v.verse, ch)}
+          <span className="lib-verse-content">{noteMarker(v.verse, ch)}<span className={"lib-bsb-text" + hiClass(v.verse, null, ch)}>{v.verse_text}</span></span>
+        </div>
+      </React.Fragment>
+    );
+  };
+
   // Non-canonical reader (Didache, etc.). The Greek interlinear is the normal reading,
   // exactly like Bible ABP. The readable English appears ONLY in Parallel — same
   // two-column layout as Bible parallel (Greek interlinear | English). No bracket /
@@ -1850,6 +1927,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           translation={translation}
           corpus={corpus}
           pickBible={pickBible}
+          esvOwner={esvOwner}
           otherOpen={otherOpen}
           setOtherOpen={setOtherOpen}
           chrono={chrono}
@@ -1883,6 +1961,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           corpus={corpus}
           translation={translation}
           pickBible={pickBible}
+          esvOwner={esvOwner}
           toggleParallel={toggleParallel}
           nonCanonList={NONCANON}
           showStrongs={showStrongs}
@@ -2146,6 +2225,25 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           ) : (
             <div className="lib-text-words">
               {withMarks(bsbView, renderBsbVerse)}
+            </div>
+          )
+        ) : translation === "esv" ? (
+          esvShowLoading ? (
+            <div className="lib-loading">Loading…</div>
+          ) : (
+            <div className="lib-text-words">
+              {!chronoOn && (
+                <div className="lib-esv-audio">
+                  {esvAudioUrl ? (
+                    <audio className="lib-esv-player" src={esvAudioUrl} controls autoPlay />
+                  ) : (
+                    <button className="lib-esv-listen" disabled={esvAudioBusy} onClick={loadEsvAudio}>
+                      {esvAudioBusy ? "Loading audio…" : "▶ Listen (ESV audio)"}
+                    </button>
+                  )}
+                </div>
+              )}
+              {withMarks(esvView, renderEsvVerse)}
             </div>
           )
         ) : abpShowLoading ? (

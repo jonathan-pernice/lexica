@@ -131,6 +131,22 @@ def notes_db():
     return conn
 
 
+# The ESV is a PERSONAL, owner-only reading text (Crossway-copyrighted — it is
+# NEVER a public corpus like KJV/BSB). Its text lives in its OWN file, esv.db,
+# kept OUT of bible.db and OUT of git (*.db is gitignored), and loaded on
+# PythonAnywhere only by scripts/load_esv.py. The owner gate in views_esv.py
+# decides who is allowed to read it; this helper just opens the file read-only.
+ESV_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "esv.db")
+
+
+def esv_db():
+    """Read-only connection to esv.db. Raises sqlite3.OperationalError if the file
+    isn't there yet (esv.db not loaded) — callers catch that and return empty."""
+    conn = sqlite3.connect(f"file:{ESV_DB}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
 # ── Unified AI-synthesis result cache ────────────────────────────────────────
 # Every Haiku-backed synthesis (search, summary, xref, metav person/place) stores
 # its rows in ai_search_cache with ver_key = "<category>:<fingerprint>", the

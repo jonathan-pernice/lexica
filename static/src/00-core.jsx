@@ -32,6 +32,16 @@ function renderInlineMd(text) {
 // ============================================================
 // API LAYER
 // ============================================================
+// Attach the signed-in user's bearer token (if any). Used only by the ESV calls
+// below — the server gate needs to know WHO is asking, since the ESV is the
+// owner's personal text. Resolved at call time (NotesStore loads after this file).
+function _authHeaders() {
+  try {
+    const a = (typeof NotesStore !== "undefined") && NotesStore.auth();
+    return a && a.token ? { "Authorization": "Bearer " + a.token } : {};
+  } catch (e) { return {}; }
+}
+
 const api = {
   search: (q, phrase = false) =>
     fetch(`/api/search?q=${encodeURIComponent(q)}&phrase=${phrase ? 1 : 0}`).then(r => r.json()),
@@ -73,6 +83,17 @@ const api = {
     fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   bsbChapter: (book, ch) =>
     fetch(`/api/bsb/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  // ESV is the owner's personal text — every call carries the login token and the
+  // server refuses anyone but the owner (404). esvStatus drives the toggle.
+  esvStatus: () =>
+    fetch(`/api/esv/status`, { headers: _authHeaders() })
+      .then(r => r.json()).catch(() => ({ owner: false })),
+  esvChapter: (book, ch) =>
+    fetch(`/api/esv/chapter/${encodeURIComponent(book)}/${ch}`, { headers: _authHeaders() })
+      .then(r => r.ok ? r.json() : []).catch(() => []),
+  esvAudio: (book, ch) =>
+    fetch(`/api/esv/audio/${encodeURIComponent(book)}/${ch}`, { headers: _authHeaders() })
+      .then(r => r.ok ? r.json() : { url: null }).catch(() => ({ url: null })),
   textSearch: (q, corpus, mode, book) =>
     fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` +
           `&mode=${encodeURIComponent(mode || "phrase")}` +
