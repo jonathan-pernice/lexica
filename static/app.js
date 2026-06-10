@@ -5495,6 +5495,13 @@ function LibraryView({
           "data-ch": v._ch,
           className: "lib-chrono-chapmark"
         }, selBook ? selBook.name : "", " ", v._ch));
+        // Audio progress bar above the chapter that's currently playing.
+        if (audioCapable && audioUrl && curPassage && audioKey === curPassage.book + "-" + v._ch) {
+          out.push(/*#__PURE__*/React.createElement("div", {
+            key: `cb-${v._ch}`,
+            className: "lib-chrono-audio-bar"
+          }, audioProgress));
+        }
         lastCh = v._ch;
       }
       out.push(renderFn(v));
@@ -5542,9 +5549,7 @@ function LibraryView({
     onPause: () => setAudioPlaying(false),
     onEnded: onAudioEnded
   }) : null;
-  const audioBar = !audioEl ? null : /*#__PURE__*/React.createElement("div", {
-    className: "lib-audio-bar-row"
-  }, /*#__PURE__*/React.createElement("input", {
+  const audioProgress = /*#__PURE__*/React.createElement("input", {
     className: "lib-audio-bar",
     type: "range",
     min: "0",
@@ -5553,7 +5558,13 @@ function LibraryView({
     value: Math.min(audioCur, audioDur || 0),
     onChange: seekAudio,
     "aria-label": "Audio position"
-  }), audioEl);
+  });
+  // Canonical: progress bar under the toolbar. Chrono: the bar moves inline, above the
+  // chapter that's playing (rendered at its divider in withMarks); here we just mount
+  // the hidden player.
+  const audioBar = !audioEl ? null : chronoOn ? audioEl : /*#__PURE__*/React.createElement("div", {
+    className: "lib-audio-bar-row"
+  }, audioProgress, audioEl);
   const audioBtn = audioCapable ? /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-toggle-icon" + (showPause ? " on" : ""),
     disabled: audioBusy,

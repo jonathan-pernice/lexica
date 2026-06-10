@@ -1084,6 +1084,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     arr.forEach(v => {
       if (v._ch != null && v._ch !== lastCh) {
         out.push(<div key={`cm-${v._ch}`} data-ch={v._ch} className="lib-chrono-chapmark">{selBook ? selBook.name : ""} {v._ch}</div>);
+        // Audio progress bar above the chapter that's currently playing.
+        if (audioCapable && audioUrl && curPassage && audioKey === (curPassage.book + "-" + v._ch)) {
+          out.push(<div key={`cb-${v._ch}`} className="lib-chrono-audio-bar">{audioProgress}</div>);
+        }
         lastCh = v._ch;
       }
       out.push(renderFn(v));
@@ -1127,12 +1131,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       onPlay={() => setAudioPlaying(true)} onPause={() => setAudioPlaying(false)}
       onEnded={onAudioEnded} />
   ) : null;
-  const audioBar = !audioEl ? null : (
-    <div className="lib-audio-bar-row">
-      <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
-        value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
-      {audioEl}
-    </div>
+  const audioProgress = (
+    <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
+      value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
+  );
+  // Canonical: progress bar under the toolbar. Chrono: the bar moves inline, above the
+  // chapter that's playing (rendered at its divider in withMarks); here we just mount
+  // the hidden player.
+  const audioBar = !audioEl ? null : chronoOn ? audioEl : (
+    <div className="lib-audio-bar-row">{audioProgress}{audioEl}</div>
   );
   const audioBtn = audioCapable ? (
     <button className={"lib-toggle lib-toggle-icon" + (showPause ? " on" : "")}

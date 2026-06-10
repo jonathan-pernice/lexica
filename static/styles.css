@@ -2565,6 +2565,9 @@ input { font-family: inherit; }
   padding: 3px 9px; border-radius: 4px;
 }
 .lib-chrono-chapmark:first-child { margin-top: 2px; }
+/* Chrono: audio progress bar shown above the chapter that's playing */
+.lib-chrono-audio-bar { margin: 2px 0 10px; }
+.lib-chrono-audio-bar .lib-audio-bar { margin: 0; }
 
 /* ============================================================
    READING TOOLBAR (new bar — desktop library, ≥1100px only)
