@@ -1914,8 +1914,6 @@ input { font-family: inherit; }
   .lib-toolbar-navy { background: var(--navy); border-bottom-color: var(--navy-edge, #1e3050); backdrop-filter: none; }
   .lib-toolbar-navy .mbar-loc-name { color: #e9ecf2; }
   .lib-toolbar-navy .mbar-loc-ch { color: #7eb8e8; }  /* --accent is dark navy; invisible on the navy bar without this */
-  .lib-toolbar-navy .mbar-ch-nav { color: #8a9ab8; }
-  .lib-toolbar-navy .mbar-ch-nav:active { color: #e9ecf2; background: rgba(255,255,255,0.06); }
   .lib-toolbar-navy .mbar-trans { color: #7eb8e8; }
   .lib-toolbar-navy .mbar-trans:active { background: rgba(255,255,255,0.06); }
   .lib-toolbar-navy .mbar-loc:active { background: rgba(255,255,255,0.06); }
@@ -1964,9 +1962,6 @@ input { font-family: inherit; }
 /* Overview (ⓘ) button — left slot of the mobile reading cockpit, opens the summary sheet */
 .mbar-overview { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-3); flex: 0 0 42px; }
 .mbar-overview:active { background: rgba(15,27,45,0.06); color: var(--ink); }
-.mbar-ch-nav { width: 32px; height: 42px; display: grid; place-items: center; font-size: 22px; color: var(--ink-3); flex: 0 0 auto; border-radius: 8px; }
-.mbar-ch-nav:active { background: rgba(15,27,45,0.06); color: var(--ink); }
-.mbar-ch-nav:disabled { opacity: 0.25; }
 
 /* ============================================================
    LIBRARY BOTTOM-COCKPIT (mobile prototype)
@@ -2710,9 +2705,13 @@ input { font-family: inherit; }
   margin-left: 3px;
 }
 .note-popover-btn:hover { background: rgba(255,255,255,0.2); }
-.note-popover-mobile { box-shadow: 0 4px 24px rgba(0,0,0,0.35); padding: 8px 10px; }
-.note-popover-mobile .note-swatch { width: 28px; height: 28px; }
-.note-popover-mobile .note-popover-btn { font-size: 15px; padding: 9px 16px; }
+/* Mobile: shrink the highlight menu so the colors + actions sit on one row
+   instead of wrapping. Bookmark drops to icon-only to save the most width. */
+.note-popover-mobile { box-shadow: 0 4px 24px rgba(0,0,0,0.35); padding: 6px 8px; gap: 3px; }
+.note-popover-mobile .note-swatches { gap: 4px; margin-left: 2px; }
+.note-popover-mobile .note-swatch { width: 22px; height: 22px; }
+.note-popover-mobile .note-popover-btn { font-size: 12px; padding: 6px 9px; margin-left: 2px; }
+.note-popover-mobile .note-btn-lbl { display: none; }
 
 /* Highlight paint on words / verses (matched in the same reading text).
    Square corners + flush chips (column-gap is 0) make a run read as one

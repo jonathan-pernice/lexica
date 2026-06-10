@@ -2515,7 +2515,9 @@ function VerseNoteMenu({
   }, "Copy"), /*#__PURE__*/React.createElement("button", {
     className: "note-popover-btn",
     onClick: onBookmark
-  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), " Bookmark")));
+  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null), /*#__PURE__*/React.createElement("span", {
+    className: "note-btn-lbl"
+  }, "Bookmark"))));
 }
 
 // A row of color swatches + a clear button, for the editor.
@@ -6572,41 +6574,13 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement(Icon.Search, null)), /*#__PURE__*/React.createElement("div", {
     className: "mbar-center"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "mbar-ch-nav",
-    disabled: selChapter <= 1,
-    onClick: () => {
-      const c = Math.max(1, selChapter - 1);
-      setSelChapter(c);
-      if (!nonCanon) onNavChange?.({
-        ...nav,
-        book: selBook?.abbrev,
-        chapter: c,
-        highlight: null
-      });
-    },
-    "aria-label": "Previous chapter"
-  }, "\u2039"), /*#__PURE__*/React.createElement("button", {
     className: "mbar-loc",
     onClick: () => setMobileNavOpen(true)
   }, /*#__PURE__*/React.createElement("span", {
     className: "mbar-loc-name"
   }, nonCanon ? nonCanon.name : selBook ? selBook.name : ""), /*#__PURE__*/React.createElement("span", {
     className: "mbar-loc-ch"
-  }, selChapter)), /*#__PURE__*/React.createElement("button", {
-    className: "mbar-ch-nav",
-    disabled: selChapter >= maxChap,
-    onClick: () => {
-      const c = Math.min(maxChap, selChapter + 1);
-      setSelChapter(c);
-      if (!nonCanon) onNavChange?.({
-        ...nav,
-        book: selBook?.abbrev,
-        chapter: c,
-        highlight: null
-      });
-    },
-    "aria-label": "Next chapter"
-  }, "\u203A")), /*#__PURE__*/React.createElement("button", {
+  }, selChapter))), /*#__PURE__*/React.createElement("button", {
     className: "mbar-trans",
     onClick: () => setModesOpen(true),
     "aria-label": "Reading options"
