@@ -1109,13 +1109,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     ch:   chronoOn ? (viewCh || (curPassage && curPassage.start_ch)) : selChapter,
   } : null;
   const targetKey = audioTarget && audioTarget.book ? (audioTarget.book + "-" + audioTarget.ch) : null;
-  const onTargetNow = !!targetKey && audioKey === targetKey;   // the target IS the loaded chapter
-  const showPause = onTargetNow && audioPlaying;               // pressing ⏸ pauses; ▶ plays/switches
+  const onTargetNow = !!targetKey && audioKey === targetKey;   // the chapter in view IS the loaded one
+  // The icon follows ONLY whether sound is playing, so scrolling never desyncs it.
+  const showPause = audioPlaying;
   const onToolbarAudio = () => {
     if (!audioTarget || !audioTarget.book || !audioTarget.ch) return;
     const a = audioRef.current;
-    if (onTargetNow && a) { if (a.paused) a.play().catch(() => {}); else a.pause(); }
-    else loadAudio(audioTarget.book, audioTarget.ch);          // start / switch to the chapter in view
+    if (a && !a.paused) { a.pause(); return; }                 // playing → pause
+    if (a && onTargetNow) { a.play().catch(() => {}); return; } // paused on the chapter in view → resume
+    loadAudio(audioTarget.book, audioTarget.ch);               // else start / switch to the chapter in view
   };
   const onAudioEnded = () => {
     setAudioPlaying(false);
