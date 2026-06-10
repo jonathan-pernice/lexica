@@ -2566,9 +2566,10 @@ input { font-family: inherit; }
   color: var(--gold); background: var(--gold-soft);
   padding: 3px 9px; border-radius: 4px;
 }
-/* Prose flow + parallel start their text at the container edge — no indent there */
-.lib-prose-flow .lib-chrono-chapmark,
-.lib-parallel .lib-chrono-chapmark { margin-left: 0; }
+/* Prose flow: text starts at the container edge — no indent */
+.lib-prose-flow .lib-chrono-chapmark { margin-left: 0; }
+/* Parallel: center the pill between the two columns, don't stretch it full-width */
+.lib-parallel .lib-chrono-chapmark { margin-left: 0; align-self: center; }
 .lib-chrono-chapmark:first-child { margin-top: 2px; }
 /* Chrono: audio progress bar shown above the chapter that's playing */
 .lib-chrono-audio-bar { margin: 2px 0 10px; }
