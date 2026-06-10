@@ -83,6 +83,9 @@ const api = {
     fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   bsbChapter: (book, ch) =>
     fetch(`/api/bsb/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  bsbAudio: (book, ch) =>
+    fetch(`/api/bsb/audio/${encodeURIComponent(book)}/${ch}`)
+      .then(r => r.ok ? r.json() : { url: null }).catch(() => ({ url: null })),
   // ESV is the owner's personal text — every call carries the login token and the
   // server refuses anyone but the owner (404). esvStatus drives the toggle.
   esvStatus: () =>

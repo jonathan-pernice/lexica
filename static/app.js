@@ -92,6 +92,11 @@ const api = {
   extraStrongsCount: (book, strongs) => fetch(`/api/extra/${encodeURIComponent(book)}/strongs-count/${encodeURIComponent(strongs)}`).then(r => r.json()),
   kjvChapter: (book, ch) => fetch(`/api/kjv/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   bsbChapter: (book, ch) => fetch(`/api/bsb/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
+  bsbAudio: (book, ch) => fetch(`/api/bsb/audio/${encodeURIComponent(book)}/${ch}`).then(r => r.ok ? r.json() : {
+    url: null
+  }).catch(() => ({
+    url: null
+  })),
   // ESV is the owner's personal text — every call carries the login token and the
   // server refuses anyone but the owner (404). esvStatus drives the toggle.
   esvStatus: () => fetch(`/api/esv/status`, {
@@ -4926,8 +4931,9 @@ function LibraryView({
   const [esvLoading, setEsvLoading] = useState(false);
   // ESV is the owner's personal text: esvOwner (set by the server) gates the toggle.
   const [esvOwner, setEsvOwner] = useState(false);
-  const [esvAudioUrl, setEsvAudioUrl] = useState(null); // signed FCBH mp3 url, once "Listen" is pressed
-  const [esvAudioBusy, setEsvAudioBusy] = useState(false);
+  // Chapter audio (BSB = public-domain openbible; ESV = owner-only FCBH), once "Listen" is pressed.
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [audioBusy, setAudioBusy] = useState(false);
   const [libOptions, setLibOptions] = useState({
     viewMode: "chip",
     showStrongs: false,
@@ -5252,20 +5258,21 @@ function LibraryView({
     };
   }, [selBook && selBook.abbrev, selChapter, translation, corpus, chronoOn, esvOwner]);
 
-  // Reset the ESV audio when the chapter/text changes — the old signed mp3 url is
-  // for the previous chapter. The owner presses Listen to fetch the new one.
+  // Reset the chapter audio when the chapter/text changes — the old mp3 is for the
+  // previous chapter. Press Listen to fetch the new one (BSB public / ESV owner-only).
   useEffect(() => {
-    setEsvAudioUrl(null);
-    setEsvAudioBusy(false);
+    setAudioUrl(null);
+    setAudioBusy(false);
   }, [selBook && selBook.abbrev, selChapter, translation]);
-  const loadEsvAudio = () => {
+  const loadAudio = () => {
     if (!selBook) return;
-    setEsvAudioBusy(true);
-    api.esvAudio(selBook.abbrev, selChapter).then(d => {
-      setEsvAudioBusy(false);
-      if (d && d.url) setEsvAudioUrl(d.url);else flash("No audio for this chapter");
+    setAudioBusy(true);
+    const fetchUrl = translation === "esv" ? api.esvAudio : api.bsbAudio;
+    fetchUrl(selBook.abbrev, selChapter).then(d => {
+      setAudioBusy(false);
+      if (d && d.url) setAudioUrl(d.url);else flash("No audio for this chapter");
     }).catch(() => {
-      setEsvAudioBusy(false);
+      setAudioBusy(false);
       flash("Audio unavailable");
     });
   };
@@ -5439,6 +5446,20 @@ function LibraryView({
   const kjvShowLoading = chronoOn ? chronoLoading || !chronoReady : kjvLoading;
   const bsbShowLoading = chronoOn ? chronoLoading || !chronoReady : bsbLoading;
   const esvShowLoading = chronoOn ? chronoLoading || !chronoReady : esvLoading;
+  // Per-chapter audio player (BSB + ESV). Shared by both readers; once Listen is
+  // pressed the browser plays the mp3 straight from the source.
+  const audioControl = /*#__PURE__*/React.createElement("div", {
+    className: "lib-esv-audio"
+  }, audioUrl ? /*#__PURE__*/React.createElement("audio", {
+    className: "lib-esv-player",
+    src: audioUrl,
+    controls: true,
+    autoPlay: true
+  }) : /*#__PURE__*/React.createElement("button", {
+    className: "lib-esv-listen",
+    disabled: audioBusy,
+    onClick: loadAudio
+  }, audioBusy ? "Loading audio…" : "▶ Listen"));
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
   const swipeHandlers = isMobile ? {
@@ -6988,22 +7009,11 @@ function LibraryView({
     className: "lib-loading"
   }, "Loading\u2026") : /*#__PURE__*/React.createElement("div", {
     className: "lib-text-words"
-  }, withMarks(bsbView, renderBsbVerse)) : translation === "esv" ? esvShowLoading ? /*#__PURE__*/React.createElement("div", {
+  }, !chronoOn && audioControl, withMarks(bsbView, renderBsbVerse)) : translation === "esv" ? esvShowLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lib-loading"
   }, "Loading\u2026") : /*#__PURE__*/React.createElement("div", {
     className: "lib-text-words"
-  }, !chronoOn && /*#__PURE__*/React.createElement("div", {
-    className: "lib-esv-audio"
-  }, esvAudioUrl ? /*#__PURE__*/React.createElement("audio", {
-    className: "lib-esv-player",
-    src: esvAudioUrl,
-    controls: true,
-    autoPlay: true
-  }) : /*#__PURE__*/React.createElement("button", {
-    className: "lib-esv-listen",
-    disabled: esvAudioBusy,
-    onClick: loadEsvAudio
-  }, esvAudioBusy ? "Loading audio…" : "▶ Listen (ESV audio)")), withMarks(esvView, renderEsvVerse)) : abpShowLoading ? /*#__PURE__*/React.createElement("div", {
+  }, !chronoOn && audioControl, withMarks(esvView, renderEsvVerse)) : abpShowLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lib-loading"
   }, "Loading\u2026") : wordMode ? /*#__PURE__*/React.createElement("div", {
     className: "lib-text-words"

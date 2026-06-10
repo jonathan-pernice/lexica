@@ -76,6 +76,39 @@ _KJV_BOOK_ID: dict[str, int] = {
 }
 _KJV_BOOK_ID_REV: dict[int, str] = {v: k for k, v in _KJV_BOOK_ID.items()}
 
+# App book-abbrev -> standard USFM 3-char code. Used by the audio features:
+# FCBH wants it UPPERCASE (ESV audio); openbible.com's public-domain BSB files
+# want it title-cased (BSB_<NN>_<Mrk>_<CCC>.mp3). Both derive from this one map.
+_USFM_BOOK: dict[str, str] = {
+    "Gen": "GEN", "Exo": "EXO", "Lev": "LEV", "Num": "NUM", "Deu": "DEU",
+    "Jos": "JOS", "Jdg": "JDG", "Rth": "RUT", "1Sa": "1SA", "2Sa": "2SA",
+    "1Ki": "1KI", "2Ki": "2KI", "1Ch": "1CH", "2Ch": "2CH", "Ezr": "EZR",
+    "Neh": "NEH", "Est": "EST", "Job": "JOB", "Psa": "PSA", "Pro": "PRO",
+    "Ecc": "ECC", "Son": "SNG", "Isa": "ISA", "Jer": "JER", "Lam": "LAM",
+    "Eze": "EZK", "Dan": "DAN", "Hos": "HOS", "Joe": "JOL", "Amo": "AMO",
+    "Oba": "OBA", "Jon": "JON", "Mic": "MIC", "Nah": "NAM", "Hab": "HAB",
+    "Zep": "ZEP", "Hag": "HAG", "Zec": "ZEC", "Mal": "MAL", "Mat": "MAT",
+    "Mar": "MRK", "Luk": "LUK", "Joh": "JHN", "Act": "ACT", "Rom": "ROM",
+    "1Co": "1CO", "2Co": "2CO", "Gal": "GAL", "Eph": "EPH", "Php": "PHP",
+    "Col": "COL", "1Th": "1TH", "2Th": "2TH", "1Ti": "1TI", "2Ti": "2TI",
+    "Tit": "TIT", "Phm": "PHM", "Heb": "HEB", "Jas": "JAS", "1Pe": "1PE",
+    "2Pe": "2PE", "1Jn": "1JN", "2Jn": "2JN", "3Jn": "3JN", "Jud": "JUD",
+    "Rev": "REV",
+}
+
+
+def usfm_titlecase(usfm: str) -> str:
+    """USFM code -> openbible.com's filename form: first letter capital, the rest
+    lower, digits kept. 'MRK'->'Mrk', '1SA'->'1Sa', '3JN'->'3Jn'."""
+    out, seen_alpha = [], False
+    for c in usfm:
+        if c.isalpha():
+            out.append(c.upper() if not seen_alpha else c.lower())
+            seen_alpha = True
+        else:
+            out.append(c)
+    return "".join(out)
+
 _STRONGS_RE = re.compile(r'^[GH]?(\d+(?:\.\d+)*)$', re.IGNORECASE)
 _WORD_BOUNDARY_RE_CACHE: dict[str, re.Pattern] = {}
 

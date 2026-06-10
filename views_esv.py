@@ -29,7 +29,7 @@ import urllib.request
 
 from flask import Blueprint, jsonify, request
 
-from core import db_ro, esv_db, notes_db, _KJV_BOOK_ID
+from core import db_ro, esv_db, notes_db, _KJV_BOOK_ID, _USFM_BOOK
 
 bp = Blueprint("esv", __name__)
 
@@ -47,23 +47,7 @@ FCBH_API_BASE  = os.environ.get("FCBH_API_BASE", "https://4.dbt.io/api")
 ESV_FILESET_NT = os.environ.get("ESV_AUDIO_FILESET_NT", "ENGESVN2DA")
 ESV_FILESET_OT = os.environ.get("ESV_AUDIO_FILESET_OT")   # optional
 
-# App book-abbrev -> USFM book id (what FCBH expects), full 1-66.
-_USFM = {
-    "Gen": "GEN", "Exo": "EXO", "Lev": "LEV", "Num": "NUM", "Deu": "DEU",
-    "Jos": "JOS", "Jdg": "JDG", "Rth": "RUT", "1Sa": "1SA", "2Sa": "2SA",
-    "1Ki": "1KI", "2Ki": "2KI", "1Ch": "1CH", "2Ch": "2CH", "Ezr": "EZR",
-    "Neh": "NEH", "Est": "EST", "Job": "JOB", "Psa": "PSA", "Pro": "PRO",
-    "Ecc": "ECC", "Son": "SNG", "Isa": "ISA", "Jer": "JER", "Lam": "LAM",
-    "Eze": "EZK", "Dan": "DAN", "Hos": "HOS", "Joe": "JOL", "Amo": "AMO",
-    "Oba": "OBA", "Jon": "JON", "Mic": "MIC", "Nah": "NAM", "Hab": "HAB",
-    "Zep": "ZEP", "Hag": "HAG", "Zec": "ZEC", "Mal": "MAL", "Mat": "MAT",
-    "Mar": "MRK", "Luk": "LUK", "Joh": "JHN", "Act": "ACT", "Rom": "ROM",
-    "1Co": "1CO", "2Co": "2CO", "Gal": "GAL", "Eph": "EPH", "Php": "PHP",
-    "Col": "COL", "1Th": "1TH", "2Th": "2TH", "1Ti": "1TI", "2Ti": "2TI",
-    "Tit": "TIT", "Phm": "PHM", "Heb": "HEB", "Jas": "JAS", "1Pe": "1PE",
-    "2Pe": "2PE", "1Jn": "1JN", "2Jn": "2JN", "3Jn": "3JN", "Jud": "JUD",
-    "Rev": "REV",
-}
+_USFM = _USFM_BOOK   # app book-abbrev -> USFM code (what FCBH expects)
 
 
 def _is_owner():

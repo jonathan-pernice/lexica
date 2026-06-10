@@ -663,8 +663,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const [esvLoading, setEsvLoading] = useState(false);
   // ESV is the owner's personal text: esvOwner (set by the server) gates the toggle.
   const [esvOwner, setEsvOwner] = useState(false);
-  const [esvAudioUrl, setEsvAudioUrl] = useState(null);   // signed FCBH mp3 url, once "Listen" is pressed
-  const [esvAudioBusy, setEsvAudioBusy] = useState(false);
+  // Chapter audio (BSB = public-domain openbible; ESV = owner-only FCBH), once "Listen" is pressed.
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [audioBusy, setAudioBusy] = useState(false);
   const [libOptions, setLibOptions] = useState({
     viewMode: "chip", showStrongs: false, showInterlinear: false,
   });
@@ -918,21 +919,22 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     return () => { cancelled = true; };
   }, [selBook && selBook.abbrev, selChapter, translation, corpus, chronoOn, esvOwner]);
 
-  // Reset the ESV audio when the chapter/text changes — the old signed mp3 url is
-  // for the previous chapter. The owner presses Listen to fetch the new one.
+  // Reset the chapter audio when the chapter/text changes — the old mp3 is for the
+  // previous chapter. Press Listen to fetch the new one (BSB public / ESV owner-only).
   useEffect(() => {
-    setEsvAudioUrl(null); setEsvAudioBusy(false);
+    setAudioUrl(null); setAudioBusy(false);
   }, [selBook && selBook.abbrev, selChapter, translation]);
-  const loadEsvAudio = () => {
+  const loadAudio = () => {
     if (!selBook) return;
-    setEsvAudioBusy(true);
-    api.esvAudio(selBook.abbrev, selChapter)
+    setAudioBusy(true);
+    const fetchUrl = translation === "esv" ? api.esvAudio : api.bsbAudio;
+    fetchUrl(selBook.abbrev, selChapter)
       .then(d => {
-        setEsvAudioBusy(false);
-        if (d && d.url) setEsvAudioUrl(d.url);
+        setAudioBusy(false);
+        if (d && d.url) setAudioUrl(d.url);
         else flash("No audio for this chapter");
       })
-      .catch(() => { setEsvAudioBusy(false); flash("Audio unavailable"); });
+      .catch(() => { setAudioBusy(false); flash("Audio unavailable"); });
   };
 
   useEffect(() => {
@@ -1070,6 +1072,19 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const kjvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : kjvLoading;
   const bsbShowLoading = chronoOn ? (chronoLoading || !chronoReady) : bsbLoading;
   const esvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : esvLoading;
+  // Per-chapter audio player (BSB + ESV). Shared by both readers; once Listen is
+  // pressed the browser plays the mp3 straight from the source.
+  const audioControl = (
+    <div className="lib-esv-audio">
+      {audioUrl ? (
+        <audio className="lib-esv-player" src={audioUrl} controls autoPlay />
+      ) : (
+        <button className="lib-esv-listen" disabled={audioBusy} onClick={loadAudio}>
+          {audioBusy ? "Loading audio…" : "▶ Listen"}
+        </button>
+      )}
+    </div>
+  );
 
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
@@ -2224,6 +2239,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <div className="lib-loading">Loading…</div>
           ) : (
             <div className="lib-text-words">
+              {!chronoOn && audioControl}
               {withMarks(bsbView, renderBsbVerse)}
             </div>
           )
@@ -2232,17 +2248,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <div className="lib-loading">Loading…</div>
           ) : (
             <div className="lib-text-words">
-              {!chronoOn && (
-                <div className="lib-esv-audio">
-                  {esvAudioUrl ? (
-                    <audio className="lib-esv-player" src={esvAudioUrl} controls autoPlay />
-                  ) : (
-                    <button className="lib-esv-listen" disabled={esvAudioBusy} onClick={loadEsvAudio}>
-                      {esvAudioBusy ? "Loading audio…" : "▶ Listen (ESV audio)"}
-                    </button>
-                  )}
-                </div>
-              )}
+              {!chronoOn && audioControl}
               {withMarks(esvView, renderEsvVerse)}
             </div>
           )
