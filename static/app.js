@@ -4434,6 +4434,38 @@ function ModesSheet({
   const extraEnglish = !!(activeNonCanon && activeNonCanon.englishOnly);
   const layoutLocked = proseLocked && !extraEnglish;
   const viewChipOn = extraEnglish ? viewMode === "chip" : chipMode;
+  // Text picker gestures: a TAP swaps to that single Bible; a LONG-PRESS (or right-click)
+  // ticks it into / out of the side-by-side compare set. One shared timer is fine (touches
+  // happen one at a time); the `fired` flag stops a long-press from also firing the tap.
+  const pressRef = useRef({
+    timer: null,
+    fired: false
+  });
+  const pickHandlers = id => ({
+    onClick: () => {
+      if (pressRef.current.fired) {
+        pressRef.current.fired = false;
+        return;
+      }
+      pickBible(id);
+    },
+    onContextMenu: e => {
+      e.preventDefault();
+      toggleCompare(id);
+    },
+    onTouchStart: () => {
+      const st = pressRef.current;
+      st.fired = false;
+      clearTimeout(st.timer);
+      st.timer = setTimeout(() => {
+        st.fired = true;
+        toggleCompare(id);
+        if (navigator.vibrate) navigator.vibrate(12);
+      }, 500);
+    },
+    onTouchMove: () => clearTimeout(pressRef.current.timer),
+    onTouchEnd: () => clearTimeout(pressRef.current.timer)
+  });
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sheet-scrim",
     onClick: onClose
@@ -4486,16 +4518,15 @@ function ModesSheet({
      compareActive + toggleCompare already do the read/compare switching. */
   React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "mode-hint"
-  }, "Tap to read \xB7 tick 2\u20134 to compare"), /*#__PURE__*/React.createElement("div", {
+  }, "Tap to read \xB7 long-press to compare"), /*#__PURE__*/React.createElement("div", {
     className: "mseg text-ed text-pick"
   }, compareAvail.map(id => {
     const on = compareActive.includes(id);
-    return /*#__PURE__*/React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", _extends({
       key: id,
       className: "mseg-b" + (on ? " on" : ""),
-      onClick: () => toggleCompare(id),
       "aria-pressed": on
-    }, on && /*#__PURE__*/React.createElement("span", {
+    }, pickHandlers(id)), on && /*#__PURE__*/React.createElement("span", {
       className: "mseg-chk",
       "aria-hidden": "true"
     }, "\u2713"), id.toUpperCase());

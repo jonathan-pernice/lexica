@@ -473,6 +473,22 @@ function ModesSheet({
   const extraEnglish = !!(activeNonCanon && activeNonCanon.englishOnly);
   const layoutLocked = proseLocked && !extraEnglish;
   const viewChipOn   = extraEnglish ? viewMode === "chip" : chipMode;
+  // Text picker gestures: a TAP swaps to that single Bible; a LONG-PRESS (or right-click)
+  // ticks it into / out of the side-by-side compare set. One shared timer is fine (touches
+  // happen one at a time); the `fired` flag stops a long-press from also firing the tap.
+  const pressRef = useRef({ timer: null, fired: false });
+  const pickHandlers = (id) => ({
+    onClick: () => { if (pressRef.current.fired) { pressRef.current.fired = false; return; } pickBible(id); },
+    onContextMenu: (e) => { e.preventDefault(); toggleCompare(id); },
+    onTouchStart: () => {
+      const st = pressRef.current;
+      st.fired = false;
+      clearTimeout(st.timer);
+      st.timer = setTimeout(() => { st.fired = true; toggleCompare(id); if (navigator.vibrate) navigator.vibrate(12); }, 500);
+    },
+    onTouchMove: () => clearTimeout(pressRef.current.timer),
+    onTouchEnd: () => clearTimeout(pressRef.current.timer),
+  });
   return (
     <>
       <div className="sheet-scrim" onClick={onClose} />
@@ -498,12 +514,12 @@ function ModesSheet({
               /* Bible: one checkable row — tick 1 to read it, 2-4 to compare side by side.
                  compareActive + toggleCompare already do the read/compare switching. */
               <>
-                <div className="mode-hint">Tap to read · tick 2–4 to compare</div>
+                <div className="mode-hint">Tap to read · long-press to compare</div>
                 <div className="mseg text-ed text-pick">
                   {compareAvail.map(id => {
                     const on = compareActive.includes(id);
                     return (
-                      <button key={id} className={"mseg-b"+(on?" on":"")} onClick={()=>toggleCompare(id)} aria-pressed={on}>
+                      <button key={id} className={"mseg-b"+(on?" on":"")} aria-pressed={on} {...pickHandlers(id)}>
                         {on && <span className="mseg-chk" aria-hidden="true">✓</span>}{id.toUpperCase()}
                       </button>
                     );
