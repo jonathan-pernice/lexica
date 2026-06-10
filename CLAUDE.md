@@ -216,16 +216,31 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 
 ## Library Tab
 - Desktop toolbar (lib-bar): [‹ Ch input ›] | [Compare ▾] | [Strong's] [Interlinear] | [Chip] [Prose]
-  (text source — ABP/KJV/BSB/ESV*/NIV* — lives in the LEFT NAV's nav-source seg, not the toolbar; * = owner only)
+  (text source — ABP/KJV/BSB/ESV*/NIV* — lives in the LEFT NAV's nav-source seg, not the toolbar; * = owner only.
+  The seg goes full-width via `nav-source-seg--wide` when the owner's ESV/NIV are present so 6 buttons don't crowd.)
 - Mobile toolbar (lib-toolbar): [☰] [‹] [Book Ch ▾] [›] [ABP/KJV/Par] — sticky, fixed height 56px
 - **Compare (was "Parallel"): pick 2–4 of ABP/KJV/BSB/ESV/NIV to read side by side.** `translation === "parallel"`
   is the mode; `compareSel` (array) = which texts. Desktop = N columns (`.lib-cmp-2/3/4`); mobile = stacked,
-  one labeled line per text. Desktop picker = checkbox dropdown on the Compare button; mobile = a "Compare"
-  row in ModesSheet. Rows are the ordered UNION of every selected text's verses (keyed chapter+verse), so a
-  missing verse leaves a blank cell. Notes/highlights are SHARED across columns (whole-verse paint in compare).
+  one labeled line per text. Rows are the ordered UNION of every selected text's verses (keyed chapter+verse),
+  so a missing verse leaves a blank cell. Notes/highlights are SHARED across columns (whole-verse paint in compare).
+  - **Desktop picker** = checkbox dropdown on the Compare button.
+  - **MOBILE picker (rebuilt 2026-06-10): the separate Compare row is GONE — the Reading sheet's single Text
+    picker IS the compare control.** TAP a text = read just it (single swap); LONG-PRESS (or right-click) = tick
+    it into/out of the 2–4 side-by-side set. A ✓ marks each shown text; a line below reads "Reading X" /
+    "Comparing N — … side by side". All driven by `compareActive`/`toggleCompare` (which already flip
+    single↔parallel and floor at 1). Gesture handler = `pickHandlers` in `ModesSheet` (500ms timer + a `fired`
+    flag so a long-press doesn't also fire the tap). Hint: "Tap to read · long-press to compare". A non-canon
+    reader falls back to the plain single picker (taps jump back to the Bible).
 - Chip mode: all words individually clickable with interlinear stack (Greek → English → Strong's)
 - Prose mode: clickable inline word spans, no chip borders — reading-first view
 - KJV mode locks Prose to English only (no Greek available)
+- English-only "other books" (Apocrypha/Enoch/etc.): the Chip toggle gives a VERSE-PER-LINE reading layout
+  (`renderExtraLines`, `extraLineMode`) — plain text, one verse per row, no clickable chips (no Greek). Prose =
+  the old flowing run-together text. Strong's/Interlinear stay locked. (2026-06-10)
+- **Library remembers your reading spot across reloads:** `localStorage` `lexica.lib.v1` saves
+  book/chapter/translation (+ an open non-canon text) and restores it on load instead of opening at Genesis 1.
+  An explicit verse jump (`nav.book`, e.g. a Search/cross-ref click) overrides it. Compare/chronological are NOT
+  restored (fall back to single/canonical). (2026-06-10)
 - Word clicks → LSJ sidebar (G-numbers), BDB sidebar (H-numbers), or metaV (proper nouns)
 - KJV word clicks correctly route: common words → LSJ, proper nouns → metaV, Hebrew → BDB
 - Italic words render muted/italic: KJV (italic=1) and ABP (words.italic=1); ABP bracket words `[word]` are also translator additions

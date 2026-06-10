@@ -66,7 +66,9 @@ gaps, worst-first:
    (LXX/ABP) by design; Hebrew study leans on KJV+Strong's→BDB. BLB and STEP give a real Hebrew
    interlinear word-for-word. Biggest thing a serious user would notice. Related plumbing already
    noted: the non-canon "Hebrew/Aramaic interlinear" gap below, and Hebrew morphology under
-   "More texts + word grammar". `code: would need BDB/H-number join + right-to-left chips in the reader`
+   "More texts + word grammar". **PLAN + free data sources (OpenScriptures morphhb / macula-hebrew) +
+   the work breakdown + textual-history notes are now in memory `project_hebrew_ot_interlinear` (2026-06-10)
+   — the kickoff prompt for a future session.** `code: would need BDB/H-number join + right-to-left chips in the reader`
 2. **Fewer translations** — a handful (ABP/KJV/BSB + owner ESV/NIV) vs BLB's dozens / YouVersion's
    hundreds. Cheap win: add public-domain ones (ASV, YLT, Darby, Geneva) — see "More texts".
 3. **No reading plans / devotionals / social.** That's YouVersion's whole world — deliberately NOT
@@ -106,10 +108,11 @@ Deliberate NON-targets (listed so we don't mistake them for gaps): no paid comme
      the new multi-text COMPARE view a highlight paints WHOLE-VERSE in every column (even its home text) —
      intentional for now; exact-word paint in compare would need the column's own translation id threaded
      into `hiForWord` (today it reads the global `translation`, which is "parallel" in compare).
-  3. **Small UI follow-ups offered 2026-06-10 (not built):** (a) show the bookmark/note/highlight icons
-     in the Notes-TAB list per item too (the in-reader markers already differ — ribbon vs pencil);
-     (b) remember the Library book/chapter on refresh (the active TAB is already remembered via
-     `localStorage` `lexica.view.v1`, but Library still opens at Genesis 1).
+  3. ~~**Small UI follow-ups offered 2026-06-10.**~~ **BOTH DONE 2026-06-10:** (a) the Notes-TAB list now
+     shows the per-item type marker (ribbon `Icon.Bookmark` / pencil `Icon.Note` / color dot), matching
+     the reader (`.notes-item-type` in 35-notes.jsx); (b) the Library remembers book/chapter (+ translation
+     + open non-canon text) across reloads via `localStorage` `lexica.lib.v1`, restoring instead of
+     Genesis 1 (a `nav.book` jump still overrides). Compare/chronological not restored — fall back.
 
 ---
 
