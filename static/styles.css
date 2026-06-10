@@ -1975,6 +1975,7 @@ input { font-family: inherit; }
 /* Overview (ⓘ) button — left slot of the mobile reading cockpit, opens the summary sheet */
 .mbar-overview { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-3); flex: 0 0 42px; }
 .mbar-overview:active { background: rgba(15,27,45,0.06); color: var(--ink); }
+.mbar-audio.on { color: var(--accent); }   /* playing → highlight the play/pause icon */
 
 /* ============================================================
    LIBRARY BOTTOM-COCKPIT (mobile prototype)

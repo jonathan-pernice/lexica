@@ -1112,19 +1112,23 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     const cur = parseInt(audioKey.split("-")[1], 10);
     if (cur < curPassage.end_ch) loadAudio(curPassage.book, cur + 1);
   };
-  // Rendered under whichever toolbar is showing (desktop or mobile), only once a
-  // chapter's audio is actually loaded so there's no empty gap before pressing play.
-  const audioBar = (audioCapable && audioUrl) ? (
+  // The audio element itself (invisible) always renders while a chapter is loaded so
+  // it can play. The progress bar wraps it on DESKTOP only — on mobile the bottom
+  // toolbar has no room for a bar, so we render just the bare audio there.
+  const audioEl = (audioCapable && audioUrl) ? (
+    <audio ref={audioRef} src={audioUrl} preload="metadata"
+      onLoadedMetadata={e => setAudioDur(e.target.duration || 0)}
+      onTimeUpdate={e => setAudioCur(e.target.currentTime || 0)}
+      onPlay={() => setAudioPlaying(true)} onPause={() => setAudioPlaying(false)}
+      onEnded={onAudioEnded} />
+  ) : null;
+  const audioBar = !audioEl ? null : isMobile ? audioEl : (
     <div className="lib-audio-bar-row">
       <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
         value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
-      <audio ref={audioRef} src={audioUrl} preload="metadata"
-        onLoadedMetadata={e => setAudioDur(e.target.duration || 0)}
-        onTimeUpdate={e => setAudioCur(e.target.currentTime || 0)}
-        onPlay={() => setAudioPlaying(true)} onPause={() => setAudioPlaying(false)}
-        onEnded={onAudioEnded} />
+      {audioEl}
     </div>
-  ) : null;
+  );
   const audioBtn = audioCapable ? (
     <button className={"lib-toggle lib-toggle-icon" + (audioPlaying ? " on" : "")}
       disabled={audioBusy}
@@ -2127,12 +2131,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               <Icon.Search/>
             </button>
           )}
-          {audioCapable && (
-            <button className={"mbar-overview mbar-audio" + (audioPlaying ? " on" : "")} disabled={audioBusy}
-              onClick={onToolbarAudio} aria-label={audioPlaying ? "Pause audio" : "Play chapter audio"}>
-              {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
-            </button>
-          )}
           <div className="mbar-center">
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
               {chronoOn ? (
@@ -2145,6 +2143,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               )}
             </button>
           </div>
+          {audioCapable && (
+            <button className={"mbar-overview mbar-audio" + (audioPlaying ? " on" : "")} disabled={audioBusy}
+              onClick={onToolbarAudio} aria-label={audioPlaying ? "Pause audio" : "Play chapter audio"}>
+              {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
+            </button>
+          )}
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
             {nonCanon ? (nonCanon.abbr || nonCanon.name) : translation === "parallel" ? "Par" : translation.toUpperCase()}
           </button>

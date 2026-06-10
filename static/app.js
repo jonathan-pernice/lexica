@@ -5525,9 +5525,20 @@ function LibraryView({
     const cur = parseInt(audioKey.split("-")[1], 10);
     if (cur < curPassage.end_ch) loadAudio(curPassage.book, cur + 1);
   };
-  // Rendered under whichever toolbar is showing (desktop or mobile), only once a
-  // chapter's audio is actually loaded so there's no empty gap before pressing play.
-  const audioBar = audioCapable && audioUrl ? /*#__PURE__*/React.createElement("div", {
+  // The audio element itself (invisible) always renders while a chapter is loaded so
+  // it can play. The progress bar wraps it on DESKTOP only — on mobile the bottom
+  // toolbar has no room for a bar, so we render just the bare audio there.
+  const audioEl = audioCapable && audioUrl ? /*#__PURE__*/React.createElement("audio", {
+    ref: audioRef,
+    src: audioUrl,
+    preload: "metadata",
+    onLoadedMetadata: e => setAudioDur(e.target.duration || 0),
+    onTimeUpdate: e => setAudioCur(e.target.currentTime || 0),
+    onPlay: () => setAudioPlaying(true),
+    onPause: () => setAudioPlaying(false),
+    onEnded: onAudioEnded
+  }) : null;
+  const audioBar = !audioEl ? null : isMobile ? audioEl : /*#__PURE__*/React.createElement("div", {
     className: "lib-audio-bar-row"
   }, /*#__PURE__*/React.createElement("input", {
     className: "lib-audio-bar",
@@ -5538,16 +5549,7 @@ function LibraryView({
     value: Math.min(audioCur, audioDur || 0),
     onChange: seekAudio,
     "aria-label": "Audio position"
-  }), /*#__PURE__*/React.createElement("audio", {
-    ref: audioRef,
-    src: audioUrl,
-    preload: "metadata",
-    onLoadedMetadata: e => setAudioDur(e.target.duration || 0),
-    onTimeUpdate: e => setAudioCur(e.target.currentTime || 0),
-    onPlay: () => setAudioPlaying(true),
-    onPause: () => setAudioPlaying(false),
-    onEnded: onAudioEnded
-  })) : null;
+  }), audioEl);
   const audioBtn = audioCapable ? /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-toggle-icon" + (audioPlaying ? " on" : ""),
     disabled: audioBusy,
@@ -6925,12 +6927,7 @@ function LibraryView({
     className: "mbar-overview mbar-search",
     onClick: () => setSearchOpen(o => !o),
     "aria-label": "Search this text"
-  }, /*#__PURE__*/React.createElement(Icon.Search, null)), audioCapable && /*#__PURE__*/React.createElement("button", {
-    className: "mbar-overview mbar-audio" + (audioPlaying ? " on" : ""),
-    disabled: audioBusy,
-    onClick: onToolbarAudio,
-    "aria-label": audioPlaying ? "Pause audio" : "Play chapter audio"
-  }, audioPlaying ? /*#__PURE__*/React.createElement(Icon.Pause, null) : /*#__PURE__*/React.createElement(Icon.Play, null)), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon.Search, null)), /*#__PURE__*/React.createElement("div", {
     className: "mbar-center"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mbar-loc",
@@ -6941,7 +6938,12 @@ function LibraryView({
     className: "mbar-loc-name"
   }, nonCanon ? nonCanon.name : selBook ? selBook.name : ""), /*#__PURE__*/React.createElement("span", {
     className: "mbar-loc-ch"
-  }, selChapter)))), /*#__PURE__*/React.createElement("button", {
+  }, selChapter)))), audioCapable && /*#__PURE__*/React.createElement("button", {
+    className: "mbar-overview mbar-audio" + (audioPlaying ? " on" : ""),
+    disabled: audioBusy,
+    onClick: onToolbarAudio,
+    "aria-label": audioPlaying ? "Pause audio" : "Play chapter audio"
+  }, audioPlaying ? /*#__PURE__*/React.createElement(Icon.Pause, null) : /*#__PURE__*/React.createElement(Icon.Play, null)), /*#__PURE__*/React.createElement("button", {
     className: "mbar-trans",
     onClick: () => setModesOpen(true),
     "aria-label": "Reading options"
