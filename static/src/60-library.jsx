@@ -1380,13 +1380,29 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     return null;
   };
   const hiClass = (verse, pos, ch = selChapter) => { const c = hiForWord(verse, pos, ch); return c ? " lib-hi lib-hi-" + c : ""; };
+  // A record is shown with a bookmark icon only when it's a PLAIN bookmark; once it
+  // carries a note or a highlight color it shows the note (pencil) icon instead.
+  const isBookmarkOnly = (n) => !!(n && n.bookmark && !n.body && !n.color);
+  const markerIcon = (n) => isBookmarkOnly(n) ? <Icon.Bookmark/> : <Icon.Note/>;
+  const markerLabel = (n) => isBookmarkOnly(n) ? "Open bookmark" : "Open note";
   const noteMarker = (verse, ch = selChapter) => {
     const n = noteForVerse(verse, ch);
     if (!n) return null;
     return (
-      <button className="lib-note-dot" title="Open note" aria-label="Open note"
+      <button className="lib-note-dot" title={markerLabel(n)} aria-label={markerLabel(n)}
         onClick={(e) => { e.stopPropagation(); onOpenNote && onOpenNote(n.id); }}>
-        <Icon.Bookmark/>
+        {markerIcon(n)}
+      </button>
+    );
+  };
+  // Inline variant (prose flow / non-canon) — same icon logic, inline placement.
+  const noteDotInline = (verse, ch = selChapter) => {
+    const n = noteForVerse(verse, ch);
+    if (!n) return null;
+    return (
+      <button className="lib-note-dot lib-note-dot-inline" title={markerLabel(n)} aria-label={markerLabel(n)}
+        onClick={(e) => { e.stopPropagation(); onOpenNote && onOpenNote(n.id); }}>
+        {markerIcon(n)}
       </button>
     );
   };
@@ -1917,12 +1933,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                {...vnumNoteHandlers(v.verse, ch)}>
             {v.verse}
           </sup>
-          {noteForVerse(v.verse, ch) && (
-            <button className="lib-note-dot lib-note-dot-inline" title="Open note" aria-label="Open note"
-              onClick={(e) => { e.stopPropagation(); const n = noteForVerse(v.verse, ch); onOpenNote && onOpenNote(n.id); }}>
-              <Icon.Bookmark/>
-            </button>
-          )}
+          {noteDotInline(v.verse, ch)}
           {inner}
         </span>
       </React.Fragment>
@@ -2007,12 +2018,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                  title="Right-click / long-press: add a note"
                  onClick={() => { if (vnumPressRef.current.fired) vnumPressRef.current.fired = false; }}
                  {...vnumNoteHandlers(v.verse)}>{v.verse}</sup>
-            {noteForVerse(v.verse) && (
-              <button className="lib-note-dot lib-note-dot-inline" title="Open note" aria-label="Open note"
-                onClick={(e) => { e.stopPropagation(); const n = noteForVerse(v.verse); onOpenNote && onOpenNote(n.id); }}>
-                <Icon.Bookmark/>
-              </button>
-            )}
+            {noteDotInline(v.verse)}
             <span className={hiClass(v.verse, null) || undefined}>{(v.english || "") + " "}</span>
           </span>
         </React.Fragment>
@@ -2389,12 +2395,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                        {...vnumNoteHandlers(v.verse, ch)}>
                     {v.verse}
                   </sup>
-                  {noteForVerse(v.verse, ch) && (
-                    <button className="lib-note-dot lib-note-dot-inline" title="Open note" aria-label="Open note"
-                      onClick={(e) => { e.stopPropagation(); const n = noteForVerse(v.verse, ch); onOpenNote && onOpenNote(n.id); }}>
-                      <Icon.Bookmark/>
-                    </button>
-                  )}
+                  {noteDotInline(v.verse, ch)}
                   {renderProseWords(v)}
                 </span>
               </React.Fragment>

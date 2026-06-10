@@ -642,6 +642,21 @@ const Icon = {
   }, p), /*#__PURE__*/React.createElement("path", {
     d: "M6 3h12v18l-6-4-6 4z"
   })),
+  // Note / highlight marker — a pencil (annotation)
+  Note: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M4 20h4L18.5 9.5l-4-4L4 16z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M13 7l4 4"
+  })),
   Copy: p => /*#__PURE__*/React.createElement("svg", _extends({
     width: "14",
     height: "14",
@@ -5920,18 +5935,37 @@ function LibraryView({
     const c = hiForWord(verse, pos, ch);
     return c ? " lib-hi lib-hi-" + c : "";
   };
+  // A record is shown with a bookmark icon only when it's a PLAIN bookmark; once it
+  // carries a note or a highlight color it shows the note (pencil) icon instead.
+  const isBookmarkOnly = n => !!(n && n.bookmark && !n.body && !n.color);
+  const markerIcon = n => isBookmarkOnly(n) ? /*#__PURE__*/React.createElement(Icon.Bookmark, null) : /*#__PURE__*/React.createElement(Icon.Note, null);
+  const markerLabel = n => isBookmarkOnly(n) ? "Open bookmark" : "Open note";
   const noteMarker = (verse, ch = selChapter) => {
     const n = noteForVerse(verse, ch);
     if (!n) return null;
     return /*#__PURE__*/React.createElement("button", {
       className: "lib-note-dot",
-      title: "Open note",
-      "aria-label": "Open note",
+      title: markerLabel(n),
+      "aria-label": markerLabel(n),
       onClick: e => {
         e.stopPropagation();
         onOpenNote && onOpenNote(n.id);
       }
-    }, /*#__PURE__*/React.createElement(Icon.Bookmark, null));
+    }, markerIcon(n));
+  };
+  // Inline variant (prose flow / non-canon) — same icon logic, inline placement.
+  const noteDotInline = (verse, ch = selChapter) => {
+    const n = noteForVerse(verse, ch);
+    if (!n) return null;
+    return /*#__PURE__*/React.createElement("button", {
+      className: "lib-note-dot lib-note-dot-inline",
+      title: markerLabel(n),
+      "aria-label": markerLabel(n),
+      onClick: e => {
+        e.stopPropagation();
+        onOpenNote && onOpenNote(n.id);
+      }
+    }, markerIcon(n));
   };
   // Build the whole-verse anchor (incl. a readable snippet) for a verse number.
   const verseAnchor = (verse, fromEl, ch = selChapter) => {
@@ -6632,16 +6666,7 @@ function LibraryView({
         }
         handleVerseNum(v.verse, ch);
       } : undefined
-    }, vnumNoteHandlers(v.verse, ch)), v.verse), noteForVerse(v.verse, ch) && /*#__PURE__*/React.createElement("button", {
-      className: "lib-note-dot lib-note-dot-inline",
-      title: "Open note",
-      "aria-label": "Open note",
-      onClick: e => {
-        e.stopPropagation();
-        const n = noteForVerse(v.verse, ch);
-        onOpenNote && onOpenNote(n.id);
-      }
-    }, /*#__PURE__*/React.createElement(Icon.Bookmark, null)), inner));
+    }, vnumNoteHandlers(v.verse, ch)), v.verse), noteDotInline(v.verse, ch), inner));
   };
   // Plain-text verse (BSB + ESV).
   const plainFlowInner = v => {
@@ -6754,16 +6779,7 @@ function LibraryView({
     onClick: () => {
       if (vnumPressRef.current.fired) vnumPressRef.current.fired = false;
     }
-  }, vnumNoteHandlers(v.verse)), v.verse), noteForVerse(v.verse) && /*#__PURE__*/React.createElement("button", {
-    className: "lib-note-dot lib-note-dot-inline",
-    title: "Open note",
-    "aria-label": "Open note",
-    onClick: e => {
-      e.stopPropagation();
-      const n = noteForVerse(v.verse);
-      onOpenNote && onOpenNote(n.id);
-    }
-  }, /*#__PURE__*/React.createElement(Icon.Bookmark, null)), /*#__PURE__*/React.createElement("span", {
+  }, vnumNoteHandlers(v.verse)), v.verse), noteDotInline(v.verse), /*#__PURE__*/React.createElement("span", {
     className: hiClass(v.verse, null) || undefined
   }, (v.english || "") + " ")))));
 
@@ -7225,16 +7241,7 @@ function LibraryView({
         }
         handleVerseNum(v.verse, ch);
       } : undefined
-    }, vnumNoteHandlers(v.verse, ch)), v.verse), noteForVerse(v.verse, ch) && /*#__PURE__*/React.createElement("button", {
-      className: "lib-note-dot lib-note-dot-inline",
-      title: "Open note",
-      "aria-label": "Open note",
-      onClick: e => {
-        e.stopPropagation();
-        const n = noteForVerse(v.verse, ch);
-        onOpenNote && onOpenNote(n.id);
-      }
-    }, /*#__PURE__*/React.createElement(Icon.Bookmark, null)), renderProseWords(v)));
+    }, vnumNoteHandlers(v.verse, ch)), v.verse), noteDotInline(v.verse, ch), renderProseWords(v)));
   })))), noteSel && /*#__PURE__*/React.createElement(NoteAddPopover, {
     rect: noteSel.rect,
     isMobile: isMobile,

@@ -37,6 +37,12 @@ const Icon = {
       <path d="M6 3h12v18l-6-4-6 4z"/>
     </svg>
   ),
+  // Note / highlight marker — a pencil (annotation)
+  Note: (p) => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M4 20h4L18.5 9.5l-4-4L4 16z"/><path d="M13 7l4 4"/>
+    </svg>
+  ),
   Copy: (p) => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}>
       <rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>
