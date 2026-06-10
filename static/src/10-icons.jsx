@@ -94,4 +94,16 @@ const Icon = {
       <circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/>
     </svg>
   ),
+  // Audio play (filled triangle, reads as a media control)
+  Play: (p) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" {...p}>
+      <path d="M7 4.5v15l12-7.5z"/>
+    </svg>
+  ),
+  // Audio pause (two filled bars)
+  Pause: (p) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" {...p}>
+      <rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/>
+    </svg>
+  ),
 };

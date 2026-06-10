@@ -801,6 +801,34 @@ const Icon = {
     d: "M12 11v5"
   }), /*#__PURE__*/React.createElement("path", {
     d: "M12 8h.01"
+  })),
+  // Audio play (filled triangle, reads as a media control)
+  Play: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "currentColor"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M7 4.5v15l12-7.5z"
+  })),
+  // Audio pause (two filled bars)
+  Pause: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "currentColor"
+  }, p), /*#__PURE__*/React.createElement("rect", {
+    x: "6.5",
+    y: "5",
+    width: "4",
+    height: "14",
+    rx: "1"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "13.5",
+    y: "5",
+    width: "4",
+    height: "14",
+    rx: "1"
   }))
 };
 
@@ -5298,16 +5326,6 @@ function LibraryView({
       flash("Audio unavailable");
     });
   };
-  // The Listen button doubles as play/pause: first press fetches + plays; once this
-  // chapter is loaded, the same button pauses/resumes it.
-  const toggleListen = (book, ch) => {
-    const a = audioRef.current;
-    if (audioKey === book + "-" + ch && a) {
-      if (a.paused) a.play().catch(() => {});else a.pause();
-    } else {
-      loadAudio(book, ch);
-    }
-  };
   const seekAudio = e => {
     const a = audioRef.current;
     if (!a) return;
@@ -5485,44 +5503,33 @@ function LibraryView({
   const kjvShowLoading = chronoOn ? chronoLoading || !chronoReady : kjvLoading;
   const bsbShowLoading = chronoOn ? chronoLoading || !chronoReady : bsbLoading;
   const esvShowLoading = chronoOn ? chronoLoading || !chronoReady : esvLoading;
-  // Per-chapter audio (BSB + ESV). Audio is one file per WHOLE chapter, so in
-  // chronological mode — where a passage can be a partial chapter or span two — we
-  // offer a Listen button per chapter the passage covers (each plays that full
-  // chapter). Canonical mode is just the one open chapter.
-  const bookName = abbr => (books.find(b => b.abbrev === abbr) || {}).name || abbr;
-  const audioChapters = chronoOn ? curPassage ? Array.from({
-    length: curPassage.end_ch - curPassage.start_ch + 1
-  }, (_, i) => {
-    const c = curPassage.start_ch + i;
-    return {
-      book: curPassage.book,
-      ch: c,
-      label: bookName(curPassage.book) + " " + c
-    };
-  }) : [] : selBook ? [{
-    book: selBook.abbrev,
-    ch: selChapter,
-    label: null
-  }] : [];
-  const audioControl = audioChapters.length === 0 ? null : /*#__PURE__*/React.createElement("div", {
-    className: "lib-audio-wrap"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lib-audio-picks"
-  }, audioChapters.map(a => {
-    const key = a.book + "-" + a.ch;
-    const active = audioKey === key;
-    // ▶ to start/resume, ⏸ while this chapter is playing.
-    const icon = active && audioPlaying ? "⏸" : "▶";
-    return /*#__PURE__*/React.createElement("button", {
-      key: key,
-      className: "lib-esv-listen" + (active ? " on" : ""),
-      disabled: audioBusy,
-      onClick: () => toggleListen(a.book, a.ch),
-      "aria-label": active && audioPlaying ? "Pause" : "Play"
-    }, icon + (a.label ? " " + a.label : active ? "" : " Listen"));
-  }), audioBusy && /*#__PURE__*/React.createElement("span", {
-    className: "lib-audio-loading"
-  }, "Loading audio\u2026")), audioUrl && /*#__PURE__*/React.createElement("input", {
+  // Chapter audio (BSB + ESV only) lives in the toolbar: one play/pause icon + a
+  // progress bar under the bar. Audio is one file per WHOLE chapter; in chrono mode
+  // (a passage can span chapters) play starts at the passage's first chapter and
+  // auto-advances to the next when one finishes.
+  const audioCapable = bsbMode || esvMode;
+  const onToolbarAudio = () => {
+    if (!audioCapable) return;
+    const a = audioRef.current;
+    if (audioUrl && a) {
+      if (a.paused) a.play().catch(() => {});else a.pause();
+      return;
+    }
+    const book = chronoOn ? curPassage && curPassage.book : selBook && selBook.abbrev;
+    const ch = chronoOn ? curPassage && curPassage.start_ch : selChapter;
+    if (book && ch) loadAudio(book, ch);
+  };
+  const onAudioEnded = () => {
+    setAudioPlaying(false);
+    if (!chronoOn || !curPassage || !audioKey) return; // chrono: roll into the next chapter of the passage
+    const cur = parseInt(audioKey.split("-")[1], 10);
+    if (cur < curPassage.end_ch) loadAudio(curPassage.book, cur + 1);
+  };
+  // Rendered under whichever toolbar is showing (desktop or mobile), only once a
+  // chapter's audio is actually loaded so there's no empty gap before pressing play.
+  const audioBar = audioCapable && audioUrl ? /*#__PURE__*/React.createElement("div", {
+    className: "lib-audio-bar-row"
+  }, /*#__PURE__*/React.createElement("input", {
     className: "lib-audio-bar",
     type: "range",
     min: "0",
@@ -5533,14 +5540,22 @@ function LibraryView({
     "aria-label": "Audio position"
   }), /*#__PURE__*/React.createElement("audio", {
     ref: audioRef,
-    src: audioUrl || undefined,
+    src: audioUrl,
     preload: "metadata",
     onLoadedMetadata: e => setAudioDur(e.target.duration || 0),
     onTimeUpdate: e => setAudioCur(e.target.currentTime || 0),
     onPlay: () => setAudioPlaying(true),
     onPause: () => setAudioPlaying(false),
-    onEnded: () => setAudioPlaying(false)
-  }));
+    onEnded: onAudioEnded
+  })) : null;
+  const audioBtn = audioCapable ? /*#__PURE__*/React.createElement("button", {
+    className: "lib-toggle lib-toggle-icon" + (audioPlaying ? " on" : ""),
+    disabled: audioBusy,
+    title: audioPlaying ? "Pause audio" : "Play chapter audio",
+    "aria-label": audioPlaying ? "Pause audio" : "Play chapter audio",
+    "aria-pressed": audioPlaying,
+    onClick: onToolbarAudio
+  }, audioPlaying ? /*#__PURE__*/React.createElement(Icon.Pause, null) : /*#__PURE__*/React.createElement(Icon.Play, null)) : null;
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
   const swipeHandlers = isMobile ? {
@@ -6872,7 +6887,7 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement(Icon.Lines, null))), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
-  }), canSearch && /*#__PURE__*/React.createElement("button", {
+  }), audioBtn, canSearch && /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-toggle-icon" + (searchOpen ? " on" : ""),
     title: "Search this text",
     "aria-label": "Search this text",
@@ -6910,7 +6925,12 @@ function LibraryView({
     className: "mbar-overview mbar-search",
     onClick: () => setSearchOpen(o => !o),
     "aria-label": "Search this text"
-  }, /*#__PURE__*/React.createElement(Icon.Search, null)), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon.Search, null)), audioCapable && /*#__PURE__*/React.createElement("button", {
+    className: "mbar-overview mbar-audio" + (audioPlaying ? " on" : ""),
+    disabled: audioBusy,
+    onClick: onToolbarAudio,
+    "aria-label": audioPlaying ? "Pause audio" : "Play chapter audio"
+  }, audioPlaying ? /*#__PURE__*/React.createElement(Icon.Pause, null) : /*#__PURE__*/React.createElement(Icon.Play, null)), /*#__PURE__*/React.createElement("div", {
     className: "mbar-center"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mbar-loc",
@@ -6925,7 +6945,7 @@ function LibraryView({
     className: "mbar-trans",
     onClick: () => setModesOpen(true),
     "aria-label": "Reading options"
-  }, nonCanon ? nonCanon.abbr || nonCanon.name : translation === "parallel" ? "Par" : translation.toUpperCase())), searchOpen && canSearch && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }, nonCanon ? nonCanon.abbr || nonCanon.name : translation === "parallel" ? "Par" : translation.toUpperCase())), audioBar, searchOpen && canSearch && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "lib-search-scrim",
     onClick: () => setSearchOpen(false)
   }), /*#__PURE__*/React.createElement("div", {
@@ -7090,11 +7110,11 @@ function LibraryView({
     className: "lib-loading"
   }, "Loading\u2026") : /*#__PURE__*/React.createElement("div", {
     className: "lib-text-words"
-  }, audioControl, withMarks(bsbView, renderBsbVerse)) : translation === "esv" ? esvShowLoading ? /*#__PURE__*/React.createElement("div", {
+  }, withMarks(bsbView, renderBsbVerse)) : translation === "esv" ? esvShowLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lib-loading"
   }, "Loading\u2026") : /*#__PURE__*/React.createElement("div", {
     className: "lib-text-words"
-  }, audioControl, withMarks(esvView, renderEsvVerse)) : abpShowLoading ? /*#__PURE__*/React.createElement("div", {
+  }, withMarks(esvView, renderEsvVerse)) : abpShowLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lib-loading"
   }, "Loading\u2026") : wordMode ? /*#__PURE__*/React.createElement("div", {
     className: "lib-text-words"

@@ -1446,35 +1446,14 @@ input { font-family: inherit; }
   padding: 40px 0;
 }
 
-/* Chapter read-along audio (BSB + ESV) */
-.lib-audio-wrap { margin: 0 0 16px; }
-.lib-audio-picks {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-.lib-esv-listen {
-  font: inherit;
-  font-size: 14px;
-  color: var(--ink);
-  background: var(--bg-2, #f0ece4);
-  border: 1px solid var(--line, #ddd6c8);
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-.lib-esv-listen:hover { background: var(--bg-3, #e7e1d6); }
-.lib-esv-listen.on { background: var(--ink); color: #fff; border-color: var(--ink); }
-.lib-esv-listen:disabled { opacity: 0.5; cursor: default; }
-.lib-audio-loading { font-size: 13px; color: var(--ink-4); }
-
-/* Just the draggable progress bar (the Listen button is the play/pause) */
+/* Chapter read-along audio (BSB + ESV). Play/pause is a toolbar icon; this is the
+   draggable progress bar that sits just under the toolbar while audio is loaded. */
+.lib-audio-bar-row { padding: 4px 18px 0; }
 .lib-audio-bar {
   display: block;
   width: 100%;
-  max-width: 520px;
-  margin-top: 10px;
+  max-width: 640px;
+  margin: 4px 0 0;
   accent-color: var(--ink);
   cursor: pointer;
 }

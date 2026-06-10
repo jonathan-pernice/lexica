@@ -952,16 +952,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       })
       .catch(() => { setAudioBusy(false); flash("Audio unavailable"); });
   };
-  // The Listen button doubles as play/pause: first press fetches + plays; once this
-  // chapter is loaded, the same button pauses/resumes it.
-  const toggleListen = (book, ch) => {
-    const a = audioRef.current;
-    if (audioKey === (book + "-" + ch) && a) {
-      if (a.paused) a.play().catch(() => {}); else a.pause();
-    } else {
-      loadAudio(book, ch);
-    }
-  };
   const seekAudio = (e) => {
     const a = audioRef.current; if (!a) return;
     const v = Number(e.target.value);
@@ -1103,46 +1093,47 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const kjvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : kjvLoading;
   const bsbShowLoading = chronoOn ? (chronoLoading || !chronoReady) : bsbLoading;
   const esvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : esvLoading;
-  // Per-chapter audio (BSB + ESV). Audio is one file per WHOLE chapter, so in
-  // chronological mode — where a passage can be a partial chapter or span two — we
-  // offer a Listen button per chapter the passage covers (each plays that full
-  // chapter). Canonical mode is just the one open chapter.
-  const bookName = (abbr) => ((books.find(b => b.abbrev === abbr) || {}).name) || abbr;
-  const audioChapters = chronoOn
-    ? (curPassage
-        ? Array.from({ length: curPassage.end_ch - curPassage.start_ch + 1 },
-            (_, i) => { const c = curPassage.start_ch + i; return { book: curPassage.book, ch: c, label: bookName(curPassage.book) + " " + c }; })
-        : [])
-    : (selBook ? [{ book: selBook.abbrev, ch: selChapter, label: null }] : []);
-  const audioControl = audioChapters.length === 0 ? null : (
-    <div className="lib-audio-wrap">
-      <div className="lib-audio-picks">
-        {audioChapters.map(a => {
-          const key = a.book + "-" + a.ch;
-          const active = audioKey === key;
-          // ▶ to start/resume, ⏸ while this chapter is playing.
-          const icon = active && audioPlaying ? "⏸" : "▶";
-          return (
-            <button key={key} className={"lib-esv-listen" + (active ? " on" : "")}
-              disabled={audioBusy} onClick={() => toggleListen(a.book, a.ch)}
-              aria-label={active && audioPlaying ? "Pause" : "Play"}>
-              {icon + (a.label ? " " + a.label : (active ? "" : " Listen"))}
-            </button>
-          );
-        })}
-        {audioBusy && <span className="lib-audio-loading">Loading audio…</span>}
-      </div>
-      {audioUrl && (
-        <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
-          value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
-      )}
-      <audio ref={audioRef} src={audioUrl || undefined} preload="metadata"
+  // Chapter audio (BSB + ESV only) lives in the toolbar: one play/pause icon + a
+  // progress bar under the bar. Audio is one file per WHOLE chapter; in chrono mode
+  // (a passage can span chapters) play starts at the passage's first chapter and
+  // auto-advances to the next when one finishes.
+  const audioCapable = bsbMode || esvMode;
+  const onToolbarAudio = () => {
+    if (!audioCapable) return;
+    const a = audioRef.current;
+    if (audioUrl && a) { if (a.paused) a.play().catch(() => {}); else a.pause(); return; }
+    const book = chronoOn ? (curPassage && curPassage.book) : (selBook && selBook.abbrev);
+    const ch   = chronoOn ? (curPassage && curPassage.start_ch) : selChapter;
+    if (book && ch) loadAudio(book, ch);
+  };
+  const onAudioEnded = () => {
+    setAudioPlaying(false);
+    if (!chronoOn || !curPassage || !audioKey) return;   // chrono: roll into the next chapter of the passage
+    const cur = parseInt(audioKey.split("-")[1], 10);
+    if (cur < curPassage.end_ch) loadAudio(curPassage.book, cur + 1);
+  };
+  // Rendered under whichever toolbar is showing (desktop or mobile), only once a
+  // chapter's audio is actually loaded so there's no empty gap before pressing play.
+  const audioBar = (audioCapable && audioUrl) ? (
+    <div className="lib-audio-bar-row">
+      <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
+        value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
+      <audio ref={audioRef} src={audioUrl} preload="metadata"
         onLoadedMetadata={e => setAudioDur(e.target.duration || 0)}
         onTimeUpdate={e => setAudioCur(e.target.currentTime || 0)}
         onPlay={() => setAudioPlaying(true)} onPause={() => setAudioPlaying(false)}
-        onEnded={() => setAudioPlaying(false)} />
+        onEnded={onAudioEnded} />
     </div>
-  );
+  ) : null;
+  const audioBtn = audioCapable ? (
+    <button className={"lib-toggle lib-toggle-icon" + (audioPlaying ? " on" : "")}
+      disabled={audioBusy}
+      title={audioPlaying ? "Pause audio" : "Play chapter audio"}
+      aria-label={audioPlaying ? "Pause audio" : "Play chapter audio"} aria-pressed={audioPlaying}
+      onClick={onToolbarAudio}>
+      {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
+    </button>
+  ) : null;
 
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
@@ -2105,6 +2096,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               ><Icon.Lines/></button>
             </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
+            {audioBtn}
             {canSearch && (
               <button className={"lib-toggle lib-toggle-icon" + (searchOpen ? " on" : "")} title="Search this text" aria-label="Search this text" aria-pressed={searchOpen} onClick={() => setSearchOpen(o => !o)}><Icon.Search/></button>
             )}
@@ -2135,6 +2127,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               <Icon.Search/>
             </button>
           )}
+          {audioCapable && (
+            <button className={"mbar-overview mbar-audio" + (audioPlaying ? " on" : "")} disabled={audioBusy}
+              onClick={onToolbarAudio} aria-label={audioPlaying ? "Pause audio" : "Play chapter audio"}>
+              {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
+            </button>
+          )}
           <div className="mbar-center">
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
               {chronoOn ? (
@@ -2152,6 +2150,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           </button>
         </div>
       )}
+
+      {audioBar}
 
       {searchOpen && canSearch && (
         <>
@@ -2297,7 +2297,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <div className="lib-loading">Loading…</div>
           ) : (
             <div className="lib-text-words">
-              {audioControl}
               {withMarks(bsbView, renderBsbVerse)}
             </div>
           )
@@ -2306,7 +2305,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <div className="lib-loading">Loading…</div>
           ) : (
             <div className="lib-text-words">
-              {audioControl}
               {withMarks(esvView, renderEsvVerse)}
             </div>
           )
