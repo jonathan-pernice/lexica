@@ -4231,7 +4231,6 @@ function ModesSheet({
   pickBible,
   toggleParallel,
   nonCanonList,
-  pickNonCanon,
   showStrongs,
   showInterlinear,
   setOpt,
@@ -4246,14 +4245,6 @@ function ModesSheet({
   } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
   const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly) || translation === "bsb"; // English-only / BSB: no Greek toggles
-  const [otherShown, setOtherShown] = useState(false);
-  // groups start collapsed (long list); the active text's group opens
-  const [openGroups, setOpenGroups] = useState(() => new Set(activeNonCanon ? [activeNonCanon.group] : []));
-  const toggleGroup = g => setOpenGroups(s => {
-    const n = new Set(s);
-    n.has(g) ? n.delete(g) : n.add(g);
-    return n;
-  });
   const gray = proseLocked ? {
     opacity: 0.35,
     cursor: "default"
@@ -4297,50 +4288,14 @@ function ModesSheet({
   }, "KJV"), /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (corpus === "bible" && translation === "bsb" ? " on" : ""),
     onClick: () => pickBible("bsb")
-  }, "BSB")), /*#__PURE__*/React.createElement("div", {
+  }, "BSB")), !activeNonCanon && /*#__PURE__*/React.createElement("div", {
     className: "mseg text-par"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (translation === "parallel" ? " on" : ""),
     disabled: proseLocked,
     style: gray,
     onClick: () => !proseLocked && toggleParallel()
-  }, "Parallel"))), nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "other-acc"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "other-acc-head",
-    onClick: () => setOtherShown(s => !s),
-    "aria-expanded": otherShown
-  }, /*#__PURE__*/React.createElement("span", null, "Other texts"), /*#__PURE__*/React.createElement("span", {
-    className: "other-acc-r"
-  }, activeNonCanon && /*#__PURE__*/React.createElement("span", {
-    className: "other-acc-cur"
-  }, activeNonCanon.name), /*#__PURE__*/React.createElement("span", {
-    className: "other-acc-chev" + (otherShown ? " open" : "")
-  }, "\u25BE"))), otherShown && /*#__PURE__*/React.createElement("div", {
-    className: "other-acc-list"
-  }, nonCanonGroups(nonCanonList).map(grp => {
-    const open = openGroups.has(grp.group);
-    return /*#__PURE__*/React.createElement(React.Fragment, {
-      key: grp.group
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "other-acc-grp other-acc-grp-btn" + (open ? " open" : ""),
-      onClick: () => toggleGroup(grp.group),
-      "aria-expanded": open
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "other-acc-grp-chev"
-    }, "\u25B8"), /*#__PURE__*/React.createElement("span", {
-      className: "other-acc-grp-lbl"
-    }, grp.group), /*#__PURE__*/React.createElement("span", {
-      className: "other-acc-grp-count"
-    }, grp.items.length)), open && grp.items.map(t => /*#__PURE__*/React.createElement("button", {
-      key: t.id,
-      className: "other-acc-item" + (corpus === t.id ? " on" : ""),
-      onClick: () => {
-        pickNonCanon(t);
-        onClose();
-      }
-    }, t.name)));
-  })))), /*#__PURE__*/React.createElement("div", {
+  }, "Parallel")))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
@@ -5170,14 +5125,13 @@ function LibraryView({
   const maxChap = nonCanon ? nonCanon.chapters : selBook ? selBook.chapters : 1;
 
   // Pick a non-canonical text (from the "Other" menu / nav): switch the reader to it and
-  // start at chapter 1. The ABP/Parallel buttons stay live and control its layout
-  // (Greek interlinear vs. Greek+English columns); KJV has no meaning here, so fall
-  // back to the Greek interlinear if it was active.
+  // start at chapter 1. Parallel/KJV/BSB have no meaning for a non-canonical text,
+  // so any of those falls back to the Greek interlinear (ABP single view).
   const pickNonCanon = t => {
     setCorpus(t.id);
     setSelChapter(1);
     setOtherOpen(false);
-    if (translation === "kjv" || translation === "bsb") {
+    if (translation === "kjv" || translation === "bsb" || translation === "parallel") {
       setTranslation("abp");
       onTranslationChange?.("abp");
     }
@@ -5195,8 +5149,8 @@ function LibraryView({
     onTranslationChange?.(edition);
     if (selBook && selChapter > selBook.chapters) setSelChapter(selBook.chapters);
   };
-  // Parallel is its own toggle: on shows two columns (Bible ABP|KJV, or a
-  // non-canonical text's Greek|English); off returns to the single view.
+  // Parallel is its own toggle: on shows two columns (Bible ABP|KJV); off returns
+  // to the single view. Bible only — non-canonical texts don't offer Parallel.
   const toggleParallel = () => {
     const next = translation === "parallel" ? "abp" : "parallel";
     setTranslation(next);
@@ -6462,7 +6416,6 @@ function LibraryView({
     pickBible: pickBible,
     toggleParallel: toggleParallel,
     nonCanonList: NONCANON,
-    pickNonCanon: pickNonCanon,
     showStrongs: showStrongs,
     showInterlinear: showInterlinear,
     setOpt: setOpt,
@@ -6543,7 +6496,7 @@ function LibraryView({
       cursor: "default"
     } : undefined,
     onClick: () => !proseLocked && setOpt("showInterlinear", !showInterlinear)
-  }, /*#__PURE__*/React.createElement(Icon.Interlinear, null)), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Icon.Interlinear, null)), !nonCanon && /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : ""),
     disabled: proseLocked,
     title: "Parallel (ABP + KJV)",

@@ -2017,45 +2017,6 @@ input { font-family: inherit; }
 .text-row { display: flex; gap: 10px; }
 .text-row .text-ed { flex: 2 1 0; min-width: 0; }
 .text-row .text-par { flex: 1 1 0; min-width: 0; }
-.other-acc { margin-top: 8px; border: 1px solid var(--rule); border-radius: 11px; overflow: hidden; }
-.other-acc-head {
-  width: 100%; display: flex; align-items: center; justify-content: space-between;
-  padding: 11px 14px; font-size: 14.5px; color: var(--ink-2);
-}
-.other-acc-head:active { background: var(--bg-sunk); }
-.other-acc-r { display: flex; align-items: center; gap: 8px; }
-.other-acc-cur { font-size: 13px; color: var(--accent); font-weight: 600; }
-.other-acc-chev { color: var(--ink-4); font-size: 12px; transition: transform 0.15s ease; }
-.other-acc-chev.open { transform: rotate(180deg); }
-.other-acc-list { display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
-.other-acc-item {
-  text-align: left; padding: 11px 14px; font-size: 14.5px; color: var(--ink-2);
-  background: var(--bg-sunk);
-}
-.other-acc-item + .other-acc-item { border-top: 1px solid var(--rule); }
-.other-acc-item:active { background: rgba(0,0,0,0.06); color: var(--ink); }
-.other-acc-item.on { color: var(--accent); font-weight: 600; }
-.other-acc-grp {
-  padding: 8px 14px 5px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
-  text-transform: uppercase; color: var(--ink-4); background: var(--bg-sunk);
-  border-top: 1px solid var(--rule);
-}
-.other-acc-grp:first-child { border-top: none; }
-/* collapsible group header (tap to open/close) */
-.other-acc-grp-btn {
-  display: flex; align-items: center; gap: 8px; width: 100%;
-  border: none; border-top: 1px solid var(--rule); cursor: pointer;
-  padding: 10px 14px; font: inherit; font-size: 11px; font-weight: 700;
-  letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-4);
-  background: var(--bg-sunk);
-}
-.other-acc-grp-chev { font-size: 10px; transition: transform 0.12s ease; }
-.other-acc-grp-btn.open .other-acc-grp-chev { transform: rotate(90deg); }
-.other-acc-grp-lbl { flex: 1; text-align: left; }
-.other-acc-grp-count {
-  color: var(--gold); background: var(--gold-soft);
-  border-radius: 9px; padding: 1px 7px; letter-spacing: 0;
-}
 .display-row { display: flex; gap: 10px; align-items: stretch; }
 .display-row .mseg { flex: 1 1 0; min-width: 0; }
 .display-row .font-picker .mseg-b { flex: 1 1 0; }
@@ -2869,6 +2830,31 @@ input { font-family: inherit; }
 .notes-sync-input:focus { outline: none; border-color: var(--gold); }
 .notes-sync-hint { font-size: 12px; color: var(--ink-3); margin-bottom: 10px; }
 .notes-acct-email { font-weight: 600; color: var(--ink); font-size: 14px; }
+
+/* Mobile: compact the Notes-tab header so the list isn't pushed off-screen.
+   Smaller title, tighter spacing, the explanation line dropped, and the
+   filter/sort/group controls collapsed into one swipeable row (no wrap pile). */
+@media (max-width: 1099px) {
+  .notes-view { padding: 14px 14px 80px; }
+  .notes-view-head { margin-bottom: 10px; }
+  .notes-view-titlerow { margin-bottom: 8px; }
+  .notes-view-title { font-size: 18px; }
+  .notes-tool-btn { padding: 6px 10px; font-size: 12px; }
+  .notes-sync { gap: 6px; margin-bottom: 6px; }
+  .notes-sync-label { font-size: 12px; }
+  .notes-sync-hint { display: none; }
+  .notes-mode { margin-bottom: 8px; }
+  .notes-search { padding: 8px 12px; font-size: 14px; }
+  .notes-controls {
+    flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin-top: 8px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .notes-controls::-webkit-scrollbar { display: none; }
+  .notes-controls > * { flex: 0 0 auto; }
+  .notes-filter { flex-wrap: nowrap; }
+  .notes-controls .seg-b { padding: 5px 9px; font-size: 12px; }
+  .notes-controls .notes-tool-btn { padding: 5px 10px; font-size: 12px; }
+}
 
 /* Journal — free-form pages (second note mode) */
 .notes-mode { margin-bottom: 12px; }

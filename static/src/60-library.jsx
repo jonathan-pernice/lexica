@@ -437,16 +437,12 @@ function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, 
 // Compacted to three groups: Text · Study layer · Display.
 // ============================================================
 function ModesSheet({
-  corpus, translation, pickBible, toggleParallel, nonCanonList, pickNonCanon,
+  corpus, translation, pickBible, toggleParallel, nonCanonList,
   showStrongs, showInterlinear, setOpt, chipMode, libFontSize, changeFontSize, onClose,
 }) {
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
   const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly) || translation === "bsb";   // English-only / BSB: no Greek toggles
-  const [otherShown, setOtherShown] = useState(false);
-  // groups start collapsed (long list); the active text's group opens
-  const [openGroups, setOpenGroups] = useState(() => new Set(activeNonCanon ? [activeNonCanon.group] : []));
-  const toggleGroup = (g) => setOpenGroups(s => { const n = new Set(s); n.has(g) ? n.delete(g) : n.add(g); return n; });
   const gray = proseLocked ? { opacity: 0.35, cursor: "default" } : undefined;
   return (
     <>
@@ -466,42 +462,12 @@ function ModesSheet({
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="bsb"?" on":"")} onClick={()=>pickBible("bsb")}>BSB</button>
               </div>
-              <div className="mseg text-par">
-                <button className={"mseg-b"+(translation==="parallel"?" on":"")} disabled={proseLocked} style={gray} onClick={()=>!proseLocked&&toggleParallel()}>Parallel</button>
-              </div>
+              {!activeNonCanon && (
+                <div className="mseg text-par">
+                  <button className={"mseg-b"+(translation==="parallel"?" on":"")} disabled={proseLocked} style={gray} onClick={()=>!proseLocked&&toggleParallel()}>Parallel</button>
+                </div>
+              )}
             </div>
-            {nonCanonList.length > 0 && (
-              <div className="other-acc">
-                <button className="other-acc-head" onClick={()=>setOtherShown(s=>!s)} aria-expanded={otherShown}>
-                  <span>Other texts</span>
-                  <span className="other-acc-r">
-                    {activeNonCanon && <span className="other-acc-cur">{activeNonCanon.name}</span>}
-                    <span className={"other-acc-chev"+(otherShown?" open":"")}>▾</span>
-                  </span>
-                </button>
-                {otherShown && (
-                  <div className="other-acc-list">
-                    {nonCanonGroups(nonCanonList).map(grp => {
-                      const open = openGroups.has(grp.group);
-                      return (
-                        <React.Fragment key={grp.group}>
-                          <button className={"other-acc-grp other-acc-grp-btn"+(open?" open":"")}
-                            onClick={()=>toggleGroup(grp.group)} aria-expanded={open}>
-                            <span className="other-acc-grp-chev">▸</span>
-                            <span className="other-acc-grp-lbl">{grp.group}</span>
-                            <span className="other-acc-grp-count">{grp.items.length}</span>
-                          </button>
-                          {open && grp.items.map(t => (
-                            <button key={t.id} className={"other-acc-item"+(corpus===t.id?" on":"")}
-                              onClick={()=>{ pickNonCanon(t); onClose(); }}>{t.name}</button>
-                          ))}
-                        </React.Fragment>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
           <div className="mode-sec">
             <div className="mode-lbl">Study layer</div>
@@ -909,14 +875,13 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const maxChap = nonCanon ? nonCanon.chapters : (selBook ? selBook.chapters : 1);
 
   // Pick a non-canonical text (from the "Other" menu / nav): switch the reader to it and
-  // start at chapter 1. The ABP/Parallel buttons stay live and control its layout
-  // (Greek interlinear vs. Greek+English columns); KJV has no meaning here, so fall
-  // back to the Greek interlinear if it was active.
+  // start at chapter 1. Parallel/KJV/BSB have no meaning for a non-canonical text,
+  // so any of those falls back to the Greek interlinear (ABP single view).
   const pickNonCanon = (t) => {
     setCorpus(t.id);
     setSelChapter(1);
     setOtherOpen(false);
-    if (translation === "kjv" || translation === "bsb") { setTranslation("abp"); onTranslationChange?.("abp"); }
+    if (translation === "kjv" || translation === "bsb" || translation === "parallel") { setTranslation("abp"); onTranslationChange?.("abp"); }
   };
   // Picking a Bible book from the nav returns to the Bible text.
   const selectBook = (b) => {
@@ -931,8 +896,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     onTranslationChange?.(edition);
     if (selBook && selChapter > selBook.chapters) setSelChapter(selBook.chapters);
   };
-  // Parallel is its own toggle: on shows two columns (Bible ABP|KJV, or a
-  // non-canonical text's Greek|English); off returns to the single view.
+  // Parallel is its own toggle: on shows two columns (Bible ABP|KJV); off returns
+  // to the single view. Bible only — non-canonical texts don't offer Parallel.
   const toggleParallel = () => {
     const next = translation === "parallel" ? "abp" : "parallel";
     setTranslation(next);
@@ -1887,7 +1852,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           pickBible={pickBible}
           toggleParallel={toggleParallel}
           nonCanonList={NONCANON}
-          pickNonCanon={pickNonCanon}
           showStrongs={showStrongs}
           showInterlinear={showInterlinear}
           setOpt={setOpt}
@@ -1921,7 +1885,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <span className="lib-bar-sep" aria-hidden="true"/>
             <button className={"lib-toggle lib-toggle-icon" + (showStrongs ? " on" : "")} disabled={proseLocked} title="Strong's numbers" aria-label="Strong's numbers" aria-pressed={showStrongs} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showStrongs", !showStrongs)}><Icon.Hash/></button>
             <button className={"lib-toggle lib-toggle-icon" + (showInterlinear ? " on" : "")} disabled={proseLocked} title="Interlinear" aria-label="Interlinear" aria-pressed={showInterlinear} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}><Icon.Interlinear/></button>
-            <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} disabled={proseLocked} title="Parallel (ABP + KJV)" aria-label="Parallel" aria-pressed={translation === "parallel"} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && toggleParallel()}><Icon.Columns/></button>
+            {!nonCanon && <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} disabled={proseLocked} title="Parallel (ABP + KJV)" aria-label="Parallel" aria-pressed={translation === "parallel"} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && toggleParallel()}><Icon.Columns/></button>}
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg">
               <button
