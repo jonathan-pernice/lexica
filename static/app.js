@@ -6844,13 +6844,7 @@ function LibraryView({
       });
     },
     "aria-label": chronoOn ? "Previous passage" : "Previous chapter"
-  }, "\u2039"), chronoOn ? /*#__PURE__*/React.createElement("span", {
-    className: "ch-lbl ch-cur ch-cur-chrono",
-    title: "Current passage \u2014 pick any from the era list at left"
-  }, curPassage ? curPassage.label : "—") : /*#__PURE__*/React.createElement("span", {
-    className: "ch-lbl ch-cur",
-    title: "Current chapter \u2014 pick any chapter from the book list at left"
-  }, selChapter), /*#__PURE__*/React.createElement("button", {
+  }, "\u2039"), /*#__PURE__*/React.createElement("button", {
     className: "ch-nav",
     disabled: chronoOn ? chrono && chronoPos >= chrono.passages.length : selChapter >= maxChap,
     onClick: () => {

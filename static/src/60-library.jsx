@@ -2102,9 +2102,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                 onClick={() => { if (chronoOn) { stepPassage(-1); return; } const c = Math.max(1, selChapter - 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
                 aria-label={chronoOn ? "Previous passage" : "Previous chapter"}
               >‹</button>
-              {chronoOn
-                ? <span className="ch-lbl ch-cur ch-cur-chrono" title="Current passage — pick any from the era list at left">{curPassage ? curPassage.label : "—"}</span>
-                : <span className="ch-lbl ch-cur" title="Current chapter — pick any chapter from the book list at left">{selChapter}</span>}
               <button
                 className="ch-nav"
                 disabled={chronoOn ? (chrono && chronoPos >= chrono.passages.length) : selChapter >= maxChap}
