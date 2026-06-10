@@ -16,7 +16,13 @@ function App() {
   const [corpusSort, setCorpusSort] = useState("curated"); // "curated" | "canonical"
   const [corpusTextMode, setCorpusTextMode] = useState("abp"); // "abp" | "kjv"
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 1100);
-  const [mainView, setMainView] = useState("library");
+  // Remember the active tab across refreshes (guard against a stale/removed value).
+  const _VIEWS = ["library", "lexicon", "search", "notes", "about"];
+  const [mainView, setMainView] = useState(() => {
+    try { const v = localStorage.getItem("lexica.view.v1"); return _VIEWS.includes(v) ? v : "library"; }
+    catch (e) { return "library"; }
+  });
+  useEffect(() => { try { localStorage.setItem("lexica.view.v1", mainView); } catch (e) {} }, [mainView]);
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
   const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
