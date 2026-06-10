@@ -243,16 +243,20 @@ on single-chapter passages if it ever feels redundant.
 ### Read-along audio (play a chapter while you read)
 Like eSword's ESV/KJV audio — a play button that reads the chapter aloud. Scoped 2026-06-09.
 Plan: EVERY reading text gets audio EXCEPT ABP (no recording exists for it).
-- **BSB — cleanest option.** The official Berean Standard Bible audio (narrators Souer/Hays/Gilbert)
-  is **public domain (CC0)** — no terms, no key, no non-commercial limit. We can download the mp3s and
-  host them ourselves. Trade-off: PLAIN narration, **no background music/dramatization.**
+**BSB audio DONE + PUSHED 2026-06-10** (commit 039ed32) — see the shared `▶ Listen` player below.
+ESV audio built but waiting on the FCBH key (~1 week).
+- **BSB — DONE.** Per-chapter `▶ Listen` button in the BSB reader. We DON'T self-host — `/api/bsb/audio`
+  hands the browser the public-domain (CC0) Souer mp3 straight from openbible.com
+  (`/audio/souer/BSB_<NN>_<Abbr>_<CCC>.mp3`; verified resolving). PLAIN narration, no music. The same
+  player serves ESV (owner-only). openbible also has gilbert/hays/david + _music variants if wanted.
 - **KJV — dramatized (music + sound effects)** like eSword comes from Faith Comes By Hearing's "Bible
   Brain" API (formerly Bible.is). Free for non-commercial use but stays on THEIR terms + THEIR server
   (register for a key). Also simpler free KJV-with-soft-music recordings exist (AudioTreasure, Internet
   Archive) if plain narration is fine.
-- **ESV — dramatized, but PRIVATE.** FCBH Bible Brain has ESV audio with background music (fileset
-  e.g. `ENGESVN2DA`). Rides along with the login-gated ESV text above — owner-only, server-enforced,
-  so the spoken ESV words match the ESV text on screen. See the ESV item under "More texts" below.
+- **ESV — dramatized, PRIVATE, owner-only — BUILT 2026-06-10, waiting on the key.** `/api/esv/audio`
+  fetches the FCBH Bible Brain signed mp3 server-side (key stays in the WSGI), behind the same owner
+  gate as the ESV text. Default fileset `ENGESVN2DA` is dramatized ESV **NT only**; OT needs a separate
+  fileset (`ESV_AUDIO_FILESET_OT`). Goes live once `FCBH_API_KEY` is set on PA (key requested 2026-06-10).
 - **ABP — none exists** (niche LXX Greek interlinear; no recordings). The primary Greek text stays
   audio-less; KJV/BSB/ESV all get it.
 - **The catch = alignment.** Audio is per-CHAPTER, not timed per verse, so the basic version is a
@@ -275,18 +279,14 @@ place for the existing place sidebar, so this is smaller than it looks.
 - **Textus Receptus Greek NT:** add as a second NT text next to ABP. Same Strong's numbering, so it
   plugs in easily, and showing where the two Greek texts differ is genuinely rare and useful.
 - **More English translations** (ASV, YLT, Darby, Geneva) as comparison texts — all public domain.
-- **ESV — PERSONAL, LOGIN-GATED TO THE OWNER ONLY (plan set 2026-06-09).** ESV is Crossway-copyrighted,
-  so it CANNOT be a public reading text like KJV/BSB. But the owner owns ESV copies (bought several of
-  their books) and wants it for his OWN study — that's personal use, not publishing. So the plan: load
-  the ESV text (chapter-per-file source exists, e.g. github.com/lguenth/mdbible) AND wire up ESV audio,
-  but show BOTH only to the owner's account.
-  - **HARD RULE: enforce the gate on the SERVER, not just hide the toggle.** The ESV text route AND the
-    audio embed must check "is this the owner's account?" server-side and refuse everyone else — hiding
-    the button is not enough (the address must not work for anyone else). Reuse the existing accounts/
-    login (notes.db bearer token) to identify the owner.
-  - Keep it GENUINELY single-user. Opening ESV to other logged-in users = publishing again = not allowed.
-  - ESV audio is on FCBH's Bible Brain API (dramatized fileset exists, e.g. `ENGESVN2DA`); fine for
-    private non-commercial use, streamed from their server on their terms.
+- **ESV — PERSONAL, LOGIN-GATED — BUILT + PUSHED 2026-06-10** (commits dd7a73f, 039ed32; memory
+  `project_esv_audio`). Owner-only ESV reading text, gate enforced on the SERVER (404 to everyone
+  else, not just a hidden toggle): `views_esv.py` checks the notes.db bearer token's account email
+  against `ESV_OWNER_EMAIL` (WSGI env). Text in its own `esv.db` (out of bible.db + git), loaded by
+  `scripts/load_esv.py` from the mdbible by_book source. ESV audio = FCBH Bible Brain (`ENGESVN2DA`,
+  NT-only), owner-gated, key fetched server-side. **To activate on PA:** deploy → load esv.db →
+  set `ESV_OWNER_EMAIL` (+ `FCBH_API_KEY` for audio) in the WSGI → reload. (FCBH key requested
+  2026-06-10, ~1 week.) Done as part of the audio item below.
 - **Extra-biblical texts** referenced in scripture (1 Enoch, cited in Jude; Dead Sea Scrolls variants)
   as a separate "Apocrypha" section, never mixed into the canon. Research good digital sources first.
 
