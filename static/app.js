@@ -4958,17 +4958,20 @@ function LibraryView({
     api.chronological().then(setChrono).catch(() => {});
   }, []);
 
+  // Where you were reading in canonical order, so flipping back restores it
+  // (instead of stranding you on the chronological passage's book/chapter).
+  const canonReturnRef = useRef(null);
   // Jump the reader to a chronological passage: select its book and land on its
   // START chapter. (Stage 2 trims to the exact verse window and spans chapters.)
+  // No manual verse-clearing here — the chapter loader clears + reloads itself when
+  // the book/chapter actually changes; clearing when they DON'T change just blanks
+  // the page (e.g. switching to chrono while already on Genesis 1).
   const pickPassage = p => {
     if (!p) return;
     const b = books.find(bk => bk.abbrev === p.book);
     if (!b) return;
     setChronoPos(p.pos);
     if (corpus !== "bible") setCorpus("bible");
-    setVerses([]);
-    setKjvVerses([]);
-    setBsbVerses([]);
     setSelBook(b);
     setSelChapter(p.start_ch);
   };
@@ -4979,13 +4982,28 @@ function LibraryView({
     if (next < 1 || next > chrono.passages.length) return;
     pickPassage(chrono.passages[next - 1]);
   };
-  // Turning chronological order ON: leave any non-canon text and jump to the
-  // current passage so the reader matches the list.
+  // Flip reading order. Entering chronological stashes the canonical spot and jumps
+  // to the current passage; leaving restores the stashed canonical spot.
   const setOrder = mode => {
-    setOrderMode(mode);
-    if (mode === "chronological" && chrono) {
-      if (corpus !== "bible") setCorpus("bible");
-      pickPassage(chrono.passages[chronoPos - 1] || chrono.passages[0]);
+    if (mode === orderMode) return;
+    if (mode === "chronological") {
+      canonReturnRef.current = selBook ? {
+        book: selBook,
+        chapter: selChapter
+      } : null;
+      setOrderMode("chronological");
+      if (chrono) {
+        if (corpus !== "bible") setCorpus("bible");
+        pickPassage(chrono.passages[chronoPos - 1] || chrono.passages[0]);
+      }
+    } else {
+      setOrderMode("canonical");
+      const r = canonReturnRef.current;
+      if (r && r.book) {
+        if (corpus !== "bible") setCorpus("bible");
+        setSelBook(r.book);
+        setSelChapter(r.chapter);
+      }
     }
   };
   useEffect(() => {

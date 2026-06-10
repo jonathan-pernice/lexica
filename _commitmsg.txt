@@ -1,0 +1,12 @@
+Chronological Stage 1 fixes: blank-on-enter + remember canonical spot
+
+- Switching to chronological while already on a passage's start chapter
+  (e.g. Genesis 1) showed a blank page: pickPassage cleared the verses but
+  the chapter loader didn't refire because book/chapter didn't change. Drop
+  the manual clearing — the loader already clears and reloads on a real
+  book/chapter change, so an unchanged target just keeps its verses.
+- Flipping back to Canonical stranded you on the chronological passage's
+  book/chapter. Now entering chronological stashes your canonical spot and
+  leaving restores it.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
