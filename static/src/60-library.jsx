@@ -1082,7 +1082,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     const out = []; let lastCh = null;
     arr.forEach(v => {
       if (v._ch != null && v._ch !== lastCh) {
-        out.push(<div key={`cm-${v._ch}`} className="lib-chrono-chapmark">{selBook ? selBook.name : ""} {v._ch}</div>);
+        out.push(
+          <div key={`cm-${v._ch}`} className="lib-chrono-chapmark">
+            <span className="lib-chrono-chapmark-lbl">{selBook ? selBook.name : ""} {v._ch}</span>
+            {renderChronoAudio(v._ch)}
+          </div>
+        );
         lastCh = v._ch;
       }
       out.push(renderFn(v));
@@ -1093,18 +1098,23 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const kjvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : kjvLoading;
   const bsbShowLoading = chronoOn ? (chronoLoading || !chronoReady) : bsbLoading;
   const esvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : esvLoading;
-  // Chapter audio (BSB + ESV only) lives in the toolbar: one play/pause icon + a
-  // progress bar under the bar. Audio is one file per WHOLE chapter; in chrono mode
-  // (a passage can span chapters) play starts at the passage's first chapter and
-  // auto-advances to the next when one finishes.
+  // Chapter audio (BSB + ESV only). Audio is one file per WHOLE chapter.
+  //  - Canonical: a play/pause icon in the toolbar + a progress bar under the toolbar
+  //    (desktop AND mobile — same spot).
+  //  - Chronological: a play/pause + bar above EACH chapter's verses (renderChronoAudio,
+  //    placed at the chapter dividers); play auto-advances to the next chapter on end.
   const audioCapable = bsbMode || esvMode;
   const onToolbarAudio = () => {
     if (!audioCapable) return;
     const a = audioRef.current;
     if (audioUrl && a) { if (a.paused) a.play().catch(() => {}); else a.pause(); return; }
-    const book = chronoOn ? (curPassage && curPassage.book) : (selBook && selBook.abbrev);
-    const ch   = chronoOn ? (curPassage && curPassage.start_ch) : selChapter;
-    if (book && ch) loadAudio(book, ch);
+    if (selBook) loadAudio(selBook.abbrev, selChapter);
+  };
+  // Toggle one specific chapter (used by the inline chrono controls).
+  const onChapterAudio = (book, ch) => {
+    const a = audioRef.current;
+    if (audioKey === (book + "-" + ch) && a) { if (a.paused) a.play().catch(() => {}); else a.pause(); }
+    else loadAudio(book, ch);
   };
   const onAudioEnded = () => {
     setAudioPlaying(false);
@@ -1112,9 +1122,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     const cur = parseInt(audioKey.split("-")[1], 10);
     if (cur < curPassage.end_ch) loadAudio(curPassage.book, cur + 1);
   };
-  // The audio element itself (invisible) always renders while a chapter is loaded so
-  // it can play. The progress bar wraps it on DESKTOP only — on mobile the bottom
-  // toolbar has no room for a bar, so we render just the bare audio there.
+  // The (invisible) audio element renders once while a chapter is loaded so it can play.
   const audioEl = (audioCapable && audioUrl) ? (
     <audio ref={audioRef} src={audioUrl} preload="metadata"
       onLoadedMetadata={e => setAudioDur(e.target.duration || 0)}
@@ -1122,14 +1130,17 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       onPlay={() => setAudioPlaying(true)} onPause={() => setAudioPlaying(false)}
       onEnded={onAudioEnded} />
   ) : null;
-  const audioBar = !audioEl ? null : isMobile ? audioEl : (
-    <div className="lib-audio-bar-row">
-      <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
-        value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
-      {audioEl}
-    </div>
+  const audioProgress = (
+    <input className="lib-audio-bar" type="range" min="0" max={audioDur || 0} step="0.1"
+      value={Math.min(audioCur, audioDur || 0)} onChange={seekAudio} aria-label="Audio position" />
   );
-  const audioBtn = audioCapable ? (
+  // Under-toolbar slot. Chrono keeps the bar inline per chapter, so here it just mounts
+  // the hidden player; canonical shows the progress bar (desktop + mobile alike).
+  const audioBar = !audioEl ? null : chronoOn ? audioEl : (
+    <div className="lib-audio-bar-row">{audioProgress}{audioEl}</div>
+  );
+  // Toolbar play/pause — canonical only (chrono uses the inline per-chapter controls).
+  const audioBtn = (audioCapable && !chronoOn) ? (
     <button className={"lib-toggle lib-toggle-icon" + (audioPlaying ? " on" : "")}
       disabled={audioBusy}
       title={audioPlaying ? "Pause audio" : "Play chapter audio"}
@@ -1138,6 +1149,22 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
     </button>
   ) : null;
+  // Inline control rendered at each chrono chapter divider (above that chapter's verses).
+  const renderChronoAudio = (ch) => {
+    if (!audioCapable || !curPassage) return null;
+    const book = curPassage.book;
+    const active = audioKey === (book + "-" + ch);
+    return (
+      <span className="lib-chrono-audio">
+        <button className={"lib-chrono-play" + (active && audioPlaying ? " on" : "")}
+          disabled={audioBusy} onClick={() => onChapterAudio(book, ch)}
+          aria-label={active && audioPlaying ? "Pause" : "Play chapter"}>
+          {active && audioPlaying ? <Icon.Pause/> : <Icon.Play/>}
+        </button>
+        {active && audioUrl && audioProgress}
+      </span>
+    );
+  };
 
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
@@ -2143,7 +2170,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               )}
             </button>
           </div>
-          {audioCapable && (
+          {audioCapable && !chronoOn && (
             <button className={"mbar-overview mbar-audio" + (audioPlaying ? " on" : "")} disabled={audioBusy}
               onClick={onToolbarAudio} aria-label={audioPlaying ? "Pause audio" : "Play chapter audio"}>
               {audioPlaying ? <Icon.Pause/> : <Icon.Play/>}

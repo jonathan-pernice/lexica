@@ -2559,12 +2559,25 @@ input { font-family: inherit; }
 
 /* Chronological: a small chapter divider between the chapters a passage spans */
 .lib-chrono-chapmark {
-  display: inline-block; margin: 16px 0 9px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--gold); background: var(--gold-soft);
-  padding: 3px 9px; border-radius: 4px;
+  display: flex; align-items: center; gap: 10px; margin: 16px 0 9px;
 }
 .lib-chrono-chapmark:first-child { margin-top: 2px; }
+.lib-chrono-chapmark-lbl {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gold); background: var(--gold-soft);
+  padding: 3px 9px; border-radius: 4px; flex: 0 0 auto;
+}
+/* Inline per-chapter play/pause + progress bar (chronological reading) */
+.lib-chrono-audio { display: inline-flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.lib-chrono-play {
+  display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto;
+  color: var(--ink); background: var(--bg-2, #f0ece4);
+  border: 1px solid var(--line, #ddd6c8); border-radius: 6px; cursor: pointer;
+}
+.lib-chrono-play:hover { background: var(--bg-3, #e7e1d6); }
+.lib-chrono-play.on { color: var(--accent); }
+.lib-chrono-play:disabled { opacity: 0.5; cursor: default; }
+.lib-chrono-audio .lib-audio-bar { margin: 0; max-width: 320px; flex: 1; }
 
 /* ============================================================
    READING TOOLBAR (new bar — desktop library, ≥1100px only)
