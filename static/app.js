@@ -731,6 +731,23 @@ const Icon = {
     height: "16",
     rx: "1"
   })),
+  // Chronological order → clock
+  Clock: p => /*#__PURE__*/React.createElement("svg", _extends({
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.75",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, p), /*#__PURE__*/React.createElement("circle", {
+    cx: "12",
+    cy: "12",
+    r: "9"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M12 7v5l3.5 2"
+  })),
   // Overview / summary → info circle
   Info: p => /*#__PURE__*/React.createElement("svg", _extends({
     width: "20",
@@ -3995,17 +4012,7 @@ function LibNavPanel({
     className: "nav-other-lbl"
   }, nonCanon ? nonCanon.abbr || nonCanon.name : "Other"), /*#__PURE__*/React.createElement("span", {
     className: "nav-other-caret" + (otherOpen ? " open" : "")
-  }, "\u25BE")))), chrono && !nonCanon && /*#__PURE__*/React.createElement("div", {
-    className: "nav-order"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "seg nav-order-seg"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (orderMode !== "chronological" ? " on" : ""),
-    onClick: () => setOrder("canonical")
-  }, "Canonical"), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (orderMode === "chronological" ? " on" : ""),
-    onClick: () => setOrder("chronological")
-  }, "Chronological"))), otherOpen && nonCanonList && nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "\u25BE")))), otherOpen && nonCanonList && nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "nav-other-inline"
   }, nonCanonGroups(nonCanonList).map(grp => {
     const open = openGroups.has(grp.group);
@@ -4108,10 +4115,22 @@ function MobileBookPicker({
   nonCanon,
   nonCanonList,
   onDone,
-  onClose
+  onClose,
+  chronoOn,
+  chrono,
+  chronoPos,
+  onPickPassage
 }) {
   // A non-canonical book is identified by its `id`; a Bible book by its `abbrev`.
   const isNC = b => !!(b && b.id);
+  // Chronological: the picker shows eras → passages instead of books → chapters.
+  const curEraId = chrono && chrono.passages[chronoPos - 1] ? chrono.passages[chronoPos - 1].era : null;
+  const [openEras, setOpenEras] = useState(() => new Set(curEraId ? [curEraId] : []));
+  const toggleEra = id => setOpenEras(s => {
+    const n = new Set(s);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
   // If a non-canonical text is already open, jump straight to its chapter grid so the
   // reader can change chapter (this is the bug it fixes: the picker used to show only
   // the Bible books, stranding you on whatever Bible book was last selected).
@@ -4146,20 +4165,43 @@ function MobileBookPicker({
     className: "sheet-handle"
   })), /*#__PURE__*/React.createElement("div", {
     className: "mpick-head"
-  }, onChapter ? /*#__PURE__*/React.createElement("button", {
+  }, !chronoOn && onChapter ? /*#__PURE__*/React.createElement("button", {
     className: "mpick-back",
     onClick: () => setScreen("book")
   }, "\u2039 Books") : /*#__PURE__*/React.createElement("span", {
     className: "mpick-head-spacer"
   }), /*#__PURE__*/React.createElement("span", {
     className: "mpick-title"
-  }, onChapter ? pickedBook.name : "Books"), /*#__PURE__*/React.createElement("button", {
+  }, chronoOn ? "Chronological" : onChapter ? pickedBook.name : "Books"), /*#__PURE__*/React.createElement("button", {
     className: "mpick-x",
     onClick: onClose
   }, "\u2715")), /*#__PURE__*/React.createElement("div", {
     className: "mpick-scroll",
     ref: scrollRef
-  }, onChapter ? /*#__PURE__*/React.createElement("div", {
+  }, chronoOn ? chrono.eras.map(era => {
+    const open = openEras.has(era.id);
+    const eraPassages = chrono.passages.filter(p => p.era === era.id);
+    return /*#__PURE__*/React.createElement("div", {
+      key: era.id,
+      className: "mpick-section"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "mpick-sec-label mpick-sec-btn" + (open ? " open" : ""),
+      onClick: () => toggleEra(era.id),
+      "aria-expanded": open
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "mpick-sec-caret"
+    }, "\u25B8"), /*#__PURE__*/React.createElement("span", {
+      className: "mpick-sec-name"
+    }, era.name), /*#__PURE__*/React.createElement("span", {
+      className: "mpick-sec-count"
+    }, eraPassages.length)), open && /*#__PURE__*/React.createElement("div", {
+      className: "mpick-passages"
+    }, eraPassages.map(p => /*#__PURE__*/React.createElement("button", {
+      key: p.pos,
+      className: "mpick-passage" + (p.pos === chronoPos ? " on" : ""),
+      onClick: () => onPickPassage(p)
+    }, p.label))));
+  }) : onChapter ? /*#__PURE__*/React.createElement("div", {
     className: "mpick-grid"
   }, Array.from({
     length: pickedBook.chapters
@@ -4239,7 +4281,10 @@ function ModesSheet({
   chipMode,
   libFontSize,
   changeFontSize,
-  onClose
+  onClose,
+  chrono,
+  orderMode,
+  setOrder
 }) {
   const {
     sheetRef,
@@ -4297,7 +4342,19 @@ function ModesSheet({
     disabled: proseLocked,
     style: gray,
     onClick: () => !proseLocked && toggleParallel()
-  }, "Parallel")))), /*#__PURE__*/React.createElement("div", {
+  }, "Parallel")))), chrono && !activeNonCanon && /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Order"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (orderMode !== "chronological" ? " on" : ""),
+    onClick: () => setOrder("canonical")
+  }, "Canonical"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (orderMode === "chronological" ? " on" : ""),
+    onClick: () => setOrder("chronological")
+  }, "Chronological"))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
@@ -5298,7 +5355,10 @@ function LibraryView({
       swipeRef.current = null;
       if (Math.abs(dx) < 50) return; // too short
       if (Math.abs(dy) > Math.abs(dx) * 0.6) return; // too vertical
-      if (dx < 0 && selChapter < maxChap) {
+      if (chronoOn) {
+        // chronological: swipe walks passages
+        stepPassage(dx < 0 ? 1 : -1);
+      } else if (dx < 0 && selChapter < maxChap) {
         const c = selChapter + 1;
         setSelChapter(c);
         if (!nonCanon) onNavChange?.({
@@ -6406,6 +6466,13 @@ function LibraryView({
     selChapter: selChapter,
     nonCanon: nonCanon,
     nonCanonList: NONCANON,
+    chronoOn: chronoOn,
+    chrono: chrono,
+    chronoPos: chronoPos,
+    onPickPassage: p => {
+      pickPassage(p);
+      setMobileNavOpen(false);
+    },
     onDone: (b, n) => {
       if (b.id) pickNonCanon(b);else selectBook(b);
       setSelChapter(n);
@@ -6424,6 +6491,9 @@ function LibraryView({
     chipMode: chipMode,
     libFontSize: libFontSize,
     changeFontSize: changeFontSize,
+    chrono: chrono,
+    orderMode: orderMode,
+    setOrder: setOrder,
     onClose: () => setModesOpen(false)
   }), /*#__PURE__*/React.createElement("div", null, navVisible ? /*#__PURE__*/React.createElement("div", {
     className: "lib-bar"
@@ -6473,7 +6543,22 @@ function LibraryView({
       });
     },
     "aria-label": chronoOn ? "Next passage" : "Next chapter"
-  }, "\u203A")), /*#__PURE__*/React.createElement("span", {
+  }, "\u203A")), chrono && !nonCanon && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+    className: "lib-bar-sep",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "seg lib-order-seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (orderMode !== "chronological" ? " on" : ""),
+    title: "Canonical order (books in order)",
+    "aria-label": "Canonical order",
+    onClick: () => setOrder("canonical")
+  }, /*#__PURE__*/React.createElement(Icon.Book, null)), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (orderMode === "chronological" ? " on" : ""),
+    title: "Chronological order (events in sequence)",
+    "aria-label": "Chronological order",
+    onClick: () => setOrder("chronological")
+  }, /*#__PURE__*/React.createElement(Icon.Clock, null)))), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("button", {
@@ -6576,11 +6661,13 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement("button", {
     className: "mbar-loc",
     onClick: () => setMobileNavOpen(true)
-  }, /*#__PURE__*/React.createElement("span", {
+  }, chronoOn ? /*#__PURE__*/React.createElement("span", {
+    className: "mbar-loc-name mbar-loc-chrono"
+  }, curPassage ? curPassage.label : "—") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
     className: "mbar-loc-name"
   }, nonCanon ? nonCanon.name : selBook ? selBook.name : ""), /*#__PURE__*/React.createElement("span", {
     className: "mbar-loc-ch"
-  }, selChapter))), /*#__PURE__*/React.createElement("button", {
+  }, selChapter)))), /*#__PURE__*/React.createElement("button", {
     className: "mbar-trans",
     onClick: () => setModesOpen(true),
     "aria-label": "Reading options"

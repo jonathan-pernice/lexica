@@ -1956,6 +1956,7 @@ input { font-family: inherit; }
 .mbar-loc:active { background: rgba(15,27,45,0.05); }
 .mbar-loc-name { font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
 .mbar-loc-ch { font-family: var(--f-mono); font-size: 15px; color: var(--accent); font-weight: 500; }
+.mbar-loc-chrono { font-size: 14.5px; max-width: 60vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mbar-loc-cv { color: var(--ink-4); }
 .mbar-trans { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: var(--accent); flex: 0 0 auto; }
 .mbar-trans:active { background: rgba(15,27,45,0.06); }
@@ -2390,6 +2391,14 @@ input { font-family: inherit; }
 .mpick-btn:hover { color: var(--ink); }
 .mpick-btn:active { color: var(--accent); }
 .mpick-btn.on { color: var(--accent); font-weight: 800; font-size: 15px; }
+/* chronological: full-width passage rows under each era */
+.mpick-passages { display: flex; flex-direction: column; gap: 1px; margin-bottom: 8px; }
+.mpick-passage {
+  width: 100%; text-align: left; padding: 9px 8px; border-radius: 5px;
+  font-size: 14.5px; color: var(--ink-2); background: none; border: none;
+}
+.mpick-passage:active { background: var(--bg-sunk); }
+.mpick-passage.on { color: var(--accent); font-weight: 700; background: var(--bg-sunk); }
 /* non-canonical books: full-width rows with the readable name (not a cramped abbr) */
 .mpick-btn-nc {
   grid-column: 1 / -1;
@@ -2509,13 +2518,6 @@ input { font-family: inherit; }
 .ch-chip:hover { color: var(--ink); }
 .ch-chip.on { color: var(--ink); font-weight: 700; }
 
-/* Reading-order toggle (Canonical | Chronological), under the source picker */
-.nav-order {
-  display: flex; align-items: center; justify-content: center;
-  padding: 7px 10px; border-bottom: 1px solid var(--rule);
-}
-.nav-order-seg { flex: 0 0 auto; }
-
 /* Chronological era list — collapsible era headers → passage buttons */
 .nav-era {
   width: 100%; display: flex; align-items: center; gap: 6px;
@@ -2609,6 +2611,9 @@ input { font-family: inherit; }
   .seg-b.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 500; }
   .seg-b:active:not(.on) { background: var(--bg-sunk); color: var(--ink); }
   .seg-sm .seg-b { font-size: 11.5px; padding: 4px 9px; }
+  /* Canonical/Chronological order toggle — icon buttons, centered */
+  .lib-order-seg .seg-b { display: inline-flex; align-items: center; justify-content: center; padding: 5px 9px; }
+  .lib-order-seg .seg-b.on { color: var(--gold); }
 
   .lib-toggle {
     font-size: 12.5px; color: var(--ink-3);

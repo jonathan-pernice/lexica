@@ -234,16 +234,8 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
           )}
         </div>
       </div>
-      {/* Reading order — canonical book order vs chronological (event) order. Only
-          for the Bible texts; a non-canonical text has no chronological list. */}
-      {chrono && !nonCanon && (
-        <div className="nav-order">
-          <div className="seg nav-order-seg">
-            <button className={"seg-b" + (orderMode !== "chronological" ? " on" : "")} onClick={() => setOrder("canonical")}>Canonical</button>
-            <button className={"seg-b" + (orderMode === "chronological" ? " on" : "")} onClick={() => setOrder("chronological")}>Chronological</button>
-          </div>
-        </div>
-      )}
+      {/* Reading-order toggle (Canonical | Chronological) lives in the top toolbar.
+          The nav just reflects orderMode: era→passage list when chronological. */}
       {/* "Other" books open INLINE in the panel (pushes the book list down) so the
           menu never floats over the reading text. */}
       {otherOpen && nonCanonList && nonCanonList.length > 0 && (
@@ -336,9 +328,13 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
 // ============================================================
 // MOBILE BOOK PICKER — full-screen, two-screen (book grid → chapter grid)
 // ============================================================
-function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, onDone, onClose }) {
+function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, onDone, onClose, chronoOn, chrono, chronoPos, onPickPassage }) {
   // A non-canonical book is identified by its `id`; a Bible book by its `abbrev`.
   const isNC = b => !!(b && b.id);
+  // Chronological: the picker shows eras → passages instead of books → chapters.
+  const curEraId = chrono && chrono.passages[chronoPos - 1] ? chrono.passages[chronoPos - 1].era : null;
+  const [openEras, setOpenEras] = useState(() => new Set(curEraId ? [curEraId] : []));
+  const toggleEra = (id) => setOpenEras(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
   // If a non-canonical text is already open, jump straight to its chapter grid so the
   // reader can change chapter (this is the bug it fixes: the picker used to show only
   // the Bible books, stranding you on whatever Bible book was last selected).
@@ -370,14 +366,35 @@ function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, 
     <div className="mpick" ref={sheetRef}>
       <div className="sheet-drag-zone" aria-hidden="true"><div className="sheet-handle"></div></div>
       <div className="mpick-head">
-        {onChapter
+        {!chronoOn && onChapter
           ? <button className="mpick-back" onClick={() => setScreen("book")}>‹ Books</button>
           : <span className="mpick-head-spacer" />}
-        <span className="mpick-title">{onChapter ? pickedBook.name : "Books"}</span>
+        <span className="mpick-title">{chronoOn ? "Chronological" : (onChapter ? pickedBook.name : "Books")}</span>
         <button className="mpick-x" onClick={onClose}>✕</button>
       </div>
       <div className="mpick-scroll" ref={scrollRef}>
-        {onChapter ? (
+        {chronoOn ? (
+          chrono.eras.map(era => {
+            const open = openEras.has(era.id);
+            const eraPassages = chrono.passages.filter(p => p.era === era.id);
+            return (
+              <div key={era.id} className="mpick-section">
+                <button className={"mpick-sec-label mpick-sec-btn" + (open ? " open" : "")} onClick={() => toggleEra(era.id)} aria-expanded={open}>
+                  <span className="mpick-sec-caret">▸</span>
+                  <span className="mpick-sec-name">{era.name}</span>
+                  <span className="mpick-sec-count">{eraPassages.length}</span>
+                </button>
+                {open && (
+                  <div className="mpick-passages">
+                    {eraPassages.map(p => (
+                      <button key={p.pos} className={"mpick-passage" + (p.pos === chronoPos ? " on" : "")} onClick={() => onPickPassage(p)}>{p.label}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : onChapter ? (
           <div className="mpick-grid">
             {Array.from({ length: pickedBook.chapters }, (_, i) => i + 1).map(n => {
               const active = isActive(pickedBook) && n === selChapter;
@@ -439,6 +456,7 @@ function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, 
 function ModesSheet({
   corpus, translation, pickBible, toggleParallel, nonCanonList,
   showStrongs, showInterlinear, setOpt, chipMode, libFontSize, changeFontSize, onClose,
+  chrono, orderMode, setOrder,
 }) {
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
@@ -469,6 +487,15 @@ function ModesSheet({
               )}
             </div>
           </div>
+          {chrono && !activeNonCanon && (
+            <div className="mode-sec">
+              <div className="mode-lbl">Order</div>
+              <div className="mseg">
+                <button className={"mseg-b"+(orderMode!=="chronological"?" on":"")} onClick={()=>setOrder("canonical")}>Canonical</button>
+                <button className={"mseg-b"+(orderMode==="chronological"?" on":"")} onClick={()=>setOrder("chronological")}>Chronological</button>
+              </div>
+            </div>
+          )}
           <div className="mode-sec">
             <div className="mode-lbl">Study layer</div>
             <div className="mtog">
@@ -1009,7 +1036,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       swipeRef.current = null;
       if (Math.abs(dx) < 50) return;           // too short
       if (Math.abs(dy) > Math.abs(dx) * 0.6) return; // too vertical
-      if (dx < 0 && selChapter < maxChap) {
+      if (chronoOn) {                          // chronological: swipe walks passages
+        stepPassage(dx < 0 ? 1 : -1);
+      } else if (dx < 0 && selChapter < maxChap) {
         const c = selChapter + 1;
         setSelChapter(c);
         if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null });
@@ -1837,6 +1866,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           selChapter={selChapter}
           nonCanon={nonCanon}
           nonCanonList={NONCANON}
+          chronoOn={chronoOn}
+          chrono={chrono}
+          chronoPos={chronoPos}
+          onPickPassage={(p) => { pickPassage(p); setMobileNavOpen(false); }}
           onDone={(b, n) => {
             if (b.id) pickNonCanon(b); else selectBook(b);
             setSelChapter(n);
@@ -1858,6 +1891,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           chipMode={chipMode}
           libFontSize={libFontSize}
           changeFontSize={changeFontSize}
+          chrono={chrono}
+          orderMode={orderMode}
+          setOrder={setOrder}
           onClose={() => setModesOpen(false)}
         />
       )}
@@ -1882,6 +1918,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                 aria-label={chronoOn ? "Next passage" : "Next chapter"}
               >›</button>
             </div>
+            {chrono && !nonCanon && (
+              <>
+                <span className="lib-bar-sep" aria-hidden="true"/>
+                <div className="seg lib-order-seg">
+                  <button className={"seg-b" + (orderMode !== "chronological" ? " on" : "")} title="Canonical order (books in order)" aria-label="Canonical order" onClick={() => setOrder("canonical")}><Icon.Book/></button>
+                  <button className={"seg-b" + (orderMode === "chronological" ? " on" : "")} title="Chronological order (events in sequence)" aria-label="Chronological order" onClick={() => setOrder("chronological")}><Icon.Clock/></button>
+                </div>
+              </>
+            )}
             <span className="lib-bar-sep" aria-hidden="true"/>
             <button className={"lib-toggle lib-toggle-icon" + (showStrongs ? " on" : "")} disabled={proseLocked} title="Strong's numbers" aria-label="Strong's numbers" aria-pressed={showStrongs} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showStrongs", !showStrongs)}><Icon.Hash/></button>
             <button className={"lib-toggle lib-toggle-icon" + (showInterlinear ? " on" : "")} disabled={proseLocked} title="Interlinear" aria-label="Interlinear" aria-pressed={showInterlinear} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}><Icon.Interlinear/></button>
@@ -1934,8 +1979,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           )}
           <div className="mbar-center">
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
-              <span className="mbar-loc-name">{nonCanon ? nonCanon.name : (selBook ? selBook.name : "")}</span>
-              <span className="mbar-loc-ch">{selChapter}</span>
+              {chronoOn ? (
+                <span className="mbar-loc-name mbar-loc-chrono">{curPassage ? curPassage.label : "—"}</span>
+              ) : (
+                <>
+                  <span className="mbar-loc-name">{nonCanon ? nonCanon.name : (selBook ? selBook.name : "")}</span>
+                  <span className="mbar-loc-ch">{selChapter}</span>
+                </>
+              )}
             </button>
           </div>
           <button className="mbar-trans" onClick={() => setModesOpen(true)} aria-label="Reading options">
