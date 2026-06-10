@@ -34,13 +34,21 @@ stay behind, run by one tail script (`scripts/finish_rebuild.sh`) plus a final p
   old-way rebuild showed the same drift. The standalone fix_*.py scripts are KEPT as re-appliers; on
   a fresh build they find 0 to do.
 
-**THE STANDING LEVER (if these last scripts ever bug you):** the word-splitter GUESSES which English
-word goes with which Greek word by matching the dictionary — that leaky guess is what the 237-verse
-`fix_split_merges` patch cleans up. We already have real word-by-word alignment data (the Rahlfs/TAGNT
-files used for the pronoun fix). Feeding that into the splitter (`_split_compounds`) to replace the
-guess could retire split_merges entirely. Big, risky project — the splitter is load-bearing — so a
-deliberate future effort, copy-first, only when wanted. See memory `project_architecture_rework` (#2)
-and `project_parser_number_reversal`.
+**THE STANDING LEVER — CHECKED 2026-06-09, DECLINED (keep the patch).** The word-splitter GUESSES
+which English word goes with which Greek word by matching the dictionary — that leaky guess is what the
+237-verse `fix_split_merges` patch cleans up. The idea was to feed the real word-by-word alignment data
+(the Rahlfs/TAGNT files from the pronoun fix) into the splitter (`_split_compounds`) to replace the
+guess and retire the patch. A read-only check on the lexica-val copy killed it: that data is Greek-only
+— it tells you each Greek word's grammar but never which English word pairs with it, so it can't do the
+English-to-Greek matching that IS the splitter's job. It can only act as a grammar filter afterward, and
+the filter can't tell a good split from a bad one: allowing only plain nouns/verbs would wrongly throw
+away 126 of the 240 good fixes (53% — the good splits land on little words like "and"/"me"/"not" all the
+time), and the grammar tag is missing on a fifth of all words. The one clean signal — "never pile a real
+word onto 'the'" — covers under half the garbles and the build already guards it. So the frozen
+237-verse patch stays: small, stable, proven. **LESSON:** an alignment with no English in it can't
+replace an English-pairing step; it can only filter, and a filter can't reconstruct the missing pairing.
+Throwaway check scripts: `C:\Users\JP\lexica-val\check_splitter_morph.py` + `check_237_targets_morph.py`.
+See memory `project_architecture_rework` (#2) and `project_parser_number_reversal`. DON'T re-investigate.
 
 ---
 

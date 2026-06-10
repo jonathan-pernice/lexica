@@ -440,6 +440,9 @@ one rebuilt (DELETE only ever hits the copy). The build also makes its own `bibl
      (carry=True in _split_compounds) regresses ~85 other verses, so the provably-clean subset is
      frozen in scripts/split_merge_fixes.json. Regenerate with `_gen_split_candidates.py` ONLY if
      _split_compounds itself changes (it didn't → committed json applies 237/0-skipped).
+     (Retiring this via the Rahlfs/TAGNT alignment was viability-checked 2026-06-09 and DECLINED: the
+     alignment is Greek-only so it can't replace the English-pairing guess, and a morph filter
+     over-blocks 53% of the good fixes — see memory project_architecture_rework #2. Don't re-investigate.)
    - fix_kyrios_mistags (3): Dan 4:19 "and"→καί; "of Cyrus" Dan 11:1/Ezr 5:13 → H3566. Pinned.
    - fix_merge_misses (1): Dan 9:10 hand-verified merge the auto generator misses. Pinned.
    - dedup_words (0 now — Hab 3:14 fixed at source) → fix_bracket_punct ONCE MORE (~202 cells):
