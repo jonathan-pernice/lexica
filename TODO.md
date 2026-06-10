@@ -132,6 +132,35 @@ so the source language ONLY matters if we want a word-by-word original. For a He
 join on H-numbers in `/api/extra`, BDB/Hebrew routing + right-to-left chips in the reader. Not urgent
 — no Hebrew non-canonical is queued, and any of them can ship English-only today.
 
+## Random redesign ideas (2026-06-09 brainstorm — pick any, nothing committed)
+
+Loose look-and-feel ideas, parked here so they're not lost. None are scoped yet — grab whichever appeals.
+
+**Reading experience**
+- **Focus mode** — tap the text and all the chrome (toolbar, left nav, bottom tabs) fades away for
+  distraction-free reading; tap again to bring it back. `code: reader chrome toggle in 60-library.jsx + 90-app.jsx`
+- **Parchment / dark themes** — a warm sepia reading skin plus a real dark mode, with a small corner
+  toggle. `code: styles.css theme vars (--ink, --bg…) + a theme switch`
+- **Greek-friendly typography** — a proper Greek serif and more line spacing so the reader feels like
+  a book, not a database. `code: styles.css font stack + line-height on the reader`
+
+**Layout**
+- **Word detail as a floating card** — instead of the fixed right sidebar, the lexicon info pops up
+  right next to the word you clicked. `code: detail panel in 90-app.jsx (today it's the right sidebar)`
+- **Collapsing toolbar** — shrink the desktop lib-bar to one compact pill that expands when you reach
+  for it, giving the text more room. `code: lib-bar in 60-library.jsx + styles.css`
+
+**Navigation**
+- **Real start screen** — a proper home/landing instead of dropping straight into Genesis 1.
+  `code: initial view in 90-app.jsx`
+- **Chronological timeline scrubber** — a draggable era timeline across the top of the chronological
+  READING MODE (it's a reading mode, NOT a tab) for jumping around the sequence.
+  `code: chronological reading-mode UI; memory project_chronological_tab`
+
+**Search**
+- **One smart box** — merge the Lexicon and AI search inputs into a single field that detects what you
+  typed (Strong's vs Greek vs plain question) and routes it. `code: Search tab inputs in 70-search.jsx`
+
 ## Bigger features (someday / ideas)
 
 ### Advanced desktop workspace
