@@ -5585,9 +5585,12 @@ function LibraryView({
       if (!root) return;
       const marks = root.querySelectorAll(".lib-chrono-chapmark[data-ch]");
       if (!marks.length) return;
+      // Switch when a chapter heading passes ~just-above the middle of the screen
+      // (not the very top), so the "current" chapter matches what you're reading.
+      const threshold = (window.innerHeight || 800) * 0.45;
       let cur = parseInt(marks[0].dataset.ch, 10);
       marks.forEach(m => {
-        if (m.getBoundingClientRect().top <= 150) cur = parseInt(m.dataset.ch, 10);
+        if (m.getBoundingClientRect().top <= threshold) cur = parseInt(m.dataset.ch, 10);
       });
       setViewCh(cur);
     };
