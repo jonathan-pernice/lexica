@@ -1,7 +1,7 @@
 // ============================================================
 // HEADER
 // ============================================================
-function Header({ activeView, onNavChange, owner }) {
+function Header({ activeView, onNavChange }) {
   return (
     <header className="hdr">
       <div className="hdr-inner">
@@ -23,7 +23,6 @@ function Header({ activeView, onNavChange, owner }) {
           <button className={"hdr-link " + (activeView === "search" ? "active" : "")} onClick={() => onNavChange("search")}>Search</button>
           <button className={"hdr-link " + (activeView === "notes" ? "active" : "")} onClick={() => onNavChange("notes")}>Notes</button>
           <button className={"hdr-link " + (activeView === "about" ? "active" : "")} onClick={() => onNavChange("about")}>About</button>
-          {owner && <button className={"hdr-link " + (activeView === "stats" ? "active" : "")} onClick={() => onNavChange("stats")}>Stats</button>}
         </nav>
       </div>
     </header>

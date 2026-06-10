@@ -2581,7 +2581,8 @@ input { font-family: inherit; }
 /* ============================================================
    STATS — owner-only visitor dashboard
 ============================================================ */
-.stats-view { max-width: 760px; margin: 0 auto; padding: 28px 20px 60px; }
+.about-owner-seg { display: inline-flex; margin-bottom: 20px; }
+.stats-view { max-width: 760px; margin: 0 auto; padding: 4px 0 40px; }
 .stats-title { font-family: var(--f-serif); font-size: 26px; font-weight: 600; color: var(--ink); margin: 0 0 4px; }
 .stats-sub { font-size: 13px; color: var(--ink-4); margin-bottom: 22px; }
 .stats-cards { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }

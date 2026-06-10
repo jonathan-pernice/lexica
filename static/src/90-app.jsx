@@ -128,10 +128,6 @@ function App() {
     check();
     return NotesStore.subscribe(check);   // setAuth notifies on login/logout
   }, []);
-  // If the owner signs out while on the Stats tab, bounce back to the Library.
-  useEffect(() => {
-    if (!owner && mainView === "stats") setMainView("library");
-  }, [owner, mainView]);
 
   const handleReadInContext = (book, chapter, verse) => {
     searchScrollRef.current = window.scrollY;
@@ -204,7 +200,7 @@ function App() {
 
   return (
     <div className={"app view-" + mainView + " " + ((activeEntry || libCrossRef || activeNote || showLibSummary) ? "has-detail" : "")}>
-      <Header activeView={mainView} onNavChange={handleNavChange} owner={owner}/>
+      <Header activeView={mainView} onNavChange={handleNavChange}/>
       {isMobile && mainView !== "library" && (
         <div className="mobile-brand-bar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -221,8 +217,7 @@ function App() {
             <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveNote(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onOpenNote={openNote} onTranslationChange={setLibTranslation} isMobile={isMobile} showSummary={showLibSummary} />
           </div>
         )}
-        {mainView === "about" && <AboutView />}
-        {mainView === "stats" && owner && <StatsView />}
+        {mainView === "about" && <AboutView owner={owner} />}
         {mainView === "notes" && <NotesView onOpen={openNoteFromList} />}
         <div style={{ display: mainView === "lexicon" ? undefined : "none" }}>
           <LexiconView
@@ -417,12 +412,6 @@ function App() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
             About
           </button>
-          {owner && (
-            <button className={"mobile-tab" + (mainView === "stats" ? " active" : "")} onClick={() => handleNavChange("stats")}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
-              Stats
-            </button>
-          )}
         </nav>
       )}
     </div>

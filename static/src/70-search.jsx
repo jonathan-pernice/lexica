@@ -98,10 +98,20 @@ function GuidedTour({ onDone }) {
 // ============================================================
 // ABOUT VIEW
 // ============================================================
-function AboutView() {
+function AboutView({ owner }) {
+  // The owner gets a private "Stats" view tucked behind a toggle here (no extra tab).
+  const [tab, setTab] = useState("about");
   return (
     <div className="about-view">
       <div className="about-inner">
+        {owner && (
+          <div className="seg about-owner-seg">
+            <button className={"seg-b" + (tab === "about" ? " on" : "")} onClick={() => setTab("about")}>About</button>
+            <button className={"seg-b" + (tab === "stats" ? " on" : "")} onClick={() => setTab("stats")}>Stats</button>
+          </div>
+        )}
+        {owner && tab === "stats" ? <StatsView /> : (
+        <>
         <h1 className="about-title">About Lexica</h1>
         <p className="about-lead">A Greek and Hebrew word study tool for the diligent Berean. No seminary required.</p>
 
@@ -128,6 +138,8 @@ function AboutView() {
           <a className="donate-btn kofi" href="https://ko-fi.com/lexica" target="_blank" rel="noopener noreferrer">☕ Ko-fi</a>
           <a className="donate-btn github" href="https://github.com/sponsors/jonathan-pernice" target="_blank" rel="noopener noreferrer">♥ GitHub Sponsors</a>
         </div>
+        </>
+        )}
       </div>
     </div>
   );

@@ -1292,8 +1292,7 @@ function useNotesVersion() {
 // ============================================================
 function Header({
   activeView,
-  onNavChange,
-  owner
+  onNavChange
 }) {
   return /*#__PURE__*/React.createElement("header", {
     className: "hdr"
@@ -1343,10 +1342,7 @@ function Header({
   }, "Notes"), /*#__PURE__*/React.createElement("button", {
     className: "hdr-link " + (activeView === "about" ? "active" : ""),
     onClick: () => onNavChange("about")
-  }, "About"), owner && /*#__PURE__*/React.createElement("button", {
-    className: "hdr-link " + (activeView === "stats" ? "active" : ""),
-    onClick: () => onNavChange("stats")
-  }, "Stats"))));
+  }, "About"))));
 }
 
 // ============================================================
@@ -7413,12 +7409,24 @@ function GuidedTour({
 // ============================================================
 // ABOUT VIEW
 // ============================================================
-function AboutView() {
+function AboutView({
+  owner
+}) {
+  // The owner gets a private "Stats" view tucked behind a toggle here (no extra tab).
+  const [tab, setTab] = useState("about");
   return /*#__PURE__*/React.createElement("div", {
     className: "about-view"
   }, /*#__PURE__*/React.createElement("div", {
     className: "about-inner"
-  }, /*#__PURE__*/React.createElement("h1", {
+  }, owner && /*#__PURE__*/React.createElement("div", {
+    className: "seg about-owner-seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (tab === "about" ? " on" : ""),
+    onClick: () => setTab("about")
+  }, "About"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (tab === "stats" ? " on" : ""),
+    onClick: () => setTab("stats")
+  }, "Stats")), owner && tab === "stats" ? /*#__PURE__*/React.createElement(StatsView, null) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", {
     className: "about-title"
   }, "About Lexica"), /*#__PURE__*/React.createElement("p", {
     className: "about-lead"
@@ -7454,7 +7462,7 @@ function AboutView() {
     href: "https://github.com/sponsors/jonathan-pernice",
     target: "_blank",
     rel: "noopener noreferrer"
-  }, "\u2665 GitHub Sponsors"))));
+  }, "\u2665 GitHub Sponsors")))));
 }
 
 // ============================================================
@@ -8226,10 +8234,6 @@ function App() {
     check();
     return NotesStore.subscribe(check); // setAuth notifies on login/logout
   }, []);
-  // If the owner signs out while on the Stats tab, bounce back to the Library.
-  useEffect(() => {
-    if (!owner && mainView === "stats") setMainView("library");
-  }, [owner, mainView]);
   const handleReadInContext = (book, chapter, verse) => {
     searchScrollRef.current = window.scrollY;
     setLibNav({
@@ -8311,8 +8315,7 @@ function App() {
     className: "app view-" + mainView + " " + (activeEntry || libCrossRef || activeNote || showLibSummary ? "has-detail" : "")
   }, /*#__PURE__*/React.createElement(Header, {
     activeView: mainView,
-    onNavChange: handleNavChange,
-    owner: owner
+    onNavChange: handleNavChange
   }), isMobile && mainView !== "library" && /*#__PURE__*/React.createElement("div", {
     className: "mobile-brand-bar"
   }, /*#__PURE__*/React.createElement("svg", {
@@ -8354,7 +8357,9 @@ function App() {
     onTranslationChange: setLibTranslation,
     isMobile: isMobile,
     showSummary: showLibSummary
-  })), mainView === "about" && /*#__PURE__*/React.createElement(AboutView, null), mainView === "stats" && owner && /*#__PURE__*/React.createElement(StatsView, null), mainView === "notes" && /*#__PURE__*/React.createElement(NotesView, {
+  })), mainView === "about" && /*#__PURE__*/React.createElement(AboutView, {
+    owner: owner
+  }), mainView === "notes" && /*#__PURE__*/React.createElement(NotesView, {
     onOpen: openNoteFromList
   }), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -8660,20 +8665,6 @@ function App() {
     y1: "12",
     x2: "12",
     y2: "16"
-  })), "About"), owner && /*#__PURE__*/React.createElement("button", {
-    className: "mobile-tab" + (mainView === "stats" ? " active" : ""),
-    onClick: () => handleNavChange("stats")
-  }, /*#__PURE__*/React.createElement("svg", {
-    width: "18",
-    height: "18",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "1.8",
-    strokeLinecap: "round",
-    strokeLinejoin: "round"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M4 20V10M10 20V4M16 20v-7M22 20H2"
-  })), "Stats")));
+  })), "About")));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
