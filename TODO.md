@@ -193,7 +193,9 @@ Loose look-and-feel ideas, parked here so they're not lost. None are scoped yet 
   for it, giving the text more room. `code: lib-bar in 60-library.jsx + styles.css`
 
 **Navigation**
-- **Real start screen** — a proper home/landing instead of dropping straight into Genesis 1.
+- ~~**Real start screen**~~ — **DECLINED 2026-06-10.** A home/landing sitting between the user and
+  the text would repeat BLB's mistake (reading buried behind chrome). Landing straight in the text is
+  a feature — keep it. First-time orientation is already covered by the existing tutorial welcome page.
   `code: initial view in 90-app.jsx`
 - **Chronological timeline scrubber** — a draggable era timeline across the top of the chronological
   READING MODE (it's a reading mode, NOT a tab) for jumping around the sequence.
