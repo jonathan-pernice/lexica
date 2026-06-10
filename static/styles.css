@@ -1446,9 +1446,13 @@ input { font-family: inherit; }
   padding: 40px 0;
 }
 
-/* ESV (owner-only) per-chapter audio control */
-.lib-esv-audio {
-  margin: 0 0 14px;
+/* Chapter read-along audio (BSB + ESV) */
+.lib-audio-wrap { margin: 0 0 16px; }
+.lib-audio-picks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 .lib-esv-listen {
   font: inherit;
@@ -1461,11 +1465,42 @@ input { font-family: inherit; }
   cursor: pointer;
 }
 .lib-esv-listen:hover { background: var(--bg-3, #e7e1d6); }
+.lib-esv-listen.on { background: var(--ink); color: #fff; border-color: var(--ink); }
 .lib-esv-listen:disabled { opacity: 0.5; cursor: default; }
-.lib-esv-player {
-  width: 100%;
-  max-width: 420px;
-  height: 36px;
+.lib-audio-loading { font-size: 13px; color: var(--ink-4); }
+
+/* Custom player: skip-back / play / skip-fwd, time, draggable progress bar */
+.lib-audio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  max-width: 520px;
+}
+.lib-audio-btn {
+  font: inherit;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--bg-2, #f0ece4);
+  border: 1px solid var(--line, #ddd6c8);
+  border-radius: 6px;
+  padding: 6px 9px;
+  cursor: pointer;
+}
+.lib-audio-btn:hover { background: var(--bg-3, #e7e1d6); }
+.lib-audio-play { min-width: 38px; }
+.lib-audio-time {
+  font-size: 12px;
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+  min-width: 34px;
+  text-align: center;
+}
+.lib-audio-bar {
+  flex: 1;
+  accent-color: var(--ink);
+  cursor: pointer;
 }
 
 /* Verse reading container — all modes */

@@ -647,6 +647,60 @@ function nonCanonGroups(list) {
 }
 
 // ============================================================
+// AUDIO PLAYER — chapter read-along (BSB + ESV). Custom controls so ff/rw and the
+// progress bar look the same in every browser. Plays whatever mp3 `src` it's given;
+// the chapter audio is one file (no per-verse timing), so this is whole-chapter.
+// ============================================================
+function fmtTime(s) {
+  if (!isFinite(s) || s < 0) s = 0;
+  s = Math.floor(s);
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+function AudioPlayer({ src }) {
+  const ref = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [cur, setCur] = useState(0);
+  const [dur, setDur] = useState(0);
+  // New chapter: reload + start playing (the user already pressed Listen).
+  useEffect(() => {
+    const a = ref.current; if (!a) return;
+    setCur(0); setDur(0);
+    a.load();
+    a.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+  }, [src]);
+  const toggle = () => {
+    const a = ref.current; if (!a) return;
+    if (a.paused) a.play().catch(() => {}); else a.pause();
+  };
+  const skip = (d) => {
+    const a = ref.current; if (!a) return;
+    const max = a.duration || dur || 0;
+    a.currentTime = Math.min(Math.max(0, a.currentTime + d), max);
+  };
+  const seek = (e) => {
+    const a = ref.current; if (!a) return;
+    const v = Number(e.target.value);
+    a.currentTime = v; setCur(v);
+  };
+  return (
+    <div className="lib-audio">
+      <audio ref={ref} src={src} preload="metadata"
+        onLoadedMetadata={e => setDur(e.target.duration || 0)}
+        onTimeUpdate={e => setCur(e.target.currentTime || 0)}
+        onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)} />
+      <button className="lib-audio-btn" onClick={() => skip(-15)} aria-label="Back 15 seconds">⏪</button>
+      <button className="lib-audio-btn lib-audio-play" onClick={toggle} aria-label={playing ? "Pause" : "Play"}>{playing ? "⏸" : "▶"}</button>
+      <button className="lib-audio-btn" onClick={() => skip(15)} aria-label="Forward 15 seconds">⏩</button>
+      <span className="lib-audio-time">{fmtTime(cur)}</span>
+      <input className="lib-audio-bar" type="range" min="0" max={dur || 0} step="0.1"
+        value={Math.min(cur, dur || 0)} onChange={seek} aria-label="Seek" />
+      <span className="lib-audio-time">{fmtTime(dur)}</span>
+    </div>
+  );
+}
+
+// ============================================================
 // LIBRARY VIEW
 // ============================================================
 function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpenNote, onTranslationChange, isMobile, showSummary }) {
@@ -664,7 +718,10 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   // ESV is the owner's personal text: esvOwner (set by the server) gates the toggle.
   const [esvOwner, setEsvOwner] = useState(false);
   // Chapter audio (BSB = public-domain openbible; ESV = owner-only FCBH), once "Listen" is pressed.
+  // audioKey = the "book-chapter" currently loaded (so the right Listen button highlights in chrono,
+  // where a passage can span chapters and each chapter is its own file).
   const [audioUrl, setAudioUrl] = useState(null);
+  const [audioKey, setAudioKey] = useState(null);
   const [audioBusy, setAudioBusy] = useState(false);
   const [libOptions, setLibOptions] = useState({
     viewMode: "chip", showStrongs: false, showInterlinear: false,
@@ -919,19 +976,20 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     return () => { cancelled = true; };
   }, [selBook && selBook.abbrev, selChapter, translation, corpus, chronoOn, esvOwner]);
 
-  // Reset the chapter audio when the chapter/text changes — the old mp3 is for the
-  // previous chapter. Press Listen to fetch the new one (BSB public / ESV owner-only).
+  // Reset the chapter audio when the reading changes — the old mp3 is for the
+  // previous chapter/passage. Press Listen to fetch the new one. (chronoPos covers
+  // moving between chronological passages, which doesn't change selChapter.)
   useEffect(() => {
-    setAudioUrl(null); setAudioBusy(false);
-  }, [selBook && selBook.abbrev, selChapter, translation]);
-  const loadAudio = () => {
-    if (!selBook) return;
+    setAudioUrl(null); setAudioKey(null); setAudioBusy(false);
+  }, [selBook && selBook.abbrev, selChapter, translation, chronoPos]);
+  const loadAudio = (book, ch) => {
+    if (!book) return;
     setAudioBusy(true);
     const fetchUrl = translation === "esv" ? api.esvAudio : api.bsbAudio;
-    fetchUrl(selBook.abbrev, selChapter)
+    fetchUrl(book, ch)
       .then(d => {
         setAudioBusy(false);
-        if (d && d.url) setAudioUrl(d.url);
+        if (d && d.url) { setAudioUrl(d.url); setAudioKey(book + "-" + ch); }
         else flash("No audio for this chapter");
       })
       .catch(() => { setAudioBusy(false); flash("Audio unavailable"); });
@@ -1072,17 +1130,32 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const kjvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : kjvLoading;
   const bsbShowLoading = chronoOn ? (chronoLoading || !chronoReady) : bsbLoading;
   const esvShowLoading = chronoOn ? (chronoLoading || !chronoReady) : esvLoading;
-  // Per-chapter audio player (BSB + ESV). Shared by both readers; once Listen is
-  // pressed the browser plays the mp3 straight from the source.
-  const audioControl = (
-    <div className="lib-esv-audio">
-      {audioUrl ? (
-        <audio className="lib-esv-player" src={audioUrl} controls autoPlay />
-      ) : (
-        <button className="lib-esv-listen" disabled={audioBusy} onClick={loadAudio}>
-          {audioBusy ? "Loading audio…" : "▶ Listen"}
-        </button>
-      )}
+  // Per-chapter audio (BSB + ESV). Audio is one file per WHOLE chapter, so in
+  // chronological mode — where a passage can be a partial chapter or span two — we
+  // offer a Listen button per chapter the passage covers (each plays that full
+  // chapter). Canonical mode is just the one open chapter.
+  const bookName = (abbr) => ((books.find(b => b.abbrev === abbr) || {}).name) || abbr;
+  const audioChapters = chronoOn
+    ? (curPassage
+        ? Array.from({ length: curPassage.end_ch - curPassage.start_ch + 1 },
+            (_, i) => { const c = curPassage.start_ch + i; return { book: curPassage.book, ch: c, label: bookName(curPassage.book) + " " + c }; })
+        : [])
+    : (selBook ? [{ book: selBook.abbrev, ch: selChapter, label: null }] : []);
+  const audioControl = audioChapters.length === 0 ? null : (
+    <div className="lib-audio-wrap">
+      <div className="lib-audio-picks">
+        {audioChapters.map(a => {
+          const key = a.book + "-" + a.ch;
+          return (
+            <button key={key} className={"lib-esv-listen" + (audioKey === key ? " on" : "")}
+              disabled={audioBusy} onClick={() => loadAudio(a.book, a.ch)}>
+              {"▶ Listen" + (a.label ? " — " + a.label : "")}
+            </button>
+          );
+        })}
+        {audioBusy && <span className="lib-audio-loading">Loading audio…</span>}
+      </div>
+      {audioUrl && <AudioPlayer src={audioUrl} />}
     </div>
   );
 
@@ -2239,7 +2312,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <div className="lib-loading">Loading…</div>
           ) : (
             <div className="lib-text-words">
-              {!chronoOn && audioControl}
+              {audioControl}
               {withMarks(bsbView, renderBsbVerse)}
             </div>
           )
@@ -2248,7 +2321,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <div className="lib-loading">Loading…</div>
           ) : (
             <div className="lib-text-words">
-              {!chronoOn && audioControl}
+              {audioControl}
               {withMarks(esvView, renderEsvVerse)}
             </div>
           )
