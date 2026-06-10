@@ -61,6 +61,8 @@ const api = {
   },
   books: () =>
     fetch("/api/books").then(r => r.json()),
+  chronological: () =>
+    fetch("/static/chronological.json").then(r => r.json()),
   chapter: (book, ch) =>
     fetch(`/api/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   extraChapter: (book, ch) =>

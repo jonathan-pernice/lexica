@@ -1,0 +1,11091 @@
+{
+"eras": [
+{
+"id": "primeval-history",
+"name": "Primeval History",
+"blurb": "Creation, the Fall, the Flood, and the Tower of Babel"
+},
+{
+"id": "the-patriarchs",
+"name": "The Patriarchs",
+"blurb": "Abraham, Isaac, Jacob, Joseph — and Job"
+},
+{
+"id": "the-exodus-wilderness",
+"name": "The Exodus & Wilderness",
+"blurb": "Out of Egypt, the Law, and forty years of wandering"
+},
+{
+"id": "the-conquest",
+"name": "The Conquest",
+"blurb": "Joshua and the taking of the promised land"
+},
+{
+"id": "the-judges",
+"name": "The Judges",
+"blurb": "The cycle of judges, and the story of Ruth"
+},
+{
+"id": "the-united-kingdom",
+"name": "The United Kingdom",
+"blurb": "Samuel, Saul, and the reign of David"
+},
+{
+"id": "the-reign-of-solomon",
+"name": "The Reign of Solomon",
+"blurb": "The temple and the wisdom books"
+},
+{
+"id": "the-divided-kingdom",
+"name": "The Divided Kingdom",
+"blurb": "Israel and Judah split, and the early prophets"
+},
+{
+"id": "judah-s-fall-the-exile",
+"name": "Judah's Fall & the Exile",
+"blurb": "The last kings, Jerusalem falls, and Babylon"
+},
+{
+"id": "the-return",
+"name": "The Return",
+"blurb": "Home from exile — temple, walls, and the last prophets"
+},
+{
+"id": "the-gospels",
+"name": "The Gospels",
+"blurb": "The life, death, and resurrection of Jesus"
+},
+{
+"id": "the-early-church",
+"name": "The Early Church",
+"blurb": "Acts and the apostles' letters"
+},
+{
+"id": "revelation",
+"name": "Revelation",
+"blurb": "John's vision and the close of the age"
+}
+],
+"passages": [
+{
+"pos": 1,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 24
+},
+{
+"pos": 2,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 4–5",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 32
+},
+{
+"pos": 3,
+"era": "primeval-history",
+"book": "1Ch",
+"label": "1 Chronicles 1:1–4",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 4
+},
+{
+"pos": 4,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 6",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 22
+},
+{
+"pos": 5,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 7:1–10:5",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 5
+},
+{
+"pos": 6,
+"era": "primeval-history",
+"book": "1Ch",
+"label": "1 Chronicles 1:5–7",
+"start_ch": 1,
+"start_v": 5,
+"end_ch": 1,
+"end_v": 7
+},
+{
+"pos": 7,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 10:6–20",
+"start_ch": 10,
+"start_v": 6,
+"end_ch": 10,
+"end_v": 20
+},
+{
+"pos": 8,
+"era": "primeval-history",
+"book": "1Ch",
+"label": "1 Chronicles 1:8–16",
+"start_ch": 1,
+"start_v": 8,
+"end_ch": 1,
+"end_v": 16
+},
+{
+"pos": 9,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 10:21–30",
+"start_ch": 10,
+"start_v": 21,
+"end_ch": 10,
+"end_v": 30
+},
+{
+"pos": 10,
+"era": "primeval-history",
+"book": "1Ch",
+"label": "1 Chronicles 1:17–23",
+"start_ch": 1,
+"start_v": 17,
+"end_ch": 1,
+"end_v": 23
+},
+{
+"pos": 11,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 10:31–32",
+"start_ch": 10,
+"start_v": 31,
+"end_ch": 10,
+"end_v": 32
+},
+{
+"pos": 12,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 11:1–26",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 26
+},
+{
+"pos": 13,
+"era": "primeval-history",
+"book": "1Ch",
+"label": "1 Chronicles 1:24–27",
+"start_ch": 1,
+"start_v": 24,
+"end_ch": 1,
+"end_v": 27
+},
+{
+"pos": 14,
+"era": "primeval-history",
+"book": "Gen",
+"label": "Genesis 11:27–31",
+"start_ch": 11,
+"start_v": 27,
+"end_ch": 11,
+"end_v": 31
+},
+{
+"pos": 15,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 12–14",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 24
+},
+{
+"pos": 16,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 15–17",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 27
+},
+{
+"pos": 17,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 18:1–21:7",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 7
+},
+{
+"pos": 18,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 21:8–23:20",
+"start_ch": 21,
+"start_v": 8,
+"end_ch": 23,
+"end_v": 20
+},
+{
+"pos": 19,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 11:32–32",
+"start_ch": 11,
+"start_v": 32,
+"end_ch": 11,
+"end_v": 32
+},
+{
+"pos": 20,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 24",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 67
+},
+{
+"pos": 21,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 25:1–4",
+"start_ch": 25,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 4
+},
+{
+"pos": 22,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 1:32–33",
+"start_ch": 1,
+"start_v": 32,
+"end_ch": 1,
+"end_v": 33
+},
+{
+"pos": 23,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 25:5–6",
+"start_ch": 25,
+"start_v": 5,
+"end_ch": 25,
+"end_v": 6
+},
+{
+"pos": 24,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 25:12–18",
+"start_ch": 25,
+"start_v": 12,
+"end_ch": 25,
+"end_v": 18
+},
+{
+"pos": 25,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 1:28–31",
+"start_ch": 1,
+"start_v": 28,
+"end_ch": 1,
+"end_v": 31
+},
+{
+"pos": 26,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 1:34–34",
+"start_ch": 1,
+"start_v": 34,
+"end_ch": 1,
+"end_v": 34
+},
+{
+"pos": 27,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 25:19–26",
+"start_ch": 25,
+"start_v": 19,
+"end_ch": 25,
+"end_v": 26
+},
+{
+"pos": 28,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 25:7–11",
+"start_ch": 25,
+"start_v": 7,
+"end_ch": 25,
+"end_v": 11
+},
+{
+"pos": 29,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 25:27–28:5",
+"start_ch": 25,
+"start_v": 27,
+"end_ch": 28,
+"end_v": 5
+},
+{
+"pos": 30,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 28:6–30:24",
+"start_ch": 28,
+"start_v": 6,
+"end_ch": 30,
+"end_v": 24
+},
+{
+"pos": 31,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 30:25–31:55",
+"start_ch": 30,
+"start_v": 25,
+"end_ch": 31,
+"end_v": 55
+},
+{
+"pos": 32,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 32:1–35:27",
+"start_ch": 32,
+"start_v": 1,
+"end_ch": 35,
+"end_v": 27
+},
+{
+"pos": 33,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 36:1–19",
+"start_ch": 36,
+"start_v": 1,
+"end_ch": 36,
+"end_v": 19
+},
+{
+"pos": 34,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 1:35–37",
+"start_ch": 1,
+"start_v": 35,
+"end_ch": 1,
+"end_v": 37
+},
+{
+"pos": 35,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 36:20–30",
+"start_ch": 36,
+"start_v": 20,
+"end_ch": 36,
+"end_v": 30
+},
+{
+"pos": 36,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 1:38–42",
+"start_ch": 1,
+"start_v": 38,
+"end_ch": 1,
+"end_v": 42
+},
+{
+"pos": 37,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 36:31–43",
+"start_ch": 36,
+"start_v": 31,
+"end_ch": 36,
+"end_v": 43
+},
+{
+"pos": 38,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 1:43–2:2",
+"start_ch": 1,
+"start_v": 43,
+"end_ch": 2,
+"end_v": 2
+},
+{
+"pos": 39,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 37–38",
+"start_ch": 37,
+"start_v": 1,
+"end_ch": 38,
+"end_v": 30
+},
+{
+"pos": 40,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 2:3–6",
+"start_ch": 2,
+"start_v": 3,
+"end_ch": 2,
+"end_v": 6
+},
+{
+"pos": 41,
+"era": "the-patriarchs",
+"book": "1Ch",
+"label": "1 Chronicles 2:8–8",
+"start_ch": 2,
+"start_v": 8,
+"end_ch": 2,
+"end_v": 8
+},
+{
+"pos": 42,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 39",
+"start_ch": 39,
+"start_v": 1,
+"end_ch": 39,
+"end_v": 23
+},
+{
+"pos": 43,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 40",
+"start_ch": 40,
+"start_v": 1,
+"end_ch": 40,
+"end_v": 23
+},
+{
+"pos": 44,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 35:28–29",
+"start_ch": 35,
+"start_v": 28,
+"end_ch": 35,
+"end_v": 29
+},
+{
+"pos": 45,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 41",
+"start_ch": 41,
+"start_v": 1,
+"end_ch": 41,
+"end_v": 57
+},
+{
+"pos": 46,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 42:1–45:15",
+"start_ch": 42,
+"start_v": 1,
+"end_ch": 45,
+"end_v": 15
+},
+{
+"pos": 47,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 45:16–47:27",
+"start_ch": 45,
+"start_v": 16,
+"end_ch": 47,
+"end_v": 27
+},
+{
+"pos": 48,
+"era": "the-patriarchs",
+"book": "Gen",
+"label": "Genesis 47:28–50:26",
+"start_ch": 47,
+"start_v": 28,
+"end_ch": 50,
+"end_v": 26
+},
+{
+"pos": 49,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 1–4",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 21
+},
+{
+"pos": 50,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 5–7",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 21
+},
+{
+"pos": 51,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 8–11",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 20
+},
+{
+"pos": 52,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 12–14",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 22
+},
+{
+"pos": 53,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 15–18",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 21
+},
+{
+"pos": 54,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 19–21",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 34
+},
+{
+"pos": 55,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 22–25",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 6
+},
+{
+"pos": 56,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 26–29",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 25
+},
+{
+"pos": 57,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 30–31",
+"start_ch": 30,
+"start_v": 1,
+"end_ch": 31,
+"end_v": 40
+},
+{
+"pos": 58,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 32–34",
+"start_ch": 32,
+"start_v": 1,
+"end_ch": 34,
+"end_v": 37
+},
+{
+"pos": 59,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 35–37",
+"start_ch": 35,
+"start_v": 1,
+"end_ch": 37,
+"end_v": 24
+},
+{
+"pos": 60,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 38:1–40:5",
+"start_ch": 38,
+"start_v": 1,
+"end_ch": 40,
+"end_v": 5
+},
+{
+"pos": 61,
+"era": "the-patriarchs",
+"book": "Job",
+"label": "Job 40:6–42:17",
+"start_ch": 40,
+"start_v": 6,
+"end_ch": 42,
+"end_v": 17
+},
+{
+"pos": 62,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 25
+},
+{
+"pos": 63,
+"era": "the-exodus-wilderness",
+"book": "1Ch",
+"label": "1 Chronicles 6:1–3",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 3
+},
+{
+"pos": 64,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 3:1–4:17",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 17
+},
+{
+"pos": 65,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 4:18–7:13",
+"start_ch": 4,
+"start_v": 18,
+"end_ch": 7,
+"end_v": 13
+},
+{
+"pos": 66,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 7:14–9:35",
+"start_ch": 7,
+"start_v": 14,
+"end_ch": 9,
+"end_v": 35
+},
+{
+"pos": 67,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 10–12",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 51
+},
+{
+"pos": 68,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 13–15",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 27
+},
+{
+"pos": 69,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 16–19",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 25
+},
+{
+"pos": 70,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 20:1–22:15",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 15
+},
+{
+"pos": 71,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 22:16–24:18",
+"start_ch": 22,
+"start_v": 16,
+"end_ch": 24,
+"end_v": 18
+},
+{
+"pos": 72,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 25–28",
+"start_ch": 25,
+"start_v": 1,
+"end_ch": 28,
+"end_v": 43
+},
+{
+"pos": 73,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 29–31",
+"start_ch": 29,
+"start_v": 1,
+"end_ch": 31,
+"end_v": 18
+},
+{
+"pos": 74,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 32–34",
+"start_ch": 32,
+"start_v": 1,
+"end_ch": 34,
+"end_v": 35
+},
+{
+"pos": 75,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 35–36",
+"start_ch": 35,
+"start_v": 1,
+"end_ch": 36,
+"end_v": 38
+},
+{
+"pos": 76,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 37:1–39:31",
+"start_ch": 37,
+"start_v": 1,
+"end_ch": 39,
+"end_v": 31
+},
+{
+"pos": 77,
+"era": "the-exodus-wilderness",
+"book": "Exo",
+"label": "Exodus 39:32–40:38",
+"start_ch": 39,
+"start_v": 32,
+"end_ch": 40,
+"end_v": 38
+},
+{
+"pos": 78,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 9:15–23",
+"start_ch": 9,
+"start_v": 15,
+"end_ch": 9,
+"end_v": 23
+},
+{
+"pos": 79,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 7",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 89
+},
+{
+"pos": 80,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 8:1–9:14",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 14
+},
+{
+"pos": 81,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 17
+},
+{
+"pos": 82,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 4–6",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 30
+},
+{
+"pos": 83,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 7–8",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 36
+},
+{
+"pos": 84,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 9–11",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 47
+},
+{
+"pos": 85,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 12:1–14:32",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 32
+},
+{
+"pos": 86,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 14:33–16:34",
+"start_ch": 14,
+"start_v": 33,
+"end_ch": 16,
+"end_v": 34
+},
+{
+"pos": 87,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 17–19",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 37
+},
+{
+"pos": 88,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 20–22",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 33
+},
+{
+"pos": 89,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 23:1–25:23",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 23
+},
+{
+"pos": 90,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 25:24–26:46",
+"start_ch": 25,
+"start_v": 24,
+"end_ch": 26,
+"end_v": 46
+},
+{
+"pos": 91,
+"era": "the-exodus-wilderness",
+"book": "Lev",
+"label": "Leviticus 27",
+"start_ch": 27,
+"start_v": 1,
+"end_ch": 27,
+"end_v": 34
+},
+{
+"pos": 92,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 54
+},
+{
+"pos": 93,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 2–3",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 51
+},
+{
+"pos": 94,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 4–5",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 31
+},
+{
+"pos": 95,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 6",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 27
+},
+{
+"pos": 96,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 10",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 36
+},
+{
+"pos": 97,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 11–13",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 33
+},
+{
+"pos": 98,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 14–15",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 41
+},
+{
+"pos": 99,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 16–18",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 32
+},
+{
+"pos": 100,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 19–21",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 35
+},
+{
+"pos": 101,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 22–24",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 25
+},
+{
+"pos": 102,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 25–26",
+"start_ch": 25,
+"start_v": 1,
+"end_ch": 26,
+"end_v": 65
+},
+{
+"pos": 103,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 27–29",
+"start_ch": 27,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 40
+},
+{
+"pos": 104,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 30–31",
+"start_ch": 30,
+"start_v": 1,
+"end_ch": 31,
+"end_v": 54
+},
+{
+"pos": 105,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 32–33",
+"start_ch": 32,
+"start_v": 1,
+"end_ch": 33,
+"end_v": 56
+},
+{
+"pos": 106,
+"era": "the-exodus-wilderness",
+"book": "Num",
+"label": "Numbers 34–36",
+"start_ch": 34,
+"start_v": 1,
+"end_ch": 36,
+"end_v": 13
+},
+{
+"pos": 107,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 1:1–3:20",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 20
+},
+{
+"pos": 108,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 3:21–5:33",
+"start_ch": 3,
+"start_v": 21,
+"end_ch": 5,
+"end_v": 33
+},
+{
+"pos": 109,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 6–9",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 29
+},
+{
+"pos": 110,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 10–12",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 32
+},
+{
+"pos": 111,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 13:1–16:17",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 17
+},
+{
+"pos": 112,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 16:18–21:9",
+"start_ch": 16,
+"start_v": 18,
+"end_ch": 21,
+"end_v": 9
+},
+{
+"pos": 113,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 21:10–25:19",
+"start_ch": 21,
+"start_v": 10,
+"end_ch": 25,
+"end_v": 19
+},
+{
+"pos": 114,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 26:1–29:1",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 1
+},
+{
+"pos": 115,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 29:2–31:29",
+"start_ch": 29,
+"start_v": 2,
+"end_ch": 31,
+"end_v": 29
+},
+{
+"pos": 116,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 31:30–32:52",
+"start_ch": 31,
+"start_v": 30,
+"end_ch": 32,
+"end_v": 52
+},
+{
+"pos": 117,
+"era": "the-exodus-wilderness",
+"book": "Psa",
+"label": "Psalm 90",
+"start_ch": 90,
+"start_v": 1,
+"end_ch": 90,
+"end_v": 17
+},
+{
+"pos": 118,
+"era": "the-exodus-wilderness",
+"book": "Deu",
+"label": "Deuteronomy 33–34",
+"start_ch": 33,
+"start_v": 1,
+"end_ch": 34,
+"end_v": 12
+},
+{
+"pos": 119,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 24
+},
+{
+"pos": 120,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 3–6",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 27
+},
+{
+"pos": 121,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 7:1–1",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 1
+},
+{
+"pos": 122,
+"era": "the-conquest",
+"book": "1Ch",
+"label": "1 Chronicles 2:7–7",
+"start_ch": 2,
+"start_v": 7,
+"end_ch": 2,
+"end_v": 7
+},
+{
+"pos": 123,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 7:2–9:27",
+"start_ch": 7,
+"start_v": 2,
+"end_ch": 9,
+"end_v": 27
+},
+{
+"pos": 124,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 10:1–12:6",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 6
+},
+{
+"pos": 125,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 12:7–15:19",
+"start_ch": 12,
+"start_v": 7,
+"end_ch": 15,
+"end_v": 19
+},
+{
+"pos": 126,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 15:20–17:18",
+"start_ch": 15,
+"start_v": 20,
+"end_ch": 17,
+"end_v": 18
+},
+{
+"pos": 127,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 18:1–19:48",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 48
+},
+{
+"pos": 128,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 19:49–21:45",
+"start_ch": 19,
+"start_v": 49,
+"end_ch": 21,
+"end_v": 45
+},
+{
+"pos": 129,
+"era": "the-conquest",
+"book": "1Ch",
+"label": "1 Chronicles 6:54–81",
+"start_ch": 6,
+"start_v": 54,
+"end_ch": 6,
+"end_v": 81
+},
+{
+"pos": 130,
+"era": "the-conquest",
+"book": "Jos",
+"label": "Joshua 22–24",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 33
+},
+{
+"pos": 131,
+"era": "the-judges",
+"book": "Jdg",
+"label": "Judges 1:1–3:30",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 30
+},
+{
+"pos": 132,
+"era": "the-judges",
+"book": "Jdg",
+"label": "Judges 3:31–6:40",
+"start_ch": 3,
+"start_v": 31,
+"end_ch": 6,
+"end_v": 40
+},
+{
+"pos": 133,
+"era": "the-judges",
+"book": "Jdg",
+"label": "Judges 7:1–9:21",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 21
+},
+{
+"pos": 134,
+"era": "the-judges",
+"book": "Jdg",
+"label": "Judges 9:22–11:28",
+"start_ch": 9,
+"start_v": 22,
+"end_ch": 11,
+"end_v": 28
+},
+{
+"pos": 135,
+"era": "the-judges",
+"book": "Jdg",
+"label": "Judges 11:29–15:20",
+"start_ch": 11,
+"start_v": 29,
+"end_ch": 15,
+"end_v": 20
+},
+{
+"pos": 136,
+"era": "the-judges",
+"book": "Jdg",
+"label": "Judges 16–18",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 31
+},
+{
+"pos": 137,
+"era": "the-judges",
+"book": "Jdg",
+"label": "Judges 19–21",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 25
+},
+{
+"pos": 138,
+"era": "the-judges",
+"book": "Rth",
+"label": "Ruth 1:1–4:12",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 12
+},
+{
+"pos": 139,
+"era": "the-judges",
+"book": "Rth",
+"label": "Ruth 4:13–22",
+"start_ch": 4,
+"start_v": 13,
+"end_ch": 4,
+"end_v": 22
+},
+{
+"pos": 140,
+"era": "the-judges",
+"book": "1Ch",
+"label": "1 Chronicles 2:9–55",
+"start_ch": 2,
+"start_v": 9,
+"end_ch": 2,
+"end_v": 55
+},
+{
+"pos": 141,
+"era": "the-judges",
+"book": "1Ch",
+"label": "1 Chronicles 4:1–23",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 23
+},
+{
+"pos": 142,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 1:1–8",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 8
+},
+{
+"pos": 143,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 1:9–4:11",
+"start_ch": 1,
+"start_v": 9,
+"end_ch": 4,
+"end_v": 11
+},
+{
+"pos": 144,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 4:12–8:22",
+"start_ch": 4,
+"start_v": 12,
+"end_ch": 8,
+"end_v": 22
+},
+{
+"pos": 145,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 9–12",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 25
+},
+{
+"pos": 146,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 9:35–39",
+"start_ch": 9,
+"start_v": 35,
+"end_ch": 9,
+"end_v": 39
+},
+{
+"pos": 147,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 13:1–5",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 5
+},
+{
+"pos": 148,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 13:19–23",
+"start_ch": 13,
+"start_v": 19,
+"end_ch": 13,
+"end_v": 23
+},
+{
+"pos": 149,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 13:6–18",
+"start_ch": 13,
+"start_v": 6,
+"end_ch": 13,
+"end_v": 18
+},
+{
+"pos": 150,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 14",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 52
+},
+{
+"pos": 151,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 15:1–17:31",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 31
+},
+{
+"pos": 152,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 17:32–19:17",
+"start_ch": 17,
+"start_v": 32,
+"end_ch": 19,
+"end_v": 17
+},
+{
+"pos": 153,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 59",
+"start_ch": 59,
+"start_v": 1,
+"end_ch": 59,
+"end_v": 17
+},
+{
+"pos": 154,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 19:18–24",
+"start_ch": 19,
+"start_v": 18,
+"end_ch": 19,
+"end_v": 24
+},
+{
+"pos": 155,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 20–21",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 15
+},
+{
+"pos": 156,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 34",
+"start_ch": 34,
+"start_v": 1,
+"end_ch": 34,
+"end_v": 22
+},
+{
+"pos": 157,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 22:1–2",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 2
+},
+{
+"pos": 158,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 57",
+"start_ch": 57,
+"start_v": 1,
+"end_ch": 57,
+"end_v": 11
+},
+{
+"pos": 159,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 142",
+"start_ch": 142,
+"start_v": 1,
+"end_ch": 142,
+"end_v": 7
+},
+{
+"pos": 160,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 12:8–18",
+"start_ch": 12,
+"start_v": 8,
+"end_ch": 12,
+"end_v": 18
+},
+{
+"pos": 161,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 22:3–23",
+"start_ch": 22,
+"start_v": 3,
+"end_ch": 22,
+"end_v": 23
+},
+{
+"pos": 162,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 52",
+"start_ch": 52,
+"start_v": 1,
+"end_ch": 52,
+"end_v": 9
+},
+{
+"pos": 163,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 23:1–12",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 23,
+"end_v": 12
+},
+{
+"pos": 164,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 23:13–29",
+"start_ch": 23,
+"start_v": 13,
+"end_ch": 23,
+"end_v": 29
+},
+{
+"pos": 165,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 54",
+"start_ch": 54,
+"start_v": 1,
+"end_ch": 54,
+"end_v": 7
+},
+{
+"pos": 166,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 24–25",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 44
+},
+{
+"pos": 167,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 26:1–27:7",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 27,
+"end_v": 7
+},
+{
+"pos": 168,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 12:1–7",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 7
+},
+{
+"pos": 169,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 27:8–29:11",
+"start_ch": 27,
+"start_v": 8,
+"end_ch": 29,
+"end_v": 11
+},
+{
+"pos": 170,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 12:19–19",
+"start_ch": 12,
+"start_v": 19,
+"end_ch": 12,
+"end_v": 19
+},
+{
+"pos": 171,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 56",
+"start_ch": 56,
+"start_v": 1,
+"end_ch": 56,
+"end_v": 13
+},
+{
+"pos": 172,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 30",
+"start_ch": 30,
+"start_v": 1,
+"end_ch": 30,
+"end_v": 31
+},
+{
+"pos": 173,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 12:20–22",
+"start_ch": 12,
+"start_v": 20,
+"end_ch": 12,
+"end_v": 22
+},
+{
+"pos": 174,
+"era": "the-united-kingdom",
+"book": "1Sa",
+"label": "1 Samuel 31",
+"start_ch": 31,
+"start_v": 1,
+"end_ch": 31,
+"end_v": 13
+},
+{
+"pos": 175,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 10",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 14
+},
+{
+"pos": 176,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 9:40–44",
+"start_ch": 9,
+"start_v": 40,
+"end_ch": 9,
+"end_v": 44
+},
+{
+"pos": 177,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 4:4–4",
+"start_ch": 4,
+"start_v": 4,
+"end_ch": 4,
+"end_v": 4
+},
+{
+"pos": 178,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 27
+},
+{
+"pos": 179,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 2:1–3:5",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 5
+},
+{
+"pos": 180,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 3:1–4",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 4
+},
+{
+"pos": 181,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 23:8–17",
+"start_ch": 23,
+"start_v": 8,
+"end_ch": 23,
+"end_v": 17
+},
+{
+"pos": 182,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 11:10–19",
+"start_ch": 11,
+"start_v": 10,
+"end_ch": 11,
+"end_v": 19
+},
+{
+"pos": 183,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 23:18–39",
+"start_ch": 23,
+"start_v": 18,
+"end_ch": 23,
+"end_v": 39
+},
+{
+"pos": 184,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 11:20–47",
+"start_ch": 11,
+"start_v": 20,
+"end_ch": 11,
+"end_v": 47
+},
+{
+"pos": 185,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 3:6–4:3",
+"start_ch": 3,
+"start_v": 6,
+"end_ch": 4,
+"end_v": 3
+},
+{
+"pos": 186,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 4:5–12",
+"start_ch": 4,
+"start_v": 5,
+"end_ch": 4,
+"end_v": 12
+},
+{
+"pos": 187,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 5:1–3",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 3
+},
+{
+"pos": 188,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 11:1–3",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 3
+},
+{
+"pos": 189,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 12:23–40",
+"start_ch": 12,
+"start_v": 23,
+"end_ch": 12,
+"end_v": 40
+},
+{
+"pos": 190,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 5:17–25",
+"start_ch": 5,
+"start_v": 17,
+"end_ch": 5,
+"end_v": 25
+},
+{
+"pos": 191,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 14:8–17",
+"start_ch": 14,
+"start_v": 8,
+"end_ch": 14,
+"end_v": 17
+},
+{
+"pos": 192,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 5:6–10",
+"start_ch": 5,
+"start_v": 6,
+"end_ch": 5,
+"end_v": 10
+},
+{
+"pos": 193,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 11:4–9",
+"start_ch": 11,
+"start_v": 4,
+"end_ch": 11,
+"end_v": 9
+},
+{
+"pos": 194,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 3:4–4",
+"start_ch": 3,
+"start_v": 4,
+"end_ch": 3,
+"end_v": 4
+},
+{
+"pos": 195,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 5:13–13",
+"start_ch": 5,
+"start_v": 13,
+"end_ch": 5,
+"end_v": 13
+},
+{
+"pos": 196,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 5:4–5",
+"start_ch": 5,
+"start_v": 4,
+"end_ch": 5,
+"end_v": 5
+},
+{
+"pos": 197,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 5:11–12",
+"start_ch": 5,
+"start_v": 11,
+"end_ch": 5,
+"end_v": 12
+},
+{
+"pos": 198,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 14:1–2",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 2
+},
+{
+"pos": 199,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 13:1–5",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 5
+},
+{
+"pos": 200,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 6:1–11",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 11
+},
+{
+"pos": 201,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 13:6–14",
+"start_ch": 13,
+"start_v": 6,
+"end_ch": 13,
+"end_v": 14
+},
+{
+"pos": 202,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 6:12–12",
+"start_ch": 6,
+"start_v": 12,
+"end_ch": 6,
+"end_v": 12
+},
+{
+"pos": 203,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 15:1–28",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 28
+},
+{
+"pos": 204,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 6:12–16",
+"start_ch": 6,
+"start_v": 12,
+"end_ch": 6,
+"end_v": 16
+},
+{
+"pos": 205,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 15:29–29",
+"start_ch": 15,
+"start_v": 29,
+"end_ch": 15,
+"end_v": 29
+},
+{
+"pos": 206,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 6:17–19",
+"start_ch": 6,
+"start_v": 17,
+"end_ch": 6,
+"end_v": 19
+},
+{
+"pos": 207,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 16",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 43
+},
+{
+"pos": 208,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 6:19–23",
+"start_ch": 6,
+"start_v": 19,
+"end_ch": 6,
+"end_v": 23
+},
+{
+"pos": 209,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 7:1–17",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 17
+},
+{
+"pos": 210,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 17:1–15",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 15
+},
+{
+"pos": 211,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 7:18–29",
+"start_ch": 7,
+"start_v": 18,
+"end_ch": 7,
+"end_v": 29
+},
+{
+"pos": 212,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 17:16–27",
+"start_ch": 17,
+"start_v": 16,
+"end_ch": 17,
+"end_v": 27
+},
+{
+"pos": 213,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 8:1–14",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 14
+},
+{
+"pos": 214,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 18:1–13",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 13
+},
+{
+"pos": 215,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 60",
+"start_ch": 60,
+"start_v": 1,
+"end_ch": 60,
+"end_v": 12
+},
+{
+"pos": 216,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 8:15–18",
+"start_ch": 8,
+"start_v": 15,
+"end_ch": 8,
+"end_v": 18
+},
+{
+"pos": 217,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 18:14–17",
+"start_ch": 18,
+"start_v": 14,
+"end_ch": 18,
+"end_v": 17
+},
+{
+"pos": 218,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 6:16–30",
+"start_ch": 6,
+"start_v": 16,
+"end_ch": 6,
+"end_v": 30
+},
+{
+"pos": 219,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 6:50–53",
+"start_ch": 6,
+"start_v": 50,
+"end_ch": 6,
+"end_v": 53
+},
+{
+"pos": 220,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 6:31–48",
+"start_ch": 6,
+"start_v": 31,
+"end_ch": 6,
+"end_v": 48
+},
+{
+"pos": 221,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 9–10",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 19
+},
+{
+"pos": 222,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 19",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 19
+},
+{
+"pos": 223,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 20:1–1",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 20,
+"end_v": 1
+},
+{
+"pos": 224,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 11:1–12:14",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 14
+},
+{
+"pos": 225,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 51",
+"start_ch": 51,
+"start_v": 1,
+"end_ch": 51,
+"end_v": 19
+},
+{
+"pos": 226,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 12:15–25",
+"start_ch": 12,
+"start_v": 15,
+"end_ch": 12,
+"end_v": 25
+},
+{
+"pos": 227,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 5:14–16",
+"start_ch": 5,
+"start_v": 14,
+"end_ch": 5,
+"end_v": 16
+},
+{
+"pos": 228,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 14:3–7",
+"start_ch": 14,
+"start_v": 3,
+"end_ch": 14,
+"end_v": 7
+},
+{
+"pos": 229,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 3:5–9",
+"start_ch": 3,
+"start_v": 5,
+"end_ch": 3,
+"end_v": 9
+},
+{
+"pos": 230,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 12:26–31",
+"start_ch": 12,
+"start_v": 26,
+"end_ch": 12,
+"end_v": 31
+},
+{
+"pos": 231,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 20:2–3",
+"start_ch": 20,
+"start_v": 2,
+"end_ch": 20,
+"end_v": 3
+},
+{
+"pos": 232,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 13–14",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 33
+},
+{
+"pos": 233,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 15:1–17:14",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 14
+},
+{
+"pos": 234,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 17:15–29",
+"start_ch": 17,
+"start_v": 15,
+"end_ch": 17,
+"end_v": 29
+},
+{
+"pos": 235,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 3",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 8
+},
+{
+"pos": 236,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 63",
+"start_ch": 63,
+"start_v": 1,
+"end_ch": 63,
+"end_v": 11
+},
+{
+"pos": 237,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 18:1–19:30",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 30
+},
+{
+"pos": 238,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 19:31–20:26",
+"start_ch": 19,
+"start_v": 31,
+"end_ch": 20,
+"end_v": 26
+},
+{
+"pos": 239,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 7",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 17
+},
+{
+"pos": 240,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 21",
+"start_ch": 21,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 22
+},
+{
+"pos": 241,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 20:4–8",
+"start_ch": 20,
+"start_v": 4,
+"end_ch": 20,
+"end_v": 8
+},
+{
+"pos": 242,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 22",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 51
+},
+{
+"pos": 243,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 18",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 50
+},
+{
+"pos": 244,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 24:1–9",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 9
+},
+{
+"pos": 245,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 21:1–6",
+"start_ch": 21,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 6
+},
+{
+"pos": 246,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 24:10–17",
+"start_ch": 24,
+"start_v": 10,
+"end_ch": 24,
+"end_v": 17
+},
+{
+"pos": 247,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 21:7–17",
+"start_ch": 21,
+"start_v": 7,
+"end_ch": 21,
+"end_v": 17
+},
+{
+"pos": 248,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 24:18–25",
+"start_ch": 24,
+"start_v": 18,
+"end_ch": 24,
+"end_v": 25
+},
+{
+"pos": 249,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 21:18–22:19",
+"start_ch": 21,
+"start_v": 18,
+"end_ch": 22,
+"end_v": 19
+},
+{
+"pos": 250,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 23–25",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 31
+},
+{
+"pos": 251,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 26–28",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 28,
+"end_v": 21
+},
+{
+"pos": 252,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 29:1–22",
+"start_ch": 29,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 22
+},
+{
+"pos": 253,
+"era": "the-united-kingdom",
+"book": "1Ki",
+"label": "1 Kings 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 53
+},
+{
+"pos": 254,
+"era": "the-united-kingdom",
+"book": "1Ki",
+"label": "1 Kings 2:1–9",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 9
+},
+{
+"pos": 255,
+"era": "the-united-kingdom",
+"book": "2Sa",
+"label": "2 Samuel 23:1–7",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 23,
+"end_v": 7
+},
+{
+"pos": 256,
+"era": "the-united-kingdom",
+"book": "1Ki",
+"label": "1 Kings 2:10–12",
+"start_ch": 2,
+"start_v": 10,
+"end_ch": 2,
+"end_v": 12
+},
+{
+"pos": 257,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 29:26–30",
+"start_ch": 29,
+"start_v": 26,
+"end_ch": 29,
+"end_v": 30
+},
+{
+"pos": 258,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 4–6",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 10
+},
+{
+"pos": 259,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 8–9",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 20
+},
+{
+"pos": 260,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 11",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 7
+},
+{
+"pos": 261,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 12–17",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 15
+},
+{
+"pos": 262,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 19–21",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 13
+},
+{
+"pos": 263,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 22–26",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 26,
+"end_v": 12
+},
+{
+"pos": 264,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 27–32",
+"start_ch": 27,
+"start_v": 1,
+"end_ch": 32,
+"end_v": 11
+},
+{
+"pos": 265,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 35–38",
+"start_ch": 35,
+"start_v": 1,
+"end_ch": 38,
+"end_v": 22
+},
+{
+"pos": 266,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 39–41",
+"start_ch": 39,
+"start_v": 1,
+"end_ch": 41,
+"end_v": 13
+},
+{
+"pos": 267,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 53",
+"start_ch": 53,
+"start_v": 1,
+"end_ch": 53,
+"end_v": 6
+},
+{
+"pos": 268,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 55",
+"start_ch": 55,
+"start_v": 1,
+"end_ch": 55,
+"end_v": 23
+},
+{
+"pos": 269,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 58",
+"start_ch": 58,
+"start_v": 1,
+"end_ch": 58,
+"end_v": 11
+},
+{
+"pos": 270,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 61–62",
+"start_ch": 61,
+"start_v": 1,
+"end_ch": 62,
+"end_v": 12
+},
+{
+"pos": 271,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 64–67",
+"start_ch": 64,
+"start_v": 1,
+"end_ch": 67,
+"end_v": 7
+},
+{
+"pos": 272,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 68–70",
+"start_ch": 68,
+"start_v": 1,
+"end_ch": 70,
+"end_v": 5
+},
+{
+"pos": 273,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 86",
+"start_ch": 86,
+"start_v": 1,
+"end_ch": 86,
+"end_v": 17
+},
+{
+"pos": 274,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 101",
+"start_ch": 101,
+"start_v": 1,
+"end_ch": 101,
+"end_v": 8
+},
+{
+"pos": 275,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 103",
+"start_ch": 103,
+"start_v": 1,
+"end_ch": 103,
+"end_v": 22
+},
+{
+"pos": 276,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 108–110",
+"start_ch": 108,
+"start_v": 1,
+"end_ch": 110,
+"end_v": 7
+},
+{
+"pos": 277,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 122",
+"start_ch": 122,
+"start_v": 1,
+"end_ch": 122,
+"end_v": 9
+},
+{
+"pos": 278,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 124",
+"start_ch": 124,
+"start_v": 1,
+"end_ch": 124,
+"end_v": 8
+},
+{
+"pos": 279,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 131",
+"start_ch": 131,
+"start_v": 1,
+"end_ch": 131,
+"end_v": 3
+},
+{
+"pos": 280,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 133",
+"start_ch": 133,
+"start_v": 1,
+"end_ch": 133,
+"end_v": 3
+},
+{
+"pos": 281,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 138–141",
+"start_ch": 138,
+"start_v": 1,
+"end_ch": 141,
+"end_v": 10
+},
+{
+"pos": 282,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 143",
+"start_ch": 143,
+"start_v": 1,
+"end_ch": 143,
+"end_v": 12
+},
+{
+"pos": 283,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 144–145",
+"start_ch": 144,
+"start_v": 1,
+"end_ch": 145,
+"end_v": 21
+},
+{
+"pos": 284,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 88–89",
+"start_ch": 88,
+"start_v": 1,
+"end_ch": 89,
+"end_v": 52
+},
+{
+"pos": 285,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 50",
+"start_ch": 50,
+"start_v": 1,
+"end_ch": 50,
+"end_v": 23
+},
+{
+"pos": 286,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 73–74",
+"start_ch": 73,
+"start_v": 1,
+"end_ch": 74,
+"end_v": 23
+},
+{
+"pos": 287,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 75–78",
+"start_ch": 75,
+"start_v": 1,
+"end_ch": 78,
+"end_v": 72
+},
+{
+"pos": 288,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalms 79–82",
+"start_ch": 79,
+"start_v": 1,
+"end_ch": 82,
+"end_v": 8
+},
+{
+"pos": 289,
+"era": "the-united-kingdom",
+"book": "Psa",
+"label": "Psalm 83",
+"start_ch": 83,
+"start_v": 1,
+"end_ch": 83,
+"end_v": 18
+},
+{
+"pos": 290,
+"era": "the-united-kingdom",
+"book": "1Ch",
+"label": "1 Chronicles 29:23–25",
+"start_ch": 29,
+"start_v": 23,
+"end_ch": 29,
+"end_v": 25
+},
+{
+"pos": 291,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 1:1–1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 1
+},
+{
+"pos": 292,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 2:13–3:4",
+"start_ch": 2,
+"start_v": 13,
+"end_ch": 3,
+"end_v": 4
+},
+{
+"pos": 293,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 1:2–6",
+"start_ch": 1,
+"start_v": 2,
+"end_ch": 1,
+"end_v": 6
+},
+{
+"pos": 294,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 3:5–15",
+"start_ch": 3,
+"start_v": 5,
+"end_ch": 3,
+"end_v": 15
+},
+{
+"pos": 295,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 1:7–13",
+"start_ch": 1,
+"start_v": 7,
+"end_ch": 1,
+"end_v": 13
+},
+{
+"pos": 296,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 3:16–28",
+"start_ch": 3,
+"start_v": 16,
+"end_ch": 3,
+"end_v": 28
+},
+{
+"pos": 297,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 5",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 18
+},
+{
+"pos": 298,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 2",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 18
+},
+{
+"pos": 299,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 6:1–13",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 13
+},
+{
+"pos": 300,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 3:1–14",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 14
+},
+{
+"pos": 301,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 6:14–38",
+"start_ch": 6,
+"start_v": 14,
+"end_ch": 6,
+"end_v": 38
+},
+{
+"pos": 302,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 7",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 51
+},
+{
+"pos": 303,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 3:15–4:22",
+"start_ch": 3,
+"start_v": 15,
+"end_ch": 4,
+"end_v": 22
+},
+{
+"pos": 304,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 8:1–11",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 11
+},
+{
+"pos": 305,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 5",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 14
+},
+{
+"pos": 306,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 8:12–21",
+"start_ch": 8,
+"start_v": 12,
+"end_ch": 8,
+"end_v": 21
+},
+{
+"pos": 307,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 6:1–11",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 11
+},
+{
+"pos": 308,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 8:22–53",
+"start_ch": 8,
+"start_v": 22,
+"end_ch": 8,
+"end_v": 53
+},
+{
+"pos": 309,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 6:12–42",
+"start_ch": 6,
+"start_v": 12,
+"end_ch": 6,
+"end_v": 42
+},
+{
+"pos": 310,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 8:54–66",
+"start_ch": 8,
+"start_v": 54,
+"end_ch": 8,
+"end_v": 66
+},
+{
+"pos": 311,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 7:1–10",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 10
+},
+{
+"pos": 312,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 9:1–9",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 9
+},
+{
+"pos": 313,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 7:11–22",
+"start_ch": 7,
+"start_v": 11,
+"end_ch": 7,
+"end_v": 22
+},
+{
+"pos": 314,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 9:10–14",
+"start_ch": 9,
+"start_v": 10,
+"end_ch": 9,
+"end_v": 14
+},
+{
+"pos": 315,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 8",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 18
+},
+{
+"pos": 316,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 9:15–10:13",
+"start_ch": 9,
+"start_v": 15,
+"end_ch": 10,
+"end_v": 13
+},
+{
+"pos": 317,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 9:1–12",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 12
+},
+{
+"pos": 318,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 10:14–29",
+"start_ch": 10,
+"start_v": 14,
+"end_ch": 10,
+"end_v": 29
+},
+{
+"pos": 319,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 9:13–28",
+"start_ch": 9,
+"start_v": 13,
+"end_ch": 9,
+"end_v": 28
+},
+{
+"pos": 320,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 1:14–17",
+"start_ch": 1,
+"start_v": 14,
+"end_ch": 1,
+"end_v": 17
+},
+{
+"pos": 321,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 4",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 34
+},
+{
+"pos": 322,
+"era": "the-reign-of-solomon",
+"book": "Psa",
+"label": "Psalm 72",
+"start_ch": 72,
+"start_v": 1,
+"end_ch": 72,
+"end_v": 20
+},
+{
+"pos": 323,
+"era": "the-reign-of-solomon",
+"book": "Psa",
+"label": "Psalm 127",
+"start_ch": 127,
+"start_v": 1,
+"end_ch": 127,
+"end_v": 5
+},
+{
+"pos": 324,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 1–4",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 27
+},
+{
+"pos": 325,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 5–7",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 27
+},
+{
+"pos": 326,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 8–10",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 32
+},
+{
+"pos": 327,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 11–13",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 25
+},
+{
+"pos": 328,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 14–16",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 33
+},
+{
+"pos": 329,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 17–19",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 29
+},
+{
+"pos": 330,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 20:1–22:16",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 16
+},
+{
+"pos": 331,
+"era": "the-reign-of-solomon",
+"book": "Pro",
+"label": "Proverbs 22:17–24:34",
+"start_ch": 22,
+"start_v": 17,
+"end_ch": 24,
+"end_v": 34
+},
+{
+"pos": 332,
+"era": "the-reign-of-solomon",
+"book": "Son",
+"label": "Song of Solomon 1–8",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 14
+},
+{
+"pos": 333,
+"era": "the-reign-of-solomon",
+"book": "1Ki",
+"label": "1 Kings 11",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 43
+},
+{
+"pos": 334,
+"era": "the-reign-of-solomon",
+"book": "2Ch",
+"label": "2 Chronicles 9:29–31",
+"start_ch": 9,
+"start_v": 29,
+"end_ch": 9,
+"end_v": 31
+},
+{
+"pos": 335,
+"era": "the-reign-of-solomon",
+"book": "Ecc",
+"label": "Ecclesiastes 1:1–11",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 11
+},
+{
+"pos": 336,
+"era": "the-reign-of-solomon",
+"book": "Ecc",
+"label": "Ecclesiastes 1:12–6:12",
+"start_ch": 1,
+"start_v": 12,
+"end_ch": 6,
+"end_v": 12
+},
+{
+"pos": 337,
+"era": "the-reign-of-solomon",
+"book": "Ecc",
+"label": "Ecclesiastes 7:1–11:6",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 6
+},
+{
+"pos": 338,
+"era": "the-reign-of-solomon",
+"book": "Ecc",
+"label": "Ecclesiastes 11:7–12:14",
+"start_ch": 11,
+"start_v": 7,
+"end_ch": 12,
+"end_v": 14
+},
+{
+"pos": 339,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 12:1–20",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 20
+},
+{
+"pos": 340,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 10",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 19
+},
+{
+"pos": 341,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 12:21–24",
+"start_ch": 12,
+"start_v": 21,
+"end_ch": 12,
+"end_v": 24
+},
+{
+"pos": 342,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 11:1–4",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 4
+},
+{
+"pos": 343,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 12:25–33",
+"start_ch": 12,
+"start_v": 25,
+"end_ch": 12,
+"end_v": 33
+},
+{
+"pos": 344,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 11:5–17",
+"start_ch": 11,
+"start_v": 5,
+"end_ch": 11,
+"end_v": 17
+},
+{
+"pos": 345,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 13:1–14:18",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 18
+},
+{
+"pos": 346,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 14:21–24",
+"start_ch": 14,
+"start_v": 21,
+"end_ch": 14,
+"end_v": 24
+},
+{
+"pos": 347,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 12:13–14",
+"start_ch": 12,
+"start_v": 13,
+"end_ch": 12,
+"end_v": 14
+},
+{
+"pos": 348,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 11:18–23",
+"start_ch": 11,
+"start_v": 18,
+"end_ch": 11,
+"end_v": 23
+},
+{
+"pos": 349,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 12:1–12",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 12
+},
+{
+"pos": 350,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 14:25–28",
+"start_ch": 14,
+"start_v": 25,
+"end_ch": 14,
+"end_v": 28
+},
+{
+"pos": 351,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 12:13–16",
+"start_ch": 12,
+"start_v": 13,
+"end_ch": 12,
+"end_v": 16
+},
+{
+"pos": 352,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 14:29–15:5",
+"start_ch": 14,
+"start_v": 29,
+"end_ch": 15,
+"end_v": 5
+},
+{
+"pos": 353,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 13",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 22
+},
+{
+"pos": 354,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 15:6–8",
+"start_ch": 15,
+"start_v": 6,
+"end_ch": 15,
+"end_v": 8
+},
+{
+"pos": 355,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 14:1–8",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 8
+},
+{
+"pos": 356,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 15:9–15",
+"start_ch": 15,
+"start_v": 9,
+"end_ch": 15,
+"end_v": 15
+},
+{
+"pos": 357,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 14:19–20",
+"start_ch": 14,
+"start_v": 19,
+"end_ch": 14,
+"end_v": 20
+},
+{
+"pos": 358,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 15:25–34",
+"start_ch": 15,
+"start_v": 25,
+"end_ch": 15,
+"end_v": 34
+},
+{
+"pos": 359,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 14:9–15",
+"start_ch": 14,
+"start_v": 9,
+"end_ch": 14,
+"end_v": 15
+},
+{
+"pos": 360,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 15:16–22",
+"start_ch": 15,
+"start_v": 16,
+"end_ch": 15,
+"end_v": 22
+},
+{
+"pos": 361,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 16:1–10",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 10
+},
+{
+"pos": 362,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 16",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 34
+},
+{
+"pos": 363,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 15:23–24",
+"start_ch": 15,
+"start_v": 23,
+"end_ch": 15,
+"end_v": 24
+},
+{
+"pos": 364,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 16:11–17:19",
+"start_ch": 16,
+"start_v": 11,
+"end_ch": 17,
+"end_v": 19
+},
+{
+"pos": 365,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 17:1–7",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 7
+},
+{
+"pos": 366,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 17:8–20:22",
+"start_ch": 17,
+"start_v": 8,
+"end_ch": 20,
+"end_v": 22
+},
+{
+"pos": 367,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 20:23–22:9",
+"start_ch": 20,
+"start_v": 23,
+"end_ch": 22,
+"end_v": 9
+},
+{
+"pos": 368,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 18:1–8",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 8
+},
+{
+"pos": 369,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 22:10–28",
+"start_ch": 22,
+"start_v": 10,
+"end_ch": 22,
+"end_v": 28
+},
+{
+"pos": 370,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 18:9–27",
+"start_ch": 18,
+"start_v": 9,
+"end_ch": 18,
+"end_v": 27
+},
+{
+"pos": 371,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 22:29–35",
+"start_ch": 22,
+"start_v": 29,
+"end_ch": 22,
+"end_v": 35
+},
+{
+"pos": 372,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 18:28–34",
+"start_ch": 18,
+"start_v": 28,
+"end_ch": 18,
+"end_v": 34
+},
+{
+"pos": 373,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 22:36–40",
+"start_ch": 22,
+"start_v": 36,
+"end_ch": 22,
+"end_v": 40
+},
+{
+"pos": 374,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 22:51–53",
+"start_ch": 22,
+"start_v": 51,
+"end_ch": 22,
+"end_v": 53
+},
+{
+"pos": 375,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 19:1–20:30",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 20,
+"end_v": 30
+},
+{
+"pos": 376,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 18
+},
+{
+"pos": 377,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 3",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 27
+},
+{
+"pos": 378,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 22:41–49",
+"start_ch": 22,
+"start_v": 41,
+"end_ch": 22,
+"end_v": 49
+},
+{
+"pos": 379,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 20:31–37",
+"start_ch": 20,
+"start_v": 31,
+"end_ch": 20,
+"end_v": 37
+},
+{
+"pos": 380,
+"era": "the-divided-kingdom",
+"book": "1Ki",
+"label": "1 Kings 22:50–50",
+"start_ch": 22,
+"start_v": 50,
+"end_ch": 22,
+"end_v": 50
+},
+{
+"pos": 381,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 21:1–4",
+"start_ch": 21,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 4
+},
+{
+"pos": 382,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 8:16–22",
+"start_ch": 8,
+"start_v": 16,
+"end_ch": 8,
+"end_v": 22
+},
+{
+"pos": 383,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 21:5–7",
+"start_ch": 21,
+"start_v": 5,
+"end_ch": 21,
+"end_v": 7
+},
+{
+"pos": 384,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 2",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 25
+},
+{
+"pos": 385,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 4",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 44
+},
+{
+"pos": 386,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 5:1–8:15",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 15
+},
+{
+"pos": 387,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 21:8–20",
+"start_ch": 21,
+"start_v": 8,
+"end_ch": 21,
+"end_v": 20
+},
+{
+"pos": 388,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 8:23–29",
+"start_ch": 8,
+"start_v": 23,
+"end_ch": 8,
+"end_v": 29
+},
+{
+"pos": 389,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 22:1–7",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 7
+},
+{
+"pos": 390,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 9:1–10:17",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 17
+},
+{
+"pos": 391,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 22:8–9",
+"start_ch": 22,
+"start_v": 8,
+"end_ch": 22,
+"end_v": 9
+},
+{
+"pos": 392,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 10:18–31",
+"start_ch": 10,
+"start_v": 18,
+"end_ch": 10,
+"end_v": 31
+},
+{
+"pos": 393,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 11:1–3",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 3
+},
+{
+"pos": 394,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 22:10–12",
+"start_ch": 22,
+"start_v": 10,
+"end_ch": 22,
+"end_v": 12
+},
+{
+"pos": 395,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 11:4–12",
+"start_ch": 11,
+"start_v": 4,
+"end_ch": 11,
+"end_v": 12
+},
+{
+"pos": 396,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 23:1–11",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 23,
+"end_v": 11
+},
+{
+"pos": 397,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 11:13–16",
+"start_ch": 11,
+"start_v": 13,
+"end_ch": 11,
+"end_v": 16
+},
+{
+"pos": 398,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 23:12–15",
+"start_ch": 23,
+"start_v": 12,
+"end_ch": 23,
+"end_v": 15
+},
+{
+"pos": 399,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 11:17–21",
+"start_ch": 11,
+"start_v": 17,
+"end_ch": 11,
+"end_v": 21
+},
+{
+"pos": 400,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 23:16–21",
+"start_ch": 23,
+"start_v": 16,
+"end_ch": 23,
+"end_v": 21
+},
+{
+"pos": 401,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 12:1–16",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 16
+},
+{
+"pos": 402,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 24:1–22",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 22
+},
+{
+"pos": 403,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 10:32–36",
+"start_ch": 10,
+"start_v": 32,
+"end_ch": 10,
+"end_v": 36
+},
+{
+"pos": 404,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 13:1–11",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 11
+},
+{
+"pos": 405,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 12:17–21",
+"start_ch": 12,
+"start_v": 17,
+"end_ch": 12,
+"end_v": 21
+},
+{
+"pos": 406,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 24:23–27",
+"start_ch": 24,
+"start_v": 23,
+"end_ch": 24,
+"end_v": 27
+},
+{
+"pos": 407,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 13:14–25",
+"start_ch": 13,
+"start_v": 14,
+"end_ch": 13,
+"end_v": 25
+},
+{
+"pos": 408,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 14:1–14",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 14
+},
+{
+"pos": 409,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 25:1–24",
+"start_ch": 25,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 24
+},
+{
+"pos": 410,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 13:12–13",
+"start_ch": 13,
+"start_v": 12,
+"end_ch": 13,
+"end_v": 13
+},
+{
+"pos": 411,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 14:15–16",
+"start_ch": 14,
+"start_v": 15,
+"end_ch": 14,
+"end_v": 16
+},
+{
+"pos": 412,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 14:23–27",
+"start_ch": 14,
+"start_v": 23,
+"end_ch": 14,
+"end_v": 27
+},
+{
+"pos": 413,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 25:25–28",
+"start_ch": 25,
+"start_v": 25,
+"end_ch": 25,
+"end_v": 28
+},
+{
+"pos": 414,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 14:17–22",
+"start_ch": 14,
+"start_v": 17,
+"end_ch": 14,
+"end_v": 22
+},
+{
+"pos": 415,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 15:1–5",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 5
+},
+{
+"pos": 416,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 26:1–21",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 26,
+"end_v": 21
+},
+{
+"pos": 417,
+"era": "the-divided-kingdom",
+"book": "Jon",
+"label": "Jonah 1–4",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 11
+},
+{
+"pos": 418,
+"era": "the-divided-kingdom",
+"book": "Amo",
+"label": "Amos 1–6",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 14
+},
+{
+"pos": 419,
+"era": "the-divided-kingdom",
+"book": "Amo",
+"label": "Amos 7–9",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 15
+},
+{
+"pos": 420,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 14:28–29",
+"start_ch": 14,
+"start_v": 28,
+"end_ch": 14,
+"end_v": 29
+},
+{
+"pos": 421,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 15:8–29",
+"start_ch": 15,
+"start_v": 8,
+"end_ch": 15,
+"end_v": 29
+},
+{
+"pos": 422,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 15:6–7",
+"start_ch": 15,
+"start_v": 6,
+"end_ch": 15,
+"end_v": 7
+},
+{
+"pos": 423,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 26:22–23",
+"start_ch": 26,
+"start_v": 22,
+"end_ch": 26,
+"end_v": 23
+},
+{
+"pos": 424,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 6",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 13
+},
+{
+"pos": 425,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 15:32–38",
+"start_ch": 15,
+"start_v": 32,
+"end_ch": 15,
+"end_v": 38
+},
+{
+"pos": 426,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 27",
+"start_ch": 27,
+"start_v": 1,
+"end_ch": 27,
+"end_v": 9
+},
+{
+"pos": 427,
+"era": "the-divided-kingdom",
+"book": "Mic",
+"label": "Micah 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 16
+},
+{
+"pos": 428,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 16:1–9",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 9
+},
+{
+"pos": 429,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 28:1–15",
+"start_ch": 28,
+"start_v": 1,
+"end_ch": 28,
+"end_v": 15
+},
+{
+"pos": 430,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 7",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 25
+},
+{
+"pos": 431,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 8–11",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 16
+},
+{
+"pos": 432,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 12",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 6
+},
+{
+"pos": 433,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 17",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 14
+},
+{
+"pos": 434,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 28:16–21",
+"start_ch": 28,
+"start_v": 16,
+"end_ch": 28,
+"end_v": 21
+},
+{
+"pos": 435,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 16:10–18",
+"start_ch": 16,
+"start_v": 10,
+"end_ch": 16,
+"end_v": 18
+},
+{
+"pos": 436,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 28:22–25",
+"start_ch": 28,
+"start_v": 22,
+"end_ch": 28,
+"end_v": 25
+},
+{
+"pos": 437,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 18:1–8",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 8
+},
+{
+"pos": 438,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 29:1–2",
+"start_ch": 29,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 2
+},
+{
+"pos": 439,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 15:30–31",
+"start_ch": 15,
+"start_v": 30,
+"end_ch": 15,
+"end_v": 31
+},
+{
+"pos": 440,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 17:1–4",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 4
+},
+{
+"pos": 441,
+"era": "the-divided-kingdom",
+"book": "Hos",
+"label": "Hosea 1:1–2:13",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 13
+},
+{
+"pos": 442,
+"era": "the-divided-kingdom",
+"book": "Hos",
+"label": "Hosea 2:14–8:14",
+"start_ch": 2,
+"start_v": 14,
+"end_ch": 8,
+"end_v": 14
+},
+{
+"pos": 443,
+"era": "the-divided-kingdom",
+"book": "Hos",
+"label": "Hosea 9–14",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 9
+},
+{
+"pos": 444,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 28",
+"start_ch": 28,
+"start_v": 1,
+"end_ch": 28,
+"end_v": 29
+},
+{
+"pos": 445,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 17:5–5",
+"start_ch": 17,
+"start_v": 5,
+"end_ch": 17,
+"end_v": 5
+},
+{
+"pos": 446,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 18:9–12",
+"start_ch": 18,
+"start_v": 9,
+"end_ch": 18,
+"end_v": 12
+},
+{
+"pos": 447,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 17:6–41",
+"start_ch": 17,
+"start_v": 6,
+"end_ch": 17,
+"end_v": 41
+},
+{
+"pos": 448,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 1:1–20",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 20
+},
+{
+"pos": 449,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 1:21–5:30",
+"start_ch": 1,
+"start_v": 21,
+"end_ch": 5,
+"end_v": 30
+},
+{
+"pos": 450,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 16:19–20",
+"start_ch": 16,
+"start_v": 19,
+"end_ch": 16,
+"end_v": 20
+},
+{
+"pos": 451,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 28:26–27",
+"start_ch": 28,
+"start_v": 26,
+"end_ch": 28,
+"end_v": 27
+},
+{
+"pos": 452,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 13–16",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 14
+},
+{
+"pos": 453,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 29:3–31:21",
+"start_ch": 29,
+"start_v": 3,
+"end_ch": 31,
+"end_v": 21
+},
+{
+"pos": 454,
+"era": "the-divided-kingdom",
+"book": "Pro",
+"label": "Proverbs 25–29",
+"start_ch": 25,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 27
+},
+{
+"pos": 455,
+"era": "the-divided-kingdom",
+"book": "Pro",
+"label": "Proverbs 30–31",
+"start_ch": 30,
+"start_v": 1,
+"end_ch": 31,
+"end_v": 31
+},
+{
+"pos": 456,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 42",
+"start_ch": 42,
+"start_v": 1,
+"end_ch": 42,
+"end_v": 11
+},
+{
+"pos": 457,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 43",
+"start_ch": 43,
+"start_v": 1,
+"end_ch": 43,
+"end_v": 5
+},
+{
+"pos": 458,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 44",
+"start_ch": 44,
+"start_v": 1,
+"end_ch": 44,
+"end_v": 26
+},
+{
+"pos": 459,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 45",
+"start_ch": 45,
+"start_v": 1,
+"end_ch": 45,
+"end_v": 17
+},
+{
+"pos": 460,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 46",
+"start_ch": 46,
+"start_v": 1,
+"end_ch": 46,
+"end_v": 11
+},
+{
+"pos": 461,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 47",
+"start_ch": 47,
+"start_v": 1,
+"end_ch": 47,
+"end_v": 9
+},
+{
+"pos": 462,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 48",
+"start_ch": 48,
+"start_v": 1,
+"end_ch": 48,
+"end_v": 14
+},
+{
+"pos": 463,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 49",
+"start_ch": 49,
+"start_v": 1,
+"end_ch": 49,
+"end_v": 20
+},
+{
+"pos": 464,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 84",
+"start_ch": 84,
+"start_v": 1,
+"end_ch": 84,
+"end_v": 12
+},
+{
+"pos": 465,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 85",
+"start_ch": 85,
+"start_v": 1,
+"end_ch": 85,
+"end_v": 13
+},
+{
+"pos": 466,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 87",
+"start_ch": 87,
+"start_v": 1,
+"end_ch": 87,
+"end_v": 7
+},
+{
+"pos": 467,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalms 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 12
+},
+{
+"pos": 468,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 10",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 18
+},
+{
+"pos": 469,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 33",
+"start_ch": 33,
+"start_v": 1,
+"end_ch": 33,
+"end_v": 22
+},
+{
+"pos": 470,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 71",
+"start_ch": 71,
+"start_v": 1,
+"end_ch": 71,
+"end_v": 24
+},
+{
+"pos": 471,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 91",
+"start_ch": 91,
+"start_v": 1,
+"end_ch": 91,
+"end_v": 16
+},
+{
+"pos": 472,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 92",
+"start_ch": 92,
+"start_v": 1,
+"end_ch": 92,
+"end_v": 15
+},
+{
+"pos": 473,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 93",
+"start_ch": 93,
+"start_v": 1,
+"end_ch": 93,
+"end_v": 5
+},
+{
+"pos": 474,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 94",
+"start_ch": 94,
+"start_v": 1,
+"end_ch": 94,
+"end_v": 23
+},
+{
+"pos": 475,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 95",
+"start_ch": 95,
+"start_v": 1,
+"end_ch": 95,
+"end_v": 11
+},
+{
+"pos": 476,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 96",
+"start_ch": 96,
+"start_v": 1,
+"end_ch": 96,
+"end_v": 13
+},
+{
+"pos": 477,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 97",
+"start_ch": 97,
+"start_v": 1,
+"end_ch": 97,
+"end_v": 12
+},
+{
+"pos": 478,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 98",
+"start_ch": 98,
+"start_v": 1,
+"end_ch": 98,
+"end_v": 9
+},
+{
+"pos": 479,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 99",
+"start_ch": 99,
+"start_v": 1,
+"end_ch": 99,
+"end_v": 9
+},
+{
+"pos": 480,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 100",
+"start_ch": 100,
+"start_v": 1,
+"end_ch": 100,
+"end_v": 5
+},
+{
+"pos": 481,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 102",
+"start_ch": 102,
+"start_v": 1,
+"end_ch": 102,
+"end_v": 28
+},
+{
+"pos": 482,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 104",
+"start_ch": 104,
+"start_v": 1,
+"end_ch": 104,
+"end_v": 35
+},
+{
+"pos": 483,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 105",
+"start_ch": 105,
+"start_v": 1,
+"end_ch": 105,
+"end_v": 45
+},
+{
+"pos": 484,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 106",
+"start_ch": 106,
+"start_v": 1,
+"end_ch": 106,
+"end_v": 48
+},
+{
+"pos": 485,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 107",
+"start_ch": 107,
+"start_v": 1,
+"end_ch": 107,
+"end_v": 43
+},
+{
+"pos": 486,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 111",
+"start_ch": 111,
+"start_v": 1,
+"end_ch": 111,
+"end_v": 10
+},
+{
+"pos": 487,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 112",
+"start_ch": 112,
+"start_v": 1,
+"end_ch": 112,
+"end_v": 10
+},
+{
+"pos": 488,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 113",
+"start_ch": 113,
+"start_v": 1,
+"end_ch": 113,
+"end_v": 9
+},
+{
+"pos": 489,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 114",
+"start_ch": 114,
+"start_v": 1,
+"end_ch": 114,
+"end_v": 8
+},
+{
+"pos": 490,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 115",
+"start_ch": 115,
+"start_v": 1,
+"end_ch": 115,
+"end_v": 18
+},
+{
+"pos": 491,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 116",
+"start_ch": 116,
+"start_v": 1,
+"end_ch": 116,
+"end_v": 19
+},
+{
+"pos": 492,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 117",
+"start_ch": 117,
+"start_v": 1,
+"end_ch": 117,
+"end_v": 2
+},
+{
+"pos": 493,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 118",
+"start_ch": 118,
+"start_v": 1,
+"end_ch": 118,
+"end_v": 29
+},
+{
+"pos": 494,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 119",
+"start_ch": 119,
+"start_v": 1,
+"end_ch": 119,
+"end_v": 176
+},
+{
+"pos": 495,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 120",
+"start_ch": 120,
+"start_v": 1,
+"end_ch": 120,
+"end_v": 7
+},
+{
+"pos": 496,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 121",
+"start_ch": 121,
+"start_v": 1,
+"end_ch": 121,
+"end_v": 8
+},
+{
+"pos": 497,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 123",
+"start_ch": 123,
+"start_v": 1,
+"end_ch": 123,
+"end_v": 4
+},
+{
+"pos": 498,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 125",
+"start_ch": 125,
+"start_v": 1,
+"end_ch": 125,
+"end_v": 5
+},
+{
+"pos": 499,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 126",
+"start_ch": 126,
+"start_v": 1,
+"end_ch": 126,
+"end_v": 6
+},
+{
+"pos": 500,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 128",
+"start_ch": 128,
+"start_v": 1,
+"end_ch": 128,
+"end_v": 6
+},
+{
+"pos": 501,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 129",
+"start_ch": 129,
+"start_v": 1,
+"end_ch": 129,
+"end_v": 8
+},
+{
+"pos": 502,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 130",
+"start_ch": 130,
+"start_v": 1,
+"end_ch": 130,
+"end_v": 8
+},
+{
+"pos": 503,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 132",
+"start_ch": 132,
+"start_v": 1,
+"end_ch": 132,
+"end_v": 18
+},
+{
+"pos": 504,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 134",
+"start_ch": 134,
+"start_v": 1,
+"end_ch": 134,
+"end_v": 3
+},
+{
+"pos": 505,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 135",
+"start_ch": 135,
+"start_v": 1,
+"end_ch": 135,
+"end_v": 21
+},
+{
+"pos": 506,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 136",
+"start_ch": 136,
+"start_v": 1,
+"end_ch": 136,
+"end_v": 26
+},
+{
+"pos": 507,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 146",
+"start_ch": 146,
+"start_v": 1,
+"end_ch": 146,
+"end_v": 10
+},
+{
+"pos": 508,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 147",
+"start_ch": 147,
+"start_v": 1,
+"end_ch": 147,
+"end_v": 20
+},
+{
+"pos": 509,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 148",
+"start_ch": 148,
+"start_v": 1,
+"end_ch": 148,
+"end_v": 14
+},
+{
+"pos": 510,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 149",
+"start_ch": 149,
+"start_v": 1,
+"end_ch": 149,
+"end_v": 9
+},
+{
+"pos": 511,
+"era": "the-divided-kingdom",
+"book": "Psa",
+"label": "Psalm 150",
+"start_ch": 150,
+"start_v": 1,
+"end_ch": 150,
+"end_v": 6
+},
+{
+"pos": 512,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 18–23",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 23,
+"end_v": 18
+},
+{
+"pos": 513,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 24–27",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 27,
+"end_v": 13
+},
+{
+"pos": 514,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 29",
+"start_ch": 29,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 24
+},
+{
+"pos": 515,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 30–33",
+"start_ch": 30,
+"start_v": 1,
+"end_ch": 33,
+"end_v": 24
+},
+{
+"pos": 516,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 34–35",
+"start_ch": 34,
+"start_v": 1,
+"end_ch": 35,
+"end_v": 10
+},
+{
+"pos": 517,
+"era": "the-divided-kingdom",
+"book": "Mic",
+"label": "Micah 2–5",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 15
+},
+{
+"pos": 518,
+"era": "the-divided-kingdom",
+"book": "Mic",
+"label": "Micah 6–7",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 20
+},
+{
+"pos": 519,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 32:1–8",
+"start_ch": 32,
+"start_v": 1,
+"end_ch": 32,
+"end_v": 8
+},
+{
+"pos": 520,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 18:13–18",
+"start_ch": 18,
+"start_v": 13,
+"end_ch": 18,
+"end_v": 18
+},
+{
+"pos": 521,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 36:1–3",
+"start_ch": 36,
+"start_v": 1,
+"end_ch": 36,
+"end_v": 3
+},
+{
+"pos": 522,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 18:19–37",
+"start_ch": 18,
+"start_v": 19,
+"end_ch": 18,
+"end_v": 37
+},
+{
+"pos": 523,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 36:4–22",
+"start_ch": 36,
+"start_v": 4,
+"end_ch": 36,
+"end_v": 22
+},
+{
+"pos": 524,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 19:1–19",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 19
+},
+{
+"pos": 525,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 37:1–20",
+"start_ch": 37,
+"start_v": 1,
+"end_ch": 37,
+"end_v": 20
+},
+{
+"pos": 526,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 32:9–19",
+"start_ch": 32,
+"start_v": 9,
+"end_ch": 32,
+"end_v": 19
+},
+{
+"pos": 527,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 19:20–37",
+"start_ch": 19,
+"start_v": 20,
+"end_ch": 19,
+"end_v": 37
+},
+{
+"pos": 528,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 37:21–38",
+"start_ch": 37,
+"start_v": 21,
+"end_ch": 37,
+"end_v": 38
+},
+{
+"pos": 529,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 32:20–23",
+"start_ch": 32,
+"start_v": 20,
+"end_ch": 32,
+"end_v": 23
+},
+{
+"pos": 530,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 20:1–11",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 20,
+"end_v": 11
+},
+{
+"pos": 531,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 38:1–8",
+"start_ch": 38,
+"start_v": 1,
+"end_ch": 38,
+"end_v": 8
+},
+{
+"pos": 532,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 32:24–31",
+"start_ch": 32,
+"start_v": 24,
+"end_ch": 32,
+"end_v": 31
+},
+{
+"pos": 533,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 38:9–22",
+"start_ch": 38,
+"start_v": 9,
+"end_ch": 38,
+"end_v": 22
+},
+{
+"pos": 534,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 20:12–19",
+"start_ch": 20,
+"start_v": 12,
+"end_ch": 20,
+"end_v": 19
+},
+{
+"pos": 535,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 39",
+"start_ch": 39,
+"start_v": 1,
+"end_ch": 39,
+"end_v": 8
+},
+{
+"pos": 536,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 40:1–44:5",
+"start_ch": 40,
+"start_v": 1,
+"end_ch": 44,
+"end_v": 5
+},
+{
+"pos": 537,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 44:6–48:11",
+"start_ch": 44,
+"start_v": 6,
+"end_ch": 48,
+"end_v": 11
+},
+{
+"pos": 538,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 48:12–52:12",
+"start_ch": 48,
+"start_v": 12,
+"end_ch": 52,
+"end_v": 12
+},
+{
+"pos": 539,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 52:13–57:21",
+"start_ch": 52,
+"start_v": 13,
+"end_ch": 57,
+"end_v": 21
+},
+{
+"pos": 540,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 58:1–63:14",
+"start_ch": 58,
+"start_v": 1,
+"end_ch": 63,
+"end_v": 14
+},
+{
+"pos": 541,
+"era": "the-divided-kingdom",
+"book": "Isa",
+"label": "Isaiah 63:15–66:24",
+"start_ch": 63,
+"start_v": 15,
+"end_ch": 66,
+"end_v": 24
+},
+{
+"pos": 542,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 20:20–21",
+"start_ch": 20,
+"start_v": 20,
+"end_ch": 20,
+"end_v": 21
+},
+{
+"pos": 543,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 32:32–33",
+"start_ch": 32,
+"start_v": 32,
+"end_ch": 32,
+"end_v": 33
+},
+{
+"pos": 544,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 21:1–9",
+"start_ch": 21,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 9
+},
+{
+"pos": 545,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 33:1–9",
+"start_ch": 33,
+"start_v": 1,
+"end_ch": 33,
+"end_v": 9
+},
+{
+"pos": 546,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 21:10–17",
+"start_ch": 21,
+"start_v": 10,
+"end_ch": 21,
+"end_v": 17
+},
+{
+"pos": 547,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 33:10–19",
+"start_ch": 33,
+"start_v": 10,
+"end_ch": 33,
+"end_v": 19
+},
+{
+"pos": 548,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 21:18–18",
+"start_ch": 21,
+"start_v": 18,
+"end_ch": 21,
+"end_v": 18
+},
+{
+"pos": 549,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 33:20–20",
+"start_ch": 33,
+"start_v": 20,
+"end_ch": 33,
+"end_v": 20
+},
+{
+"pos": 550,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 21:19–26",
+"start_ch": 21,
+"start_v": 19,
+"end_ch": 21,
+"end_v": 26
+},
+{
+"pos": 551,
+"era": "the-divided-kingdom",
+"book": "2Ch",
+"label": "2 Chronicles 33:21–25",
+"start_ch": 33,
+"start_v": 21,
+"end_ch": 33,
+"end_v": 25
+},
+{
+"pos": 552,
+"era": "the-divided-kingdom",
+"book": "2Ki",
+"label": "2 Kings 22:1–2",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 2
+},
+{
+"pos": 553,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 34:1–7",
+"start_ch": 34,
+"start_v": 1,
+"end_ch": 34,
+"end_v": 7
+},
+{
+"pos": 554,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 1:1–2:22",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 22
+},
+{
+"pos": 555,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 2:23–5:19",
+"start_ch": 2,
+"start_v": 23,
+"end_ch": 5,
+"end_v": 19
+},
+{
+"pos": 556,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 5:20–6:30",
+"start_ch": 5,
+"start_v": 20,
+"end_ch": 6,
+"end_v": 30
+},
+{
+"pos": 557,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 22:3–20",
+"start_ch": 22,
+"start_v": 3,
+"end_ch": 22,
+"end_v": 20
+},
+{
+"pos": 558,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 34:8–28",
+"start_ch": 34,
+"start_v": 8,
+"end_ch": 34,
+"end_v": 28
+},
+{
+"pos": 559,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 23:1–20",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 23,
+"end_v": 20
+},
+{
+"pos": 560,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 34:29–33",
+"start_ch": 34,
+"start_v": 29,
+"end_ch": 34,
+"end_v": 33
+},
+{
+"pos": 561,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 23:21–28",
+"start_ch": 23,
+"start_v": 21,
+"end_ch": 23,
+"end_v": 28
+},
+{
+"pos": 562,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 35:1–19",
+"start_ch": 35,
+"start_v": 1,
+"end_ch": 35,
+"end_v": 19
+},
+{
+"pos": 563,
+"era": "judah-s-fall-the-exile",
+"book": "Nah",
+"label": "Nahum 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 19
+},
+{
+"pos": 564,
+"era": "judah-s-fall-the-exile",
+"book": "Hab",
+"label": "Habakkuk 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 19
+},
+{
+"pos": 565,
+"era": "judah-s-fall-the-exile",
+"book": "Zep",
+"label": "Zephaniah 1:1–2:7",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 7
+},
+{
+"pos": 566,
+"era": "judah-s-fall-the-exile",
+"book": "Zep",
+"label": "Zephaniah 2:8–3:20",
+"start_ch": 2,
+"start_v": 8,
+"end_ch": 3,
+"end_v": 20
+},
+{
+"pos": 567,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 35:20–27",
+"start_ch": 35,
+"start_v": 20,
+"end_ch": 35,
+"end_v": 27
+},
+{
+"pos": 568,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 23:29–30",
+"start_ch": 23,
+"start_v": 29,
+"end_ch": 23,
+"end_v": 30
+},
+{
+"pos": 569,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 47–48",
+"start_ch": 47,
+"start_v": 1,
+"end_ch": 48,
+"end_v": 47
+},
+{
+"pos": 570,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 36:1–4",
+"start_ch": 36,
+"start_v": 1,
+"end_ch": 36,
+"end_v": 4
+},
+{
+"pos": 571,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 23:31–37",
+"start_ch": 23,
+"start_v": 31,
+"end_ch": 23,
+"end_v": 37
+},
+{
+"pos": 572,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 36:5–5",
+"start_ch": 36,
+"start_v": 5,
+"end_ch": 36,
+"end_v": 5
+},
+{
+"pos": 573,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 22:1–23",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 23
+},
+{
+"pos": 574,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 26",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 26,
+"end_v": 24
+},
+{
+"pos": 575,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 24:1–4",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 4
+},
+{
+"pos": 576,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 25:1–14",
+"start_ch": 25,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 14
+},
+{
+"pos": 577,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 25:15–38",
+"start_ch": 25,
+"start_v": 15,
+"end_ch": 25,
+"end_v": 38
+},
+{
+"pos": 578,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 36",
+"start_ch": 36,
+"start_v": 1,
+"end_ch": 36,
+"end_v": 32
+},
+{
+"pos": 579,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 45–46",
+"start_ch": 45,
+"start_v": 1,
+"end_ch": 46,
+"end_v": 28
+},
+{
+"pos": 580,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 19–20",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 20,
+"end_v": 18
+},
+{
+"pos": 581,
+"era": "judah-s-fall-the-exile",
+"book": "Dan",
+"label": "Daniel 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 21
+},
+{
+"pos": 582,
+"era": "judah-s-fall-the-exile",
+"book": "Dan",
+"label": "Daniel 2–3",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 30
+},
+{
+"pos": 583,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 7:1–8:3",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 3
+},
+{
+"pos": 584,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 8:4–11:23",
+"start_ch": 8,
+"start_v": 4,
+"end_ch": 11,
+"end_v": 23
+},
+{
+"pos": 585,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 12–15",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 21
+},
+{
+"pos": 586,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 16–18",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 23
+},
+{
+"pos": 587,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 35",
+"start_ch": 35,
+"start_v": 1,
+"end_ch": 35,
+"end_v": 19
+},
+{
+"pos": 588,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 49:1–33",
+"start_ch": 49,
+"start_v": 1,
+"end_ch": 49,
+"end_v": 33
+},
+{
+"pos": 589,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 24:5–7",
+"start_ch": 24,
+"start_v": 5,
+"end_ch": 24,
+"end_v": 7
+},
+{
+"pos": 590,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 36:6–8",
+"start_ch": 36,
+"start_v": 6,
+"end_ch": 36,
+"end_v": 8
+},
+{
+"pos": 591,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 24:8–9",
+"start_ch": 24,
+"start_v": 8,
+"end_ch": 24,
+"end_v": 9
+},
+{
+"pos": 592,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 36:9–9",
+"start_ch": 36,
+"start_v": 9,
+"end_ch": 36,
+"end_v": 9
+},
+{
+"pos": 593,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 22:24–23:32",
+"start_ch": 22,
+"start_v": 24,
+"end_ch": 23,
+"end_v": 32
+},
+{
+"pos": 594,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 23:33–24:10",
+"start_ch": 23,
+"start_v": 33,
+"end_ch": 24,
+"end_v": 10
+},
+{
+"pos": 595,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 29:1–31:14",
+"start_ch": 29,
+"start_v": 1,
+"end_ch": 31,
+"end_v": 14
+},
+{
+"pos": 596,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 31:15–40",
+"start_ch": 31,
+"start_v": 15,
+"end_ch": 31,
+"end_v": 40
+},
+{
+"pos": 597,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 49:34–51:14",
+"start_ch": 49,
+"start_v": 34,
+"end_ch": 51,
+"end_v": 14
+},
+{
+"pos": 598,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 51:15–58",
+"start_ch": 51,
+"start_v": 15,
+"end_ch": 51,
+"end_v": 58
+},
+{
+"pos": 599,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 36:10–10",
+"start_ch": 36,
+"start_v": 10,
+"end_ch": 36,
+"end_v": 10
+},
+{
+"pos": 600,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 24:10–17",
+"start_ch": 24,
+"start_v": 10,
+"end_ch": 24,
+"end_v": 17
+},
+{
+"pos": 601,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 3:10–16",
+"start_ch": 3,
+"start_v": 10,
+"end_ch": 3,
+"end_v": 16
+},
+{
+"pos": 602,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 36:11–14",
+"start_ch": 36,
+"start_v": 11,
+"end_ch": 36,
+"end_v": 14
+},
+{
+"pos": 603,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 52:1–3",
+"start_ch": 52,
+"start_v": 1,
+"end_ch": 52,
+"end_v": 3
+},
+{
+"pos": 604,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 24:18–20",
+"start_ch": 24,
+"start_v": 18,
+"end_ch": 24,
+"end_v": 20
+},
+{
+"pos": 605,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 37:1–10",
+"start_ch": 37,
+"start_v": 1,
+"end_ch": 37,
+"end_v": 10
+},
+{
+"pos": 606,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 37:11–38:28",
+"start_ch": 37,
+"start_v": 11,
+"end_ch": 38,
+"end_v": 28
+},
+{
+"pos": 607,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 1:1–3:15",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 15
+},
+{
+"pos": 608,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 3:16–4:17",
+"start_ch": 3,
+"start_v": 16,
+"end_ch": 4,
+"end_v": 17
+},
+{
+"pos": 609,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 27–28",
+"start_ch": 27,
+"start_v": 1,
+"end_ch": 28,
+"end_v": 17
+},
+{
+"pos": 610,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 51:59–64",
+"start_ch": 51,
+"start_v": 59,
+"end_ch": 51,
+"end_v": 64
+},
+{
+"pos": 611,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 5–9",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 11
+},
+{
+"pos": 612,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 10–13",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 23
+},
+{
+"pos": 613,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 14–16",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 63
+},
+{
+"pos": 614,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 17–19",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 14
+},
+{
+"pos": 615,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 20:1–22:16",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 16
+},
+{
+"pos": 616,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 22:17–23:49",
+"start_ch": 22,
+"start_v": 17,
+"end_ch": 23,
+"end_v": 49
+},
+{
+"pos": 617,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 24:20–25:2",
+"start_ch": 24,
+"start_v": 20,
+"end_ch": 25,
+"end_v": 2
+},
+{
+"pos": 618,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 52:3–5",
+"start_ch": 52,
+"start_v": 3,
+"end_ch": 52,
+"end_v": 5
+},
+{
+"pos": 619,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 39:1–1",
+"start_ch": 39,
+"start_v": 1,
+"end_ch": 39,
+"end_v": 1
+},
+{
+"pos": 620,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 24:1–14",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 14
+},
+{
+"pos": 621,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 24:15–25:17",
+"start_ch": 24,
+"start_v": 15,
+"end_ch": 25,
+"end_v": 17
+},
+{
+"pos": 622,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 34",
+"start_ch": 34,
+"start_v": 1,
+"end_ch": 34,
+"end_v": 22
+},
+{
+"pos": 623,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 21",
+"start_ch": 21,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 14
+},
+{
+"pos": 624,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 29:1–16",
+"start_ch": 29,
+"start_v": 1,
+"end_ch": 29,
+"end_v": 16
+},
+{
+"pos": 625,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 30:20–31:18",
+"start_ch": 30,
+"start_v": 20,
+"end_ch": 31,
+"end_v": 18
+},
+{
+"pos": 626,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 32–33",
+"start_ch": 32,
+"start_v": 1,
+"end_ch": 33,
+"end_v": 26
+},
+{
+"pos": 627,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 26:1–14",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 26,
+"end_v": 14
+},
+{
+"pos": 628,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 26:15–28:26",
+"start_ch": 26,
+"start_v": 15,
+"end_ch": 28,
+"end_v": 26
+},
+{
+"pos": 629,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 25:3–7",
+"start_ch": 25,
+"start_v": 3,
+"end_ch": 25,
+"end_v": 7
+},
+{
+"pos": 630,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 52:6–11",
+"start_ch": 52,
+"start_v": 6,
+"end_ch": 52,
+"end_v": 11
+},
+{
+"pos": 631,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 39:2–10",
+"start_ch": 39,
+"start_v": 2,
+"end_ch": 39,
+"end_v": 10
+},
+{
+"pos": 632,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 39:11–18",
+"start_ch": 39,
+"start_v": 11,
+"end_ch": 39,
+"end_v": 18
+},
+{
+"pos": 633,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 40:1–6",
+"start_ch": 40,
+"start_v": 1,
+"end_ch": 40,
+"end_v": 6
+},
+{
+"pos": 634,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 25:8–21",
+"start_ch": 25,
+"start_v": 8,
+"end_ch": 25,
+"end_v": 21
+},
+{
+"pos": 635,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 52:12–27",
+"start_ch": 52,
+"start_v": 12,
+"end_ch": 52,
+"end_v": 27
+},
+{
+"pos": 636,
+"era": "judah-s-fall-the-exile",
+"book": "2Ch",
+"label": "2 Chronicles 36:15–21",
+"start_ch": 36,
+"start_v": 15,
+"end_ch": 36,
+"end_v": 21
+},
+{
+"pos": 637,
+"era": "judah-s-fall-the-exile",
+"book": "Lam",
+"label": "Lamentations 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 22
+},
+{
+"pos": 638,
+"era": "judah-s-fall-the-exile",
+"book": "Lam",
+"label": "Lamentations 2–4",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 22
+},
+{
+"pos": 639,
+"era": "judah-s-fall-the-exile",
+"book": "Lam",
+"label": "Lamentations 5",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 22
+},
+{
+"pos": 640,
+"era": "judah-s-fall-the-exile",
+"book": "Oba",
+"label": "Obadiah 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 21
+},
+{
+"pos": 641,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 25:22–26",
+"start_ch": 25,
+"start_v": 22,
+"end_ch": 25,
+"end_v": 26
+},
+{
+"pos": 642,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 40:7–41:18",
+"start_ch": 40,
+"start_v": 7,
+"end_ch": 41,
+"end_v": 18
+},
+{
+"pos": 643,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 42–44",
+"start_ch": 42,
+"start_v": 1,
+"end_ch": 44,
+"end_v": 30
+},
+{
+"pos": 644,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 33:21–33",
+"start_ch": 33,
+"start_v": 21,
+"end_ch": 33,
+"end_v": 33
+},
+{
+"pos": 645,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 34–36",
+"start_ch": 34,
+"start_v": 1,
+"end_ch": 36,
+"end_v": 38
+},
+{
+"pos": 646,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 37–39",
+"start_ch": 37,
+"start_v": 1,
+"end_ch": 39,
+"end_v": 29
+},
+{
+"pos": 647,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 32:1–16",
+"start_ch": 32,
+"start_v": 1,
+"end_ch": 32,
+"end_v": 16
+},
+{
+"pos": 648,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 32:17–33:20",
+"start_ch": 32,
+"start_v": 17,
+"end_ch": 33,
+"end_v": 20
+},
+{
+"pos": 649,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 52:28–30",
+"start_ch": 52,
+"start_v": 28,
+"end_ch": 52,
+"end_v": 30
+},
+{
+"pos": 650,
+"era": "judah-s-fall-the-exile",
+"book": "Psa",
+"label": "Psalm 137",
+"start_ch": 137,
+"start_v": 1,
+"end_ch": 137,
+"end_v": 9
+},
+{
+"pos": 651,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 4:24–5:17",
+"start_ch": 4,
+"start_v": 24,
+"end_ch": 5,
+"end_v": 17
+},
+{
+"pos": 652,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 5:18–26",
+"start_ch": 5,
+"start_v": 18,
+"end_ch": 5,
+"end_v": 26
+},
+{
+"pos": 653,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 6:3–3",
+"start_ch": 6,
+"start_v": 3,
+"end_ch": 6,
+"end_v": 3
+},
+{
+"pos": 654,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 6:49–49",
+"start_ch": 6,
+"start_v": 49,
+"end_ch": 6,
+"end_v": 49
+},
+{
+"pos": 655,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 6:4–15",
+"start_ch": 6,
+"start_v": 4,
+"end_ch": 6,
+"end_v": 15
+},
+{
+"pos": 656,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 7:1–8:28",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 28
+},
+{
+"pos": 657,
+"era": "judah-s-fall-the-exile",
+"book": "1Ch",
+"label": "1 Chronicles 8:29–9:1",
+"start_ch": 8,
+"start_v": 29,
+"end_ch": 9,
+"end_v": 1
+},
+{
+"pos": 658,
+"era": "judah-s-fall-the-exile",
+"book": "Dan",
+"label": "Daniel 4",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 37
+},
+{
+"pos": 659,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 40:1–37",
+"start_ch": 40,
+"start_v": 1,
+"end_ch": 40,
+"end_v": 37
+},
+{
+"pos": 660,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 40:38–43:27",
+"start_ch": 40,
+"start_v": 38,
+"end_ch": 43,
+"end_v": 27
+},
+{
+"pos": 661,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 44–46",
+"start_ch": 44,
+"start_v": 1,
+"end_ch": 46,
+"end_v": 24
+},
+{
+"pos": 662,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 47–48",
+"start_ch": 47,
+"start_v": 1,
+"end_ch": 48,
+"end_v": 35
+},
+{
+"pos": 663,
+"era": "judah-s-fall-the-exile",
+"book": "Eze",
+"label": "Ezekiel 29:17–30:19",
+"start_ch": 29,
+"start_v": 17,
+"end_ch": 30,
+"end_v": 19
+},
+{
+"pos": 664,
+"era": "judah-s-fall-the-exile",
+"book": "2Ki",
+"label": "2 Kings 25:27–30",
+"start_ch": 25,
+"start_v": 27,
+"end_ch": 25,
+"end_v": 30
+},
+{
+"pos": 665,
+"era": "judah-s-fall-the-exile",
+"book": "Jer",
+"label": "Jeremiah 52:31–34",
+"start_ch": 52,
+"start_v": 31,
+"end_ch": 52,
+"end_v": 34
+},
+{
+"pos": 666,
+"era": "judah-s-fall-the-exile",
+"book": "Dan",
+"label": "Daniel 7–8",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 27
+},
+{
+"pos": 667,
+"era": "judah-s-fall-the-exile",
+"book": "Dan",
+"label": "Daniel 5",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 31
+},
+{
+"pos": 668,
+"era": "judah-s-fall-the-exile",
+"book": "Dan",
+"label": "Daniel 6",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 28
+},
+{
+"pos": 669,
+"era": "judah-s-fall-the-exile",
+"book": "Dan",
+"label": "Daniel 9",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 27
+},
+{
+"pos": 670,
+"era": "the-return",
+"book": "2Ch",
+"label": "2 Chronicles 36:22–23",
+"start_ch": 36,
+"start_v": 22,
+"end_ch": 36,
+"end_v": 23
+},
+{
+"pos": 671,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 11
+},
+{
+"pos": 672,
+"era": "the-return",
+"book": "1Ch",
+"label": "1 Chronicles 3:17–19",
+"start_ch": 3,
+"start_v": 17,
+"end_ch": 3,
+"end_v": 19
+},
+{
+"pos": 673,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 2:1–4:5",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 5
+},
+{
+"pos": 674,
+"era": "the-return",
+"book": "1Ch",
+"label": "1 Chronicles 3:19–24",
+"start_ch": 3,
+"start_v": 19,
+"end_ch": 3,
+"end_v": 24
+},
+{
+"pos": 675,
+"era": "the-return",
+"book": "Dan",
+"label": "Daniel 10–12",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 13
+},
+{
+"pos": 676,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 4:24–5:1",
+"start_ch": 4,
+"start_v": 24,
+"end_ch": 5,
+"end_v": 1
+},
+{
+"pos": 677,
+"era": "the-return",
+"book": "Hag",
+"label": "Haggai 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 15
+},
+{
+"pos": 678,
+"era": "the-return",
+"book": "Hag",
+"label": "Haggai 2:1–9",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 9
+},
+{
+"pos": 679,
+"era": "the-return",
+"book": "Zec",
+"label": "Zechariah 1:1–6",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 6
+},
+{
+"pos": 680,
+"era": "the-return",
+"book": "Hag",
+"label": "Haggai 2:10–19",
+"start_ch": 2,
+"start_v": 10,
+"end_ch": 2,
+"end_v": 19
+},
+{
+"pos": 681,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 5:2–2",
+"start_ch": 5,
+"start_v": 2,
+"end_ch": 5,
+"end_v": 2
+},
+{
+"pos": 682,
+"era": "the-return",
+"book": "Hag",
+"label": "Haggai 2:20–23",
+"start_ch": 2,
+"start_v": 20,
+"end_ch": 2,
+"end_v": 23
+},
+{
+"pos": 683,
+"era": "the-return",
+"book": "Zec",
+"label": "Zechariah 1:7–5:11",
+"start_ch": 1,
+"start_v": 7,
+"end_ch": 5,
+"end_v": 11
+},
+{
+"pos": 684,
+"era": "the-return",
+"book": "Zec",
+"label": "Zechariah 6",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 15
+},
+{
+"pos": 685,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 5:3–6:14",
+"start_ch": 5,
+"start_v": 3,
+"end_ch": 6,
+"end_v": 14
+},
+{
+"pos": 686,
+"era": "the-return",
+"book": "Zec",
+"label": "Zechariah 7–8",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 23
+},
+{
+"pos": 687,
+"era": "the-return",
+"book": "Zec",
+"label": "Zechariah 9–14",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 21
+},
+{
+"pos": 688,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 6:14–22",
+"start_ch": 6,
+"start_v": 14,
+"end_ch": 6,
+"end_v": 22
+},
+{
+"pos": 689,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 4:6–6",
+"start_ch": 4,
+"start_v": 6,
+"end_ch": 4,
+"end_v": 6
+},
+{
+"pos": 690,
+"era": "the-return",
+"book": "Est",
+"label": "Esther 1–4",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 17
+},
+{
+"pos": 691,
+"era": "the-return",
+"book": "Est",
+"label": "Esther 5–10",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 3
+},
+{
+"pos": 692,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 4:7–23",
+"start_ch": 4,
+"start_v": 7,
+"end_ch": 4,
+"end_v": 23
+},
+{
+"pos": 693,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 7–8",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 36
+},
+{
+"pos": 694,
+"era": "the-return",
+"book": "Ezr",
+"label": "Ezra 9–10",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 44
+},
+{
+"pos": 695,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 20
+},
+{
+"pos": 696,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 3:1–7:3",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 3
+},
+{
+"pos": 697,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 7:4–8:12",
+"start_ch": 7,
+"start_v": 4,
+"end_ch": 8,
+"end_v": 12
+},
+{
+"pos": 698,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 8:13–10:39",
+"start_ch": 8,
+"start_v": 13,
+"end_ch": 10,
+"end_v": 39
+},
+{
+"pos": 699,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 11:1–12:26",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 26
+},
+{
+"pos": 700,
+"era": "the-return",
+"book": "1Ch",
+"label": "1 Chronicles 9:1–34",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 34
+},
+{
+"pos": 701,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 12:27–13:6",
+"start_ch": 12,
+"start_v": 27,
+"end_ch": 13,
+"end_v": 6
+},
+{
+"pos": 702,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 5:14–19",
+"start_ch": 5,
+"start_v": 14,
+"end_ch": 5,
+"end_v": 19
+},
+{
+"pos": 703,
+"era": "the-return",
+"book": "Neh",
+"label": "Nehemiah 13:7–31",
+"start_ch": 13,
+"start_v": 7,
+"end_ch": 13,
+"end_v": 31
+},
+{
+"pos": 704,
+"era": "the-return",
+"book": "Mal",
+"label": "Malachi 1:1–2:9",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 9
+},
+{
+"pos": 705,
+"era": "the-return",
+"book": "Mal",
+"label": "Malachi 2:10–4:6",
+"start_ch": 2,
+"start_v": 10,
+"end_ch": 4,
+"end_v": 6
+},
+{
+"pos": 706,
+"era": "the-return",
+"book": "Joe",
+"label": "Joel 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 21
+},
+{
+"pos": 707,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:1–1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 1
+},
+{
+"pos": 708,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 1:1–4",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 4
+},
+{
+"pos": 709,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 1:1–18",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 18
+},
+{
+"pos": 710,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 1:1–17",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 17
+},
+{
+"pos": 711,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 3:23–38",
+"start_ch": 3,
+"start_v": 23,
+"end_ch": 3,
+"end_v": 38
+},
+{
+"pos": 712,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 1:5–38",
+"start_ch": 1,
+"start_v": 5,
+"end_ch": 1,
+"end_v": 38
+},
+{
+"pos": 713,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 1:39–80",
+"start_ch": 1,
+"start_v": 39,
+"end_ch": 1,
+"end_v": 80
+},
+{
+"pos": 714,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 1:18–25",
+"start_ch": 1,
+"start_v": 18,
+"end_ch": 1,
+"end_v": 25
+},
+{
+"pos": 715,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 2:1–40",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 40
+},
+{
+"pos": 716,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 2",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 23
+},
+{
+"pos": 717,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 2:41–52",
+"start_ch": 2,
+"start_v": 41,
+"end_ch": 2,
+"end_v": 52
+},
+{
+"pos": 718,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:2–8",
+"start_ch": 1,
+"start_v": 2,
+"end_ch": 1,
+"end_v": 8
+},
+{
+"pos": 719,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 3:1–12",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 12
+},
+{
+"pos": 720,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 3:1–18",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 18
+},
+{
+"pos": 721,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:9–11",
+"start_ch": 1,
+"start_v": 9,
+"end_ch": 1,
+"end_v": 11
+},
+{
+"pos": 722,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 3:13–17",
+"start_ch": 3,
+"start_v": 13,
+"end_ch": 3,
+"end_v": 17
+},
+{
+"pos": 723,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 3:21–22",
+"start_ch": 3,
+"start_v": 21,
+"end_ch": 3,
+"end_v": 22
+},
+{
+"pos": 724,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:12–13",
+"start_ch": 1,
+"start_v": 12,
+"end_ch": 1,
+"end_v": 13
+},
+{
+"pos": 725,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 4:1–11",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 11
+},
+{
+"pos": 726,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 4:1–15",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 15
+},
+{
+"pos": 727,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 1:19–2:25",
+"start_ch": 1,
+"start_v": 19,
+"end_ch": 2,
+"end_v": 25
+},
+{
+"pos": 728,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 3:1–4:45",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 45
+},
+{
+"pos": 729,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 3:19–20",
+"start_ch": 3,
+"start_v": 19,
+"end_ch": 3,
+"end_v": 20
+},
+{
+"pos": 730,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:14–15",
+"start_ch": 1,
+"start_v": 14,
+"end_ch": 1,
+"end_v": 15
+},
+{
+"pos": 731,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 4:12–17",
+"start_ch": 4,
+"start_v": 12,
+"end_ch": 4,
+"end_v": 17
+},
+{
+"pos": 732,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 3:23–23",
+"start_ch": 3,
+"start_v": 23,
+"end_ch": 3,
+"end_v": 23
+},
+{
+"pos": 733,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 4:46–54",
+"start_ch": 4,
+"start_v": 46,
+"end_ch": 4,
+"end_v": 54
+},
+{
+"pos": 734,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 4:16–30",
+"start_ch": 4,
+"start_v": 16,
+"end_ch": 4,
+"end_v": 30
+},
+{
+"pos": 735,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:16–20",
+"start_ch": 1,
+"start_v": 16,
+"end_ch": 1,
+"end_v": 20
+},
+{
+"pos": 736,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 4:18–22",
+"start_ch": 4,
+"start_v": 18,
+"end_ch": 4,
+"end_v": 22
+},
+{
+"pos": 737,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:21–28",
+"start_ch": 1,
+"start_v": 21,
+"end_ch": 1,
+"end_v": 28
+},
+{
+"pos": 738,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 4:31–37",
+"start_ch": 4,
+"start_v": 31,
+"end_ch": 4,
+"end_v": 37
+},
+{
+"pos": 739,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:29–34",
+"start_ch": 1,
+"start_v": 29,
+"end_ch": 1,
+"end_v": 34
+},
+{
+"pos": 740,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 8:14–17",
+"start_ch": 8,
+"start_v": 14,
+"end_ch": 8,
+"end_v": 17
+},
+{
+"pos": 741,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 4:38–41",
+"start_ch": 4,
+"start_v": 38,
+"end_ch": 4,
+"end_v": 41
+},
+{
+"pos": 742,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:35–39",
+"start_ch": 1,
+"start_v": 35,
+"end_ch": 1,
+"end_v": 39
+},
+{
+"pos": 743,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 4:42–44",
+"start_ch": 4,
+"start_v": 42,
+"end_ch": 4,
+"end_v": 44
+},
+{
+"pos": 744,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 4:23–25",
+"start_ch": 4,
+"start_v": 23,
+"end_ch": 4,
+"end_v": 25
+},
+{
+"pos": 745,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 5:1–11",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 11
+},
+{
+"pos": 746,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 1:40–45",
+"start_ch": 1,
+"start_v": 40,
+"end_ch": 1,
+"end_v": 45
+},
+{
+"pos": 747,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 8:1–4",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 4
+},
+{
+"pos": 748,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 5:12–16",
+"start_ch": 5,
+"start_v": 12,
+"end_ch": 5,
+"end_v": 16
+},
+{
+"pos": 749,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 2:1–12",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 12
+},
+{
+"pos": 750,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 9:1–8",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 8
+},
+{
+"pos": 751,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 5:17–26",
+"start_ch": 5,
+"start_v": 17,
+"end_ch": 5,
+"end_v": 26
+},
+{
+"pos": 752,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 2:13–17",
+"start_ch": 2,
+"start_v": 13,
+"end_ch": 2,
+"end_v": 17
+},
+{
+"pos": 753,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 9:9–13",
+"start_ch": 9,
+"start_v": 9,
+"end_ch": 9,
+"end_v": 13
+},
+{
+"pos": 754,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 5:27–32",
+"start_ch": 5,
+"start_v": 27,
+"end_ch": 5,
+"end_v": 32
+},
+{
+"pos": 755,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 2:18–22",
+"start_ch": 2,
+"start_v": 18,
+"end_ch": 2,
+"end_v": 22
+},
+{
+"pos": 756,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 9:14–17",
+"start_ch": 9,
+"start_v": 14,
+"end_ch": 9,
+"end_v": 17
+},
+{
+"pos": 757,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 5:33–39",
+"start_ch": 5,
+"start_v": 33,
+"end_ch": 5,
+"end_v": 39
+},
+{
+"pos": 758,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 5",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 47
+},
+{
+"pos": 759,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 2:23–28",
+"start_ch": 2,
+"start_v": 23,
+"end_ch": 2,
+"end_v": 28
+},
+{
+"pos": 760,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 12:1–8",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 8
+},
+{
+"pos": 761,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:1–5",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 5
+},
+{
+"pos": 762,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 3:1–6",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 6
+},
+{
+"pos": 763,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 12:9–14",
+"start_ch": 12,
+"start_v": 9,
+"end_ch": 12,
+"end_v": 14
+},
+{
+"pos": 764,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:6–11",
+"start_ch": 6,
+"start_v": 6,
+"end_ch": 6,
+"end_v": 11
+},
+{
+"pos": 765,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 12:15–21",
+"start_ch": 12,
+"start_v": 15,
+"end_ch": 12,
+"end_v": 21
+},
+{
+"pos": 766,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 3:7–19",
+"start_ch": 3,
+"start_v": 7,
+"end_ch": 3,
+"end_v": 19
+},
+{
+"pos": 767,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:12–16",
+"start_ch": 6,
+"start_v": 12,
+"end_ch": 6,
+"end_v": 16
+},
+{
+"pos": 768,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 5:1–12",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 12
+},
+{
+"pos": 769,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:17–26",
+"start_ch": 6,
+"start_v": 17,
+"end_ch": 6,
+"end_v": 26
+},
+{
+"pos": 770,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 5:13–48",
+"start_ch": 5,
+"start_v": 13,
+"end_ch": 5,
+"end_v": 48
+},
+{
+"pos": 771,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:27–36",
+"start_ch": 6,
+"start_v": 27,
+"end_ch": 6,
+"end_v": 36
+},
+{
+"pos": 772,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 6:1–4",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 4
+},
+{
+"pos": 773,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 6:5–7:6",
+"start_ch": 6,
+"start_v": 5,
+"end_ch": 7,
+"end_v": 6
+},
+{
+"pos": 774,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:37–42",
+"start_ch": 6,
+"start_v": 37,
+"end_ch": 6,
+"end_v": 42
+},
+{
+"pos": 775,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 7:7–20",
+"start_ch": 7,
+"start_v": 7,
+"end_ch": 7,
+"end_v": 20
+},
+{
+"pos": 776,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:43–45",
+"start_ch": 6,
+"start_v": 43,
+"end_ch": 6,
+"end_v": 45
+},
+{
+"pos": 777,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 7:21–29",
+"start_ch": 7,
+"start_v": 21,
+"end_ch": 7,
+"end_v": 29
+},
+{
+"pos": 778,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 6:46–49",
+"start_ch": 6,
+"start_v": 46,
+"end_ch": 6,
+"end_v": 49
+},
+{
+"pos": 779,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 8:5–13",
+"start_ch": 8,
+"start_v": 5,
+"end_ch": 8,
+"end_v": 13
+},
+{
+"pos": 780,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 7:1–17",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 17
+},
+{
+"pos": 781,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 11:1–19",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 19
+},
+{
+"pos": 782,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 7:18–35",
+"start_ch": 7,
+"start_v": 18,
+"end_ch": 7,
+"end_v": 35
+},
+{
+"pos": 783,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 11:20–30",
+"start_ch": 11,
+"start_v": 20,
+"end_ch": 11,
+"end_v": 30
+},
+{
+"pos": 784,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 7:36–50",
+"start_ch": 7,
+"start_v": 36,
+"end_ch": 7,
+"end_v": 50
+},
+{
+"pos": 785,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 8:1–3",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 3
+},
+{
+"pos": 786,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 3:20–30",
+"start_ch": 3,
+"start_v": 20,
+"end_ch": 3,
+"end_v": 30
+},
+{
+"pos": 787,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 12:22–45",
+"start_ch": 12,
+"start_v": 22,
+"end_ch": 12,
+"end_v": 45
+},
+{
+"pos": 788,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 3:31–35",
+"start_ch": 3,
+"start_v": 31,
+"end_ch": 3,
+"end_v": 35
+},
+{
+"pos": 789,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 12:46–50",
+"start_ch": 12,
+"start_v": 46,
+"end_ch": 12,
+"end_v": 50
+},
+{
+"pos": 790,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 8:19–21",
+"start_ch": 8,
+"start_v": 19,
+"end_ch": 8,
+"end_v": 21
+},
+{
+"pos": 791,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 4:1–9",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 9
+},
+{
+"pos": 792,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 13:1–9",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 9
+},
+{
+"pos": 793,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 8:4–8",
+"start_ch": 8,
+"start_v": 4,
+"end_ch": 8,
+"end_v": 8
+},
+{
+"pos": 794,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 4:10–20",
+"start_ch": 4,
+"start_v": 10,
+"end_ch": 4,
+"end_v": 20
+},
+{
+"pos": 795,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 13:10–23",
+"start_ch": 13,
+"start_v": 10,
+"end_ch": 13,
+"end_v": 23
+},
+{
+"pos": 796,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 8:9–18",
+"start_ch": 8,
+"start_v": 9,
+"end_ch": 8,
+"end_v": 18
+},
+{
+"pos": 797,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 4:21–29",
+"start_ch": 4,
+"start_v": 21,
+"end_ch": 4,
+"end_v": 29
+},
+{
+"pos": 798,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 13:24–30",
+"start_ch": 13,
+"start_v": 24,
+"end_ch": 13,
+"end_v": 30
+},
+{
+"pos": 799,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 4:30–34",
+"start_ch": 4,
+"start_v": 30,
+"end_ch": 4,
+"end_v": 34
+},
+{
+"pos": 800,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 13:31–52",
+"start_ch": 13,
+"start_v": 31,
+"end_ch": 13,
+"end_v": 52
+},
+{
+"pos": 801,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 4:35–41",
+"start_ch": 4,
+"start_v": 35,
+"end_ch": 4,
+"end_v": 41
+},
+{
+"pos": 802,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 8:23–27",
+"start_ch": 8,
+"start_v": 23,
+"end_ch": 8,
+"end_v": 27
+},
+{
+"pos": 803,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 8:22–25",
+"start_ch": 8,
+"start_v": 22,
+"end_ch": 8,
+"end_v": 25
+},
+{
+"pos": 804,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 5:1–20",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 20
+},
+{
+"pos": 805,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 8:28–34",
+"start_ch": 8,
+"start_v": 28,
+"end_ch": 8,
+"end_v": 34
+},
+{
+"pos": 806,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 8:26–39",
+"start_ch": 8,
+"start_v": 26,
+"end_ch": 8,
+"end_v": 39
+},
+{
+"pos": 807,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 5:21–43",
+"start_ch": 5,
+"start_v": 21,
+"end_ch": 5,
+"end_v": 43
+},
+{
+"pos": 808,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 9:18–26",
+"start_ch": 9,
+"start_v": 18,
+"end_ch": 9,
+"end_v": 26
+},
+{
+"pos": 809,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 8:40–56",
+"start_ch": 8,
+"start_v": 40,
+"end_ch": 8,
+"end_v": 56
+},
+{
+"pos": 810,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 9:27–34",
+"start_ch": 9,
+"start_v": 27,
+"end_ch": 9,
+"end_v": 34
+},
+{
+"pos": 811,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 6:1–6",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 6
+},
+{
+"pos": 812,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 13:53–58",
+"start_ch": 13,
+"start_v": 53,
+"end_ch": 13,
+"end_v": 58
+},
+{
+"pos": 813,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 9:35–38",
+"start_ch": 9,
+"start_v": 35,
+"end_ch": 9,
+"end_v": 38
+},
+{
+"pos": 814,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 6:7–13",
+"start_ch": 6,
+"start_v": 7,
+"end_ch": 6,
+"end_v": 13
+},
+{
+"pos": 815,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 10",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 42
+},
+{
+"pos": 816,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:1–6",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 6
+},
+{
+"pos": 817,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:7–9",
+"start_ch": 9,
+"start_v": 7,
+"end_ch": 9,
+"end_v": 9
+},
+{
+"pos": 818,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 6:14–29",
+"start_ch": 6,
+"start_v": 14,
+"end_ch": 6,
+"end_v": 29
+},
+{
+"pos": 819,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 14:1–21",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 21
+},
+{
+"pos": 820,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 6:30–44",
+"start_ch": 6,
+"start_v": 30,
+"end_ch": 6,
+"end_v": 44
+},
+{
+"pos": 821,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:10–17",
+"start_ch": 9,
+"start_v": 10,
+"end_ch": 9,
+"end_v": 17
+},
+{
+"pos": 822,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 6:1–15",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 15
+},
+{
+"pos": 823,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 6:45–52",
+"start_ch": 6,
+"start_v": 45,
+"end_ch": 6,
+"end_v": 52
+},
+{
+"pos": 824,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 14:22–33",
+"start_ch": 14,
+"start_v": 22,
+"end_ch": 14,
+"end_v": 33
+},
+{
+"pos": 825,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 6:16–21",
+"start_ch": 6,
+"start_v": 16,
+"end_ch": 6,
+"end_v": 21
+},
+{
+"pos": 826,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 6:53–56",
+"start_ch": 6,
+"start_v": 53,
+"end_ch": 6,
+"end_v": 56
+},
+{
+"pos": 827,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 14:34–36",
+"start_ch": 14,
+"start_v": 34,
+"end_ch": 14,
+"end_v": 36
+},
+{
+"pos": 828,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 6:22–71",
+"start_ch": 6,
+"start_v": 22,
+"end_ch": 6,
+"end_v": 71
+},
+{
+"pos": 829,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 7:1–23",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 23
+},
+{
+"pos": 830,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 15:1–20",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 20
+},
+{
+"pos": 831,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 7:24–30",
+"start_ch": 7,
+"start_v": 24,
+"end_ch": 7,
+"end_v": 30
+},
+{
+"pos": 832,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 15:21–28",
+"start_ch": 15,
+"start_v": 21,
+"end_ch": 15,
+"end_v": 28
+},
+{
+"pos": 833,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 7:31–37",
+"start_ch": 7,
+"start_v": 31,
+"end_ch": 7,
+"end_v": 37
+},
+{
+"pos": 834,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 15:29–31",
+"start_ch": 15,
+"start_v": 29,
+"end_ch": 15,
+"end_v": 31
+},
+{
+"pos": 835,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 8:1–10",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 10
+},
+{
+"pos": 836,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 15:32–16:4",
+"start_ch": 15,
+"start_v": 32,
+"end_ch": 16,
+"end_v": 4
+},
+{
+"pos": 837,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 8:11–21",
+"start_ch": 8,
+"start_v": 11,
+"end_ch": 8,
+"end_v": 21
+},
+{
+"pos": 838,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 16:5–12",
+"start_ch": 16,
+"start_v": 5,
+"end_ch": 16,
+"end_v": 12
+},
+{
+"pos": 839,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 8:22–30",
+"start_ch": 8,
+"start_v": 22,
+"end_ch": 8,
+"end_v": 30
+},
+{
+"pos": 840,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 16:13–20",
+"start_ch": 16,
+"start_v": 13,
+"end_ch": 16,
+"end_v": 20
+},
+{
+"pos": 841,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:18–20",
+"start_ch": 9,
+"start_v": 18,
+"end_ch": 9,
+"end_v": 20
+},
+{
+"pos": 842,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 8:31–9:1",
+"start_ch": 8,
+"start_v": 31,
+"end_ch": 9,
+"end_v": 1
+},
+{
+"pos": 843,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 16:21–28",
+"start_ch": 16,
+"start_v": 21,
+"end_ch": 16,
+"end_v": 28
+},
+{
+"pos": 844,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:21–27",
+"start_ch": 9,
+"start_v": 21,
+"end_ch": 9,
+"end_v": 27
+},
+{
+"pos": 845,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 9:2–13",
+"start_ch": 9,
+"start_v": 2,
+"end_ch": 9,
+"end_v": 13
+},
+{
+"pos": 846,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 17:1–13",
+"start_ch": 17,
+"start_v": 1,
+"end_ch": 17,
+"end_v": 13
+},
+{
+"pos": 847,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:28–36",
+"start_ch": 9,
+"start_v": 28,
+"end_ch": 9,
+"end_v": 36
+},
+{
+"pos": 848,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 9:14–29",
+"start_ch": 9,
+"start_v": 14,
+"end_ch": 9,
+"end_v": 29
+},
+{
+"pos": 849,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 17:14–21",
+"start_ch": 17,
+"start_v": 14,
+"end_ch": 17,
+"end_v": 21
+},
+{
+"pos": 850,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:37–43",
+"start_ch": 9,
+"start_v": 37,
+"end_ch": 9,
+"end_v": 43
+},
+{
+"pos": 851,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 9:30–32",
+"start_ch": 9,
+"start_v": 30,
+"end_ch": 9,
+"end_v": 32
+},
+{
+"pos": 852,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 17:22–23",
+"start_ch": 17,
+"start_v": 22,
+"end_ch": 17,
+"end_v": 23
+},
+{
+"pos": 853,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:43–45",
+"start_ch": 9,
+"start_v": 43,
+"end_ch": 9,
+"end_v": 45
+},
+{
+"pos": 854,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 17:24–27",
+"start_ch": 17,
+"start_v": 24,
+"end_ch": 17,
+"end_v": 27
+},
+{
+"pos": 855,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 9:33–37",
+"start_ch": 9,
+"start_v": 33,
+"end_ch": 9,
+"end_v": 37
+},
+{
+"pos": 856,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 18:1–6",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 6
+},
+{
+"pos": 857,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:46–48",
+"start_ch": 9,
+"start_v": 46,
+"end_ch": 9,
+"end_v": 48
+},
+{
+"pos": 858,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 9:38–41",
+"start_ch": 9,
+"start_v": 38,
+"end_ch": 9,
+"end_v": 41
+},
+{
+"pos": 859,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:49–50",
+"start_ch": 9,
+"start_v": 49,
+"end_ch": 9,
+"end_v": 50
+},
+{
+"pos": 860,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 9:42–50",
+"start_ch": 9,
+"start_v": 42,
+"end_ch": 9,
+"end_v": 50
+},
+{
+"pos": 861,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 18:7–35",
+"start_ch": 18,
+"start_v": 7,
+"end_ch": 18,
+"end_v": 35
+},
+{
+"pos": 862,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 7:1–9",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 9
+},
+{
+"pos": 863,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:51–56",
+"start_ch": 9,
+"start_v": 51,
+"end_ch": 9,
+"end_v": 56
+},
+{
+"pos": 864,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 8:18–22",
+"start_ch": 8,
+"start_v": 18,
+"end_ch": 8,
+"end_v": 22
+},
+{
+"pos": 865,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 9:57–62",
+"start_ch": 9,
+"start_v": 57,
+"end_ch": 9,
+"end_v": 62
+},
+{
+"pos": 866,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 7:10–8:20",
+"start_ch": 7,
+"start_v": 10,
+"end_ch": 8,
+"end_v": 20
+},
+{
+"pos": 867,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 8:21–59",
+"start_ch": 8,
+"start_v": 21,
+"end_ch": 8,
+"end_v": 59
+},
+{
+"pos": 868,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 10:1–11:13",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 13
+},
+{
+"pos": 869,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 11:14–12:34",
+"start_ch": 11,
+"start_v": 14,
+"end_ch": 12,
+"end_v": 34
+},
+{
+"pos": 870,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 12:35–13:21",
+"start_ch": 12,
+"start_v": 35,
+"end_ch": 13,
+"end_v": 21
+},
+{
+"pos": 871,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 9",
+"start_ch": 9,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 41
+},
+{
+"pos": 872,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 10",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 42
+},
+{
+"pos": 873,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 13:22–14:24",
+"start_ch": 13,
+"start_v": 22,
+"end_ch": 14,
+"end_v": 24
+},
+{
+"pos": 874,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 14:25–17:10",
+"start_ch": 14,
+"start_v": 25,
+"end_ch": 17,
+"end_v": 10
+},
+{
+"pos": 875,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 11:1–37",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 37
+},
+{
+"pos": 876,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 11:38–57",
+"start_ch": 11,
+"start_v": 38,
+"end_ch": 11,
+"end_v": 57
+},
+{
+"pos": 877,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 17:11–18:8",
+"start_ch": 17,
+"start_v": 11,
+"end_ch": 18,
+"end_v": 8
+},
+{
+"pos": 878,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 18:9–14",
+"start_ch": 18,
+"start_v": 9,
+"end_ch": 18,
+"end_v": 14
+},
+{
+"pos": 879,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 10:1–12",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 12
+},
+{
+"pos": 880,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 19:1–12",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 12
+},
+{
+"pos": 881,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 10:13–16",
+"start_ch": 10,
+"start_v": 13,
+"end_ch": 10,
+"end_v": 16
+},
+{
+"pos": 882,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 19:13–15",
+"start_ch": 19,
+"start_v": 13,
+"end_ch": 19,
+"end_v": 15
+},
+{
+"pos": 883,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 18:15–17",
+"start_ch": 18,
+"start_v": 15,
+"end_ch": 18,
+"end_v": 17
+},
+{
+"pos": 884,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 10:17–31",
+"start_ch": 10,
+"start_v": 17,
+"end_ch": 10,
+"end_v": 31
+},
+{
+"pos": 885,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 19:16–30",
+"start_ch": 19,
+"start_v": 16,
+"end_ch": 19,
+"end_v": 30
+},
+{
+"pos": 886,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 18:18–30",
+"start_ch": 18,
+"start_v": 18,
+"end_ch": 18,
+"end_v": 30
+},
+{
+"pos": 887,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 20:1–16",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 20,
+"end_v": 16
+},
+{
+"pos": 888,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 10:32–34",
+"start_ch": 10,
+"start_v": 32,
+"end_ch": 10,
+"end_v": 34
+},
+{
+"pos": 889,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 20:17–19",
+"start_ch": 20,
+"start_v": 17,
+"end_ch": 20,
+"end_v": 19
+},
+{
+"pos": 890,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 18:31–34",
+"start_ch": 18,
+"start_v": 31,
+"end_ch": 18,
+"end_v": 34
+},
+{
+"pos": 891,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 10:35–45",
+"start_ch": 10,
+"start_v": 35,
+"end_ch": 10,
+"end_v": 45
+},
+{
+"pos": 892,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 20:20–34",
+"start_ch": 20,
+"start_v": 20,
+"end_ch": 20,
+"end_v": 34
+},
+{
+"pos": 893,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 10:46–52",
+"start_ch": 10,
+"start_v": 46,
+"end_ch": 10,
+"end_v": 52
+},
+{
+"pos": 894,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 18:35–19:27",
+"start_ch": 18,
+"start_v": 35,
+"end_ch": 19,
+"end_v": 27
+},
+{
+"pos": 895,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:3–9",
+"start_ch": 14,
+"start_v": 3,
+"end_ch": 14,
+"end_v": 9
+},
+{
+"pos": 896,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:6–13",
+"start_ch": 26,
+"start_v": 6,
+"end_ch": 26,
+"end_v": 13
+},
+{
+"pos": 897,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 12:1–11",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 11
+},
+{
+"pos": 898,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 11:1–11",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 11
+},
+{
+"pos": 899,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 21:1–11",
+"start_ch": 21,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 11
+},
+{
+"pos": 900,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 19:28–40",
+"start_ch": 19,
+"start_v": 28,
+"end_ch": 19,
+"end_v": 40
+},
+{
+"pos": 901,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 12:12–19",
+"start_ch": 12,
+"start_v": 12,
+"end_ch": 12,
+"end_v": 19
+},
+{
+"pos": 902,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 19:41–44",
+"start_ch": 19,
+"start_v": 41,
+"end_ch": 19,
+"end_v": 44
+},
+{
+"pos": 903,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 12:20–36",
+"start_ch": 12,
+"start_v": 20,
+"end_ch": 12,
+"end_v": 36
+},
+{
+"pos": 904,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 12:37–50",
+"start_ch": 12,
+"start_v": 37,
+"end_ch": 12,
+"end_v": 50
+},
+{
+"pos": 905,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 11:12–14",
+"start_ch": 11,
+"start_v": 12,
+"end_ch": 11,
+"end_v": 14
+},
+{
+"pos": 906,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 21:18–22",
+"start_ch": 21,
+"start_v": 18,
+"end_ch": 21,
+"end_v": 22
+},
+{
+"pos": 907,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 11:15–19",
+"start_ch": 11,
+"start_v": 15,
+"end_ch": 11,
+"end_v": 19
+},
+{
+"pos": 908,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 21:12–17",
+"start_ch": 21,
+"start_v": 12,
+"end_ch": 21,
+"end_v": 17
+},
+{
+"pos": 909,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 19:45–48",
+"start_ch": 19,
+"start_v": 45,
+"end_ch": 19,
+"end_v": 48
+},
+{
+"pos": 910,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 11:20–33",
+"start_ch": 11,
+"start_v": 20,
+"end_ch": 11,
+"end_v": 33
+},
+{
+"pos": 911,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 21:23–27",
+"start_ch": 21,
+"start_v": 23,
+"end_ch": 21,
+"end_v": 27
+},
+{
+"pos": 912,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 20:1–8",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 20,
+"end_v": 8
+},
+{
+"pos": 913,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 21:28–32",
+"start_ch": 21,
+"start_v": 28,
+"end_ch": 21,
+"end_v": 32
+},
+{
+"pos": 914,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 12:1–12",
+"start_ch": 12,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 12
+},
+{
+"pos": 915,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 21:33–46",
+"start_ch": 21,
+"start_v": 33,
+"end_ch": 21,
+"end_v": 46
+},
+{
+"pos": 916,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 20:9–19",
+"start_ch": 20,
+"start_v": 9,
+"end_ch": 20,
+"end_v": 19
+},
+{
+"pos": 917,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 22:1–14",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 14
+},
+{
+"pos": 918,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 12:13–17",
+"start_ch": 12,
+"start_v": 13,
+"end_ch": 12,
+"end_v": 17
+},
+{
+"pos": 919,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 22:15–22",
+"start_ch": 22,
+"start_v": 15,
+"end_ch": 22,
+"end_v": 22
+},
+{
+"pos": 920,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 20:20–26",
+"start_ch": 20,
+"start_v": 20,
+"end_ch": 20,
+"end_v": 26
+},
+{
+"pos": 921,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 12:18–27",
+"start_ch": 12,
+"start_v": 18,
+"end_ch": 12,
+"end_v": 27
+},
+{
+"pos": 922,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 22:23–33",
+"start_ch": 22,
+"start_v": 23,
+"end_ch": 22,
+"end_v": 33
+},
+{
+"pos": 923,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 20:27–40",
+"start_ch": 20,
+"start_v": 27,
+"end_ch": 20,
+"end_v": 40
+},
+{
+"pos": 924,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 12:28–34",
+"start_ch": 12,
+"start_v": 28,
+"end_ch": 12,
+"end_v": 34
+},
+{
+"pos": 925,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 22:34–40",
+"start_ch": 22,
+"start_v": 34,
+"end_ch": 22,
+"end_v": 40
+},
+{
+"pos": 926,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 12:35–37",
+"start_ch": 12,
+"start_v": 35,
+"end_ch": 12,
+"end_v": 37
+},
+{
+"pos": 927,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 22:41–46",
+"start_ch": 22,
+"start_v": 41,
+"end_ch": 22,
+"end_v": 46
+},
+{
+"pos": 928,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 20:41–44",
+"start_ch": 20,
+"start_v": 41,
+"end_ch": 20,
+"end_v": 44
+},
+{
+"pos": 929,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 12:38–40",
+"start_ch": 12,
+"start_v": 38,
+"end_ch": 12,
+"end_v": 40
+},
+{
+"pos": 930,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 23:1–12",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 23,
+"end_v": 12
+},
+{
+"pos": 931,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 20:45–47",
+"start_ch": 20,
+"start_v": 45,
+"end_ch": 20,
+"end_v": 47
+},
+{
+"pos": 932,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 23:13–39",
+"start_ch": 23,
+"start_v": 13,
+"end_ch": 23,
+"end_v": 39
+},
+{
+"pos": 933,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 12:41–44",
+"start_ch": 12,
+"start_v": 41,
+"end_ch": 12,
+"end_v": 44
+},
+{
+"pos": 934,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 21:1–4",
+"start_ch": 21,
+"start_v": 1,
+"end_ch": 21,
+"end_v": 4
+},
+{
+"pos": 935,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 13:1–23",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 23
+},
+{
+"pos": 936,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 24:1–25",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 25
+},
+{
+"pos": 937,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 21:5–24",
+"start_ch": 21,
+"start_v": 5,
+"end_ch": 21,
+"end_v": 24
+},
+{
+"pos": 938,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 13:24–31",
+"start_ch": 13,
+"start_v": 24,
+"end_ch": 13,
+"end_v": 31
+},
+{
+"pos": 939,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 24:26–35",
+"start_ch": 24,
+"start_v": 26,
+"end_ch": 24,
+"end_v": 35
+},
+{
+"pos": 940,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 21:25–33",
+"start_ch": 21,
+"start_v": 25,
+"end_ch": 21,
+"end_v": 33
+},
+{
+"pos": 941,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 13:32–37",
+"start_ch": 13,
+"start_v": 32,
+"end_ch": 13,
+"end_v": 37
+},
+{
+"pos": 942,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 24:36–51",
+"start_ch": 24,
+"start_v": 36,
+"end_ch": 24,
+"end_v": 51
+},
+{
+"pos": 943,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 21:34–38",
+"start_ch": 21,
+"start_v": 34,
+"end_ch": 21,
+"end_v": 38
+},
+{
+"pos": 944,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 25",
+"start_ch": 25,
+"start_v": 1,
+"end_ch": 25,
+"end_v": 46
+},
+{
+"pos": 945,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:1–2",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 2
+},
+{
+"pos": 946,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:1–5",
+"start_ch": 26,
+"start_v": 1,
+"end_ch": 26,
+"end_v": 5
+},
+{
+"pos": 947,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:1–2",
+"start_ch": 22,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 2
+},
+{
+"pos": 948,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:10–11",
+"start_ch": 14,
+"start_v": 10,
+"end_ch": 14,
+"end_v": 11
+},
+{
+"pos": 949,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:14–16",
+"start_ch": 26,
+"start_v": 14,
+"end_ch": 26,
+"end_v": 16
+},
+{
+"pos": 950,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:3–6",
+"start_ch": 22,
+"start_v": 3,
+"end_ch": 22,
+"end_v": 6
+},
+{
+"pos": 951,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:12–16",
+"start_ch": 14,
+"start_v": 12,
+"end_ch": 14,
+"end_v": 16
+},
+{
+"pos": 952,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:17–19",
+"start_ch": 26,
+"start_v": 17,
+"end_ch": 26,
+"end_v": 19
+},
+{
+"pos": 953,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:7–13",
+"start_ch": 22,
+"start_v": 7,
+"end_ch": 22,
+"end_v": 13
+},
+{
+"pos": 954,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 13:1–17",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 17
+},
+{
+"pos": 955,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:17–26",
+"start_ch": 14,
+"start_v": 17,
+"end_ch": 14,
+"end_v": 26
+},
+{
+"pos": 956,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:20–30",
+"start_ch": 26,
+"start_v": 20,
+"end_ch": 26,
+"end_v": 30
+},
+{
+"pos": 957,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:14–30",
+"start_ch": 22,
+"start_v": 14,
+"end_ch": 22,
+"end_v": 30
+},
+{
+"pos": 958,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 13:18–30",
+"start_ch": 13,
+"start_v": 18,
+"end_ch": 13,
+"end_v": 30
+},
+{
+"pos": 959,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 13:31–38",
+"start_ch": 13,
+"start_v": 31,
+"end_ch": 13,
+"end_v": 38
+},
+{
+"pos": 960,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:27–31",
+"start_ch": 14,
+"start_v": 27,
+"end_ch": 14,
+"end_v": 31
+},
+{
+"pos": 961,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:31–35",
+"start_ch": 26,
+"start_v": 31,
+"end_ch": 26,
+"end_v": 35
+},
+{
+"pos": 962,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:31–38",
+"start_ch": 22,
+"start_v": 31,
+"end_ch": 22,
+"end_v": 38
+},
+{
+"pos": 963,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 14:1–15:17",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 17
+},
+{
+"pos": 964,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 15:18–17:26",
+"start_ch": 15,
+"start_v": 18,
+"end_ch": 17,
+"end_v": 26
+},
+{
+"pos": 965,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 18:1–2",
+"start_ch": 18,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 2
+},
+{
+"pos": 966,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:32–42",
+"start_ch": 14,
+"start_v": 32,
+"end_ch": 14,
+"end_v": 42
+},
+{
+"pos": 967,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:36–46",
+"start_ch": 26,
+"start_v": 36,
+"end_ch": 26,
+"end_v": 46
+},
+{
+"pos": 968,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:39–46",
+"start_ch": 22,
+"start_v": 39,
+"end_ch": 22,
+"end_v": 46
+},
+{
+"pos": 969,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:43–52",
+"start_ch": 14,
+"start_v": 43,
+"end_ch": 14,
+"end_v": 52
+},
+{
+"pos": 970,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:47–56",
+"start_ch": 26,
+"start_v": 47,
+"end_ch": 26,
+"end_v": 56
+},
+{
+"pos": 971,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:47–53",
+"start_ch": 22,
+"start_v": 47,
+"end_ch": 22,
+"end_v": 53
+},
+{
+"pos": 972,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 18:3–24",
+"start_ch": 18,
+"start_v": 3,
+"end_ch": 18,
+"end_v": 24
+},
+{
+"pos": 973,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:53–65",
+"start_ch": 14,
+"start_v": 53,
+"end_ch": 14,
+"end_v": 65
+},
+{
+"pos": 974,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:57–68",
+"start_ch": 26,
+"start_v": 57,
+"end_ch": 26,
+"end_v": 68
+},
+{
+"pos": 975,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 14:66–72",
+"start_ch": 14,
+"start_v": 66,
+"end_ch": 14,
+"end_v": 72
+},
+{
+"pos": 976,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 26:69–75",
+"start_ch": 26,
+"start_v": 69,
+"end_ch": 26,
+"end_v": 75
+},
+{
+"pos": 977,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:54–65",
+"start_ch": 22,
+"start_v": 54,
+"end_ch": 22,
+"end_v": 65
+},
+{
+"pos": 978,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 18:25–27",
+"start_ch": 18,
+"start_v": 25,
+"end_ch": 18,
+"end_v": 27
+},
+{
+"pos": 979,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:1–1",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 1
+},
+{
+"pos": 980,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:1–2",
+"start_ch": 27,
+"start_v": 1,
+"end_ch": 27,
+"end_v": 2
+},
+{
+"pos": 981,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 22:66–71",
+"start_ch": 22,
+"start_v": 66,
+"end_ch": 22,
+"end_v": 71
+},
+{
+"pos": 982,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:3–10",
+"start_ch": 27,
+"start_v": 3,
+"end_ch": 27,
+"end_v": 10
+},
+{
+"pos": 983,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:2–5",
+"start_ch": 15,
+"start_v": 2,
+"end_ch": 15,
+"end_v": 5
+},
+{
+"pos": 984,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:11–14",
+"start_ch": 27,
+"start_v": 11,
+"end_ch": 27,
+"end_v": 14
+},
+{
+"pos": 985,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 23:1–12",
+"start_ch": 23,
+"start_v": 1,
+"end_ch": 23,
+"end_v": 12
+},
+{
+"pos": 986,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 18:28–40",
+"start_ch": 18,
+"start_v": 28,
+"end_ch": 18,
+"end_v": 40
+},
+{
+"pos": 987,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:6–15",
+"start_ch": 15,
+"start_v": 6,
+"end_ch": 15,
+"end_v": 15
+},
+{
+"pos": 988,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:15–26",
+"start_ch": 27,
+"start_v": 15,
+"end_ch": 27,
+"end_v": 26
+},
+{
+"pos": 989,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 23:13–25",
+"start_ch": 23,
+"start_v": 13,
+"end_ch": 23,
+"end_v": 25
+},
+{
+"pos": 990,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 19:1–16",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 19,
+"end_v": 16
+},
+{
+"pos": 991,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:16–20",
+"start_ch": 15,
+"start_v": 16,
+"end_ch": 15,
+"end_v": 20
+},
+{
+"pos": 992,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:27–31",
+"start_ch": 27,
+"start_v": 27,
+"end_ch": 27,
+"end_v": 31
+},
+{
+"pos": 993,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:21–24",
+"start_ch": 15,
+"start_v": 21,
+"end_ch": 15,
+"end_v": 24
+},
+{
+"pos": 994,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:32–34",
+"start_ch": 27,
+"start_v": 32,
+"end_ch": 27,
+"end_v": 34
+},
+{
+"pos": 995,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 23:26–31",
+"start_ch": 23,
+"start_v": 26,
+"end_ch": 23,
+"end_v": 31
+},
+{
+"pos": 996,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 19:17–17",
+"start_ch": 19,
+"start_v": 17,
+"end_ch": 19,
+"end_v": 17
+},
+{
+"pos": 997,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:25–32",
+"start_ch": 15,
+"start_v": 25,
+"end_ch": 15,
+"end_v": 32
+},
+{
+"pos": 998,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:35–44",
+"start_ch": 27,
+"start_v": 35,
+"end_ch": 27,
+"end_v": 44
+},
+{
+"pos": 999,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 23:32–43",
+"start_ch": 23,
+"start_v": 32,
+"end_ch": 23,
+"end_v": 43
+},
+{
+"pos": 1000,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 19:18–27",
+"start_ch": 19,
+"start_v": 18,
+"end_ch": 19,
+"end_v": 27
+},
+{
+"pos": 1001,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:33–41",
+"start_ch": 15,
+"start_v": 33,
+"end_ch": 15,
+"end_v": 41
+},
+{
+"pos": 1002,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:45–56",
+"start_ch": 27,
+"start_v": 45,
+"end_ch": 27,
+"end_v": 56
+},
+{
+"pos": 1003,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 23:44–49",
+"start_ch": 23,
+"start_v": 44,
+"end_ch": 23,
+"end_v": 49
+},
+{
+"pos": 1004,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 19:28–37",
+"start_ch": 19,
+"start_v": 28,
+"end_ch": 19,
+"end_v": 37
+},
+{
+"pos": 1005,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 15:42–47",
+"start_ch": 15,
+"start_v": 42,
+"end_ch": 15,
+"end_v": 47
+},
+{
+"pos": 1006,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:57–61",
+"start_ch": 27,
+"start_v": 57,
+"end_ch": 27,
+"end_v": 61
+},
+{
+"pos": 1007,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 23:50–56",
+"start_ch": 23,
+"start_v": 50,
+"end_ch": 23,
+"end_v": 56
+},
+{
+"pos": 1008,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 19:38–42",
+"start_ch": 19,
+"start_v": 38,
+"end_ch": 19,
+"end_v": 42
+},
+{
+"pos": 1009,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 27:62–66",
+"start_ch": 27,
+"start_v": 62,
+"end_ch": 27,
+"end_v": 66
+},
+{
+"pos": 1010,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 16:1–8",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 8
+},
+{
+"pos": 1011,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 28:1–7",
+"start_ch": 28,
+"start_v": 1,
+"end_ch": 28,
+"end_v": 7
+},
+{
+"pos": 1012,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 24:1–12",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 24,
+"end_v": 12
+},
+{
+"pos": 1013,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 16:9–13",
+"start_ch": 16,
+"start_v": 9,
+"end_ch": 16,
+"end_v": 13
+},
+{
+"pos": 1014,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 20:1–18",
+"start_ch": 20,
+"start_v": 1,
+"end_ch": 20,
+"end_v": 18
+},
+{
+"pos": 1015,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 28:8–15",
+"start_ch": 28,
+"start_v": 8,
+"end_ch": 28,
+"end_v": 15
+},
+{
+"pos": 1016,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 24:13–43",
+"start_ch": 24,
+"start_v": 13,
+"end_ch": 24,
+"end_v": 43
+},
+{
+"pos": 1017,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 16:12–13",
+"start_ch": 16,
+"start_v": 12,
+"end_ch": 16,
+"end_v": 13
+},
+{
+"pos": 1018,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 20:19–23",
+"start_ch": 20,
+"start_v": 19,
+"end_ch": 20,
+"end_v": 23
+},
+{
+"pos": 1019,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 16:14–14",
+"start_ch": 16,
+"start_v": 14,
+"end_ch": 16,
+"end_v": 14
+},
+{
+"pos": 1020,
+"era": "the-gospels",
+"book": "Joh",
+"label": "John 20:24–21:25",
+"start_ch": 20,
+"start_v": 24,
+"end_ch": 21,
+"end_v": 25
+},
+{
+"pos": 1021,
+"era": "the-gospels",
+"book": "Mat",
+"label": "Matthew 28:16–20",
+"start_ch": 28,
+"start_v": 16,
+"end_ch": 28,
+"end_v": 20
+},
+{
+"pos": 1022,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 16:15–18",
+"start_ch": 16,
+"start_v": 15,
+"end_ch": 16,
+"end_v": 18
+},
+{
+"pos": 1023,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 24:44–49",
+"start_ch": 24,
+"start_v": 44,
+"end_ch": 24,
+"end_v": 49
+},
+{
+"pos": 1024,
+"era": "the-gospels",
+"book": "Mar",
+"label": "Mark 16:19–20",
+"start_ch": 16,
+"start_v": 19,
+"end_ch": 16,
+"end_v": 20
+},
+{
+"pos": 1025,
+"era": "the-gospels",
+"book": "Luk",
+"label": "Luke 24:50–53",
+"start_ch": 24,
+"start_v": 50,
+"end_ch": 24,
+"end_v": 53
+},
+{
+"pos": 1026,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 47
+},
+{
+"pos": 1027,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 3–5",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 42
+},
+{
+"pos": 1028,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 6:1–8:1",
+"start_ch": 6,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 1
+},
+{
+"pos": 1029,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 8–9",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 9,
+"end_v": 43
+},
+{
+"pos": 1030,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 10:1–12:5",
+"start_ch": 10,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 5
+},
+{
+"pos": 1031,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 12:6–14:20",
+"start_ch": 12,
+"start_v": 6,
+"end_ch": 14,
+"end_v": 20
+},
+{
+"pos": 1032,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 14:21–28",
+"start_ch": 14,
+"start_v": 21,
+"end_ch": 14,
+"end_v": 28
+},
+{
+"pos": 1033,
+"era": "the-early-church",
+"book": "Gal",
+"label": "Galatians 1:1–3:23",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 23
+},
+{
+"pos": 1034,
+"era": "the-early-church",
+"book": "Gal",
+"label": "Galatians 3:24–6:18",
+"start_ch": 3,
+"start_v": 24,
+"end_ch": 6,
+"end_v": 18
+},
+{
+"pos": 1035,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 15:1–21",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 21
+},
+{
+"pos": 1036,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 15:22–17:15",
+"start_ch": 15,
+"start_v": 22,
+"end_ch": 17,
+"end_v": 15
+},
+{
+"pos": 1037,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 17:16–18:3",
+"start_ch": 17,
+"start_v": 16,
+"end_ch": 18,
+"end_v": 3
+},
+{
+"pos": 1038,
+"era": "the-early-church",
+"book": "1Th",
+"label": "1 Thessalonians 1:1–5:11",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 11
+},
+{
+"pos": 1039,
+"era": "the-early-church",
+"book": "1Th",
+"label": "1 Thessalonians 5:12–28",
+"start_ch": 5,
+"start_v": 12,
+"end_ch": 5,
+"end_v": 28
+},
+{
+"pos": 1040,
+"era": "the-early-church",
+"book": "2Th",
+"label": "2 Thessalonians 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 18
+},
+{
+"pos": 1041,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 18:4–23",
+"start_ch": 18,
+"start_v": 4,
+"end_ch": 18,
+"end_v": 23
+},
+{
+"pos": 1042,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 18:24–19:20",
+"start_ch": 18,
+"start_v": 24,
+"end_ch": 19,
+"end_v": 20
+},
+{
+"pos": 1043,
+"era": "the-early-church",
+"book": "1Co",
+"label": "1 Corinthians 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 23
+},
+{
+"pos": 1044,
+"era": "the-early-church",
+"book": "1Co",
+"label": "1 Corinthians 4–7",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 7,
+"end_v": 40
+},
+{
+"pos": 1045,
+"era": "the-early-church",
+"book": "1Co",
+"label": "1 Corinthians 8:1–11:1",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 11,
+"end_v": 1
+},
+{
+"pos": 1046,
+"era": "the-early-church",
+"book": "1Co",
+"label": "1 Corinthians 11:2–13:13",
+"start_ch": 11,
+"start_v": 2,
+"end_ch": 13,
+"end_v": 13
+},
+{
+"pos": 1047,
+"era": "the-early-church",
+"book": "1Co",
+"label": "1 Corinthians 14–15",
+"start_ch": 14,
+"start_v": 1,
+"end_ch": 15,
+"end_v": 58
+},
+{
+"pos": 1048,
+"era": "the-early-church",
+"book": "1Co",
+"label": "1 Corinthians 16",
+"start_ch": 16,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 24
+},
+{
+"pos": 1049,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 19:21–20:6",
+"start_ch": 19,
+"start_v": 21,
+"end_ch": 20,
+"end_v": 6
+},
+{
+"pos": 1050,
+"era": "the-early-church",
+"book": "Rom",
+"label": "Romans 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 32
+},
+{
+"pos": 1051,
+"era": "the-early-church",
+"book": "Rom",
+"label": "Romans 2–4",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 25
+},
+{
+"pos": 1052,
+"era": "the-early-church",
+"book": "Rom",
+"label": "Romans 5:1–8:17",
+"start_ch": 5,
+"start_v": 1,
+"end_ch": 8,
+"end_v": 17
+},
+{
+"pos": 1053,
+"era": "the-early-church",
+"book": "Rom",
+"label": "Romans 8:18–10:21",
+"start_ch": 8,
+"start_v": 18,
+"end_ch": 10,
+"end_v": 21
+},
+{
+"pos": 1054,
+"era": "the-early-church",
+"book": "Rom",
+"label": "Romans 11–14",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 23
+},
+{
+"pos": 1055,
+"era": "the-early-church",
+"book": "Rom",
+"label": "Romans 15–16",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 16,
+"end_v": 27
+},
+{
+"pos": 1056,
+"era": "the-early-church",
+"book": "2Co",
+"label": "2 Corinthians 1:1–2:4",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 4
+},
+{
+"pos": 1057,
+"era": "the-early-church",
+"book": "2Co",
+"label": "2 Corinthians 2:5–6:13",
+"start_ch": 2,
+"start_v": 5,
+"end_ch": 6,
+"end_v": 13
+},
+{
+"pos": 1058,
+"era": "the-early-church",
+"book": "2Co",
+"label": "2 Corinthians 6:14–10:18",
+"start_ch": 6,
+"start_v": 14,
+"end_ch": 10,
+"end_v": 18
+},
+{
+"pos": 1059,
+"era": "the-early-church",
+"book": "2Co",
+"label": "2 Corinthians 11:1–13:13",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 13
+},
+{
+"pos": 1060,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 20:7–12",
+"start_ch": 20,
+"start_v": 7,
+"end_ch": 20,
+"end_v": 12
+},
+{
+"pos": 1061,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 20:13–21:36",
+"start_ch": 20,
+"start_v": 13,
+"end_ch": 21,
+"end_v": 36
+},
+{
+"pos": 1062,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 21:37–23:35",
+"start_ch": 21,
+"start_v": 37,
+"end_ch": 23,
+"end_v": 35
+},
+{
+"pos": 1063,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 24–26",
+"start_ch": 24,
+"start_v": 1,
+"end_ch": 26,
+"end_v": 32
+},
+{
+"pos": 1064,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 27",
+"start_ch": 27,
+"start_v": 1,
+"end_ch": 27,
+"end_v": 44
+},
+{
+"pos": 1065,
+"era": "the-early-church",
+"book": "Act",
+"label": "Acts 28",
+"start_ch": 28,
+"start_v": 1,
+"end_ch": 28,
+"end_v": 31
+},
+{
+"pos": 1066,
+"era": "the-early-church",
+"book": "Eph",
+"label": "Ephesians 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 22
+},
+{
+"pos": 1067,
+"era": "the-early-church",
+"book": "Eph",
+"label": "Ephesians 3:1–5:14",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 14
+},
+{
+"pos": 1068,
+"era": "the-early-church",
+"book": "Eph",
+"label": "Ephesians 5:15–6:24",
+"start_ch": 5,
+"start_v": 15,
+"end_ch": 6,
+"end_v": 24
+},
+{
+"pos": 1069,
+"era": "the-early-church",
+"book": "Col",
+"label": "Colossians 1:1–23",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 23
+},
+{
+"pos": 1070,
+"era": "the-early-church",
+"book": "Col",
+"label": "Colossians 1:24–4:18",
+"start_ch": 1,
+"start_v": 24,
+"end_ch": 4,
+"end_v": 18
+},
+{
+"pos": 1071,
+"era": "the-early-church",
+"book": "Phm",
+"label": "Philemon 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 25
+},
+{
+"pos": 1072,
+"era": "the-early-church",
+"book": "Php",
+"label": "Philippians 1:1–2:11",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 11
+},
+{
+"pos": 1073,
+"era": "the-early-church",
+"book": "Php",
+"label": "Philippians 2:12–4:23",
+"start_ch": 2,
+"start_v": 12,
+"end_ch": 4,
+"end_v": 23
+},
+{
+"pos": 1074,
+"era": "the-early-church",
+"book": "Jas",
+"label": "James 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 18
+},
+{
+"pos": 1075,
+"era": "the-early-church",
+"book": "Jas",
+"label": "James 4–5",
+"start_ch": 4,
+"start_v": 1,
+"end_ch": 5,
+"end_v": 20
+},
+{
+"pos": 1076,
+"era": "the-early-church",
+"book": "1Ti",
+"label": "1 Timothy 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 15
+},
+{
+"pos": 1077,
+"era": "the-early-church",
+"book": "1Ti",
+"label": "1 Timothy 3:1–6:10",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 10
+},
+{
+"pos": 1078,
+"era": "the-early-church",
+"book": "1Ti",
+"label": "1 Timothy 6:11–21",
+"start_ch": 6,
+"start_v": 11,
+"end_ch": 6,
+"end_v": 21
+},
+{
+"pos": 1079,
+"era": "the-early-church",
+"book": "Tit",
+"label": "Titus 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 15
+},
+{
+"pos": 1080,
+"era": "the-early-church",
+"book": "2Ti",
+"label": "2 Timothy 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 18
+},
+{
+"pos": 1081,
+"era": "the-early-church",
+"book": "2Ti",
+"label": "2 Timothy 2:1–4:18",
+"start_ch": 2,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 18
+},
+{
+"pos": 1082,
+"era": "the-early-church",
+"book": "2Ti",
+"label": "2 Timothy 4:19–22",
+"start_ch": 4,
+"start_v": 19,
+"end_ch": 4,
+"end_v": 22
+},
+{
+"pos": 1083,
+"era": "the-early-church",
+"book": "Heb",
+"label": "Hebrews 1:1–4:13",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 13
+},
+{
+"pos": 1084,
+"era": "the-early-church",
+"book": "Heb",
+"label": "Hebrews 4:14–7:28",
+"start_ch": 4,
+"start_v": 14,
+"end_ch": 7,
+"end_v": 28
+},
+{
+"pos": 1085,
+"era": "the-early-church",
+"book": "Heb",
+"label": "Hebrews 8–10",
+"start_ch": 8,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 39
+},
+{
+"pos": 1086,
+"era": "the-early-church",
+"book": "Heb",
+"label": "Hebrews 11–12",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 12,
+"end_v": 29
+},
+{
+"pos": 1087,
+"era": "the-early-church",
+"book": "Heb",
+"label": "Hebrews 13",
+"start_ch": 13,
+"start_v": 1,
+"end_ch": 13,
+"end_v": 25
+},
+{
+"pos": 1088,
+"era": "the-early-church",
+"book": "1Pe",
+"label": "1 Peter 1:1–2:3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 3
+},
+{
+"pos": 1089,
+"era": "the-early-church",
+"book": "1Pe",
+"label": "1 Peter 2:4–5:11",
+"start_ch": 2,
+"start_v": 4,
+"end_ch": 5,
+"end_v": 11
+},
+{
+"pos": 1090,
+"era": "the-early-church",
+"book": "1Pe",
+"label": "1 Peter 5:12–14",
+"start_ch": 5,
+"start_v": 12,
+"end_ch": 5,
+"end_v": 14
+},
+{
+"pos": 1091,
+"era": "the-early-church",
+"book": "2Pe",
+"label": "2 Peter 1–3",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 3,
+"end_v": 18
+},
+{
+"pos": 1092,
+"era": "the-early-church",
+"book": "1Jn",
+"label": "1 John 1:1–4:6",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 4,
+"end_v": 6
+},
+{
+"pos": 1093,
+"era": "the-early-church",
+"book": "1Jn",
+"label": "1 John 4:7–5:21",
+"start_ch": 4,
+"start_v": 7,
+"end_ch": 5,
+"end_v": 21
+},
+{
+"pos": 1094,
+"era": "the-early-church",
+"book": "2Jn",
+"label": "2 John 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 13
+},
+{
+"pos": 1095,
+"era": "the-early-church",
+"book": "3Jn",
+"label": "3 John 1:1–15",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 15
+},
+{
+"pos": 1096,
+"era": "the-early-church",
+"book": "Jud",
+"label": "Jude 1",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 1,
+"end_v": 25
+},
+{
+"pos": 1097,
+"era": "revelation",
+"book": "Rev",
+"label": "Revelation 1–2",
+"start_ch": 1,
+"start_v": 1,
+"end_ch": 2,
+"end_v": 29
+},
+{
+"pos": 1098,
+"era": "revelation",
+"book": "Rev",
+"label": "Revelation 3–6",
+"start_ch": 3,
+"start_v": 1,
+"end_ch": 6,
+"end_v": 17
+},
+{
+"pos": 1099,
+"era": "revelation",
+"book": "Rev",
+"label": "Revelation 7–10",
+"start_ch": 7,
+"start_v": 1,
+"end_ch": 10,
+"end_v": 11
+},
+{
+"pos": 1100,
+"era": "revelation",
+"book": "Rev",
+"label": "Revelation 11–14",
+"start_ch": 11,
+"start_v": 1,
+"end_ch": 14,
+"end_v": 20
+},
+{
+"pos": 1101,
+"era": "revelation",
+"book": "Rev",
+"label": "Revelation 15–18",
+"start_ch": 15,
+"start_v": 1,
+"end_ch": 18,
+"end_v": 24
+},
+{
+"pos": 1102,
+"era": "revelation",
+"book": "Rev",
+"label": "Revelation 19–22",
+"start_ch": 19,
+"start_v": 1,
+"end_ch": 22,
+"end_v": 21
+}
+]
+}

@@ -150,8 +150,20 @@ const _BOOK_DIV = {
   Jud:"General Epistles",Rev:"Apocalyptic",
 };
 
-function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible, otherOpen, setOtherOpen }) {
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible, otherOpen, setOtherOpen, chrono, orderMode, setOrder, chronoPos, onPickPassage }) {
   const [query, setQuery] = useState("");
+  const chronoMode = orderMode === "chronological" && chrono && !nonCanon;
+  // The era a passage belongs to, so the active passage's era starts expanded.
+  const curEraId = chrono && chrono.passages[chronoPos - 1] ? chrono.passages[chronoPos - 1].era : null;
+  const [openEras, setOpenEras] = useState(() => new Set(curEraId ? [curEraId] : []));
+  const toggleEra = (id) => setOpenEras(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const navActiveRef = useRef(null);   // the active passage button (scroll into view)
+  // Keep the active passage's era open and scroll it into view as you step through.
+  useEffect(() => {
+    if (!chronoMode || !curEraId) return;
+    setOpenEras(s => s.has(curEraId) ? s : new Set(s).add(curEraId));
+    requestAnimationFrame(() => navActiveRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
+  }, [chronoMode, chronoPos, curEraId]);
   // "Other" menu groups start collapsed (the list is long) — except the group of the
   // text that's currently open, so the active pick stays visible.
   const [openGroups, setOpenGroups] = useState(() => new Set(nonCanon ? [nonCanon.group] : []));
@@ -222,6 +234,16 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
           )}
         </div>
       </div>
+      {/* Reading order — canonical book order vs chronological (event) order. Only
+          for the Bible texts; a non-canonical text has no chronological list. */}
+      {chrono && !nonCanon && (
+        <div className="nav-order">
+          <div className="seg nav-order-seg">
+            <button className={"seg-b" + (orderMode !== "chronological" ? " on" : "")} onClick={() => setOrder("canonical")}>Canonical</button>
+            <button className={"seg-b" + (orderMode === "chronological" ? " on" : "")} onClick={() => setOrder("chronological")}>Chronological</button>
+          </div>
+        </div>
+      )}
       {/* "Other" books open INLINE in the panel (pushes the book list down) so the
           menu never floats over the reading text. */}
       {otherOpen && nonCanonList && nonCanonList.length > 0 && (
@@ -247,8 +269,34 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
         </div>
       )}
       <div className="nav-scroll">
-        {nonCanon && nonCanonActive}
-        {!nonCanon && groups.map(g => (
+        {chronoMode && chrono.eras.map(era => {
+          const open = openEras.has(era.id);
+          const eraPassages = chrono.passages.filter(p => p.era === era.id);
+          return (
+            <div className="nav-group" key={era.id}>
+              <button className={"nav-era" + (open ? " open" : "")} onClick={() => toggleEra(era.id)}
+                aria-expanded={open} title={era.blurb}>
+                <span className="nav-era-caret">▸</span>
+                <span className="nav-era-name">{era.name}</span>
+                <span className="nav-era-count">{eraPassages.length}</span>
+              </button>
+              {open && (
+                <div className="nav-passages">
+                  {eraPassages.map(p => {
+                    const active = p.pos === chronoPos;
+                    return (
+                      <button key={p.pos} ref={active ? navActiveRef : null}
+                        className={"nav-passage" + (active ? " on" : "")}
+                        onClick={() => { onPickPassage(p); if (isOverlay) onClose(); }}>{p.label}</button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {!chronoMode && nonCanon && nonCanonActive}
+        {!chronoMode && !nonCanon && groups.map(g => (
           <div className="nav-group" key={g.key}>
             <div className="nav-div">
               <span className="nav-div-t">{g.t}</span>
@@ -627,7 +675,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const [otherOpen, setOtherOpen] = useState(false);
   const [fontOpen, setFontOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);   // mobile: overview sheet
+  // Chronological reading: the same reader, fed passages in event order. The list
+  // is a static file (book + verse range pointers, no Bible text). "canonical" =
+  // normal book/chapter order; "chronological" = walk `chrono.passages` in order.
+  const [orderMode, setOrderMode] = useState("canonical"); // "canonical" | "chronological"
+  const [chrono, setChrono] = useState(null);              // { eras, passages } | null
+  const [chronoPos, setChronoPos] = useState(1);           // current passage position (1-based)
   const nonCanon = NONCANON.find(t => t.id === corpus) || null;
+  const chronoOn = orderMode === "chronological" && !nonCanon && !!chrono;
+  const curPassage = chronoOn ? (chrono.passages[chronoPos - 1] || null) : null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
   const readingRef = useRef(null);
@@ -679,6 +735,41 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       if (data.length) setSelBook(data[0]);
     });
   }, []);
+
+  // Load the chronological passage list once (a small static file). If it fails,
+  // chronoOn stays false and the Order toggle simply never appears.
+  useEffect(() => {
+    api.chronological().then(setChrono).catch(() => {});
+  }, []);
+
+  // Jump the reader to a chronological passage: select its book and land on its
+  // START chapter. (Stage 2 trims to the exact verse window and spans chapters.)
+  const pickPassage = (p) => {
+    if (!p) return;
+    const b = books.find(bk => bk.abbrev === p.book);
+    if (!b) return;
+    setChronoPos(p.pos);
+    if (corpus !== "bible") setCorpus("bible");
+    setVerses([]); setKjvVerses([]); setBsbVerses([]);
+    setSelBook(b);
+    setSelChapter(p.start_ch);
+  };
+  // Step forward/back through the whole passage list (flows across era edges).
+  const stepPassage = (delta) => {
+    if (!chrono) return;
+    const next = chronoPos + delta;
+    if (next < 1 || next > chrono.passages.length) return;
+    pickPassage(chrono.passages[next - 1]);
+  };
+  // Turning chronological order ON: leave any non-canon text and jump to the
+  // current passage so the reader matches the list.
+  const setOrder = (mode) => {
+    setOrderMode(mode);
+    if (mode === "chronological" && chrono) {
+      if (corpus !== "bible") setCorpus("bible");
+      pickPassage(chrono.passages[chronoPos - 1] || chrono.passages[0]);
+    }
+  };
 
   useEffect(() => {
     if (!nav || !nav.book || !books.length) return;
@@ -1667,6 +1758,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           pickBible={pickBible}
           otherOpen={otherOpen}
           setOtherOpen={setOtherOpen}
+          chrono={chrono}
+          orderMode={orderMode}
+          setOrder={setOrder}
+          chronoPos={chronoPos}
+          onPickPassage={pickPassage}
         />
       )}
       {!navVisible && mobileNavOpen && (
@@ -1705,19 +1801,21 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       {navVisible ? (
         <div className="lib-bar">
           <div className="lib-bar-l">
-            <div className="bar-ch">
+            <div className={"bar-ch" + (chronoOn ? " bar-ch-chrono" : "")}>
               <button
                 className="ch-nav"
-                disabled={selChapter <= 1}
-                onClick={() => { const c = Math.max(1, selChapter - 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
-                aria-label="Previous chapter"
+                disabled={chronoOn ? chronoPos <= 1 : selChapter <= 1}
+                onClick={() => { if (chronoOn) { stepPassage(-1); return; } const c = Math.max(1, selChapter - 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
+                aria-label={chronoOn ? "Previous passage" : "Previous chapter"}
               >‹</button>
-              <span className="ch-lbl ch-cur" title="Current chapter — pick any chapter from the book list at left">{selChapter}</span>
+              {chronoOn
+                ? <span className="ch-lbl ch-cur ch-cur-chrono" title="Current passage — pick any from the era list at left">{curPassage ? curPassage.label : "—"}</span>
+                : <span className="ch-lbl ch-cur" title="Current chapter — pick any chapter from the book list at left">{selChapter}</span>}
               <button
                 className="ch-nav"
-                disabled={selChapter >= maxChap}
-                onClick={() => { const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
-                aria-label="Next chapter"
+                disabled={chronoOn ? (chrono && chronoPos >= chrono.passages.length) : selChapter >= maxChap}
+                onClick={() => { if (chronoOn) { stepPassage(1); return; } const c = Math.min(maxChap, selChapter + 1); setSelChapter(c); if (!nonCanon) onNavChange?.({ ...nav, book: selBook?.abbrev, chapter: c, highlight: null }); }}
+                aria-label={chronoOn ? "Next passage" : "Next chapter"}
               >›</button>
             </div>
             <span className="lib-bar-sep" aria-hidden="true"/>

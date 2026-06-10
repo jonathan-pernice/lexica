@@ -73,6 +73,7 @@ const api = {
     return fetch(`/api/lsj-summary/${encodeURIComponent(path)}${qs}`).then(r => r.json());
   },
   books: () => fetch("/api/books").then(r => r.json()),
+  chronological: () => fetch("/static/chronological.json").then(r => r.json()),
   chapter: (book, ch) => fetch(`/api/chapter/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   extraChapter: (book, ch) => fetch(`/api/extra/${encodeURIComponent(book)}/chapter/${ch}`).then(r => r.json()),
   extraStrongsCount: (book, strongs) => fetch(`/api/extra/${encodeURIComponent(book)}/strongs-count/${encodeURIComponent(strongs)}`).then(r => r.json()),
@@ -3876,9 +3877,33 @@ function LibNavPanel({
   corpus,
   pickBible,
   otherOpen,
-  setOtherOpen
+  setOtherOpen,
+  chrono,
+  orderMode,
+  setOrder,
+  chronoPos,
+  onPickPassage
 }) {
   const [query, setQuery] = useState("");
+  const chronoMode = orderMode === "chronological" && chrono && !nonCanon;
+  // The era a passage belongs to, so the active passage's era starts expanded.
+  const curEraId = chrono && chrono.passages[chronoPos - 1] ? chrono.passages[chronoPos - 1].era : null;
+  const [openEras, setOpenEras] = useState(() => new Set(curEraId ? [curEraId] : []));
+  const toggleEra = id => setOpenEras(s => {
+    const n = new Set(s);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
+  const navActiveRef = useRef(null); // the active passage button (scroll into view)
+  // Keep the active passage's era open and scroll it into view as you step through.
+  useEffect(() => {
+    if (!chronoMode || !curEraId) return;
+    setOpenEras(s => s.has(curEraId) ? s : new Set(s).add(curEraId));
+    requestAnimationFrame(() => navActiveRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    }));
+  }, [chronoMode, chronoPos, curEraId]);
   // "Other" menu groups start collapsed (the list is long) — except the group of the
   // text that's currently open, so the active pick stays visible.
   const [openGroups, setOpenGroups] = useState(() => new Set(nonCanon ? [nonCanon.group] : []));
@@ -3968,7 +3993,17 @@ function LibNavPanel({
     className: "nav-other-lbl"
   }, nonCanon ? nonCanon.abbr || nonCanon.name : "Other"), /*#__PURE__*/React.createElement("span", {
     className: "nav-other-caret" + (otherOpen ? " open" : "")
-  }, "\u25BE")))), otherOpen && nonCanonList && nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
+  }, "\u25BE")))), chrono && !nonCanon && /*#__PURE__*/React.createElement("div", {
+    className: "nav-order"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "seg nav-order-seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (orderMode !== "chronological" ? " on" : ""),
+    onClick: () => setOrder("canonical")
+  }, "Canonical"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (orderMode === "chronological" ? " on" : ""),
+    onClick: () => setOrder("chronological")
+  }, "Chronological"))), otherOpen && nonCanonList && nonCanonList.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "nav-other-inline"
   }, nonCanonGroups(nonCanonList).map(grp => {
     const open = openGroups.has(grp.group);
@@ -3995,7 +4030,38 @@ function LibNavPanel({
     }, t.name)));
   })), /*#__PURE__*/React.createElement("div", {
     className: "nav-scroll"
-  }, nonCanon && nonCanonActive, !nonCanon && groups.map(g => /*#__PURE__*/React.createElement("div", {
+  }, chronoMode && chrono.eras.map(era => {
+    const open = openEras.has(era.id);
+    const eraPassages = chrono.passages.filter(p => p.era === era.id);
+    return /*#__PURE__*/React.createElement("div", {
+      className: "nav-group",
+      key: era.id
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "nav-era" + (open ? " open" : ""),
+      onClick: () => toggleEra(era.id),
+      "aria-expanded": open,
+      title: era.blurb
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "nav-era-caret"
+    }, "\u25B8"), /*#__PURE__*/React.createElement("span", {
+      className: "nav-era-name"
+    }, era.name), /*#__PURE__*/React.createElement("span", {
+      className: "nav-era-count"
+    }, eraPassages.length)), open && /*#__PURE__*/React.createElement("div", {
+      className: "nav-passages"
+    }, eraPassages.map(p => {
+      const active = p.pos === chronoPos;
+      return /*#__PURE__*/React.createElement("button", {
+        key: p.pos,
+        ref: active ? navActiveRef : null,
+        className: "nav-passage" + (active ? " on" : ""),
+        onClick: () => {
+          onPickPassage(p);
+          if (isOverlay) onClose();
+        }
+      }, p.label);
+    })));
+  }), !chronoMode && nonCanon && nonCanonActive, !chronoMode && !nonCanon && groups.map(g => /*#__PURE__*/React.createElement("div", {
     className: "nav-group",
     key: g.key
   }, /*#__PURE__*/React.createElement("div", {
@@ -4815,7 +4881,15 @@ function LibraryView({
   const [otherOpen, setOtherOpen] = useState(false);
   const [fontOpen, setFontOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false); // mobile: overview sheet
+  // Chronological reading: the same reader, fed passages in event order. The list
+  // is a static file (book + verse range pointers, no Bible text). "canonical" =
+  // normal book/chapter order; "chronological" = walk `chrono.passages` in order.
+  const [orderMode, setOrderMode] = useState("canonical"); // "canonical" | "chronological"
+  const [chrono, setChrono] = useState(null); // { eras, passages } | null
+  const [chronoPos, setChronoPos] = useState(1); // current passage position (1-based)
   const nonCanon = NONCANON.find(t => t.id === corpus) || null;
+  const chronoOn = orderMode === "chronological" && !nonCanon && !!chrono;
+  const curPassage = chronoOn ? chrono.passages[chronoPos - 1] || null : null;
   const highlightRef = useRef(null);
   const navBookRef = useRef(null);
   const readingRef = useRef(null);
@@ -4877,6 +4951,43 @@ function LibraryView({
       if (data.length) setSelBook(data[0]);
     });
   }, []);
+
+  // Load the chronological passage list once (a small static file). If it fails,
+  // chronoOn stays false and the Order toggle simply never appears.
+  useEffect(() => {
+    api.chronological().then(setChrono).catch(() => {});
+  }, []);
+
+  // Jump the reader to a chronological passage: select its book and land on its
+  // START chapter. (Stage 2 trims to the exact verse window and spans chapters.)
+  const pickPassage = p => {
+    if (!p) return;
+    const b = books.find(bk => bk.abbrev === p.book);
+    if (!b) return;
+    setChronoPos(p.pos);
+    if (corpus !== "bible") setCorpus("bible");
+    setVerses([]);
+    setKjvVerses([]);
+    setBsbVerses([]);
+    setSelBook(b);
+    setSelChapter(p.start_ch);
+  };
+  // Step forward/back through the whole passage list (flows across era edges).
+  const stepPassage = delta => {
+    if (!chrono) return;
+    const next = chronoPos + delta;
+    if (next < 1 || next > chrono.passages.length) return;
+    pickPassage(chrono.passages[next - 1]);
+  };
+  // Turning chronological order ON: leave any non-canon text and jump to the
+  // current passage so the reader matches the list.
+  const setOrder = mode => {
+    setOrderMode(mode);
+    if (mode === "chronological" && chrono) {
+      if (corpus !== "bible") setCorpus("bible");
+      pickPassage(chrono.passages[chronoPos - 1] || chrono.passages[0]);
+    }
+  };
   useEffect(() => {
     if (!nav || !nav.book || !books.length) return;
     const b = books.find(b => b.abbrev === nav.book);
@@ -6197,7 +6308,12 @@ function LibraryView({
     corpus: corpus,
     pickBible: pickBible,
     otherOpen: otherOpen,
-    setOtherOpen: setOtherOpen
+    setOtherOpen: setOtherOpen,
+    chrono: chrono,
+    orderMode: orderMode,
+    setOrder: setOrder,
+    chronoPos: chronoPos,
+    onPickPassage: pickPassage
   }), !navVisible && mobileNavOpen && /*#__PURE__*/React.createElement(MobileBookPicker, {
     books: books,
     selBook: selBook,
@@ -6229,11 +6345,15 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement("div", {
     className: "lib-bar-l"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "bar-ch"
+    className: "bar-ch" + (chronoOn ? " bar-ch-chrono" : "")
   }, /*#__PURE__*/React.createElement("button", {
     className: "ch-nav",
-    disabled: selChapter <= 1,
+    disabled: chronoOn ? chronoPos <= 1 : selChapter <= 1,
     onClick: () => {
+      if (chronoOn) {
+        stepPassage(-1);
+        return;
+      }
       const c = Math.max(1, selChapter - 1);
       setSelChapter(c);
       if (!nonCanon) onNavChange?.({
@@ -6243,14 +6363,21 @@ function LibraryView({
         highlight: null
       });
     },
-    "aria-label": "Previous chapter"
-  }, "\u2039"), /*#__PURE__*/React.createElement("span", {
+    "aria-label": chronoOn ? "Previous passage" : "Previous chapter"
+  }, "\u2039"), chronoOn ? /*#__PURE__*/React.createElement("span", {
+    className: "ch-lbl ch-cur ch-cur-chrono",
+    title: "Current passage \u2014 pick any from the era list at left"
+  }, curPassage ? curPassage.label : "—") : /*#__PURE__*/React.createElement("span", {
     className: "ch-lbl ch-cur",
     title: "Current chapter \u2014 pick any chapter from the book list at left"
   }, selChapter), /*#__PURE__*/React.createElement("button", {
     className: "ch-nav",
-    disabled: selChapter >= maxChap,
+    disabled: chronoOn ? chrono && chronoPos >= chrono.passages.length : selChapter >= maxChap,
     onClick: () => {
+      if (chronoOn) {
+        stepPassage(1);
+        return;
+      }
       const c = Math.min(maxChap, selChapter + 1);
       setSelChapter(c);
       if (!nonCanon) onNavChange?.({
@@ -6260,7 +6387,7 @@ function LibraryView({
         highlight: null
       });
     },
-    "aria-label": "Next chapter"
+    "aria-label": chronoOn ? "Next passage" : "Next chapter"
   }, "\u203A")), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"

@@ -2553,6 +2553,38 @@ input { font-family: inherit; }
 .ch-chip:hover { color: var(--ink); }
 .ch-chip.on { color: var(--ink); font-weight: 700; }
 
+/* Reading-order toggle (Canonical | Chronological), under the source picker */
+.nav-order {
+  display: flex; align-items: center; justify-content: center;
+  padding: 7px 10px; border-bottom: 1px solid var(--rule);
+}
+.nav-order-seg { flex: 0 0 auto; }
+
+/* Chronological era list — collapsible era headers → passage buttons */
+.nav-era {
+  width: 100%; display: flex; align-items: center; gap: 6px;
+  padding: 9px 10px 6px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-3); text-align: left; background: none; border: none;
+}
+.nav-era:hover { color: var(--ink); }
+.nav-era-caret { font-size: 9px; color: var(--ink-4); flex: 0 0 auto; transition: transform 0.12s ease; }
+.nav-era.open .nav-era-caret { transform: rotate(90deg); }
+.nav-era-name { flex: 1; }
+.nav-era-count {
+  font-family: var(--f-mono); font-size: 9.5px; font-weight: 600;
+  color: var(--ink-4); background: var(--bg-sunk); padding: 1px 6px; border-radius: 8px;
+}
+.nav-passages { padding: 0 4px 6px; }
+.nav-passage {
+  width: 100%; display: block; text-align: left;
+  padding: 4px 10px 4px 22px;
+  font-size: 12.5px; color: var(--ink-2); background: none; border: none;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.nav-passage:hover { color: var(--ink); }
+.nav-passage.on { background: var(--bg-sunk); color: var(--ink); font-weight: 600; border-radius: 5px; }
+
 /* ============================================================
    READING TOOLBAR (new bar — desktop library, ≥1100px only)
 ============================================================ */
@@ -2602,6 +2634,9 @@ input { font-family: inherit; }
   .ch-lbl { font-size: 13.5px; color: var(--ink-2); }
   .ch-lbl b { color: var(--ink); }
   .ch-of { color: var(--ink-4); }
+  /* Chronological: the bar shows a passage label instead of a chapter number */
+  .ch-cur-chrono { min-width: 0; font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .bar-ch-chrono { max-width: 340px; }
 
   .seg { display: inline-flex; background: var(--bg-sunk); border: 1px solid var(--rule); border-radius: 8px; padding: 2px; }
   .seg-b { font-size: 12.5px; color: var(--ink-3); padding: 5px 11px; border-radius: 6px; transition: background 0.1s, color 0.1s; }
