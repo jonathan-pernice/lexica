@@ -7242,9 +7242,20 @@ function LibraryView({
     // hidden on mobile where the shared number sits above the stack).
     // Plain English columns (BSB/ESV/NIV) carry their own verse number too
     // (the shared one is mobile-only), so every desktop column shows it.
-    const plainCol = v => /*#__PURE__*/React.createElement(React.Fragment, null, vnumEl(v.verse, v._ch ?? selChapter), /*#__PURE__*/React.createElement("span", {
-      className: "lib-bsb-text"
-    }, v.verse_text));
+    // They also get the note anchor + highlight paint + note marker so notes
+    // and highlights are SHARED across the compare columns: a highlight made
+    // in any text paints the whole verse here, the pencil shows, and you can
+    // drag-select inside the column to add a new one.
+    const plainCol = v => {
+      const pch = v._ch ?? selChapter;
+      return /*#__PURE__*/React.createElement("span", {
+        className: "lib-parallel-plain",
+        "data-note-verse": v.verse,
+        "data-note-chapter": pch
+      }, vnumEl(v.verse, pch), noteDotInline(v.verse, pch), /*#__PURE__*/React.createElement("span", {
+        className: "lib-bsb-text" + hiClass(v.verse, null, pch)
+      }, v.verse_text));
+    };
     const colDefs = {
       abp: {
         label: "ABP",
