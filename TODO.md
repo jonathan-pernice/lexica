@@ -56,6 +56,31 @@ Still open:
 
 ---
 
+## Where it's behind vs other Bible apps (2026-06-10 assessment — revisit later)
+
+We play in the FREE serious-study niche — against Blue Letter Bible, STEP Bible, e-Sword, Bible Hub.
+NOT Logos (paid library) or YouVersion (reading + social reach); those aren't the target. Honest
+gaps, worst-first:
+
+1. **No true Hebrew OT interlinear — the one real scholarly gap.** Our OT word-by-word is Greek
+   (LXX/ABP) by design; Hebrew study leans on KJV+Strong's→BDB. BLB and STEP give a real Hebrew
+   interlinear word-for-word. Biggest thing a serious user would notice. Related plumbing already
+   noted: the non-canon "Hebrew/Aramaic interlinear" gap below, and Hebrew morphology under
+   "More texts + word grammar". `code: would need BDB/H-number join + right-to-left chips in the reader`
+2. **Fewer translations** — a handful (ABP/KJV/BSB + owner ESV/NIV) vs BLB's dozens / YouVersion's
+   hundreds. Cheap win: add public-domain ones (ASV, YLT, Darby, Geneva) — see "More texts".
+3. **No reading plans / devotionals / social.** That's YouVersion's whole world — deliberately NOT
+   our target. Chronological reading mode is the closest we have; reading plans could ride on
+   accounts later if wanted.
+4. **Reach / awareness is the REAL gap — not features.** One-person app on a small box; the feature
+   set punches far above that, but almost nobody knows it exists, and each feature is a strong v1,
+   not battle-tested at scale. The missing piece is marketing/discoverability, not code.
+
+Deliberate NON-targets (listed so we don't mistake them for gaps): no paid commentary library
+(Logos), no social feed (YouVersion), no imposed systematic theology (Berean by design).
+
+---
+
 ## New features
 
 - ~~**Notes feature.**~~ **DONE 2026-06-09** (notes + highlights + bookmarks + accounts). Study
