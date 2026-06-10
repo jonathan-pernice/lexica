@@ -45,7 +45,7 @@ run_if_changed "scripts/didache_proof/" scripts/didache_proof/load_didache.py
 set -e
 
 echo "==> Reloading the live site..."
-touch /var/www/appssanding720_pythonanywhere_com_wsgi.py
+touch /var/www/www_lexica_bible_wsgi.py
 
 echo "==> Done. Site reloaded."
 echo "    (Reminder: after a words-table REBUILD, run health_check.py by hand —"

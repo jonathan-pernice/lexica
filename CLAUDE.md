@@ -62,13 +62,13 @@ Pick effort by task TYPE. When in doubt, lean higher — the plan affords it.
   (it diffs old..new HEAD and runs only the loaders for touched folders — a plain code deploy
   loads nothing), and reloads the site ONLY if the tests pass. A loader hiccup warns but never
   blocks the reload. So adding a new book just needs a normal deploy — no loader to run by hand.
-- Manual fallback (still valid): `cd ~/bible-db && git pull && touch /var/www/appssanding720_pythonanywhere_com_wsgi.py`
+- Manual fallback (still valid): `cd ~/bible-db && git pull && touch /var/www/www_lexica_bible_wsgi.py`
 - PythonAnywhere git is configured: `pull.rebase false`, `merge.autoedit no` (no prompts)
 - Database is NOT in git (too large) — managed directly on PythonAnywhere
 - After a `requirements.txt` change: on PA, `workon bible-env` THEN `pip install -r requirements.txt`
   (NO `--user` inside the venv — the venv is `/home/appssanding720/.virtualenvs/bible-env`, Python 3.11).
   Then reload. A `--user` install lands in the wrong place (system 3.13 user dir) and the site ignores it.
-- **Env vars / secrets live in the WSGI file, NOT a `.env`.** `/var/www/appssanding720_pythonanywhere_com_wsgi.py`
+- **Env vars / secrets live in the WSGI file, NOT a `.env`.** `/var/www/www_lexica_bible_wsgi.py`
   sets them with `os.environ['KEY'] = '...'` (ANTHROPIC_API_KEY, GOOGLE_CLIENT_ID). `core.load_dotenv()`
   does NOT reliably find a `.env` under the PA web app, so a `.env` there is empty/ignored — don't rely on it.
   The `os.environ[...]` lines MUST sit ABOVE the app import in the WSGI (module-level reads like
