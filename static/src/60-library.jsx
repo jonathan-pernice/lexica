@@ -518,9 +518,9 @@ function ModesSheet({
           <div className="mode-sec">
             <div className="mode-lbl">Display</div>
             <div className="display-row">
-              <div className="mseg">
-                <button className={"mseg-b"+(chipMode?" on":"")} disabled={proseLocked} style={gray} onClick={()=>!proseLocked&&setOpt("viewMode","chip")}>Chip</button>
-                <button className={"mseg-b"+(!chipMode?" on":"")} disabled={!proseLocked&&(showStrongs||showInterlinear)} style={!proseLocked&&(showStrongs||showInterlinear)?{opacity:0.35}:undefined} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}>Prose</button>
+              <div className="mseg mseg-view">
+                <button className={"mseg-b"+(chipMode?" on":"")} disabled={proseLocked} style={gray} title="Chip view" aria-label="Chip view" aria-pressed={chipMode} onClick={()=>!proseLocked&&setOpt("viewMode","chip")}><Icon.Grid/></button>
+                <button className={"mseg-b"+(!chipMode?" on":"")} disabled={!proseLocked&&(showStrongs||showInterlinear)} style={!proseLocked&&(showStrongs||showInterlinear)?{opacity:0.35}:undefined} title="Prose view" aria-label="Prose view" aria-pressed={!chipMode} onClick={()=>!showStrongs&&!showInterlinear&&setOpt("viewMode","prose")}><Icon.Lines/></button>
               </div>
               <div className="mseg font-picker">
                 <button className="mseg-b" onClick={() => changeFontSize(-1)}>A−</button>
@@ -1932,19 +1932,25 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <button className={"lib-toggle lib-toggle-icon" + (showInterlinear ? " on" : "")} disabled={proseLocked} title="Interlinear" aria-label="Interlinear" aria-pressed={showInterlinear} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}><Icon.Interlinear/></button>
             {!nonCanon && <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} disabled={proseLocked} title="Parallel (ABP + KJV)" aria-label="Parallel" aria-pressed={translation === "parallel"} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && toggleParallel()}><Icon.Columns/></button>}
             <span className="lib-bar-sep" aria-hidden="true"/>
-            <div className="seg">
+            <div className="seg lib-view-seg">
               <button
                 className={"seg-b" + (chipMode ? " on" : "")}
                 disabled={proseLocked}
+                title="Chip view"
+                aria-label="Chip view"
+                aria-pressed={chipMode}
                 style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined}
                 onClick={() => !proseLocked && setOpt("viewMode", "chip")}
-              >Chip</button>
+              ><Icon.Grid/></button>
               <button
                 className={"seg-b" + (!chipMode ? " on" : "")}
                 disabled={!proseLocked && (showStrongs || showInterlinear)}
+                title="Prose view"
+                aria-label="Prose view"
+                aria-pressed={!chipMode}
                 style={!proseLocked && (showStrongs || showInterlinear) ? { opacity: 0.35, cursor: "default" } : undefined}
                 onClick={() => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")}
-              >Prose</button>
+              ><Icon.Lines/></button>
             </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
             {canSearch && (

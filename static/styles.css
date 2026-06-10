@@ -2025,6 +2025,7 @@ input { font-family: inherit; }
 .mseg-b { flex: 1; text-align: center; font-size: 14.5px; color: var(--ink-3); padding: 10px 0; border-radius: 8px; transition: background 0.1s, color 0.1s; }
 .mseg-b.on { background: #fff; color: var(--ink); font-weight: 600; box-shadow: var(--shadow-sm); }
 .mseg-b:active:not(.on) { background: rgba(0,0,0,0.08); color: var(--ink); }
+.mseg-view .mseg-b { display: inline-flex; align-items: center; justify-content: center; }
 .font-size-lbl { font-size: 12px; color: var(--ink-3); flex: 1; text-align: center; align-self: center; user-select: none; pointer-events: none; }
 .font-picker .mseg-b { flex: 0 0 44px; }
 .mtog { display: flex; flex-direction: column; }
@@ -2614,6 +2615,8 @@ input { font-family: inherit; }
   /* Canonical/Chronological order toggle — icon buttons, centered */
   .lib-order-seg .seg-b { display: inline-flex; align-items: center; justify-content: center; padding: 5px 9px; }
   .lib-order-seg .seg-b.on { color: var(--gold); }
+  /* Chip/Prose view toggle — icon buttons, centered */
+  .lib-view-seg .seg-b { display: inline-flex; align-items: center; justify-content: center; padding: 5px 9px; }
 
   .lib-toggle {
     font-size: 12.5px; color: var(--ink-3);

@@ -4397,20 +4397,26 @@ function ModesSheet({
   }, "Display"), /*#__PURE__*/React.createElement("div", {
     className: "display-row"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "mseg"
+    className: "mseg mseg-view"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (chipMode ? " on" : ""),
     disabled: proseLocked,
     style: gray,
+    title: "Chip view",
+    "aria-label": "Chip view",
+    "aria-pressed": chipMode,
     onClick: () => !proseLocked && setOpt("viewMode", "chip")
-  }, "Chip"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Icon.Grid, null)), /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (!chipMode ? " on" : ""),
     disabled: !proseLocked && (showStrongs || showInterlinear),
     style: !proseLocked && (showStrongs || showInterlinear) ? {
       opacity: 0.35
     } : undefined,
+    title: "Prose view",
+    "aria-label": "Prose view",
+    "aria-pressed": !chipMode,
     onClick: () => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")
-  }, "Prose")), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon.Lines, null))), /*#__PURE__*/React.createElement("div", {
     className: "mseg font-picker"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b",
@@ -6598,24 +6604,30 @@ function LibraryView({
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "seg"
+    className: "seg lib-view-seg"
   }, /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (chipMode ? " on" : ""),
     disabled: proseLocked,
+    title: "Chip view",
+    "aria-label": "Chip view",
+    "aria-pressed": chipMode,
     style: proseLocked ? {
       opacity: 0.35,
       cursor: "default"
     } : undefined,
     onClick: () => !proseLocked && setOpt("viewMode", "chip")
-  }, "Chip"), /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Icon.Grid, null)), /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (!chipMode ? " on" : ""),
     disabled: !proseLocked && (showStrongs || showInterlinear),
+    title: "Prose view",
+    "aria-label": "Prose view",
+    "aria-pressed": !chipMode,
     style: !proseLocked && (showStrongs || showInterlinear) ? {
       opacity: 0.35,
       cursor: "default"
     } : undefined,
     onClick: () => !showStrongs && !showInterlinear && setOpt("viewMode", "prose")
-  }, "Prose")), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement(Icon.Lines, null))), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), canSearch && /*#__PURE__*/React.createElement("button", {
