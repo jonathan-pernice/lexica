@@ -44,6 +44,33 @@ and `project_parser_number_reversal`.
 
 ---
 
+## BSB (Berean Standard Bible) reading text — DONE 2026-06-08
+
+Public-domain modern reading text alongside ABP/KJV. Loaded by `scripts/load_bsb.py` into
+`bsb_verses`, served by `views_bsb.py` (`/api/bsb/chapter`); third option in the Library toggle
+(commit `4c88501`). Also added an eSword-style in-text search box that searches whichever text you're
+reading, via the generic `/api/text-search` (commit `05fe6d5`). No word-level/Strong's data by design.
+
+---
+
+## Free-form Journal — second note mode — DONE 2026-06-09
+
+"Verse notes | Journal" toggle in the Notes tab: plain-text titled pages, a full-page autosaving
+editor, riding the same store / sync / Export-Import as anchored notes (`kind:"journal"`, no anchor).
+Plus copy + "send verse to journal" from the reader (drag-select bar AND the verse-number menu) into
+the page you have open. Detail in memory `project_notes_highlights`.
+
+---
+
+## Front-end "build a word entry" de-dup (refactor backlog #3, front-end half) — DONE 2026-06-08
+
+The three copy-pasted entry-builders now share one core (`entrySnum()` + `wordEntryCore()` in
+static/src/00-core.jsx); makeEntry / flattenAiResults / the library makeEntry each spread the core
+and add only their own id + extras. No behavior change. Commit `007446c`. Closes the front-end half
+of refactor backlog #3 (the backend half was redesign Phase 2).
+
+---
+
 ## Notes accounts + sync (email + Google) — DONE 2026-06-09
 
 Built right after the notes feature, same session. Notes started browser-only; the user weighed a

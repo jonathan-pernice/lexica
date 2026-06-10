@@ -20,29 +20,22 @@ minor info leak closed, dead code removed, an unbounded cache capped, an endpoin
 
 Still open:
 
-1. ~~**Rebuild script is messy.**~~ **DONE 2026-06-09** — folded the six shape-keyed cleanup scripts
-   into one self-correcting build pass; proven BYTE-IDENTICAL to the old build+14-patch chain
-   (`compare_words.py`, on a copy of live). Committed 815c1c6, deployed. Full record + the kept-as-
-   patch list in [TODO_ARCHIVE.md](TODO_ARCHIVE.md).
-   **STANDING LEVER that's left** (only if these last scripts ever bug you): the word-splitter GUESSES
-   which English word pairs with which Greek word by matching the dictionary — that leaky guess is what
-   the 237-verse `fix_split_merges` patch cleans up. Real word-by-word alignment (the Rahlfs/TAGNT data
-   already used for the pronoun fix) could drive the splitter and retire that patch. Big + risky (the
-   splitter is load-bearing) — a deliberate future effort, copy-first, only when wanted.
+1. **Word-splitter still GUESSES which English word pairs with which Greek word** (it matches the
+   dictionary) — that leaky guess is what the 237-verse `fix_split_merges` patch cleans up. Real
+   word-by-word alignment (the Rahlfs/TAGNT data already used for the pronoun fix) could drive the
+   splitter (`_split_compounds`) and retire that patch. Big + risky (the splitter is load-bearing) — a
+   deliberate future effort, copy-first, only when wanted. (Surfaced from the rebuild one-pass rewrite,
+   **DONE 2026-06-09** — the 6 cleanup scripts folded into the build, proven byte-identical to the old
+   chain; full record in [TODO_ARCHIVE.md](TODO_ARCHIVE.md).)
    `code: _split_compounds in scripts/build_words_from_abp.py + scripts/split_merge_fixes.json`
-2. ~~**Two near-identical "build a word entry" functions on the front end.**~~ **DONE 2026-06-08**
-   (commit `007446c`). The three copy-pasted builders now share one core: `entrySnum()` +
-   `wordEntryCore()` in static/src/00-core.jsx; makeEntry, flattenAiResults, and the library
-   makeEntry each spread the core and add only their own id + extras. No behavior change. Closes
-   the frontend half of refactor backlog #3.
-3. **More automated checks (mostly done).** The test net now covers broken pages (snapshot harness) and
+2. **More automated checks (mostly done).** The test net now covers broken pages (snapshot harness) and
    the dangerous data invariants (strongs prefix, tipnr type-set, the build's guards). 2026-06-07 added
    the automation layer: GitHub auto-runs the tests + frontend build-check on every push (CI), a
    pre-commit hook runs the same checks locally, `scripts/deploy.sh` is a one-command tested deploy, and
    Dependabot watches outside packages. STILL OPEN here: a nightly `health_check.py` email on PA (needs a
    PA scheduled task + email login) — the only piece that has to run against the real database.
    `code: scripts/health_check.py, scripts/snapshot_endpoints.py, tests/, .github/, scripts/githooks/, scripts/deploy.sh`
-4. **Unify the AI prompt STYLE into one shared "house style" snippet.** (The cache-fingerprint half
+3. **Unify the AI prompt STYLE into one shared "house style" snippet.** (The cache-fingerprint half
    of this item is DONE 2026-06-09 — see TODO_ARCHIVE.md. This is the leftover paired half.) CORRECTED 2026-06-09 (see memory project_ai_synthesis_quality): the original plan — drop sentence-count
    caps and let LENGTH FIT THE CONTENT (adaptive) everywhere — is only right for SONNET. Haiku does NOT
    honor a soft adaptive cap: on a maximal chapter (Sibylline Bk 1) it marched every section and overran
@@ -80,19 +73,9 @@ Still open:
      Gmail now and redoing it. The send code is provider-agnostic plain SMTP, so when the domain lands
      it's just env vars in the WSGI + a small send helper + the reset/set-password endpoints. Nothing
      else is blocked by it.
-  2. ~~**Free-form journal as a SECOND note mode.**~~ **DONE 2026-06-09.** "Verse notes | Journal"
-     toggle in the Notes tab; plain-text titled pages, full-page editor that autosaves, ride the same
-     store/sync/Export-Import as anchored notes (`kind:"journal"`, no anchor). PLUS copy + "send verse
-     to journal" from the reader (drag-select bar AND the verse-number menu) into the page you have
-     open. See memory `project_notes_highlights`.
-  3. **Highlight paint reach** — cross-translation DONE 2026-06-09 (a highlight now shows in ABP/KJV/BSB;
+  2. **Highlight paint reach** — cross-translation DONE 2026-06-09 (a highlight now shows in ABP/KJV/BSB;
      exact words in its home text, rounds up to whole verse elsewhere). STILL OPEN (optional, lower
      value): word-level highlights *within* KJV/BSB (today those two only paint a whole verse).
-- ~~**BSB (Berean Standard Bible).**~~ **DONE 2026-06-08.** Public-domain modern reading text
-  alongside ABP/KJV. Loaded by `scripts/load_bsb.py` into `bsb_verses`; served by `views_bsb.py`
-  (`/api/bsb/chapter`). Added as a third reading text in the Library toggle (commit `4c88501`), and
-  an eSword-style in-text search box in the Library that searches whichever text you're reading via
-  the generic `/api/text-search` (commit `05fe6d5`). No word-level/Strong's data by design.
 
 ---
 
