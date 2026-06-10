@@ -4460,9 +4460,10 @@ function ModesSheet({
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
-  }, "Text"), /*#__PURE__*/React.createElement("div", {
-    className: "text-row"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, "Text"), activeNonCanon ?
+  /*#__PURE__*/
+  /* Reading a non-canonical text: ABP/KJV/etc just jump back to the Bible. */
+  React.createElement("div", {
     className: "mseg text-ed"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (corpus === "bible" && translation === "abp" ? " on" : ""),
@@ -4479,17 +4480,34 @@ function ModesSheet({
   }, "ESV"), nivOwner && /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (corpus === "bible" && translation === "niv" ? " on" : ""),
     onClick: () => pickBible("niv")
-  }, "NIV")))), !activeNonCanon && /*#__PURE__*/React.createElement("div", {
-    className: "mode-sec"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mode-lbl"
-  }, "Compare"), /*#__PURE__*/React.createElement("div", {
-    className: "mseg text-cmp"
-  }, compareAvail.map(id => /*#__PURE__*/React.createElement("button", {
-    key: id,
-    className: "mseg-b" + (compareActive.includes(id) ? " on" : ""),
-    onClick: () => toggleCompare(id)
-  }, id.toUpperCase())))), chrono && !activeNonCanon && /*#__PURE__*/React.createElement("div", {
+  }, "NIV")) :
+  /*#__PURE__*/
+  /* Bible: one checkable row — tick 1 to read it, 2-4 to compare side by side.
+     compareActive + toggleCompare already do the read/compare switching. */
+  React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "mode-hint"
+  }, "Tap to read \xB7 tick 2\u20134 to compare"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg text-ed text-pick"
+  }, compareAvail.map(id => {
+    const on = compareActive.includes(id);
+    return /*#__PURE__*/React.createElement("button", {
+      key: id,
+      className: "mseg-b" + (on ? " on" : ""),
+      onClick: () => toggleCompare(id),
+      "aria-pressed": on
+    }, on && /*#__PURE__*/React.createElement("span", {
+      className: "mseg-chk",
+      "aria-hidden": "true"
+    }, "\u2713"), id.toUpperCase());
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "text-mode-note"
+  }, compareActive.length >= 2 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Icon.Columns, {
+    width: "14",
+    height: "14"
+  }), /*#__PURE__*/React.createElement("span", null, "Comparing ", compareActive.length, " \u2014 ", compareActive.map(x => x.toUpperCase()).join(" · "), " side by side")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Icon.Book, {
+    width: "14",
+    height: "14"
+  }), /*#__PURE__*/React.createElement("span", null, "Reading ", (compareActive[0] || "abp").toUpperCase()))))), chrono && !activeNonCanon && /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"

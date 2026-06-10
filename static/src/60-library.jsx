@@ -485,30 +485,38 @@ function ModesSheet({
         <div className="msheet-body" ref={scrollRef}>
           <div className="mode-sec">
             <div className="mode-lbl">Text</div>
-            <div className="text-row">
+            {activeNonCanon ? (
+              /* Reading a non-canonical text: ABP/KJV/etc just jump back to the Bible. */
               <div className="mseg text-ed">
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="abp"?" on":"")} onClick={()=>pickBible("abp")}>ABP</button>
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="kjv"?" on":"")} onClick={()=>pickBible("kjv")}>KJV</button>
                 <button className={"mseg-b"+(corpus==="bible"&&translation==="bsb"?" on":"")} onClick={()=>pickBible("bsb")}>BSB</button>
-                {esvOwner && (
-                  <button className={"mseg-b"+(corpus==="bible"&&translation==="esv"?" on":"")} onClick={()=>pickBible("esv")}>ESV</button>
-                )}
-                {nivOwner && (
-                  <button className={"mseg-b"+(corpus==="bible"&&translation==="niv"?" on":"")} onClick={()=>pickBible("niv")}>NIV</button>
-                )}
+                {esvOwner && <button className={"mseg-b"+(corpus==="bible"&&translation==="esv"?" on":"")} onClick={()=>pickBible("esv")}>ESV</button>}
+                {nivOwner && <button className={"mseg-b"+(corpus==="bible"&&translation==="niv"?" on":"")} onClick={()=>pickBible("niv")}>NIV</button>}
               </div>
-            </div>
+            ) : (
+              /* Bible: one checkable row — tick 1 to read it, 2-4 to compare side by side.
+                 compareActive + toggleCompare already do the read/compare switching. */
+              <>
+                <div className="mode-hint">Tap to read · tick 2–4 to compare</div>
+                <div className="mseg text-ed text-pick">
+                  {compareAvail.map(id => {
+                    const on = compareActive.includes(id);
+                    return (
+                      <button key={id} className={"mseg-b"+(on?" on":"")} onClick={()=>toggleCompare(id)} aria-pressed={on}>
+                        {on && <span className="mseg-chk" aria-hidden="true">✓</span>}{id.toUpperCase()}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="text-mode-note">
+                  {compareActive.length >= 2
+                    ? <><Icon.Columns width="14" height="14"/><span>Comparing {compareActive.length} — {compareActive.map(x=>x.toUpperCase()).join(" · ")} side by side</span></>
+                    : <><Icon.Book width="14" height="14"/><span>Reading {(compareActive[0]||"abp").toUpperCase()}</span></>}
+                </div>
+              </>
+            )}
           </div>
-          {!activeNonCanon && (
-            <div className="mode-sec">
-              <div className="mode-lbl">Compare</div>
-              <div className="mseg text-cmp">
-                {compareAvail.map(id => (
-                  <button key={id} className={"mseg-b" + (compareActive.includes(id) ? " on" : "")} onClick={() => toggleCompare(id)}>{id.toUpperCase()}</button>
-                ))}
-              </div>
-            </div>
-          )}
           {chrono && !activeNonCanon && (
             <div className="mode-sec">
               <div className="mode-lbl">Order</div>
