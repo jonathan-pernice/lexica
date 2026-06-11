@@ -1721,34 +1721,31 @@ input { font-family: inherit; }
    each chip keeps its vertical stack (Hebrew word over English gloss over H-number). */
 .lib-heb-row { direction: rtl; }
 .lib-heb-content { direction: rtl; text-align: right; }
-.lib-heb-word { margin: 0 3px; padding-top: 4px; }
+.lib-heb-word { margin: 0 3px; }
+/* The Hebrew word is the only intentionally-larger element (a different script needs
+   the room to read the vowel points). The gloss + Strong's number INHERIT the base
+   .lib-iw-english / .lib-iw-strongs styling — same font, size, and colour as the ABP
+   interlinear chips — so every book's interlinear looks identical. We only add
+   direction:ltr so the Latin gloss/number sit correctly inside the right-to-left chip. */
 .lib-iw-heb {
   font-family: "SBL Hebrew", "Ezra SIL", "Times New Roman", var(--f-serif);
-  font-size: 1.4em;
-  line-height: 1.5;
+  font-size: 1.3em;
+  line-height: 1.45;
   color: var(--ink);
   direction: rtl;
 }
-/* gloss + Strong's number are Latin script — keep them left-to-right inside the rtl chip */
-.lib-heb-word .lib-iw-english {
-  direction: ltr;
-  font-size: 0.6em;
-  line-height: 1.25;
-  color: var(--ink-2);
-  margin-top: 1px;
-  max-width: 12ch;
-  text-align: center;
-}
-/* transliteration line — shown only when the Interlinear toggle is on */
+.lib-heb-word .lib-iw-english { direction: ltr; }
+.lib-heb-word .lib-iw-strongs { direction: ltr; }
+/* transliteration line — shown only when the Interlinear toggle is on; muted italic
+   so it reads as a secondary pronunciation cue under the word */
 .lib-heb-word .lib-iw-translit {
   direction: ltr;
   font-family: var(--f-serif);
   font-style: italic;
-  font-size: 0.58em;
-  line-height: 1.2;
+  font-size: 0.82em;
+  line-height: 1.25;
   color: var(--ink-3);
 }
-.lib-heb-word .lib-iw-strongs { direction: ltr; }
 
 /* ----- "Other" non-canonical texts picker (desktop lib bar popup) ----- */
 .lib-other-wrap { position: relative; display: inline-flex; }
