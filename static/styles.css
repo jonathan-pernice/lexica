@@ -1731,8 +1731,10 @@ input { font-family: inherit; }
    direction:ltr so the Latin gloss/number sit correctly inside the right-to-left chip. */
 .lib-iw-heb {
   font-family: "SBL Hebrew", "Ezra SIL", "Times New Roman", var(--f-serif);
-  font-size: 1.3em;
-  line-height: 1.45;
+  /* a small bump over the base size so the vowel points stay legible — not the big
+     1.3em it was. Tune here if it wants to match the other books exactly (1.05em). */
+  font-size: 1.12em;
+  line-height: 1.4;
   color: var(--ink);
   direction: rtl;
 }
