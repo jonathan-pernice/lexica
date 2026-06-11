@@ -563,12 +563,12 @@ function ModesSheet({
               </>
             )}
           </div>
-          {chrono && (
+          {chrono && !activeNonCanon && (
             <div className="mode-sec">
               <div className="mode-lbl">Order</div>
               <div className="mseg">
-                <button className={"mseg-b"+(!activeNonCanon && orderMode!=="chronological"?" on":"")} disabled={!!activeNonCanon} style={activeNonCanon?{opacity:0.35,cursor:"default"}:undefined} aria-pressed={!activeNonCanon && orderMode!=="chronological"} onClick={()=>{ if(!activeNonCanon) setOrder("canonical"); }}>Canonical</button>
-                <button className={"mseg-b"+(!activeNonCanon && orderMode==="chronological"?" on":"")} disabled={!!activeNonCanon} style={activeNonCanon?{opacity:0.35,cursor:"default"}:undefined} aria-pressed={!activeNonCanon && orderMode==="chronological"} onClick={()=>{ if(!activeNonCanon) setOrder("chronological"); }}>Chronological</button>
+                <button className={"mseg-b"+(orderMode!=="chronological"?" on":"")} aria-pressed={orderMode!=="chronological"} onClick={()=>setOrder("canonical")}>Canonical</button>
+                <button className={"mseg-b"+(orderMode==="chronological"?" on":"")} aria-pressed={orderMode==="chronological"} onClick={()=>setOrder("chronological")}>Chronological</button>
               </div>
             </div>
           )}
@@ -2440,12 +2440,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                 aria-label={chronoOn ? "Next passage" : "Next chapter"}
               >›</button>
             </div>
-            {chrono && (
+            {chrono && !nonCanon && (
               <>
                 <span className="lib-bar-sep" aria-hidden="true"/>
                 <div className="seg lib-order-seg">
-                  <button className={"seg-b" + (!nonCanon && orderMode !== "chronological" ? " on" : "")} disabled={!!nonCanon} style={nonCanon ? { opacity: 0.35, cursor: "default" } : undefined} title={nonCanon ? "Reading order applies to the Bible" : "Canonical order (books in order)"} aria-label="Canonical order" onClick={() => { if (!nonCanon) setOrder("canonical"); }}><Icon.Book/></button>
-                  <button className={"seg-b" + (!nonCanon && orderMode === "chronological" ? " on" : "")} disabled={!!nonCanon} style={nonCanon ? { opacity: 0.35, cursor: "default" } : undefined} title={nonCanon ? "Reading order applies to the Bible" : "Chronological order (events in sequence)"} aria-label="Chronological order" onClick={() => { if (!nonCanon) setOrder("chronological"); }}><Icon.Clock/></button>
+                  <button className={"seg-b" + (orderMode !== "chronological" ? " on" : "")} title="Canonical order (books in order)" aria-label="Canonical order" onClick={() => setOrder("canonical")}><Icon.Book/></button>
+                  <button className={"seg-b" + (orderMode === "chronological" ? " on" : "")} title="Chronological order (events in sequence)" aria-label="Chronological order" onClick={() => setOrder("chronological")}><Icon.Clock/></button>
                 </div>
               </>
             )}

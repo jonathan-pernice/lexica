@@ -4539,34 +4539,20 @@ function ModesSheet({
   }, translation === "heb" && /*#__PURE__*/React.createElement("span", {
     className: "mseg-chk",
     "aria-hidden": "true"
-  }, "\u2713"), "HEB")))), chrono && /*#__PURE__*/React.createElement("div", {
+  }, "\u2713"), "HEB")))), chrono && !activeNonCanon && /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
   }, "Order"), /*#__PURE__*/React.createElement("div", {
     className: "mseg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (!activeNonCanon && orderMode !== "chronological" ? " on" : ""),
-    disabled: !!activeNonCanon,
-    style: activeNonCanon ? {
-      opacity: 0.35,
-      cursor: "default"
-    } : undefined,
-    "aria-pressed": !activeNonCanon && orderMode !== "chronological",
-    onClick: () => {
-      if (!activeNonCanon) setOrder("canonical");
-    }
+    className: "mseg-b" + (orderMode !== "chronological" ? " on" : ""),
+    "aria-pressed": orderMode !== "chronological",
+    onClick: () => setOrder("canonical")
   }, "Canonical"), /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (!activeNonCanon && orderMode === "chronological" ? " on" : ""),
-    disabled: !!activeNonCanon,
-    style: activeNonCanon ? {
-      opacity: 0.35,
-      cursor: "default"
-    } : undefined,
-    "aria-pressed": !activeNonCanon && orderMode === "chronological",
-    onClick: () => {
-      if (!activeNonCanon) setOrder("chronological");
-    }
+    className: "mseg-b" + (orderMode === "chronological" ? " on" : ""),
+    "aria-pressed": orderMode === "chronological",
+    onClick: () => setOrder("chronological")
   }, "Chronological"))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
@@ -7329,35 +7315,21 @@ function LibraryView({
       });
     },
     "aria-label": chronoOn ? "Next passage" : "Next chapter"
-  }, "\u203A")), chrono && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+  }, "\u203A")), chrono && !nonCanon && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("div", {
     className: "seg lib-order-seg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (!nonCanon && orderMode !== "chronological" ? " on" : ""),
-    disabled: !!nonCanon,
-    style: nonCanon ? {
-      opacity: 0.35,
-      cursor: "default"
-    } : undefined,
-    title: nonCanon ? "Reading order applies to the Bible" : "Canonical order (books in order)",
+    className: "seg-b" + (orderMode !== "chronological" ? " on" : ""),
+    title: "Canonical order (books in order)",
     "aria-label": "Canonical order",
-    onClick: () => {
-      if (!nonCanon) setOrder("canonical");
-    }
+    onClick: () => setOrder("canonical")
   }, /*#__PURE__*/React.createElement(Icon.Book, null)), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (!nonCanon && orderMode === "chronological" ? " on" : ""),
-    disabled: !!nonCanon,
-    style: nonCanon ? {
-      opacity: 0.35,
-      cursor: "default"
-    } : undefined,
-    title: nonCanon ? "Reading order applies to the Bible" : "Chronological order (events in sequence)",
+    className: "seg-b" + (orderMode === "chronological" ? " on" : ""),
+    title: "Chronological order (events in sequence)",
     "aria-label": "Chronological order",
-    onClick: () => {
-      if (!nonCanon) setOrder("chronological");
-    }
+    onClick: () => setOrder("chronological")
   }, /*#__PURE__*/React.createElement(Icon.Clock, null)))), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
