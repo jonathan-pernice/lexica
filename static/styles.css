@@ -1501,9 +1501,6 @@ input { font-family: inherit; }
 .pericope-row .pericope-heading { flex: 1; }
 .lib-text-words > .pericope-row:first-child .pericope-heading,
 .lib-prose-flow > .pericope-row:first-child .pericope-heading { margin-top: 0; }
-@media (max-width: 1099px) {
-  .pericope-row .lib-vnum { display: none; }
-}
 
 /* Prose continuous flow (non-poetry) */
 .lib-prose-flow { line-height: 1.85; }
