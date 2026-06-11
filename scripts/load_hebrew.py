@@ -94,6 +94,11 @@ CURATED_GLOSS = {
     "H591": "ship", "H4419": "sailor", "H2904": "to hurl, throw", "H3627": "vessel, article",
     "H5591": "storm, tempest", "H5590": "to storm", "H1272": "to flee", "H8367": "to be calm",
     "H2803": "to think, plan", "H5680": "Hebrew", "H3375": "Jonah",
+    # Creation / Genesis 1 vocabulary (the most-read chapter — keep it clean)
+    "H7225": "beginning", "H1254": "to create", "H216": "light", "H2822": "darkness",
+    "H8414": "formless", "H922": "void", "H7549": "expanse", "H3974": "luminary",
+    "H4327": "kind", "H6754": "image", "H1823": "likeness", "H929": "beast, cattle",
+    "H7431": "creeping thing", "H1710": "fish", "H5775": "bird",
 }
 
 # Cantillation (chanting) accents + structural marks we DROP. We KEEP the niqqud

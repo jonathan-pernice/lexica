@@ -4462,6 +4462,7 @@ function ModesSheet({
   } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
   const proseLocked = !!(activeNonCanon && activeNonCanon.englishOnly) || translation === "bsb" || translation === "esv" || translation === "niv"; // English-only / BSB / ESV / NIV: no Greek toggles
+  const hebMode = translation === "heb"; // Hebrew interlinear: always chips, no prose option
   const gray = proseLocked ? {
     opacity: 0.35,
     cursor: "default"
@@ -4469,7 +4470,7 @@ function ModesSheet({
   // English-only "other books": Greek toggles stay locked, but line-vs-flow is allowed.
   const extraEnglish = !!(activeNonCanon && activeNonCanon.englishOnly);
   const layoutLocked = proseLocked && !extraEnglish;
-  const viewChipOn = extraEnglish ? viewMode === "chip" : chipMode;
+  const viewChipOn = hebMode ? true : extraEnglish ? viewMode === "chip" : chipMode;
   // Text picker gestures: a TAP swaps to that single Bible; a LONG-PRESS (or right-click)
   // ticks it into / out of the side-by-side compare set. One shared timer is fine (touches
   // happen one at a time); the `fired` flag stops a long-press from also firing the tap.
@@ -4657,14 +4658,15 @@ function ModesSheet({
     onClick: () => !layoutLocked && setOpt("viewMode", "chip")
   }, /*#__PURE__*/React.createElement(Icon.Grid, null)), /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (!viewChipOn ? " on" : ""),
-    disabled: !extraEnglish && !proseLocked && (showStrongs || showInterlinear),
-    style: !extraEnglish && !proseLocked && (showStrongs || showInterlinear) ? {
+    disabled: hebMode || !extraEnglish && !proseLocked && (showStrongs || showInterlinear),
+    style: hebMode || !extraEnglish && !proseLocked && (showStrongs || showInterlinear) ? {
       opacity: 0.35
     } : undefined,
     title: "Prose view",
     "aria-label": "Prose view",
     "aria-pressed": !viewChipOn,
     onClick: () => {
+      if (hebMode) return;
       if (extraEnglish) {
         setOpt("viewMode", "prose");
         return;
@@ -5761,6 +5763,7 @@ function LibraryView({
   const bsbMode = translation === "bsb";
   const esvMode = translation === "esv";
   const nivMode = translation === "niv";
+  const hebMode = translation === "heb"; // Hebrew interlinear: always chips, no prose option
   const proseLocked = !!(nonCanon && nonCanon.englishOnly) || bsbMode || esvMode || nivMode;
   const chipMode = !proseLocked && (viewMode === "chip" || showStrongs || showInterlinear);
   const wordMode = chipMode;
@@ -5771,7 +5774,7 @@ function LibraryView({
   const extraEnglish = !!(nonCanon && nonCanon.englishOnly);
   const extraLineMode = extraEnglish && viewMode === "chip";
   const layoutLocked = proseLocked && !extraEnglish;
-  const viewChipOn = extraEnglish ? viewMode === "chip" : chipMode;
+  const viewChipOn = hebMode ? true : extraEnglish ? viewMode === "chip" : chipMode;
   const POETRY_BOOKS = new Set(["Psa", "Pro", "Job", "Son", "Lam", "Ecc"]);
   const isPoetry = POETRY_BOOKS.has(selBook?.abbrev);
 
@@ -7375,15 +7378,16 @@ function LibraryView({
     onClick: () => !layoutLocked && setOpt("viewMode", "chip")
   }, /*#__PURE__*/React.createElement(Icon.Grid, null)), /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (!viewChipOn ? " on" : ""),
-    disabled: !extraEnglish && !proseLocked && (showStrongs || showInterlinear),
+    disabled: hebMode || !extraEnglish && !proseLocked && (showStrongs || showInterlinear),
     title: "Prose view",
     "aria-label": "Prose view",
     "aria-pressed": !viewChipOn,
-    style: !extraEnglish && !proseLocked && (showStrongs || showInterlinear) ? {
+    style: hebMode || !extraEnglish && !proseLocked && (showStrongs || showInterlinear) ? {
       opacity: 0.35,
       cursor: "default"
     } : undefined,
     onClick: () => {
+      if (hebMode) return;
       if (extraEnglish) {
         setOpt("viewMode", "prose");
         return;
