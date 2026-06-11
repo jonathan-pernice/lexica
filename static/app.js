@@ -6114,7 +6114,7 @@ function LibraryView({
   // Focus mode: blank-space tap strips the chrome (header/nav/toolbar/tabs/audio)
   // for distraction-free reading. A one-time hint shows the way back out.
   const toggleFocus = () => {
-    if (!focusMode) flash(isMobile ? "Tap anywhere to show the menus" : "Tap or press Esc to show the menus");
+    if (!focusMode) flash(isMobile ? "Tap anywhere to show the menus" : "Reading mode — tap the text or press Esc to exit");
     onToggleFocus && onToggleFocus();
   };
   // While focus is on: Esc brings the chrome back; arrow keys turn the page

@@ -3082,28 +3082,45 @@ input { font-family: inherit; }
 .notes-item-empty { color: var(--ink-3); font-style: italic; }
 
 /* ============================================================
-   FOCUS MODE — distraction-free reading
-   Tap blank space in the reader to strip the chrome; tap again
-   (or Esc on desktop) to bring it back. Audio keeps playing while
-   its controls are hidden. Library view only; not remembered.
+   FOCUS MODE — distraction-free reading (Library view only)
+   Mobile: hide the chrome entirely (header/nav/toolbar/tabs/audio);
+           tap blank space to bring it back. Audio keeps playing.
+   Desktop: keep the panels but lay a click-through dark wash over
+           everything except a lit, centered reading sheet. The
+           panels stay usable, just dimmed. Tap the text or press Esc
+           to bring full brightness back. Not remembered across loads.
 ============================================================ */
-.app.focus-mode .hdr,
-.app.focus-mode .nav,
-.app.focus-mode .lib-bar,
-.app.focus-mode .mobile-tabs,
-.app.focus-mode .lib-toolbar,
-.app.focus-mode .lib-audio-dock,
-.app.focus-mode .lib-audio-bar-row,
-.app.focus-mode .lib-chrono-audio-bar { display: none !important; }
 
-@media (min-width: 1100px) {
-  /* drop the empty 224px nav column; widen + center the text */
-  .app.focus-mode .library { grid-template-columns: minmax(0, 1fr); }
-  .app.focus-mode .lib-reading { max-width: 760px; margin-inline: auto; }
-}
-
+/* --- Mobile: hide the chrome outright --- */
 @media (max-width: 1099px) {
+  .app.focus-mode .hdr,
+  .app.focus-mode .nav,
+  .app.focus-mode .lib-bar,
+  .app.focus-mode .mobile-tabs,
+  .app.focus-mode .lib-toolbar,
+  .app.focus-mode .lib-audio-dock,
+  .app.focus-mode .lib-audio-bar-row,
+  .app.focus-mode .lib-chrono-audio-bar { display: none !important; }
   /* reclaim the space the top tabs + bottom cockpit reserved */
   .app.focus-mode .main { padding-top: env(safe-area-inset-top, 0px) !important; }
   .app.view-library.focus-mode .main { padding-bottom: env(safe-area-inset-bottom, 0px) !important; }
 }
+
+/* --- Desktop: darken the surroundings, spotlight the reading --- */
+@media (min-width: 1100px) {
+  .app.focus-mode::before {
+    content: ""; position: fixed; inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 50; pointer-events: none;   /* click-through: panels stay usable while dimmed */
+    animation: focus-dim-in 0.2s ease;
+  }
+  .app.focus-mode .lib-reading {
+    position: relative; z-index: 60;      /* lifted above the wash → stays bright */
+    max-width: 760px; margin: 12px auto;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 24px 40px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  }
+}
+@keyframes focus-dim-in { from { opacity: 0; } to { opacity: 1; } }
