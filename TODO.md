@@ -186,10 +186,14 @@ Loose look-and-feel ideas, parked here so they're not lost. None are scoped yet 
 - ~~**Focus mode**~~ — **DONE + LIVE 2026-06-11** (see TODO_ARCHIVE + memory `project_focus_mode`).
   Tap blank space to strip the chrome. Mobile hides everything; desktop darkens the surround and floats
   the text as a centered "book page" with big ‹ › side arrows. Esc/tap exits.
-- **Parchment / dark themes** — a warm sepia reading skin plus a real dark mode, with a small corner
-  toggle. `code: styles.css theme vars (--ink, --bg…) + a theme switch`
-- **Greek-friendly typography** — a proper Greek serif and more line spacing so the reader feels like
-  a book, not a database. `code: styles.css font stack + line-height on the reader`
+- **Parchment / dark themes — NEXT UP.** A warm sepia reading skin plus a real dark mode, as a toggle
+  sitting NEXT TO the new reading-font picker (desktop `Aa ▾` menu; mobile ModesSheet **Display** group,
+  already laid out to receive it). `code: styles.css theme vars (--ink/--bg/--paper…) + a theme switch;
+  font picker home = READ_FONTS + the Display group in 60-library.jsx`
+- ~~**Greek-friendly typography**~~ — **DONE 2026-06-11**, shipped as a reader TYPEFACE PICKER (Source
+  Serif default · Cardo · Gentium) rather than a forced swap: the reader was ALREADY a quality serif
+  (Source Serif 4), so a per-reader choice beat picking one for everyone. See TODO_ARCHIVE + memory
+  `project_reader_appearance`.
 
 **Layout**
 - **Word detail as a floating card** — instead of the fixed right sidebar, the lexicon info pops up

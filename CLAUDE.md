@@ -232,6 +232,15 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   (`.lib-audio-dock`; desktop chrono keeps the inline scrubber). It clears when the chapter/passage
   ends. The reading list gets extra bottom room (`lib-reading--audio`) so the last verse clears it.**
 - Mobile toolbar (lib-toolbar): [☰] [‹] [Book Ch ▾] [›] [ABP/KJV/Par] — sticky, fixed height 56px
+- **Reading font picker (2026-06-11):** Source Serif (default) · Cardo · Gentium, in the text-style
+  menu — desktop `Aa ▾` menu (now Size + Typeface; button title "Text style"); mobile = a row folded
+  INSIDE the ModesSheet **Display** group (no separate section, on purpose — the sepia/dark theme
+  toggle will sit beside it). Sets `--f-serif`/`--f-greek` INLINE on `.lib-reading` only, so the swap
+  is scoped to the reader and the side panels keep the app default. Remembered in `localStorage`
+  `libFont`; defaults to Source Serif so nothing changes unless picked. Cardo/Gentium carry a Hebrew
+  fallback (Frank Ruhl Libre) and LAZY-LOAD (the font file is fetched only when chosen). `READ_FONTS`
+  map + `changeFont`/`libFont` in 60-library.jsx; the two fonts added to the Google Fonts `<link>` in
+  templates/index.html. Memory `project_reader_appearance`.
 - **Compare (was "Parallel"): pick 2–4 of ABP/KJV/BSB/ESV/NIV to read side by side.** `translation === "parallel"`
   is the mode; `compareSel` (array) = which texts. Desktop = N columns (`.lib-cmp-2/3/4`); mobile = stacked,
   one labeled line per text. Rows are the ordered UNION of every selected text's verses (keyed chapter+verse),

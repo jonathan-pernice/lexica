@@ -355,6 +355,22 @@ memory note). Reopen only if a specific word is reported showing the terse gloss
 
 ---
 
+## Reader typeface picker — done (2026-06-11)
+
+A "Reading font" choice — **Source Serif (default) · Cardo · Gentium** — in the text-style menu
+(desktop `Aa ▾` = Size + Typeface; mobile = a row folded into the ModesSheet **Display** group, no
+separate section, leaving room for the upcoming sepia/dark toggle beside it). Overrides
+`--f-serif`/`--f-greek` inline on `.lib-reading` only (side panels keep the app default), remembered
+in `localStorage` `libFont`, defaults to today's Source Serif so nothing changes unless picked.
+Cardo/Gentium bake in a Hebrew fallback (Frank Ruhl Libre) and lazy-load — the font files download
+only when chosen. **Why a picker, not a swap:** the reader was already a quality serif (Source
+Serif 4), so Cardo vs it is taste, not an upgrade — handing readers the choice beat forcing one.
+Sans was considered and dropped (doesn't suit a study Bible). `READ_FONTS` map +
+`changeFont`/`libFont` in static/src/60-library.jsx; the two fonts added to the Google Fonts `<link>`
+in templates/index.html. Memory `project_reader_appearance`.
+
+---
+
 ## Pronoun number fix + grammar display — done (2026-06-04)
 
 Live as rebuild #6. Rollback: `bible_pre_morph_20260604.db`. (Memory: project_pronoun_fix_path_c.)
