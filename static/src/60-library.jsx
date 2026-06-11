@@ -2761,6 +2761,16 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
         )}
       </div>
       </div>
+      {focusMode && !isMobile && (() => {
+        const canPrev = chronoOn ? chronoPos > 1 : selChapter > 1;
+        const canNext = chronoOn ? (chrono && chronoPos < chrono.passages.length) : selChapter < maxChap;
+        return (
+          <>
+            <button className="lib-focus-arrow lib-focus-arrow-prev" aria-label="Previous" disabled={!canPrev} onClick={() => turnPage(-1)}>‹</button>
+            <button className="lib-focus-arrow lib-focus-arrow-next" aria-label="Next" disabled={!canNext} onClick={() => turnPage(1)}>›</button>
+          </>
+        );
+      })()}
       {noteSel && <NoteAddPopover rect={noteSel.rect} isMobile={isMobile} onAdd={addNoteFromSelection} onColor={addHighlightFromSelection} onCopy={copySelection} onJournal={journalFromSelection} />}
       {flashMsg && <div className="lib-flash">{flashMsg}</div>}
       {verseMenu && <VerseNoteMenu rect={verseMenu.rect} isMobile={isMobile} onColor={vmColor} onNote={vmNote} onBookmark={vmBookmark} onCopy={vmCopy} onJournal={vmJournal} onClose={() => setVerseMenu(null)} />}

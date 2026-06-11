@@ -7713,7 +7713,21 @@ function LibraryView({
         handleVerseNum(v.verse, ch);
       } : undefined
     }, vnumNoteHandlers(v.verse, ch)), v.verse), noteDotInline(v.verse, ch), renderProseWords(v)));
-  })))), noteSel && /*#__PURE__*/React.createElement(NoteAddPopover, {
+  })))), focusMode && !isMobile && (() => {
+    const canPrev = chronoOn ? chronoPos > 1 : selChapter > 1;
+    const canNext = chronoOn ? chrono && chronoPos < chrono.passages.length : selChapter < maxChap;
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+      className: "lib-focus-arrow lib-focus-arrow-prev",
+      "aria-label": "Previous",
+      disabled: !canPrev,
+      onClick: () => turnPage(-1)
+    }, "\u2039"), /*#__PURE__*/React.createElement("button", {
+      className: "lib-focus-arrow lib-focus-arrow-next",
+      "aria-label": "Next",
+      disabled: !canNext,
+      onClick: () => turnPage(1)
+    }, "\u203A"));
+  })(), noteSel && /*#__PURE__*/React.createElement(NoteAddPopover, {
     rect: noteSel.rect,
     isMobile: isMobile,
     onAdd: addNoteFromSelection,

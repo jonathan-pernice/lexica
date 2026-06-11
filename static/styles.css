@@ -3140,3 +3140,26 @@ input { font-family: inherit; }
   .app.focus-mode.has-detail .lib-reading { padding-right: 46px; }
 }
 @keyframes focus-dim-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Page-turn arrows on the dark gutters either side of the focus-mode page,
+   vertically centered (desktop focus only — added by the JSX guard). */
+@media (min-width: 1100px) {
+  .lib-focus-arrow {
+    position: fixed; top: 50%; z-index: 61;
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; line-height: 1; padding-bottom: 4px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s, transform 0.15s;
+  }
+  .lib-focus-arrow:hover { background: rgba(255, 255, 255, 0.18); }
+  .lib-focus-arrow:disabled { opacity: 0.2; cursor: default; }
+  /* sit in the middle of each dark gutter (page is 760px, centered) */
+  .lib-focus-arrow-prev { left: calc((100vw - 760px) / 4); transform: translate(-50%, -50%); }
+  .lib-focus-arrow-next { right: calc((100vw - 760px) / 4); transform: translate(50%, -50%); }
+  .lib-focus-arrow-prev:not(:disabled):hover { transform: translate(-50%, -50%) scale(1.06); }
+  .lib-focus-arrow-next:not(:disabled):hover { transform: translate(50%, -50%) scale(1.06); }
+}
