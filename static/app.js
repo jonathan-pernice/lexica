@@ -4539,20 +4539,34 @@ function ModesSheet({
   }, translation === "heb" && /*#__PURE__*/React.createElement("span", {
     className: "mseg-chk",
     "aria-hidden": "true"
-  }, "\u2713"), "HEB")))), chrono && !activeNonCanon && /*#__PURE__*/React.createElement("div", {
+  }, "\u2713"), "HEB")))), chrono && /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"
   }, "Order"), /*#__PURE__*/React.createElement("div", {
     className: "mseg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (orderMode !== "chronological" ? " on" : ""),
-    "aria-pressed": orderMode !== "chronological",
-    onClick: () => setOrder("canonical")
+    className: "mseg-b" + (!activeNonCanon && orderMode !== "chronological" ? " on" : ""),
+    disabled: !!activeNonCanon,
+    style: activeNonCanon ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    "aria-pressed": !activeNonCanon && orderMode !== "chronological",
+    onClick: () => {
+      if (!activeNonCanon) setOrder("canonical");
+    }
   }, "Canonical"), /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b" + (orderMode === "chronological" ? " on" : ""),
-    "aria-pressed": orderMode === "chronological",
-    onClick: () => setOrder("chronological")
+    className: "mseg-b" + (!activeNonCanon && orderMode === "chronological" ? " on" : ""),
+    disabled: !!activeNonCanon,
+    style: activeNonCanon ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    "aria-pressed": !activeNonCanon && orderMode === "chronological",
+    onClick: () => {
+      if (!activeNonCanon) setOrder("chronological");
+    }
   }, "Chronological"))), /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
@@ -7436,12 +7450,19 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement(Icon.Lines, null))), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
-  }), audioBtn, canSearch && /*#__PURE__*/React.createElement("button", {
+  }), audioBtn, /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-toggle-icon" + (searchOpen ? " on" : ""),
-    title: "Search this text",
+    disabled: !canSearch,
+    style: !canSearch ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    title: canSearch ? "Search this text" : "Search isn't available for this text",
     "aria-label": "Search this text",
     "aria-pressed": searchOpen,
-    onClick: () => setSearchOpen(o => !o)
+    onClick: () => {
+      if (canSearch) setSearchOpen(o => !o);
+    }
   }, /*#__PURE__*/React.createElement(Icon.Search, null)), /*#__PURE__*/React.createElement("div", {
     className: "lib-other-wrap"
   }, /*#__PURE__*/React.createElement("button", {
@@ -7470,9 +7491,15 @@ function LibraryView({
     className: "mbar-overview",
     onClick: () => setSummaryOpen(true),
     "aria-label": "Chapter overview"
-  }, /*#__PURE__*/React.createElement(Icon.Info, null)), canSearch && /*#__PURE__*/React.createElement("button", {
+  }, /*#__PURE__*/React.createElement(Icon.Info, null)), /*#__PURE__*/React.createElement("button", {
     className: "mbar-overview mbar-search",
-    onClick: () => setSearchOpen(o => !o),
+    disabled: !canSearch,
+    style: !canSearch ? {
+      opacity: 0.35
+    } : undefined,
+    onClick: () => {
+      if (canSearch) setSearchOpen(o => !o);
+    },
     "aria-label": "Search this text"
   }, /*#__PURE__*/React.createElement(Icon.Search, null)), /*#__PURE__*/React.createElement("div", {
     className: "mbar-center"

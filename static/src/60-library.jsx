@@ -563,12 +563,12 @@ function ModesSheet({
               </>
             )}
           </div>
-          {chrono && !activeNonCanon && (
+          {chrono && (
             <div className="mode-sec">
               <div className="mode-lbl">Order</div>
               <div className="mseg">
-                <button className={"mseg-b"+(orderMode!=="chronological"?" on":"")} aria-pressed={orderMode!=="chronological"} onClick={()=>setOrder("canonical")}>Canonical</button>
-                <button className={"mseg-b"+(orderMode==="chronological"?" on":"")} aria-pressed={orderMode==="chronological"} onClick={()=>setOrder("chronological")}>Chronological</button>
+                <button className={"mseg-b"+(!activeNonCanon && orderMode!=="chronological"?" on":"")} disabled={!!activeNonCanon} style={activeNonCanon?{opacity:0.35,cursor:"default"}:undefined} aria-pressed={!activeNonCanon && orderMode!=="chronological"} onClick={()=>{ if(!activeNonCanon) setOrder("canonical"); }}>Canonical</button>
+                <button className={"mseg-b"+(!activeNonCanon && orderMode==="chronological"?" on":"")} disabled={!!activeNonCanon} style={activeNonCanon?{opacity:0.35,cursor:"default"}:undefined} aria-pressed={!activeNonCanon && orderMode==="chronological"} onClick={()=>{ if(!activeNonCanon) setOrder("chronological"); }}>Chronological</button>
               </div>
             </div>
           )}
@@ -2492,9 +2492,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
             {audioBtn}
-            {canSearch && (
-              <button className={"lib-toggle lib-toggle-icon" + (searchOpen ? " on" : "")} title="Search this text" aria-label="Search this text" aria-pressed={searchOpen} onClick={() => setSearchOpen(o => !o)}><Icon.Search/></button>
-            )}
+            <button className={"lib-toggle lib-toggle-icon" + (searchOpen ? " on" : "")} disabled={!canSearch} style={!canSearch ? { opacity: 0.35, cursor: "default" } : undefined} title={canSearch ? "Search this text" : "Search isn't available for this text"} aria-label="Search this text" aria-pressed={searchOpen} onClick={() => { if (canSearch) setSearchOpen(o => !o); }}><Icon.Search/></button>
             <div className="lib-other-wrap">
               <button className="lib-toggle lib-font-btn" onClick={() => setFontOpen(o => !o)} title="Text size" aria-label="Text size">Aa ▾</button>
               {fontOpen && (
@@ -2517,11 +2515,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           <button className="mbar-overview" onClick={() => setSummaryOpen(true)} aria-label="Chapter overview">
             <Icon.Info/>
           </button>
-          {canSearch && (
-            <button className="mbar-overview mbar-search" onClick={() => setSearchOpen(o => !o)} aria-label="Search this text">
-              <Icon.Search/>
-            </button>
-          )}
+          <button className="mbar-overview mbar-search" disabled={!canSearch} style={!canSearch ? { opacity: 0.35 } : undefined} onClick={() => { if (canSearch) setSearchOpen(o => !o); }} aria-label="Search this text">
+            <Icon.Search/>
+          </button>
           <div className="mbar-center">
             <button className="mbar-loc" onClick={() => setMobileNavOpen(true)}>
               {chronoOn ? (
