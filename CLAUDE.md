@@ -225,8 +225,11 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   (text source lives in the LEFT NAV's nav-source seg, not the toolbar. CONDENSED 2026-06-11: ABP/KJV/BSB
   stay one-click buttons; ESV*/NIV*/HEB + the non-canon books fold into a **"More ▾"** menu so the row stays
   at 4. HEB = the public Hebrew OT interlinear (OT books only; the left book list AND the mobile book
-  picker drop the NT books in HEB mode). ESV*/NIV* owner only; HEB is PUBLIC (no login, 2026-06-11).
-  Hebrew/ESV/NIV survive a refresh now via a `gatedReady` guard on the restore.)
+  picker drop the NT books in HEB mode). On a non-Hebrew text sitting on a NT book, the HEB selector now
+  shows GRAYED/disabled rather than hidden (`hebShown` = heb.db loaded + reading the Bible → visible;
+  `hebPickable` = and on an OT book → clickable) — mobile shows just the grayed pill (no tooltip, no
+  hover on touch), desktop More menu keeps a hover tooltip. ESV*/NIV* owner only; HEB is PUBLIC (no
+  login, 2026-06-11). Hebrew/ESV/NIV survive a refresh now via a `gatedReady` guard on the restore.)
 - **Mobile audio (BSB/ESV): the scrubber docks at the BOTTOM, on a strip just above the reading
   cockpit (where play/pause lives), sliding up when a chapter loads — ALL modes incl. chronological
   (`.lib-audio-dock`; desktop chrono keeps the inline scrubber). It clears when the chapter/passage
