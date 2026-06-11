@@ -2952,6 +2952,16 @@ input { font-family: inherit; }
    Smaller title, tighter spacing, the explanation line dropped, and the
    filter/sort/group controls collapsed into one swipeable row (no wrap pile). */
 @media (max-width: 1099px) {
+  /* The base .seg / .seg-b pill styling is defined only in the desktop block, so on a
+     phone the segmented toggles that aren't the library's .mseg (Notes mode/filter/sort,
+     the owner About|Stats toggle) fell back to plain run-together text. Mirror the
+     desktop look here. The library toolbar/nav segs don't render on mobile, so this
+     only reaches those orphan toggles. */
+  .seg { display: inline-flex; background: var(--bg-sunk); border: 1px solid var(--rule); border-radius: 8px; padding: 2px; }
+  .seg-b { font-size: 12.5px; color: var(--ink-3); padding: 5px 11px; border-radius: 6px; transition: background 0.1s, color 0.1s; }
+  .seg-b.on { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); font-weight: 500; }
+  .seg-b:active:not(.on) { background: var(--bg-sunk); color: var(--ink); }
+
   .notes-view { padding: 14px 14px 80px; }
   .notes-view-head { margin-bottom: 10px; }
   .notes-view-titlerow { margin-bottom: 8px; }
