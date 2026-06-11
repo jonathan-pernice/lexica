@@ -397,8 +397,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   else if ((!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person"
            && !aiDescription && !aiDescLoading
            && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0)) sections.push("lsj");
-  if (!isHebrew && !isPN && !entry.isKjv && abpCount !== null && abpCount > 0) sections.push("abpOcc");
-  if (entry.isExtra && extraCount !== null && extraCount > 0) sections.push("extraOcc");
+  if (!isHebrew && !isPN && !entry.isKjv && !entry.isExtra && abpCount !== null && abpCount > 0) sections.push("abpOcc");
+  // Non-canon "other" books (Apostolic Fathers chip mode): suppress the occurrence
+  // links/counts (the LXX cross-link above + this in-book count) until Lexicon search is
+  // wired. Re-enable: drop `!entry.isExtra` above + uncomment extraOcc.
+  // if (entry.isExtra && extraCount !== null && extraCount > 0) sections.push("extraOcc");
   if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
   if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
   if (isHebrew && !entry.isHeb && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
