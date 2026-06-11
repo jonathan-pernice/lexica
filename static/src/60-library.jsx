@@ -534,25 +534,30 @@ function ModesSheet({
               </div>
             ) : (
               /* Bible: one checkable row — tick 1 to read it, 2-4 to compare side by side.
-                 compareActive + toggleCompare already do the read/compare switching. */
+                 compareActive + toggleCompare already do the read/compare switching. HEB
+                 rides in the same row but is single-read only (no compare gesture); the
+                 row wraps to a 2nd line when there are enough texts. When HEB is the read,
+                 none of the compare buttons are "on" (compareActive falls back to abp). */
               <>
                 <div className="mode-hint">Tap to read · long-press to compare</div>
                 <div className="mseg text-ed text-pick">
                   {compareAvail.map(id => {
-                    const on = compareActive.includes(id);
+                    const on = translation !== "heb" && compareActive.includes(id);
                     return (
                       <button key={id} className={"mseg-b"+(on?" on":"")} aria-pressed={on} {...pickHandlers(id)}>
                         {on && <span className="mseg-chk" aria-hidden="true">✓</span>}{id.toUpperCase()}
                       </button>
                     );
                   })}
+                  {hebPickable && (
+                    <button className={"mseg-b"+(translation === "heb" ? " on" : "")} aria-pressed={translation === "heb"}
+                      title="Hebrew OT interlinear" aria-label="Hebrew OT interlinear"
+                      onContextMenu={(e) => e.preventDefault()}
+                      onClick={() => pickBible("heb")}>
+                      {translation === "heb" && <span className="mseg-chk" aria-hidden="true">✓</span>}HEB
+                    </button>
+                  )}
                 </div>
-                {hebPickable && (
-                  <button className={"mseg-b text-heb" + (translation === "heb" ? " on" : "")} aria-pressed={translation === "heb"}
-                    onClick={() => { pickBible("heb"); onClose && onClose(); }} style={{ marginTop: 6, width: "100%" }}>
-                    {translation === "heb" && <span className="mseg-chk" aria-hidden="true">✓</span>}Hebrew OT (interlinear)
-                  </button>
-                )}
               </>
             )}
           </div>

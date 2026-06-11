@@ -4558,13 +4558,16 @@ function ModesSheet({
   }, "NIV")) :
   /*#__PURE__*/
   /* Bible: one checkable row — tick 1 to read it, 2-4 to compare side by side.
-     compareActive + toggleCompare already do the read/compare switching. */
+     compareActive + toggleCompare already do the read/compare switching. HEB
+     rides in the same row but is single-read only (no compare gesture); the
+     row wraps to a 2nd line when there are enough texts. When HEB is the read,
+     none of the compare buttons are "on" (compareActive falls back to abp). */
   React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "mode-hint"
   }, "Tap to read \xB7 long-press to compare"), /*#__PURE__*/React.createElement("div", {
     className: "mseg text-ed text-pick"
   }, compareAvail.map(id => {
-    const on = compareActive.includes(id);
+    const on = translation !== "heb" && compareActive.includes(id);
     return /*#__PURE__*/React.createElement("button", _extends({
       key: id,
       className: "mseg-b" + (on ? " on" : ""),
@@ -4573,21 +4576,17 @@ function ModesSheet({
       className: "mseg-chk",
       "aria-hidden": "true"
     }, "\u2713"), id.toUpperCase());
-  })), hebPickable && /*#__PURE__*/React.createElement("button", {
-    className: "mseg-b text-heb" + (translation === "heb" ? " on" : ""),
+  }), hebPickable && /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (translation === "heb" ? " on" : ""),
     "aria-pressed": translation === "heb",
-    onClick: () => {
-      pickBible("heb");
-      onClose && onClose();
-    },
-    style: {
-      marginTop: 6,
-      width: "100%"
-    }
+    title: "Hebrew OT interlinear",
+    "aria-label": "Hebrew OT interlinear",
+    onContextMenu: e => e.preventDefault(),
+    onClick: () => pickBible("heb")
   }, translation === "heb" && /*#__PURE__*/React.createElement("span", {
     className: "mseg-chk",
     "aria-hidden": "true"
-  }, "\u2713"), "Hebrew OT (interlinear)"))), chrono && !activeNonCanon && /*#__PURE__*/React.createElement("div", {
+  }, "\u2713"), "HEB")))), chrono && !activeNonCanon && /*#__PURE__*/React.createElement("div", {
     className: "mode-sec"
   }, /*#__PURE__*/React.createElement("div", {
     className: "mode-lbl"

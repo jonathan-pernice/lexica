@@ -2100,7 +2100,10 @@ input { font-family: inherit; }
 .font-size-lbl { font-size: 12px; color: var(--ink-3); flex: 1; text-align: center; align-self: center; user-select: none; pointer-events: none; }
 .font-picker .mseg-b { flex: 0 0 44px; }
 /* Checkable Text picker (mobile): tick 1 to read, 2-4 to compare side by side. */
-.text-pick .mseg-b { display: inline-flex; align-items: center; justify-content: center; gap: 3px; }
+/* Text picker wraps to a 2nd line when there are enough texts (e.g. ABP/KJV/BSB/ESV/NIV
+   + HEB → 3 per row). The pill's own `gap` already spaces the wrapped rows. */
+.text-pick { flex-wrap: wrap; }
+.text-pick .mseg-b { display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex: 1 1 28%; }
 .mseg-chk { font-size: 10px; color: var(--accent); line-height: 1; }
 .switch {
   width: 48px; height: 28px; border-radius: 15px;
