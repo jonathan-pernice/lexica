@@ -3971,6 +3971,7 @@ function LibNavPanel({
   pickBible,
   esvOwner,
   nivOwner,
+  hebShown,
   hebPickable,
   otherOpen,
   setOtherOpen,
@@ -4099,7 +4100,7 @@ function LibNavPanel({
     className: "nav-other-caret" + (otherOpen ? " open" : "")
   }, "\u25BE")))), otherOpen && /*#__PURE__*/React.createElement("div", {
     className: "nav-other-inline"
-  }, (esvOwner || nivOwner || hebPickable) && /*#__PURE__*/React.createElement("div", {
+  }, (esvOwner || nivOwner || hebShown) && /*#__PURE__*/React.createElement("div", {
     className: "nav-more-bibles"
   }, esvOwner && /*#__PURE__*/React.createElement("button", {
     className: "lib-other-item" + (!nonCanon && translation === "esv" ? " on" : ""),
@@ -4115,8 +4116,10 @@ function LibNavPanel({
       setOtherOpen(false);
       if (isOverlay) onClose();
     }
-  }, "NIV"), hebPickable && /*#__PURE__*/React.createElement("button", {
+  }, "NIV"), hebShown && /*#__PURE__*/React.createElement("button", {
     className: "lib-other-item" + (!nonCanon && translation === "heb" ? " on" : ""),
+    disabled: !hebPickable,
+    title: !hebPickable ? "Old Testament books only" : undefined,
     onClick: () => {
       pickBible("heb");
       setOtherOpen(false);
@@ -4387,6 +4390,7 @@ function ModesSheet({
   pickBible,
   esvOwner,
   nivOwner,
+  hebShown,
   hebPickable,
   toggleParallel,
   nonCanonList,
@@ -4519,13 +4523,20 @@ function ModesSheet({
       className: "mseg-chk",
       "aria-hidden": "true"
     }, "\u2713"), id.toUpperCase());
-  }), hebPickable && /*#__PURE__*/React.createElement("button", {
+  }), hebShown && /*#__PURE__*/React.createElement("button", {
     className: "mseg-b" + (translation === "heb" ? " on" : ""),
     "aria-pressed": translation === "heb",
-    title: "Hebrew OT interlinear",
+    disabled: !hebPickable,
+    style: !hebPickable ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    title: hebPickable ? "Hebrew OT interlinear" : "Hebrew OT — Old Testament books only",
     "aria-label": "Hebrew OT interlinear",
     onContextMenu: e => e.preventDefault(),
-    onClick: () => pickBible("heb")
+    onClick: () => {
+      if (hebPickable) pickBible("heb");
+    }
   }, translation === "heb" && /*#__PURE__*/React.createElement("span", {
     className: "mseg-chk",
     "aria-hidden": "true"
@@ -5716,7 +5727,11 @@ function LibraryView({
 
   // HEB toggle: public (shows whenever the Hebrew data is loaded), OT books only (no
   // Hebrew NT), and not while a non-canon text is open.
-  const hebPickable = hebAvail && !nonCanon && !!selBook && !NT_BOOKS.has(selBook.abbrev);
+  // hebShown = the OT-only Hebrew text exists as an option (heb.db loaded, reading the Bible).
+  // hebPickable = and it's usable on the CURRENT book (an OT book). On NT books we keep the
+  // selector VISIBLE but disabled/grayed, so it doesn't vanish out from under you.
+  const hebShown = hebAvail && !nonCanon && !!selBook;
+  const hebPickable = hebShown && !NT_BOOKS.has(selBook.abbrev);
 
   // ---- Chronological span assembly --------------------------------------
   // Pull the active text(s) for the current passage out of the loaded span,
@@ -7206,6 +7221,7 @@ function LibraryView({
     pickBible: pickBible,
     esvOwner: esvOwner,
     nivOwner: nivOwner,
+    hebShown: hebShown,
     hebPickable: hebPickable,
     otherOpen: otherOpen,
     setOtherOpen: setOtherOpen,
@@ -7240,6 +7256,7 @@ function LibraryView({
     pickBible: pickBible,
     esvOwner: esvOwner,
     nivOwner: nivOwner,
+    hebShown: hebShown,
     hebPickable: hebPickable,
     toggleParallel: toggleParallel,
     compareAvail: compareAvail,

@@ -150,7 +150,7 @@ const _BOOK_DIV = {
   Jud:"General Epistles",Rev:"Apocalyptic",
 };
 
-function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible, esvOwner, nivOwner, hebPickable, otherOpen, setOtherOpen, chrono, orderMode, setOrder, chronoPos, onPickPassage }) {
+function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, isOverlay, onClose, navBookRef, nonCanon, nonCanonList, onPickNonCanon, translation, corpus, pickBible, esvOwner, nivOwner, hebShown, hebPickable, otherOpen, setOtherOpen, chrono, orderMode, setOrder, chronoPos, onPickPassage }) {
   const [query, setQuery] = useState("");
   const chronoMode = orderMode === "chronological" && chrono && !nonCanon;
   // The era a passage belongs to, so the active passage's era starts expanded.
@@ -249,7 +249,7 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
           menu never floats over the reading text. */}
       {otherOpen && (
         <div className="nav-other-inline">
-          {(esvOwner || nivOwner || hebPickable) && (
+          {(esvOwner || nivOwner || hebShown) && (
             <div className="nav-more-bibles">
               {esvOwner && (
                 <button className={"lib-other-item" + (!nonCanon && translation === "esv" ? " on" : "")}
@@ -259,8 +259,9 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
                 <button className={"lib-other-item" + (!nonCanon && translation === "niv" ? " on" : "")}
                   onClick={() => { pickBible("niv"); setOtherOpen(false); if (isOverlay) onClose(); }}>NIV</button>
               )}
-              {hebPickable && (
+              {hebShown && (
                 <button className={"lib-other-item" + (!nonCanon && translation === "heb" ? " on" : "")}
+                  disabled={!hebPickable} title={!hebPickable ? "Old Testament books only" : undefined}
                   onClick={() => { pickBible("heb"); setOtherOpen(false); if (isOverlay) onClose(); }}>Hebrew OT (interlinear)</button>
               )}
             </div>
@@ -481,7 +482,7 @@ function MobileBookPicker({ books, selBook, selChapter, nonCanon, nonCanonList, 
 // Compacted to three groups: Text · Study layer · Display.
 // ============================================================
 function ModesSheet({
-  corpus, translation, pickBible, esvOwner, nivOwner, hebPickable, toggleParallel, nonCanonList,
+  corpus, translation, pickBible, esvOwner, nivOwner, hebShown, hebPickable, toggleParallel, nonCanonList,
   compareAvail, compareActive, toggleCompare,
   showStrongs, showInterlinear, setOpt, chipMode, viewMode, libFontSize, changeFontSize, onClose,
   chrono, orderMode, setOrder,
@@ -549,11 +550,13 @@ function ModesSheet({
                       </button>
                     );
                   })}
-                  {hebPickable && (
+                  {hebShown && (
                     <button className={"mseg-b"+(translation === "heb" ? " on" : "")} aria-pressed={translation === "heb"}
-                      title="Hebrew OT interlinear" aria-label="Hebrew OT interlinear"
+                      disabled={!hebPickable} style={!hebPickable ? {opacity:0.35,cursor:"default"} : undefined}
+                      title={hebPickable ? "Hebrew OT interlinear" : "Hebrew OT — Old Testament books only"}
+                      aria-label="Hebrew OT interlinear"
                       onContextMenu={(e) => e.preventDefault()}
-                      onClick={() => pickBible("heb")}>
+                      onClick={() => { if (hebPickable) pickBible("heb"); }}>
                       {translation === "heb" && <span className="mseg-chk" aria-hidden="true">✓</span>}HEB
                     </button>
                   )}
@@ -1230,7 +1233,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
 
   // HEB toggle: public (shows whenever the Hebrew data is loaded), OT books only (no
   // Hebrew NT), and not while a non-canon text is open.
-  const hebPickable = hebAvail && !nonCanon && !!selBook && !NT_BOOKS.has(selBook.abbrev);
+  // hebShown = the OT-only Hebrew text exists as an option (heb.db loaded, reading the Bible).
+  // hebPickable = and it's usable on the CURRENT book (an OT book). On NT books we keep the
+  // selector VISIBLE but disabled/grayed, so it doesn't vanish out from under you.
+  const hebShown = hebAvail && !nonCanon && !!selBook;
+  const hebPickable = hebShown && !NT_BOOKS.has(selBook.abbrev);
 
   // ---- Chronological span assembly --------------------------------------
   // Pull the active text(s) for the current passage out of the loaded span,
@@ -2358,6 +2365,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           pickBible={pickBible}
           esvOwner={esvOwner}
           nivOwner={nivOwner}
+          hebShown={hebShown}
           hebPickable={hebPickable}
           otherOpen={otherOpen}
           setOtherOpen={setOtherOpen}
@@ -2395,6 +2403,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           pickBible={pickBible}
           esvOwner={esvOwner}
           nivOwner={nivOwner}
+          hebShown={hebShown}
           hebPickable={hebPickable}
           toggleParallel={toggleParallel}
           compareAvail={compareAvail}

@@ -1836,8 +1836,9 @@ input { font-family: inherit; }
   border: none;
   cursor: pointer;
 }
-.lib-other-item:hover { background: var(--bg-sunk); }
+.lib-other-item:not(:disabled):hover { background: var(--bg-sunk); }
 .lib-other-item.on { color: var(--gold); font-weight: 600; }
+.lib-other-item:disabled { opacity: 0.4; cursor: default; }
 
 /* Compact text-size button + its little popover (replaces the inline A−/A+ seg) */
 .lib-font-btn { font-size: 13px; letter-spacing: 0.01em; }
