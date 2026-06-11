@@ -7355,23 +7355,16 @@ function LibraryView({
       cursor: "default"
     } : undefined,
     onClick: () => !proseLocked && setOpt("showInterlinear", !showInterlinear)
-  }, /*#__PURE__*/React.createElement(Icon.Interlinear, null)), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon.Interlinear, null)), !nonCanon && /*#__PURE__*/React.createElement("div", {
     className: "lib-other-wrap"
   }, /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : ""),
-    disabled: !!nonCanon,
-    style: nonCanon ? {
-      opacity: 0.35,
-      cursor: "default"
-    } : undefined,
-    title: nonCanon ? "Compare isn't available for this text" : "Compare translations",
+    title: "Compare translations",
     "aria-label": "Compare translations",
     "aria-pressed": translation === "parallel",
     "aria-expanded": compareOpen,
-    onClick: () => {
-      if (!nonCanon) setCompareOpen(o => !o);
-    }
-  }, /*#__PURE__*/React.createElement(Icon.Columns, null)), !nonCanon && compareOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    onClick: () => setCompareOpen(o => !o)
+  }, /*#__PURE__*/React.createElement(Icon.Columns, null)), compareOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "lib-other-scrim",
     onClick: () => setCompareOpen(false)
   }), /*#__PURE__*/React.createElement("div", {

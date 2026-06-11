@@ -2452,23 +2452,25 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <span className="lib-bar-sep" aria-hidden="true"/>
             <button className={"lib-toggle lib-toggle-icon" + (showStrongs ? " on" : "")} disabled={proseLocked} title="Strong's numbers" aria-label="Strong's numbers" aria-pressed={showStrongs} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showStrongs", !showStrongs)}><Icon.Hash/></button>
             <button className={"lib-toggle lib-toggle-icon" + (showInterlinear ? " on" : "")} disabled={proseLocked} title="Interlinear" aria-label="Interlinear" aria-pressed={showInterlinear} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}><Icon.Interlinear/></button>
-            <div className="lib-other-wrap">
-              <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} disabled={!!nonCanon} style={nonCanon ? { opacity: 0.35, cursor: "default" } : undefined} title={nonCanon ? "Compare isn't available for this text" : "Compare translations"} aria-label="Compare translations" aria-pressed={translation === "parallel"} aria-expanded={compareOpen} onClick={() => { if (!nonCanon) setCompareOpen(o => !o); }}><Icon.Columns/></button>
-              {!nonCanon && compareOpen && (
-                <>
-                  <div className="lib-other-scrim" onClick={() => setCompareOpen(false)} />
-                  <div className="lib-other-menu lib-compare-menu">
-                    <div className="lib-compare-title">Compare (pick 2–4)</div>
-                    {compareAvail.map(id => (
-                      <label key={id} className="lib-compare-opt">
-                        <input type="checkbox" checked={compareActive.includes(id)} onChange={() => toggleCompare(id)} />
-                        <span>{id.toUpperCase()}</span>
-                      </label>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+            {!nonCanon && (
+              <div className="lib-other-wrap">
+                <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} title="Compare translations" aria-label="Compare translations" aria-pressed={translation === "parallel"} aria-expanded={compareOpen} onClick={() => setCompareOpen(o => !o)}><Icon.Columns/></button>
+                {compareOpen && (
+                  <>
+                    <div className="lib-other-scrim" onClick={() => setCompareOpen(false)} />
+                    <div className="lib-other-menu lib-compare-menu">
+                      <div className="lib-compare-title">Compare (pick 2–4)</div>
+                      {compareAvail.map(id => (
+                        <label key={id} className="lib-compare-opt">
+                          <input type="checkbox" checked={compareActive.includes(id)} onChange={() => toggleCompare(id)} />
+                          <span>{id.toUpperCase()}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg lib-view-seg">
               <button
