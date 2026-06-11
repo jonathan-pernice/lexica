@@ -3121,12 +3121,18 @@ input { font-family: inherit; }
     animation: focus-dim-in 0.2s ease;
   }
   .app.focus-mode .lib-reading {
-    position: relative; z-index: 60;      /* lifted above the wash → stays bright */
-    max-width: 760px; margin: 12px auto;
+    position: fixed; z-index: 60;          /* lifted above the wash → stays bright */
+    top: 24px; bottom: 24px;
+    left: 50%; transform: translateX(-50%);/* centered on the whole screen, not the book-list column */
+    width: 760px; max-width: 92vw;
+    overflow-y: auto;                      /* the text scrolls inside the page... */
+    overscroll-behavior: contain;          /* ...without scrolling the dark backdrop */
     background: var(--bg);
-    border-radius: 12px;
-    padding: 24px 40px;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+    border-radius: 14px;
+    padding: 34px 46px 40px;               /* both the top and bottom edges show — like a real page */
+    box-shadow: 0 18px 64px rgba(0, 0, 0, 0.5);
   }
+  /* in focus mode the page is its own frame — don't reserve the side-panel gutter */
+  .app.focus-mode.has-detail .lib-reading { padding-right: 46px; }
 }
 @keyframes focus-dim-in { from { opacity: 0; } to { opacity: 1; } }
