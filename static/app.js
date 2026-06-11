@@ -1924,7 +1924,7 @@ function DetailPanel({
   const [kjvCount, setKjvCount] = useState(null);
   useEffect(() => {
     setKjvCount(null);
-    if (!isHebrew && !entry.isKjv || !entry.strongs) return;
+    if (!isHebrew && !entry.isKjv || !entry.strongs || entry.isHeb) return; // Hebrew OT reader: no KJV cross-link
     let cancelled = false;
     api.kjvStrongsCount(entry.strongs).then(d => {
       if (!cancelled) setKjvCount(d.count ?? null);
@@ -2161,7 +2161,7 @@ function DetailPanel({
   if (entry.isExtra && extraCount !== null && extraCount > 0) sections.push("extraOcc");
   if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
   if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
-  if (isHebrew && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
+  if (isHebrew && !entry.isHeb && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
   if (entry.derivation) sections.push("derivation");
   if (entry.book && !entry.isExtra) sections.push("verse");
   if (occurrences > 0 || totalResults > 0) sections.push("frequency");
@@ -2932,7 +2932,6 @@ function NotesView({
 }) {
   useNotesVersion();
   const [q, setQ] = useState("");
-  const [msg, setMsg] = useState("");
   const [filter, setFilter] = useState("all"); // all | bookmark | highlight | note
   const [sort, setSort] = useState("recent"); // recent | ref
   const [group, setGroup] = useState(false); // group by book
@@ -2945,7 +2944,6 @@ function NotesView({
   const [authOpen, setAuthOpen] = useState(null); // null | "login" | "signup"
   const [mode, setMode] = useState("notes"); // notes | journal
   const acct = NotesStore.authInfo();
-  const fileRef = useRef(null);
   let notes = NotesStore.search(q); // already newest-first
   if (filter === "bookmark") notes = notes.filter(n => n.bookmark);else if (filter === "highlight") notes = notes.filter(n => n.color);else if (filter === "note") notes = notes.filter(n => n.body && n.body.trim());
 
@@ -2998,34 +2996,6 @@ function NotesView({
   }, "\u201C", n.snippet, "\u201D"), n.body && /*#__PURE__*/React.createElement("div", {
     className: "notes-item-body"
   }, n.body));
-  const doExport = () => {
-    const data = JSON.stringify(NotesStore.exportData(), null, 2);
-    const url = URL.createObjectURL(new Blob([data], {
-      type: "application/json"
-    }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "lexica-notes-" + new Date().toISOString().slice(0, 10) + ".json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-  const doImport = e => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(reader.result);
-        const list = Array.isArray(parsed) ? parsed : parsed.notes || [];
-        const r = NotesStore.importMerge(list);
-        setMsg(`Imported ${r.added} new, ${r.updated} updated${r.skipped ? ", " + r.skipped + " skipped" : ""}.`);
-      } catch (err) {
-        setMsg("Couldn't read that file.");
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = ""; // let the same file be re-picked
-  };
   return /*#__PURE__*/React.createElement("div", {
     className: "notes-view"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3035,50 +3005,20 @@ function NotesView({
   }, /*#__PURE__*/React.createElement("h2", {
     className: "notes-view-title"
   }, "My Notes"), /*#__PURE__*/React.createElement("div", {
-    className: "notes-tools"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "notes-tool-btn",
-    onClick: doExport,
-    disabled: NotesStore.all().length === 0 && NotesStore.journals().length === 0
-  }, "Export"), /*#__PURE__*/React.createElement("button", {
-    className: "notes-tool-btn",
-    onClick: () => fileRef.current && fileRef.current.click()
-  }, "Import"), /*#__PURE__*/React.createElement("input", {
-    ref: fileRef,
-    type: "file",
-    accept: "application/json,.json",
-    style: {
-      display: "none"
-    },
-    onChange: doImport
-  }))), msg && /*#__PURE__*/React.createElement("div", {
-    className: "notes-msg"
-  }, msg), /*#__PURE__*/React.createElement("div", {
-    className: "notes-sync"
+    className: "notes-acct"
   }, acct.email ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-    className: "notes-sync-label"
-  }, "Signed in:"), /*#__PURE__*/React.createElement("span", {
-    className: "notes-acct-email"
+    className: "notes-acct-email",
+    title: acct.email
   }, acct.email), /*#__PURE__*/React.createElement("button", {
     className: "notes-tool-btn",
-    onClick: () => NotesStore.syncNow(),
-    disabled: acct.syncing
-  }, acct.syncing ? "Syncing…" : "Sync now"), /*#__PURE__*/React.createElement("button", {
-    className: "notes-tool-btn",
     onClick: () => NotesStore.logout()
-  }, "Log out")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-    className: "notes-sync-label"
-  }, "Sync across devices:"), /*#__PURE__*/React.createElement("button", {
+  }, "Log out")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     className: "notes-tool-btn",
     onClick: () => setAuthOpen("login")
   }, "Log in"), /*#__PURE__*/React.createElement("button", {
     className: "notes-tool-btn",
     onClick: () => setAuthOpen("signup")
-  }, "Sign up"))), acct.email ? /*#__PURE__*/React.createElement("div", {
-    className: "notes-sync-hint"
-  }, "Your notes sync to this account on every device you log into.") : /*#__PURE__*/React.createElement("div", {
-    className: "notes-sync-hint"
-  }, "Optional \u2014 sign in to sync your notes across devices. Notes work fine without an account."), /*#__PURE__*/React.createElement("div", {
+  }, "Sign up")))), /*#__PURE__*/React.createElement("div", {
     className: "notes-mode seg"
   }, /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (mode === "notes" ? " on" : ""),
@@ -6516,7 +6456,8 @@ function LibraryView({
       book: selBook.abbrev,
       chapter: ch,
       verse: v.verse,
-      is_pn: false
+      is_pn: false,
+      isHeb: true // from the Hebrew OT reader — suppress the KJV-occurrences link
     });
     return /*#__PURE__*/React.createElement(React.Fragment, {
       key: `heb-${ch}-${v.verse}`

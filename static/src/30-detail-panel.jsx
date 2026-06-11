@@ -191,7 +191,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [kjvCount, setKjvCount] = useState(null);
   useEffect(() => {
     setKjvCount(null);
-    if ((!isHebrew && !entry.isKjv) || !entry.strongs) return;
+    if ((!isHebrew && !entry.isKjv) || !entry.strongs || entry.isHeb) return;   // Hebrew OT reader: no KJV cross-link
     let cancelled = false;
     api.kjvStrongsCount(entry.strongs)
       .then(d => { if (!cancelled) setKjvCount(d.count ?? null); })
@@ -401,7 +401,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   if (entry.isExtra && extraCount !== null && extraCount > 0) sections.push("extraOcc");
   if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
   if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
-  if (isHebrew && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
+  if (isHebrew && !entry.isHeb && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
   if (entry.derivation) sections.push("derivation");
   if (entry.book && !entry.isExtra) sections.push("verse");
   if (occurrences > 0 || totalResults > 0) sections.push("frequency");

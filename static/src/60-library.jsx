@@ -1769,6 +1769,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       ref: `${selBook.abbrev} ${ch}:${v.verse}`,
       book: selBook.abbrev, chapter: ch, verse: v.verse,
       is_pn: false,
+      isHeb: true,   // from the Hebrew OT reader — suppress the KJV-occurrences link
     });
     return (
       <React.Fragment key={`heb-${ch}-${v.verse}`}>

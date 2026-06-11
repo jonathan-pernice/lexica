@@ -272,7 +272,6 @@ function JournalView() {
 function NotesView({ onOpen }) {
   useNotesVersion();
   const [q, setQ] = useState("");
-  const [msg, setMsg] = useState("");
   const [filter, setFilter] = useState("all");   // all | bookmark | highlight | note
   const [sort, setSort] = useState("recent");     // recent | ref
   const [group, setGroup] = useState(false);      // group by book
@@ -281,7 +280,6 @@ function NotesView({ onOpen }) {
   const [authOpen, setAuthOpen] = useState(null);   // null | "login" | "signup"
   const [mode, setMode] = useState("notes");        // notes | journal
   const acct = NotesStore.authInfo();
-  const fileRef = useRef(null);
   let notes = NotesStore.search(q);               // already newest-first
   if (filter === "bookmark") notes = notes.filter(n => n.bookmark);
   else if (filter === "highlight") notes = notes.filter(n => n.color);
@@ -325,62 +323,25 @@ function NotesView({ onOpen }) {
     </li>
   );
 
-  const doExport = () => {
-    const data = JSON.stringify(NotesStore.exportData(), null, 2);
-    const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "lexica-notes-" + new Date().toISOString().slice(0, 10) + ".json";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-  const doImport = (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const parsed = JSON.parse(reader.result);
-        const list = Array.isArray(parsed) ? parsed : (parsed.notes || []);
-        const r = NotesStore.importMerge(list);
-        setMsg(`Imported ${r.added} new, ${r.updated} updated${r.skipped ? ", " + r.skipped + " skipped" : ""}.`);
-      } catch (err) { setMsg("Couldn't read that file."); }
-    };
-    reader.readAsText(file);
-    e.target.value = "";   // let the same file be re-picked
-  };
-
   return (
     <div className="notes-view">
       <div className="notes-view-head">
         <div className="notes-view-titlerow">
           <h2 className="notes-view-title">My Notes</h2>
-          <div className="notes-tools">
-            <button className="notes-tool-btn" onClick={doExport} disabled={NotesStore.all().length === 0 && NotesStore.journals().length === 0}>Export</button>
-            <button className="notes-tool-btn" onClick={() => fileRef.current && fileRef.current.click()}>Import</button>
-            <input ref={fileRef} type="file" accept="application/json,.json" style={{ display: "none" }} onChange={doImport} />
+          <div className="notes-acct">
+            {acct.email ? (
+              <>
+                <span className="notes-acct-email" title={acct.email}>{acct.email}</span>
+                <button className="notes-tool-btn" onClick={() => NotesStore.logout()}>Log out</button>
+              </>
+            ) : (
+              <>
+                <button className="notes-tool-btn" onClick={() => setAuthOpen("login")}>Log in</button>
+                <button className="notes-tool-btn" onClick={() => setAuthOpen("signup")}>Sign up</button>
+              </>
+            )}
           </div>
         </div>
-        {msg && <div className="notes-msg">{msg}</div>}
-        <div className="notes-sync">
-          {acct.email ? (
-            <>
-              <span className="notes-sync-label">Signed in:</span>
-              <span className="notes-acct-email">{acct.email}</span>
-              <button className="notes-tool-btn" onClick={() => NotesStore.syncNow()} disabled={acct.syncing}>{acct.syncing ? "Syncing…" : "Sync now"}</button>
-              <button className="notes-tool-btn" onClick={() => NotesStore.logout()}>Log out</button>
-            </>
-          ) : (
-            <>
-              <span className="notes-sync-label">Sync across devices:</span>
-              <button className="notes-tool-btn" onClick={() => setAuthOpen("login")}>Log in</button>
-              <button className="notes-tool-btn" onClick={() => setAuthOpen("signup")}>Sign up</button>
-            </>
-          )}
-        </div>
-        {acct.email
-          ? <div className="notes-sync-hint">Your notes sync to this account on every device you log into.</div>
-          : <div className="notes-sync-hint">Optional — sign in to sync your notes across devices. Notes work fine without an account.</div>}
         <div className="notes-mode seg">
           <button className={"seg-b" + (mode === "notes" ? " on" : "")} onClick={() => setMode("notes")}>Verse notes</button>
           <button className={"seg-b" + (mode === "journal" ? " on" : "")} onClick={() => setMode("journal")}>Journal</button>

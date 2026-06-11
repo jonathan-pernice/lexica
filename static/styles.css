@@ -749,8 +749,14 @@ input { font-family: inherit; }
   border-radius: 6px;
   display: grid; place-items: center;
   color: var(--ink-3);
+  -webkit-tap-highlight-color: transparent;
 }
-.detail-close:hover { background: var(--bg-sunk); color: var(--ink); }
+/* Only paint the hover background on devices with a real pointer. On a touchscreen
+   :hover STICKS after a tap, and in Hebrew (right-to-left) the word you tap sits on
+   the same side as this X, so opening the panel left the X greyed. */
+@media (hover: hover) {
+  .detail-close:hover { background: var(--bg-sunk); color: var(--ink); }
+}
 
 /* Desktop "‹ Overview" back link — replaces the X when the panel sits on a
    word study / xref inside the Library, so the right column is never emptied. */
@@ -2931,22 +2937,17 @@ input { font-family: inherit; }
 .notes-view { max-width: 760px; margin: 0 auto; padding: 24px 20px 80px; }
 .notes-view-head { margin-bottom: 16px; }
 .notes-view-titlerow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.notes-view-title { font-size: 22px; font-weight: 700; color: var(--ink); margin: 0; }
-.notes-tools { display: flex; gap: 8px; }
+.notes-view-title { font-size: 22px; font-weight: 700; color: var(--ink); margin: 0; flex: 0 0 auto; }
 .notes-tool-btn {
   border: 1px solid var(--rule); background: var(--paper); color: var(--ink-2);
   border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
 }
 .notes-tool-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--ink); }
 .notes-tool-btn:disabled { opacity: 0.4; cursor: default; }
-.notes-msg { color: var(--ink-2); font-size: 13px; margin-bottom: 10px; }
-.notes-sync { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
-.notes-sync-label { font-size: 13px; color: var(--ink-3); font-weight: 600; }
-.notes-sync-code { font-family: var(--f-mono); font-size: 13px; background: var(--bg-sunk); padding: 4px 8px; border-radius: 6px; color: var(--ink); user-select: all; }
-.notes-sync-input { border: 1px solid var(--rule); border-radius: 8px; padding: 7px 12px; font: inherit; font-size: 14px; background: var(--paper); color: var(--ink); min-width: 200px; }
-.notes-sync-input:focus { outline: none; border-color: var(--gold); }
-.notes-sync-hint { font-size: 12px; color: var(--ink-3); margin-bottom: 10px; }
-.notes-acct-email { font-weight: 600; color: var(--ink); font-size: 14px; }
+/* Account chip lives in the title row now: just the email + Log out (or Log in / Sign
+   up). min-width:0 lets a long email truncate instead of shoving the title. */
+.notes-acct { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.notes-acct-email { font-weight: 600; color: var(--ink); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Mobile: compact the Notes-tab header so the list isn't pushed off-screen.
    Smaller title, tighter spacing, the explanation line dropped, and the
@@ -2967,9 +2968,7 @@ input { font-family: inherit; }
   .notes-view-titlerow { margin-bottom: 8px; }
   .notes-view-title { font-size: 18px; }
   .notes-tool-btn { padding: 6px 10px; font-size: 12px; }
-  .notes-sync { gap: 6px; margin-bottom: 6px; }
-  .notes-sync-label { font-size: 12px; }
-  .notes-sync-hint { display: none; }
+  .notes-acct-email { font-size: 12.5px; }
   .notes-mode { margin-bottom: 8px; }
   .notes-search { padding: 8px 12px; font-size: 14px; }
   /* Wrap the controls onto a 2nd line instead of a sideways-scroll that clipped
