@@ -5133,6 +5133,7 @@ function LibraryView({
   // Drag-select-to-note: the floating "Add note" bar + the captured anchor.
   const [noteSel, setNoteSel] = useState(null); // { rect, anchor } | null
   const justSelectedRef = useRef(false); // suppress the click that follows a drag
+  const swallowClickRef = useRef(false); // a press that closed the popup → eat its click (survives the re-render)
   const [flashMsg, setFlashMsg] = useState(""); // tiny confirmation toast ("Copied", etc.)
   const flashT = useRef(null);
   const flash = m => {
@@ -6020,6 +6021,7 @@ function LibraryView({
     }
     const r = range.getBoundingClientRect();
     justSelectedRef.current = true;
+    swallowClickRef.current = false; // a real selection isn't a dismiss-click
     setNoteSel({
       rect: {
         top: r.top,
@@ -6137,7 +6139,10 @@ function LibraryView({
     ...swipeHandlers,
     // A fresh press starts a new interaction: drop any open popover + the suppress flag.
     onMouseDown: () => {
-      if (noteSel) setNoteSel(null);
+      if (noteSel) {
+        setNoteSel(null);
+        swallowClickRef.current = true;
+      }
       justSelectedRef.current = false;
     },
     onMouseUp: () => resolveSelection(),
@@ -6154,10 +6159,11 @@ function LibraryView({
         e.preventDefault();
         return;
       }
-      // A LATER click in the reading area, with the popover already up, just dismisses
-      // it — swallow that click too. (The popover's own buttons sit outside the reading area.)
-      if (noteSel) {
-        setNoteSel(null);
+      // A press that closed the popover flagged this click to be eaten — so dismissing
+      // the popover doesn't also hit a chip / verse number / focus. (Popover buttons sit
+      // outside the reading area, so they're unaffected.)
+      if (swallowClickRef.current) {
+        swallowClickRef.current = false;
         e.stopPropagation();
         e.preventDefault();
         return;
