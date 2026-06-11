@@ -484,7 +484,7 @@ function ModesSheet({
   corpus, translation, pickBible, esvOwner, nivOwner, hebPickable, toggleParallel, nonCanonList,
   compareAvail, compareActive, toggleCompare,
   showStrongs, showInterlinear, setOpt, chipMode, viewMode, libFontSize, changeFontSize, onClose,
-  chrono, orderMode, setOrder,
+  libFont, changeFont, chrono, orderMode, setOrder,
 }) {
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
@@ -591,11 +591,30 @@ function ModesSheet({
               </div>
             </div>
           </div>
+          <div className="mode-sec">
+            <div className="mode-lbl">Reading font</div>
+            <div className="mseg mseg-font">
+              {Object.keys(READ_FONTS).map(k => (
+                <button key={k} className={"mseg-b" + (libFont === k ? " on" : "")}
+                  style={READ_FONTS[k].stack ? {fontFamily: READ_FONTS[k].stack} : undefined}
+                  onClick={() => changeFont(k)}>{READ_FONTS[k].label}</button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
   );
 }
+
+// Reader typefaces offered in the text-style menu. stack=null = the app default
+// (Source Serif, already loaded). The others bake in a Hebrew fallback (Frank Ruhl
+// Libre) so Hebrew never breaks, and only download when actually picked.
+const READ_FONTS = {
+  serif:   { label: "Source Serif", stack: null },
+  cardo:   { label: "Cardo",   stack: "'Cardo', 'Frank Ruhl Libre', Georgia, serif" },
+  gentium: { label: "Gentium", stack: "'Gentium Book Plus', 'Frank Ruhl Libre', Georgia, serif" },
+};
 
 // Non-canonical texts — reached via the "Other" pick, walled off from the Bible
 // book list, search, and lexicon counts. Each rides its own backend route + tables.
@@ -751,6 +770,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     if (stored) return parseInt(stored, 10);
     return isMobile ? 15 : 18;
   });
+  const [libFont, setLibFont] = useState(() => localStorage.getItem("libFont") || "serif");
   const [translation, setTranslation] = useState("abp"); // layout: "abp" | "kjv" | "bsb" | "esv" | "niv" | "parallel"
   // Compare (parallel): translation === "parallel" is the mode; compareSel is WHICH
   // texts (2-4) sit side by side. ESV/NIV only offered to the owner.
@@ -1726,6 +1746,12 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     });
   };
 
+  const changeFont = (key) => {
+    setLibFont(key);
+    try { localStorage.setItem("libFont", key); } catch (e) {}
+    setFontOpen(false);
+  };
+
   const handleVerseNum = onVerseNumberClick && selBook
     ? (verse, ch = selChapter) => onVerseNumberClick(selBook.abbrev, ch, verse, translation)
     : null;
@@ -2408,6 +2434,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           viewMode={viewMode}
           libFontSize={libFontSize}
           changeFontSize={changeFontSize}
+          libFont={libFont}
+          changeFont={changeFont}
           chrono={chrono}
           orderMode={orderMode}
           setOrder={setOrder}
@@ -2490,15 +2518,24 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               <button className={"lib-toggle lib-toggle-icon" + (searchOpen ? " on" : "")} title="Search this text" aria-label="Search this text" aria-pressed={searchOpen} onClick={() => setSearchOpen(o => !o)}><Icon.Search/></button>
             )}
             <div className="lib-other-wrap">
-              <button className="lib-toggle lib-font-btn" onClick={() => setFontOpen(o => !o)} title="Text size" aria-label="Text size">Aa ▾</button>
+              <button className="lib-toggle lib-font-btn" onClick={() => setFontOpen(o => !o)} title="Text style" aria-label="Text style">Aa ▾</button>
               {fontOpen && (
                 <>
                   <div className="lib-other-scrim" onClick={() => setFontOpen(false)} />
                   <div className="lib-other-menu lib-font-menu">
+                    <div className="lib-font-lbl">Size</div>
                     <div className="seg">
                       <button className="seg-b" onClick={() => changeFontSize(-1)}>A−</button>
                       <span className="font-size-lbl">{libFontSize}</span>
                       <button className="seg-b" onClick={() => changeFontSize(+1)}>A+</button>
+                    </div>
+                    <div className="lib-font-lbl">Typeface</div>
+                    <div className="lib-font-list">
+                      {Object.keys(READ_FONTS).map(k => (
+                        <button key={k} className={"lib-font-opt" + (libFont === k ? " on" : "")}
+                          style={READ_FONTS[k].stack ? {fontFamily: READ_FONTS[k].stack} : undefined}
+                          onClick={() => changeFont(k)}>{READ_FONTS[k].label}</button>
+                      ))}
                     </div>
                   </div>
                 </>
@@ -2588,7 +2625,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
         </>
       )}
 
-      <div ref={readingRef} className={"lib-reading" + (showInterlinear ? " lib-interlinear-on" : "") + (audioDockOn ? " lib-reading--audio" : "")} style={{...(translation === "parallel" ? {paddingTop: 0} : {}), "--lib-font-size": libFontSize + "px"}} {...readingHandlers}>
+      <div ref={readingRef} className={"lib-reading" + (showInterlinear ? " lib-interlinear-on" : "") + (audioDockOn ? " lib-reading--audio" : "")} style={{...(translation === "parallel" ? {paddingTop: 0} : {}), "--lib-font-size": libFontSize + "px", ...(READ_FONTS[libFont] && READ_FONTS[libFont].stack ? {"--f-serif": READ_FONTS[libFont].stack, "--f-greek": READ_FONTS[libFont].stack} : {})}} {...readingHandlers}>
 
         {nonCanon ? (
           didLoading ? (
