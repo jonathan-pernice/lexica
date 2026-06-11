@@ -254,11 +254,24 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   book/chapter/translation (+ an open non-canon text) and restores it on load instead of opening at Genesis 1.
   An explicit verse jump (`nav.book`, e.g. a Search/cross-ref click) overrides it. Compare/chronological are NOT
   restored (fall back to single/canonical). (2026-06-10)
+- **Focus mode — distraction-free reading (LIVE 2026-06-11).** A `focusMode` flag in `90-app.jsx`
+  adds `focus-mode` to `.app` (library view only; NOT remembered across reloads). Trigger = tap blank
+  space in the reader (`readingHandlers.onClick` in 60-library.jsx → `toggleFocus`), Esc exits.
+  **Mobile** = hide the chrome outright (header/nav/toolbar/tabs/audio; audio keeps PLAYING). **Desktop**
+  = a click-through dark wash (`.app.focus-mode::before`) over everything with the reading lifted into a
+  `position:fixed`, centered, self-scrolling "book page" (`.lib-reading`, both edges showing) + big ‹ ›
+  page-turn chevrons in the side gutters (`.lib-focus-arrow`, desktop only, gray out at first/last). Page
+  turn shared by swipe (mobile) + arrow keys/chevrons via `turnPage(dir)`. All CSS at the end of styles.css.
+  Full record: memory `project_focus_mode`.
 - Word clicks → LSJ sidebar (G-numbers), BDB sidebar (H-numbers), or metaV (proper nouns)
 - KJV word clicks correctly route: common words → LSJ, proper nouns → metaV, Hebrew → BDB
 - Italic words render muted/italic: KJV (italic=1) and ABP (words.italic=1); ABP bracket words `[word]` are also translator additions
-- Verse layout: `lib-verse-row` (flex-start) → `lib-vnum` (fixed, min-width) + `lib-verse-content`
+- Verse layout: `lib-verse-row` (flex-start) → `lib-vnum` (fixed, min-width gutter, non-selectable) +
+  `lib-verse-content`. The verse number's CLICK target is an inner `.lib-vnum-num` hugging the digits, so
+  the empty gutter beside the number is inert (no stray click/cross-ref/verse-highlight). (2026-06-11)
 - Clicking a verse number opens the TSK Cross-Reference Panel
+- Jumping to a verse (search/cross-ref) lands it in the UPPER THIRD of the reader (not centered); the left
+  nav scrolls the active book to the TOP of its own list (`.nav-scroll`), never the window. (2026-06-11)
 - Both word detail panel and xref panel trigger `has-detail` on `.app` → compacts `lib-reading` on desktop (desktop only, scoped to `min-width: 1100px`)
 
 ## Notes, Highlights, Bookmarks + Accounts (study notes — LIVE 2026-06-09)

@@ -183,8 +183,9 @@ join on H-numbers in `/api/extra`, BDB/Hebrew routing + right-to-left chips in t
 Loose look-and-feel ideas, parked here so they're not lost. None are scoped yet — grab whichever appeals.
 
 **Reading experience**
-- **Focus mode** — tap the text and all the chrome (toolbar, left nav, bottom tabs) fades away for
-  distraction-free reading; tap again to bring it back. `code: reader chrome toggle in 60-library.jsx + 90-app.jsx`
+- ~~**Focus mode**~~ — **DONE + LIVE 2026-06-11** (see TODO_ARCHIVE + memory `project_focus_mode`).
+  Tap blank space to strip the chrome. Mobile hides everything; desktop darkens the surround and floats
+  the text as a centered "book page" with big ‹ › side arrows. Esc/tap exits.
 - **Parchment / dark themes** — a warm sepia reading skin plus a real dark mode, with a small corner
   toggle. `code: styles.css theme vars (--ink, --bg…) + a theme switch`
 - **Greek-friendly typography** — a proper Greek serif and more line spacing so the reader feels like

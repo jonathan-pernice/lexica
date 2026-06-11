@@ -6,6 +6,31 @@ few "leave it alone" verdicts worth keeping.
 
 ---
 
+## Focus mode + reader gesture/scroll fixes — DONE 2026-06-11
+
+All on master, pushed. Full record: memory `project_focus_mode`.
+
+- **Focus mode (distraction-free reading).** Tap blank space in the reader to strip the chrome; Esc or
+  tap exits. NOT remembered across reloads. **Mobile** hides the chrome outright (header/nav/toolbar/tabs/
+  audio — audio keeps playing). **Desktop** darkens everything with a click-through dark wash and floats
+  the text as a `position:fixed`, centered, self-scrolling "book page" with big ‹ › page-turn arrows in
+  the side gutters. Files: `90-app.jsx` (flag + shell class), `60-library.jsx` (trigger/page-turn/arrows),
+  end of `styles.css`. Iterated live with the user: desktop went from hide-all → dark-spotlight; the page
+  got centered on the whole screen (not the offset column), made tall with both edges, and the arrows
+  moved to hug the page edges and grew to 76px. Open by-design: word-click lexicon shows dimmed behind
+  the page in desktop focus.
+- **Verse-number hit area tightened.** Digits moved to an inner `.lib-vnum-num` hit target; the `.lib-vnum`
+  gutter is `user-select:none` + inert. Killed the "click/drag beside the number highlights the verse" bug.
+- **Highlight pop-up = dismiss-only click** (matches the verse-number menu). First click closes it and is
+  swallowed (no chip/verse/focus underneath). LESSON: the close re-renders before the click lands, so a
+  state-in-closure check read stale — fixed with a `swallowClickRef` set at mouse-DOWN, checked AFTER the
+  `justSelectedRef` (selection-ending) check. Two passes to get right.
+- **Pericope headings left-aligned on both** mobile + desktop (were centered on mobile); mobile keeps the
+  hidden verse-gutter width so the heading lines up with the verse text.
+- **Jump-to-verse scroll:** reader lands the verse in the UPPER THIRD (not centered); left nav scrolls the
+  active book to the TOP of its own `.nav-scroll` list, never the window (which used to push the verse
+  off-screen). Decided per-case: reader = upper-third, nav = top.
+
 ## NIV text + multi-text Compare + reader UI tweaks — DONE 2026-06-10
 
 All on master, deployed. Detail: memory `project_esv_audio` (NIV) + `project_pericopes_parallel` (Compare).
