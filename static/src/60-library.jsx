@@ -1775,6 +1775,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
       gloss: w.gloss || "",
       hebrew: w.hebrew,
       morph: w.morph || "",
+      grammar: w.grammar || "",
       ref: `${selBook.abbrev} ${ch}:${v.verse}`,
       book: selBook.abbrev, chapter: ch, verse: v.verse,
       is_pn: false,
@@ -1799,6 +1800,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                   {showStrongs && (w.strongs
                     ? <span className="lib-iw-strongs">{w.strongs}</span>
                     : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>H0</span>)}
+                  {showInterlinear && w.grammar && <span className="lib-iw-gram">{w.grammar}</span>}
                 </span>
               );
             })}

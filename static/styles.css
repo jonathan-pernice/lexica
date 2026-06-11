@@ -1750,6 +1750,17 @@ input { font-family: inherit; }
   line-height: 1.25;
   color: var(--ink-3);
 }
+/* grammar (decoded morphology) — also shown only with the Interlinear toggle, small
+   and muted at the bottom of the chip by the Strong's number, like BLB/STEP */
+.lib-heb-word .lib-iw-gram {
+  direction: ltr;
+  font-size: 0.56em;
+  line-height: 1.25;
+  color: var(--ink-3);
+  max-width: 16ch;
+  text-align: center;
+  margin-top: 1px;
+}
 
 /* ----- "Other" non-canonical texts picker (desktop lib bar popup) ----- */
 .lib-other-wrap { position: relative; display: inline-flex; }

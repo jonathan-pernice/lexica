@@ -6524,6 +6524,7 @@ function LibraryView({
       gloss: w.gloss || "",
       hebrew: w.hebrew,
       morph: w.morph || "",
+      grammar: w.grammar || "",
       ref: `${selBook.abbrev} ${ch}:${v.verse}`,
       book: selBook.abbrev,
       chapter: ch,
@@ -6566,7 +6567,9 @@ function LibraryView({
         style: {
           visibility: "hidden"
         }
-      }, "H0")));
+      }, "H0")), showInterlinear && w.grammar && /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-gram"
+      }, w.grammar));
     }))));
   };
   const renderVerse = (v, skipHeading = false) => {
