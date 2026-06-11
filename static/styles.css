@@ -3080,3 +3080,30 @@ input { font-family: inherit; }
 .notes-item-snippet { color: var(--ink-2); font-style: italic; font-size: 13px; margin-bottom: 4px; }
 .notes-item-body { color: var(--ink-2); font-size: 14px; line-height: 1.45; white-space: pre-wrap; }
 .notes-item-empty { color: var(--ink-3); font-style: italic; }
+
+/* ============================================================
+   FOCUS MODE — distraction-free reading
+   Tap blank space in the reader to strip the chrome; tap again
+   (or Esc on desktop) to bring it back. Audio keeps playing while
+   its controls are hidden. Library view only; not remembered.
+============================================================ */
+.app.focus-mode .hdr,
+.app.focus-mode .nav,
+.app.focus-mode .lib-bar,
+.app.focus-mode .mobile-tabs,
+.app.focus-mode .lib-toolbar,
+.app.focus-mode .lib-audio-dock,
+.app.focus-mode .lib-audio-bar-row,
+.app.focus-mode .lib-chrono-audio-bar { display: none !important; }
+
+@media (min-width: 1100px) {
+  /* drop the empty 224px nav column; widen + center the text */
+  .app.focus-mode .library { grid-template-columns: minmax(0, 1fr); }
+  .app.focus-mode .lib-reading { max-width: 760px; margin-inline: auto; }
+}
+
+@media (max-width: 1099px) {
+  /* reclaim the space the top tabs + bottom cockpit reserved */
+  .app.focus-mode .main { padding-top: env(safe-area-inset-top, 0px) !important; }
+  .app.view-library.focus-mode .main { padding-bottom: env(safe-area-inset-bottom, 0px) !important; }
+}

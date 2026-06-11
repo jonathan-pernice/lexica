@@ -245,7 +245,7 @@ scripts/          # build-frontend.js + one-time import/migration scripts
     flag so a long-press doesn't also fire the tap). Hint: "Tap to read · long-press to compare". A non-canon
     reader falls back to the plain single picker (taps jump back to the Bible).
 - Chip mode: all words individually clickable with interlinear stack (Greek → English → Strong's)
-- Prose mode: clickable inline word spans, no chip borders — reading-first view
+- Prose mode: plain inline text — words are NOT clickable, only verse numbers are tappable (cross-refs); no chip borders, reading-first view
 - KJV mode locks Prose to English only (no Greek available)
 - English-only "other books" (Apocrypha/Enoch/etc.): the Chip toggle gives a VERSE-PER-LINE reading layout
   (`renderExtraLines`, `extraLineMode`) — plain text, one verse per row, no clickable chips (no Greek). Prose =

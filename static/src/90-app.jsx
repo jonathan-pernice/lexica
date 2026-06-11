@@ -28,6 +28,7 @@ function App() {
   const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
   const [libTranslation, setLibTranslation] = useState("abp");
   const [activeNote, setActiveNote] = useState(null);   // note id being edited
+  const [focusMode, setFocusMode] = useState(false);    // distraction-free reading: chrome hidden (library only, not remembered)
 
   // Open a note's editor — closes the word / cross-ref panels so one panel owns the slot.
   const openNote = (id) => { setActiveEntry(null); setLibCrossRef(null); setActiveNote(id); };
@@ -205,7 +206,7 @@ function App() {
   const showLibSummary = !isMobile && mainView === "library" && !activeEntry && !libCrossRef && !activeNote;
 
   return (
-    <div className={"app view-" + mainView + " " + ((activeEntry || libCrossRef || activeNote || showLibSummary) ? "has-detail" : "")}>
+    <div className={"app view-" + mainView + " " + ((activeEntry || libCrossRef || activeNote || showLibSummary) ? "has-detail " : "") + (focusMode && mainView === "library" ? "focus-mode" : "")}>
       <Header activeView={mainView} onNavChange={handleNavChange}/>
       {isMobile && mainView !== "library" && (
         <div className="mobile-brand-bar">
@@ -220,7 +221,7 @@ function App() {
       <main className="main">
         {libEverVisited && (
           <div style={{ display: mainView === "library" ? undefined : "none" }}>
-            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveNote(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onOpenNote={openNote} onTranslationChange={setLibTranslation} isMobile={isMobile} showSummary={showLibSummary} />
+            <LibraryView nav={libNav} onNavChange={setLibNav} onWordClick={(e) => { setLibCrossRef(null); setActiveNote(null); setActiveEntry(e); }} onVerseNumberClick={handleVerseNumberClick} onOpenNote={openNote} onTranslationChange={setLibTranslation} isMobile={isMobile} showSummary={showLibSummary} focusMode={focusMode} onToggleFocus={() => setFocusMode(f => !f)} />
           </div>
         )}
         {mainView === "about" && <AboutView owner={owner} />}

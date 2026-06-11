@@ -5054,7 +5054,9 @@ function LibraryView({
   onOpenNote,
   onTranslationChange,
   isMobile,
-  showSummary
+  showSummary,
+  focusMode,
+  onToggleFocus
 }) {
   const [books, setBooks] = useState([]);
   const [selBook, setSelBook] = useState(null);
@@ -5893,6 +5895,25 @@ function LibraryView({
   const sumBook = nonCanon ? nonCanon.id : chronoOn && curPassage ? curPassage.book : selBook && selBook.abbrev;
   const sumChapter = chronoOn && curPassage ? viewCh || curPassage.start_ch : selChapter;
   const sumLabel = nonCanon ? nonCanon.name : BOOK_LABELS[sumBook] || sumBook;
+
+  // Turn one page: chronological steps a passage, everything else steps a chapter.
+  // Shared by the mobile swipe and the desktop arrow keys (focus mode).
+  const turnPage = dir => {
+    // dir: +1 next, -1 prev
+    if (chronoOn) {
+      stepPassage(dir);
+      return;
+    }
+    const c = selChapter + dir;
+    if (c < 1 || c > maxChap) return;
+    setSelChapter(c);
+    if (!nonCanon) onNavChange?.({
+      ...nav,
+      book: selBook?.abbrev,
+      chapter: c,
+      highlight: null
+    });
+  };
   const swipeRef = React.useRef(null);
   const tapMovedRef = React.useRef(false);
   const swipeHandlers = isMobile ? {
@@ -5928,28 +5949,7 @@ function LibraryView({
       swipeRef.current = null;
       if (Math.abs(dx) < 50) return; // too short
       if (Math.abs(dy) > Math.abs(dx) * 0.6) return; // too vertical
-      if (chronoOn) {
-        // chronological: swipe walks passages
-        stepPassage(dx < 0 ? 1 : -1);
-      } else if (dx < 0 && selChapter < maxChap) {
-        const c = selChapter + 1;
-        setSelChapter(c);
-        if (!nonCanon) onNavChange?.({
-          ...nav,
-          book: selBook?.abbrev,
-          chapter: c,
-          highlight: null
-        });
-      } else if (dx > 0 && selChapter > 1) {
-        const c = selChapter - 1;
-        setSelChapter(c);
-        if (!nonCanon) onNavChange?.({
-          ...nav,
-          book: selBook?.abbrev,
-          chapter: c,
-          highlight: null
-        });
-      }
+      turnPage(dx < 0 ? 1 : -1); // left swipe = next, right swipe = prev
     }
   } : {};
 
@@ -6111,6 +6111,27 @@ function LibraryView({
       clearTimeout(t);
     };
   }, [isMobile]);
+  // Focus mode: blank-space tap strips the chrome (header/nav/toolbar/tabs/audio)
+  // for distraction-free reading. A one-time hint shows the way back out.
+  const toggleFocus = () => {
+    if (!focusMode) flash(isMobile ? "Tap anywhere to show the menus" : "Tap or press Esc to show the menus");
+    onToggleFocus && onToggleFocus();
+  };
+  // While focus is on: Esc brings the chrome back; arrow keys turn the page
+  // (the toolbar's hidden, so this is the desktop page-turn). Ignore keys typed
+  // into an input so search/notes fields aren't hijacked.
+  useEffect(() => {
+    if (!focusMode) return;
+    const onKey = e => {
+      if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+      if (e.key === "Escape") {
+        onToggleFocus && onToggleFocus();
+      } else if (e.key === "ArrowRight") turnPage(1);else if (e.key === "ArrowLeft") turnPage(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [focusMode, chronoOn, selChapter, maxChap, nonCanon, chronoPos]);
+
   // One handler set on the reading area: swipe (mobile) + selection (all).
   const readingHandlers = {
     ...swipeHandlers,
@@ -6132,6 +6153,14 @@ function LibraryView({
         return;
       }
       if (swipeHandlers.onClickCapture) swipeHandlers.onClickCapture(e);
+    },
+    // Tap on blank space (not a word / verse number / control, and not mid-selection)
+    // toggles focus mode. A swipe or a finished selection sets defaultPrevented above.
+    onClick: e => {
+      if (e.defaultPrevented) return;
+      if (window.getSelection && String(window.getSelection())) return;
+      if (e.target.closest && e.target.closest(".lib-word, .lib-vnum-click, .lib-flow-vnum, button, a, input, textarea, [contenteditable]")) return;
+      toggleFocus();
     }
   };
 
@@ -8577,6 +8606,7 @@ function App() {
   const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
   const [libTranslation, setLibTranslation] = useState("abp");
   const [activeNote, setActiveNote] = useState(null); // note id being edited
+  const [focusMode, setFocusMode] = useState(false); // distraction-free reading: chrome hidden (library only, not remembered)
 
   // Open a note's editor — closes the word / cross-ref panels so one panel owns the slot.
   const openNote = id => {
@@ -8786,7 +8816,7 @@ function App() {
   // its condensed (three-column) measure. Mobile never shows the summary.
   const showLibSummary = !isMobile && mainView === "library" && !activeEntry && !libCrossRef && !activeNote;
   return /*#__PURE__*/React.createElement("div", {
-    className: "app view-" + mainView + " " + (activeEntry || libCrossRef || activeNote || showLibSummary ? "has-detail" : "")
+    className: "app view-" + mainView + " " + (activeEntry || libCrossRef || activeNote || showLibSummary ? "has-detail " : "") + (focusMode && mainView === "library" ? "focus-mode" : "")
   }, /*#__PURE__*/React.createElement(Header, {
     activeView: mainView,
     onNavChange: handleNavChange
@@ -8830,7 +8860,9 @@ function App() {
     onOpenNote: openNote,
     onTranslationChange: setLibTranslation,
     isMobile: isMobile,
-    showSummary: showLibSummary
+    showSummary: showLibSummary,
+    focusMode: focusMode,
+    onToggleFocus: () => setFocusMode(f => !f)
   })), mainView === "about" && /*#__PURE__*/React.createElement(AboutView, {
     owner: owner
   }), mainView === "notes" && /*#__PURE__*/React.createElement(NotesView, {
