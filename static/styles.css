@@ -2972,11 +2972,11 @@ input { font-family: inherit; }
   .notes-sync-hint { display: none; }
   .notes-mode { margin-bottom: 8px; }
   .notes-search { padding: 8px 12px; font-size: 14px; }
+  /* Wrap the controls onto a 2nd line instead of a sideways-scroll that clipped
+     "Group by book". Each control (filter pill, sort pill, group button) stays whole. */
   .notes-controls {
-    flex-wrap: nowrap; overflow-x: auto; gap: 6px; margin-top: 8px;
-    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    flex-wrap: wrap; gap: 8px; margin-top: 8px;
   }
-  .notes-controls::-webkit-scrollbar { display: none; }
   .notes-controls > * { flex: 0 0 auto; }
   .notes-filter { flex-wrap: nowrap; }
   .notes-controls .seg-b { padding: 5px 9px; font-size: 12px; }
