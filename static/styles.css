@@ -1547,7 +1547,10 @@ input { font-family: inherit; }
   text-align: center;
   white-space: nowrap;
   align-self: flex-start;
-  margin-top: 7px;
+  /* center the number on the FIRST text line — looks balanced when the chip is a
+     single line (Strong's + Interlinear off) and still sits on the top word when the
+     lines are stacked. Tune this if it reads high/low. */
+  margin-top: 11px;
 }
 
 .lib-vnum-click {
