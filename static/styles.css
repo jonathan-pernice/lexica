@@ -1550,7 +1550,6 @@ input { font-family: inherit; }
   margin-top: 7px;
 }
 
-.lib-vnum-il { margin-top: 22px; }
 .lib-vnum-click {
   cursor: pointer;
   transition: background 0.15s, color 0.15s;

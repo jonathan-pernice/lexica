@@ -6410,7 +6410,7 @@ function LibraryView({
   };
   const handleVerseNum = onVerseNumberClick && selBook ? (verse, ch = selChapter) => onVerseNumberClick(selBook.abbrev, ch, verse, translation) : null;
   const vnumEl = (verse, ch = selChapter) => /*#__PURE__*/React.createElement("span", _extends({
-    className: "lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "") + (showInterlinear ? " lib-vnum-il" : ""),
+    className: "lib-vnum" + (handleVerseNum ? " lib-vnum-click" : ""),
     title: handleVerseNum ? "Click: cross-references · Right-click / long-press: add a note" : undefined,
     onClick: handleVerseNum ? () => {
       if (vnumPressRef.current.fired) {

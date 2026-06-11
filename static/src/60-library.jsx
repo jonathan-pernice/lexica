@@ -1679,7 +1679,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
 
   const vnumEl = (verse, ch = selChapter) => (
     <span
-      className={"lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "") + (showInterlinear ? " lib-vnum-il" : "")}
+      className={"lib-vnum" + (handleVerseNum ? " lib-vnum-click" : "")}
       title={handleVerseNum ? "Click: cross-references · Right-click / long-press: add a note" : undefined}
       onClick={handleVerseNum ? () => {
         if (vnumPressRef.current.fired) { vnumPressRef.current.fired = false; return; }
