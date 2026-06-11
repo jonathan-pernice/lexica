@@ -150,6 +150,7 @@ from views_kjv import bp as kjv_bp
 from views_bsb import bp as bsb_bp
 from views_esv import bp as esv_bp
 from views_niv import bp as niv_bp
+from views_heb import bp as heb_bp
 from views_stats import bp as stats_bp
 from views_lexicon import bp as lexicon_bp
 from views_library import bp as library_bp
@@ -177,6 +178,7 @@ app.register_blueprint(kjv_bp)
 app.register_blueprint(bsb_bp)
 app.register_blueprint(esv_bp)
 app.register_blueprint(niv_bp)
+app.register_blueprint(heb_bp)
 app.register_blueprint(stats_bp)
 app.register_blueprint(lexicon_bp)
 app.register_blueprint(library_bp)

@@ -196,6 +196,22 @@ def niv_db():
     return conn
 
 
+# The Hebrew OT interlinear (Westminster Leningrad Codex via OpenScriptures morphhb)
+# is PUBLIC DOMAIN — unlike the ESV/NIV above it is NOT owner-gated; it's meant to be
+# a public study text like ABP/KJV/BSB. It still lives in its OWN file, heb.db, kept
+# OUT of bible.db (the corpus is rebuilt; this text isn't) and OUT of git (*.db is
+# gitignored), loaded on PythonAnywhere only by scripts/load_hebrew.py.
+HEB_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "heb.db")
+
+
+def heb_db():
+    """Read-only connection to heb.db. Raises sqlite3.OperationalError if the file
+    isn't there yet (heb.db not loaded) — callers catch that and return empty."""
+    conn = sqlite3.connect(f"file:{HEB_DB}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
 # ── Unified AI-synthesis result cache ────────────────────────────────────────
 # Every Haiku-backed synthesis (search, summary, xref, metav person/place) stores
 # its rows in ai_search_cache with ver_key = "<category>:<fingerprint>", the
