@@ -371,19 +371,19 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const properName = extractProperName(entry.gloss);
   const nameOrGloss = (isPN || metavData) ? properName : entry.gloss;
   const trimTail = (s) => stripArticles((s)?.replace(/[.,;:!?—-]+$/, "").trim());
-  // Hebrew words show their gloss inline next to the transliteration; everything
-  // else shows it on its own line. This boolean gates which (and the standalone).
-  const heroHasHeGloss = !!(isHebrew && (bdbEntry?.xlit || entry.translit) && entry.gloss);
   const hero = {
     he: isHebrew,
     noGloss: isPN && !entry.greek && !isHebrew,
     script: isHebrew ? (bdbEntry?.lemma || entry.gloss) : (entry.greek || nameOrGloss),
     translit: isHebrew ? bdbEntry?.xlit : entry.translit,
-    inlineGloss: trimTail(nameOrGloss),
     standaloneGloss: trimTail((isPN || metavData) ? properName
       : (entry.greek && (entry.gloss || "").trim().split(/\s+/).length > 2 ? entry.english_head : entry.gloss)),
     morph: morphLine,
   };
+  // Show "translit · gloss" on one line whenever there's both — same for Greek and
+  // Hebrew so the two cards match (it was Hebrew-only before). Falls back to a
+  // standalone gloss line only when there's no transliteration.
+  const heroInlineGloss = !!(hero.translit && hero.standaloneGloss && !hero.noGloss);
 
   // Verse + place sections show KJV text (not ABP) for Hebrew / KJV-mode / place words.
   const useKjvText = entry.isKjv || isHebrew || (metavType === "place" && !isPN);
@@ -656,11 +656,11 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </div>
           <div className={"detail-translit-row" + (hero.he ? " detail-translit-row-he" : "")}>
             <span className="detail-translit">{hero.translit}</span>
-            {heroHasHeGloss && (
-              <><span className="detail-sep">·</span><span className="detail-gloss">{hero.inlineGloss}</span></>
+            {heroInlineGloss && (
+              <><span className="detail-sep">·</span><span className="detail-gloss">{hero.standaloneGloss}</span></>
             )}
           </div>
-          {!hero.noGloss && !heroHasHeGloss && (
+          {!hero.noGloss && !heroInlineGloss && (
             <div className="detail-gloss">{hero.standaloneGloss}</div>
           )}
           {hero.morph && <div className="detail-morph">{hero.morph}</div>}
