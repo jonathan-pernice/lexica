@@ -5768,16 +5768,21 @@ function LibraryView({
   const esvView = chronoOn ? flattenSpan("esv") : esvVerses;
   const nivView = chronoOn ? flattenSpan("niv") : nivVerses;
   // Drop a chapter divider each time _ch changes; a plain map for canonical (no _ch).
+  // Skip the divider entirely on a single-chapter passage — it would just repeat the
+  // passage location you're already reading. (The desktop audio bar anchor stays.)
+  const singleChapterPassage = chronoOn && curPassage && curPassage.start_ch === curPassage.end_ch;
   const withMarks = (arr, renderFn) => {
     const out = [];
     let lastCh = null;
     arr.forEach(v => {
       if (v._ch != null && v._ch !== lastCh) {
-        out.push(/*#__PURE__*/React.createElement("div", {
-          key: `cm-${v._ch}`,
-          "data-ch": v._ch,
-          className: "lib-chrono-chapmark"
-        }, selBook ? selBook.name : "", " ", v._ch));
+        if (!singleChapterPassage) {
+          out.push(/*#__PURE__*/React.createElement("div", {
+            key: `cm-${v._ch}`,
+            "data-ch": v._ch,
+            className: "lib-chrono-chapmark"
+          }, selBook ? selBook.name : "", " ", v._ch));
+        }
         // Audio progress bar above the chapter that's currently playing — DESKTOP only.
         // On mobile the scrubber docks at the bottom cockpit like every other mode.
         if (!isMobile && audioCapable && audioUrl && curPassage && audioKey === curPassage.book + "-" + v._ch) {
