@@ -6146,18 +6146,18 @@ function LibraryView({
       setTimeout(resolveSelection, 0); // let the browser settle the selection first
     },
     onClickCapture: e => {
-      // A highlight/note popover is open → the first click in the reading area just
-      // dismisses it. Swallow that click so it doesn't also hit a chip / verse number /
-      // focus toggle. (The popover's own buttons sit outside the reading area.)
-      if (noteSel) {
-        setNoteSel(null);
+      // The click that ENDS a selection must keep the popover showing — swallow it
+      // (so it doesn't also hit a chip / verse number / focus) but leave noteSel set.
+      if (justSelectedRef.current) {
         justSelectedRef.current = false;
         e.stopPropagation();
         e.preventDefault();
         return;
       }
-      if (justSelectedRef.current) {
-        justSelectedRef.current = false;
+      // A LATER click in the reading area, with the popover already up, just dismisses
+      // it — swallow that click too. (The popover's own buttons sit outside the reading area.)
+      if (noteSel) {
+        setNoteSel(null);
         e.stopPropagation();
         e.preventDefault();
         return;
