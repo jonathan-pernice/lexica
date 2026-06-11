@@ -1800,7 +1800,6 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                   {showStrongs && (w.strongs
                     ? <span className="lib-iw-strongs">{w.strongs}</span>
                     : <span className="lib-iw-strongs" style={{visibility:"hidden"}}>H0</span>)}
-                  {showInterlinear && w.grammar && <span className="lib-iw-gram">{w.grammar}</span>}
                 </span>
               );
             })}

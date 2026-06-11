@@ -6567,9 +6567,7 @@ function LibraryView({
         style: {
           visibility: "hidden"
         }
-      }, "H0")), showInterlinear && w.grammar && /*#__PURE__*/React.createElement("span", {
-        className: "lib-iw-gram"
-      }, w.grammar));
+      }, "H0")));
     }))));
   };
   const renderVerse = (v, skipHeading = false) => {

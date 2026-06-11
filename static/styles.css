@@ -1547,10 +1547,10 @@ input { font-family: inherit; }
   text-align: center;
   white-space: nowrap;
   align-self: flex-start;
-  /* center the number on the FIRST text line — looks balanced when the chip is a
-     single line (Strong's + Interlinear off) and still sits on the top word when the
-     lines are stacked. Tune this if it reads high/low. */
-  margin-top: 11px;
+  /* Center the number on the first text line by tying the offset to the reading font
+     size (--lib-font-size) rather than a fixed pixel — so it stays centered at every
+     size (desktop 18px, mobile 15px, any Aa setting) instead of drifting low on mobile. */
+  margin-top: calc(var(--lib-font-size, 18px) * 0.6);
 }
 
 .lib-vnum-click {
@@ -1749,17 +1749,6 @@ input { font-family: inherit; }
   font-size: 0.82em;
   line-height: 1.25;
   color: var(--ink-3);
-}
-/* grammar (decoded morphology) — also shown only with the Interlinear toggle, small
-   and muted at the bottom of the chip by the Strong's number, like BLB/STEP */
-.lib-heb-word .lib-iw-gram {
-  direction: ltr;
-  font-size: 0.56em;
-  line-height: 1.25;
-  color: var(--ink-3);
-  max-width: 16ch;
-  text-align: center;
-  margin-top: 1px;
 }
 
 /* ----- "Other" non-canonical texts picker (desktop lib bar popup) ----- */
