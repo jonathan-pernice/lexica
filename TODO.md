@@ -288,8 +288,9 @@ Read the Bible in event order, works with ANY version (ABP/KJV/BSB). Shipped as 
 toggle in the Library (Canonical | Clock icon = Chronological), NOT a separate tab. Data is a static
 `static/chronological.json` (1,102 passages, 13 eras) built by `scripts/chronological/
 build_chronological.py` — no database, no backend route. Exact-range reader trims + spans chapters.
-Full record in memory `project_chronological_tab`. Possible polish only: suppress the chapter divider
-on single-chapter passages if it ever feels redundant.
+Full record in memory `project_chronological_tab`. Polish DONE 2026-06-11: the chapter divider is now
+suppressed on single-chapter passages (it just repeated the passage location); multi-chapter passages
+keep their per-chapter dividers (`singleChapterPassage` in 60-library.jsx `withMarks`).
 
 ### Read-along audio — DONE + LIVE 2026-06-10 (BSB live for all; ESV waits on a key)
 Per-chapter audio on KJV/BSB/ESV (ABP has no recording). Full record: memory `project_esv_audio` +
