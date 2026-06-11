@@ -2440,37 +2440,35 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                 aria-label={chronoOn ? "Next passage" : "Next chapter"}
               >›</button>
             </div>
-            {chrono && !nonCanon && (
+            {chrono && (
               <>
                 <span className="lib-bar-sep" aria-hidden="true"/>
                 <div className="seg lib-order-seg">
-                  <button className={"seg-b" + (orderMode !== "chronological" ? " on" : "")} title="Canonical order (books in order)" aria-label="Canonical order" onClick={() => setOrder("canonical")}><Icon.Book/></button>
-                  <button className={"seg-b" + (orderMode === "chronological" ? " on" : "")} title="Chronological order (events in sequence)" aria-label="Chronological order" onClick={() => setOrder("chronological")}><Icon.Clock/></button>
+                  <button className={"seg-b" + (!nonCanon && orderMode !== "chronological" ? " on" : "")} disabled={!!nonCanon} style={nonCanon ? { opacity: 0.35, cursor: "default" } : undefined} title={nonCanon ? "Reading order applies to the Bible" : "Canonical order (books in order)"} aria-label="Canonical order" onClick={() => { if (!nonCanon) setOrder("canonical"); }}><Icon.Book/></button>
+                  <button className={"seg-b" + (!nonCanon && orderMode === "chronological" ? " on" : "")} disabled={!!nonCanon} style={nonCanon ? { opacity: 0.35, cursor: "default" } : undefined} title={nonCanon ? "Reading order applies to the Bible" : "Chronological order (events in sequence)"} aria-label="Chronological order" onClick={() => { if (!nonCanon) setOrder("chronological"); }}><Icon.Clock/></button>
                 </div>
               </>
             )}
             <span className="lib-bar-sep" aria-hidden="true"/>
             <button className={"lib-toggle lib-toggle-icon" + (showStrongs ? " on" : "")} disabled={proseLocked} title="Strong's numbers" aria-label="Strong's numbers" aria-pressed={showStrongs} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showStrongs", !showStrongs)}><Icon.Hash/></button>
             <button className={"lib-toggle lib-toggle-icon" + (showInterlinear ? " on" : "")} disabled={proseLocked} title="Interlinear" aria-label="Interlinear" aria-pressed={showInterlinear} style={proseLocked ? { opacity: 0.35, cursor: "default" } : undefined} onClick={() => !proseLocked && setOpt("showInterlinear", !showInterlinear)}><Icon.Interlinear/></button>
-            {!nonCanon && (
-              <div className="lib-other-wrap">
-                <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} title="Compare translations" aria-label="Compare translations" aria-pressed={translation === "parallel"} aria-expanded={compareOpen} onClick={() => setCompareOpen(o => !o)}><Icon.Columns/></button>
-                {compareOpen && (
-                  <>
-                    <div className="lib-other-scrim" onClick={() => setCompareOpen(false)} />
-                    <div className="lib-other-menu lib-compare-menu">
-                      <div className="lib-compare-title">Compare (pick 2–4)</div>
-                      {compareAvail.map(id => (
-                        <label key={id} className="lib-compare-opt">
-                          <input type="checkbox" checked={compareActive.includes(id)} onChange={() => toggleCompare(id)} />
-                          <span>{id.toUpperCase()}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
+            <div className="lib-other-wrap">
+              <button className={"lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : "")} disabled={!!nonCanon} style={nonCanon ? { opacity: 0.35, cursor: "default" } : undefined} title={nonCanon ? "Compare isn't available for this text" : "Compare translations"} aria-label="Compare translations" aria-pressed={translation === "parallel"} aria-expanded={compareOpen} onClick={() => { if (!nonCanon) setCompareOpen(o => !o); }}><Icon.Columns/></button>
+              {!nonCanon && compareOpen && (
+                <>
+                  <div className="lib-other-scrim" onClick={() => setCompareOpen(false)} />
+                  <div className="lib-other-menu lib-compare-menu">
+                    <div className="lib-compare-title">Compare (pick 2–4)</div>
+                    {compareAvail.map(id => (
+                      <label key={id} className="lib-compare-opt">
+                        <input type="checkbox" checked={compareActive.includes(id)} onChange={() => toggleCompare(id)} />
+                        <span>{id.toUpperCase()}</span>
+                      </label>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
             <span className="lib-bar-sep" aria-hidden="true"/>
             <div className="seg lib-view-seg">
               <button

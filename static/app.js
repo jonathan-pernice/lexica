@@ -7315,21 +7315,35 @@ function LibraryView({
       });
     },
     "aria-label": chronoOn ? "Next passage" : "Next chapter"
-  }, "\u203A")), chrono && !nonCanon && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+  }, "\u203A")), chrono && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
   }), /*#__PURE__*/React.createElement("div", {
     className: "seg lib-order-seg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (orderMode !== "chronological" ? " on" : ""),
-    title: "Canonical order (books in order)",
+    className: "seg-b" + (!nonCanon && orderMode !== "chronological" ? " on" : ""),
+    disabled: !!nonCanon,
+    style: nonCanon ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    title: nonCanon ? "Reading order applies to the Bible" : "Canonical order (books in order)",
     "aria-label": "Canonical order",
-    onClick: () => setOrder("canonical")
+    onClick: () => {
+      if (!nonCanon) setOrder("canonical");
+    }
   }, /*#__PURE__*/React.createElement(Icon.Book, null)), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (orderMode === "chronological" ? " on" : ""),
-    title: "Chronological order (events in sequence)",
+    className: "seg-b" + (!nonCanon && orderMode === "chronological" ? " on" : ""),
+    disabled: !!nonCanon,
+    style: nonCanon ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    title: nonCanon ? "Reading order applies to the Bible" : "Chronological order (events in sequence)",
     "aria-label": "Chronological order",
-    onClick: () => setOrder("chronological")
+    onClick: () => {
+      if (!nonCanon) setOrder("chronological");
+    }
   }, /*#__PURE__*/React.createElement(Icon.Clock, null)))), /*#__PURE__*/React.createElement("span", {
     className: "lib-bar-sep",
     "aria-hidden": "true"
@@ -7355,16 +7369,23 @@ function LibraryView({
       cursor: "default"
     } : undefined,
     onClick: () => !proseLocked && setOpt("showInterlinear", !showInterlinear)
-  }, /*#__PURE__*/React.createElement(Icon.Interlinear, null)), !nonCanon && /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement(Icon.Interlinear, null)), /*#__PURE__*/React.createElement("div", {
     className: "lib-other-wrap"
   }, /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-toggle-icon" + (translation === "parallel" ? " on" : ""),
-    title: "Compare translations",
+    disabled: !!nonCanon,
+    style: nonCanon ? {
+      opacity: 0.35,
+      cursor: "default"
+    } : undefined,
+    title: nonCanon ? "Compare isn't available for this text" : "Compare translations",
     "aria-label": "Compare translations",
     "aria-pressed": translation === "parallel",
     "aria-expanded": compareOpen,
-    onClick: () => setCompareOpen(o => !o)
-  }, /*#__PURE__*/React.createElement(Icon.Columns, null)), compareOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    onClick: () => {
+      if (!nonCanon) setCompareOpen(o => !o);
+    }
+  }, /*#__PURE__*/React.createElement(Icon.Columns, null)), !nonCanon && compareOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "lib-other-scrim",
     onClick: () => setCompareOpen(false)
   }), /*#__PURE__*/React.createElement("div", {
