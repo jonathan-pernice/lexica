@@ -40,6 +40,24 @@ function groupByBook(verses) {
   });
   return groups;
 }
+// Nave's titles are index-style — keyword first: "Accusation, False", "Trinity, The".
+// Flip the SAFE ones to read naturally ("False Accusation", "The Trinity"); leave
+// ambiguous multi-word tails alone (e.g. "God, the Father" shouldn't become "the
+// Father God"). Display only — the stored title is untouched.
+const _TITLE_STOP = new Set(["the", "a", "an", "of", "and", "or", "to", "in", "on", "for"]);
+function displayTitle(t) {
+  t = String(t || "").trim();
+  const ci = t.indexOf(",");
+  if (ci < 0 || t.indexOf(",", ci + 1) >= 0) return t;   // no comma, or more than one -> leave
+  const head = t.slice(0, ci).trim();
+  const tail = t.slice(ci + 1).trim();
+  if (!head || !tail) return t;
+  if (tail.toLowerCase() === "the") return "The " + head;
+  const words = tail.split(/\s+/);
+  if (words.length === 1 && !_TITLE_STOP.has(tail.toLowerCase()))
+    return tail.charAt(0).toUpperCase() + tail.slice(1) + " " + head;
+  return t;
+}
 
 function blankTopic() {
   return { id: "", type: "topic", title: "", intro: "", sections: [{ heading: "", verses: [] }], related: [], status: "draft", source: "" };
@@ -198,7 +216,7 @@ function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onTogg
           {!previewReader && <button className="study-edit-btn" onClick={onToggleEdit}>Edit</button>}
         </div>
         <div className="study-eyebrow">Topic</div>
-        <h1 className="study-topic-title">{entry.title}</h1>
+        <h1 className="study-topic-title">{displayTitle(entry.title)}</h1>
         <div className="study-topic-meta">{entry.source === "metav" ? "from Nave's · " : ""}{entry.sections.length} sections · {verseCount} verses</div>
         {entry.intro && <p className="study-topic-intro">{entry.intro}</p>}
         {entry.sections.length === 0 ? (
@@ -685,7 +703,7 @@ function StudyView({ pending, onConsumed }) {
   const newLabel = isTopic ? "topic" : (module === "denomination" ? "denomination" : "argument");
   const qs = q.trim().toLowerCase();
   const pool = (entries || []).filter(e => !previewReader || e.status === "published");   // a reader only sees published
-  const shown = pool.filter(e => !qs || (e.title || "").toLowerCase().includes(qs) || (e.heldBy || "").toLowerCase().includes(qs));
+  const shown = pool.filter(e => !qs || (e.title || "").toLowerCase().includes(qs) || displayTitle(e.title).toLowerCase().includes(qs) || (e.heldBy || "").toLowerCase().includes(qs));
   return (
     <div className="study-view">
       <div className="study-sub">
@@ -731,7 +749,7 @@ function StudyView({ pending, onConsumed }) {
           {shown.map(e => (
             <button className="study-row" key={e.id} onClick={() => openEntry(e.id)}>
               {!isTopic && <span className={"study-badge study-badge--" + e.type}>{STUDY_TYPE_LABEL[e.type] || e.type}</span>}
-              <span className="study-row-title">{e.title}{e.heldBy ? <span className="study-row-held"> · {e.heldBy}</span> : null}</span>
+              <span className="study-row-title">{isTopic ? displayTitle(e.title) : e.title}{e.heldBy ? <span className="study-row-held"> · {e.heldBy}</span> : null}</span>
               <span className="study-row-n">{e.n || 0} {isTopic ? "verses" : "refs"}</span>
               {!previewReader && e.status === "draft" && <span className="study-row-draft">draft</span>}
             </button>

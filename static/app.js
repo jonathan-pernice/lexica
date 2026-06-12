@@ -3918,6 +3918,23 @@ function groupByBook(verses) {
   });
   return groups;
 }
+// Nave's titles are index-style — keyword first: "Accusation, False", "Trinity, The".
+// Flip the SAFE ones to read naturally ("False Accusation", "The Trinity"); leave
+// ambiguous multi-word tails alone (e.g. "God, the Father" shouldn't become "the
+// Father God"). Display only — the stored title is untouched.
+const _TITLE_STOP = new Set(["the", "a", "an", "of", "and", "or", "to", "in", "on", "for"]);
+function displayTitle(t) {
+  t = String(t || "").trim();
+  const ci = t.indexOf(",");
+  if (ci < 0 || t.indexOf(",", ci + 1) >= 0) return t; // no comma, or more than one -> leave
+  const head = t.slice(0, ci).trim();
+  const tail = t.slice(ci + 1).trim();
+  if (!head || !tail) return t;
+  if (tail.toLowerCase() === "the") return "The " + head;
+  const words = tail.split(/\s+/);
+  if (words.length === 1 && !_TITLE_STOP.has(tail.toLowerCase())) return tail.charAt(0).toUpperCase() + tail.slice(1) + " " + head;
+  return t;
+}
 function blankTopic() {
   return {
     id: "",
@@ -4239,7 +4256,7 @@ function TopicPage({
       className: "study-eyebrow"
     }, "Topic"), /*#__PURE__*/React.createElement("h1", {
       className: "study-topic-title"
-    }, entry.title), /*#__PURE__*/React.createElement("div", {
+    }, displayTitle(entry.title)), /*#__PURE__*/React.createElement("div", {
       className: "study-topic-meta"
     }, entry.source === "metav" ? "from Nave's · " : "", entry.sections.length, " sections \xB7 ", verseCount, " verses"), entry.intro && /*#__PURE__*/React.createElement("p", {
       className: "study-topic-intro"
@@ -5199,7 +5216,7 @@ function StudyView({
   const newLabel = isTopic ? "topic" : module === "denomination" ? "denomination" : "argument";
   const qs = q.trim().toLowerCase();
   const pool = (entries || []).filter(e => !previewReader || e.status === "published"); // a reader only sees published
-  const shown = pool.filter(e => !qs || (e.title || "").toLowerCase().includes(qs) || (e.heldBy || "").toLowerCase().includes(qs));
+  const shown = pool.filter(e => !qs || (e.title || "").toLowerCase().includes(qs) || displayTitle(e.title).toLowerCase().includes(qs) || (e.heldBy || "").toLowerCase().includes(qs));
   return /*#__PURE__*/React.createElement("div", {
     className: "study-view"
   }, /*#__PURE__*/React.createElement("div", {
@@ -5246,7 +5263,7 @@ function StudyView({
     className: "study-badge study-badge--" + e.type
   }, STUDY_TYPE_LABEL[e.type] || e.type), /*#__PURE__*/React.createElement("span", {
     className: "study-row-title"
-  }, e.title, e.heldBy ? /*#__PURE__*/React.createElement("span", {
+  }, isTopic ? displayTitle(e.title) : e.title, e.heldBy ? /*#__PURE__*/React.createElement("span", {
     className: "study-row-held"
   }, " \xB7 ", e.heldBy) : null), /*#__PURE__*/React.createElement("span", {
     className: "study-row-n"
