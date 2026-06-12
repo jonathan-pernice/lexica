@@ -59,6 +59,8 @@
   --rule-2: #c7b791;
   --accent: #4a4636;
   --accent-soft: color-mix(in oklab, #4a4636 12%, var(--paper));
+  --ctl-bg: #fbf5e6;      /* warm off-white pills instead of stark pure white on parchment */
+  --ctl-on: #fefaf0;
 }
 :root[data-theme="dark"] {
   --bg: #16181c;          /* warm near-black */
