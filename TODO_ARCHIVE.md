@@ -6,6 +6,33 @@ few "leave it alone" verdicts worth keeping.
 
 ---
 
+## Study modules — admin Study tab + MetaV/Nave's import — BUILT 2026-06-12
+
+Recovered a lost idea ("a DB that had study topics") → it was the **MetaV** dataset
+(github.com/gusheng/MetaV, the same one People/Places/cross-refs came from), which carries
+Nave's+Torrey's **Topics + TopicIndex**. Built an admin-only **Study** tab: sub-switch
+**Topics · Denominations · Arguments**. Topics = a sectioned browse; denomination/argument = a
+position→support→tension→resolution claim editor. Own `study.db` (gitignored, PA-only),
+`views_study.py`, `static/src/55-study.jsx`. Loader `scripts/load_study_topics.py` imported
+~1,819 concept topics + 696 person/place "name-topics". Open follow-ups (still in TODO.md):
+a live BUG with the Nave's-sidebar block, the reader walkthrough view, the two-sided argument
+layout. Full record: memory `project_study_modules`.
+
+Lessons worth keeping:
+- **Topics are NOT claims.** First cut forced every topic into the support/tension/resolution
+  shape; a plain topic is just "a subject + its verses," so that shape made no sense. Split into
+  TWO shapes — sectioned topic browse vs the claim editor. Don't re-merge them.
+- **Filter MetaV name-topics by NAME, not a verse-count proxy.** Nave's lists every proper name;
+  those are already in the metaV sidebar + word search. Drop them using MetaV's own People/Places
+  lists (short whitelist for God/Jesus/Holy Spirit); keep concepts. The verses-count "bandaid" was
+  wrong — it kept big names and could drop small concepts.
+- **MetaV's curated topics ≠ a concordance.** Subtopics ("Affliction — consolation under / made
+  beneficial") are thematic and include verses without the keyword — real value over plain search.
+  For bare names it IS just "where mentioned" (= search), hence dropping them.
+- **CSV gotcha:** read MetaV CSVs as `utf-8-sig` — a BOM in the header made every verse link drop
+  (the "0 verses" symptom). `--replace` clears prior `metav*` rows first so a re-run is clean.
+- Verse text shown = **ABP prose** (the words' english joined like Prose mode), KJV per-verse fallback.
+
 ## Focus mode + reader gesture/scroll fixes — DONE 2026-06-11
 
 All on master, pushed. Full record: memory `project_focus_mode`.

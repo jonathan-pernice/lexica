@@ -289,37 +289,19 @@ category *names* (renamed to drop loaded framing); generate the actual verses an
 Berean-style. Build a quick proof-of-concept with the off-the-shelf topic→verse mappings first to see
 if people use it, then swap in our own verse selection. Could be a new tab or a mode inside Search.
 
-### Study modules — admin-only tab (ENGINE v1 BUILT 2026-06-12, pending deploy)
-A new **admin-gated tab** (gate like the Admin page) holding three related study tools that all run on
-ONE shared engine, so it's one build + mostly data entry, not three features:
-- **Guided study (topics)** — pick a topic, get walked through its verses step by step (intro → Step N
-  of M with next/back → verse + plain note + reflection question → related). This is the Topic browser
-  above, made into a guided walk. Topic data = the **MetaV `Topics.csv`** (the same theographic metadata
-  the People/Places sidebars use). NOTE: `scripts/load_metav.py` loads People/Places/Writers but NOT the
-  topics file — pulling that in is step one. The user will author his own, deeper topics on top.
-- **Denomination chart** — what a group believes + the verses behind it; reframed (his call) NOT as
-  "where they're wrong" but the verses that hold it in TENSION and where the middle road / resolution is.
-- **Common arguments** — two sides, what each leans on, implications, where the text lands or stays a mystery.
-
-The shared per-entry shape (one editor builds all three): **position** (the claim) · **support** (verses
-for it) · **tension** (verses against it) · **resolution** (middle road the text points to, OR marked an
-open mystery) · **notes** (private) · **related** (links to other entries). Editor only takes a verse
-REFERENCE — the verse text auto-fills from the corpus, so long verse lists stay cheap to enter. What's
-saved in the editor is what the reader views render. BUILT v1 (2026-06-12, pushed, NOT yet deployed — goes live on his deploy.sh): the AUTHORING side —
-admin-only Study tab + entry editor + storage (`views_study.py` = study.db + admin-gated CRUD +
-`/api/study/verse` ABP-prose auto-fill (KJV fallback); `static/src/55-study.jsx`; nav gated on the
-`owner` flag). study.db auto-creates, normal deploy. Couldn't test live (no local DB) — first deploy
-is the real test. PLUS a MetaV topics loader: `scripts/load_study_topics.py` reads the **gusheng/MetaV**
-CSV folder (Topics/TopicIndex/Verses — the SAME dataset People/Places came from; ~2,035 Nave's+Torrey's
-topics), groups by main topic, writes each as a DRAFT topic entry (verses in Support). Run on PA after
-deploy: `python3 scripts/load_study_topics.py ~/MetaV/CSV` (first 25; `--limit 0` all, `--only A,B`).
-STILL TO DO: the reader-facing guided WALKTHROUGH views; a real two-sided ARGUMENT layout (v1 reuses
-single-position); could also fold MetaV `Writers` in (replaces hand `_BOOK_AUTHORS`).
-Speed content entry later with AI-drafts-you-correct. Two layout mockups shown
-2026-06-12 (reader walkthrough + admin editor). Intentionally bends the app's "no imposed theology" rule —
-his app, his direction; the tension-verse framing keeps the TEXT as judge. Open: public vs his-eyes-only.
-`code: admin tab (gate via views_notes is_admin) = views_study.py + static/src/55-study.jsx;
-topics loader scripts/load_study_topics.py from gusheng/MetaV; memory project_study_modules`
+### Study modules — admin Study tab (LIVE 2026-06-12; build details in TODO_ARCHIVE + memory project_study_modules)
+Built + deployed: admin-only **Study** tab, sub-switch **Topics · Denominations · Arguments**. Topics =
+sectioned browse (MetaV/Nave's, ~1,819 concept topics loaded); denomination/argument = the
+position→support→tension→resolution claim editor; person/place names → a "Nave's topical" block on the
+metaV sidebar (696 name-topics). Verse text = ABP prose (KJV fallback). OPEN:
+- **BUG: the "Nave's topical" sidebar block isn't showing live** — the whole sidebar flow was never
+  verified in the real app. Debug: does `/api/study/for-name/<Name>` (admin, Bearer) return sections?
+  trace the `naveData` effect + `sections.push("naveTopical")` in `30-detail-panel.jsx`; whether
+  `extractProperName` matches the loader's `metavn_<slug>` id; owner gating; or simply not redeployed.
+- Reader-facing guided WALKTHROUGH view (the stepped topic-reading mockup) — not built.
+- A real two-sided ARGUMENT layout (v1 reuses the single-position claim editor).
+- Decide PUBLIC vs admin-only for these modules. Optional: fold MetaV `Writers` in (replace hand `_BOOK_AUTHORS`).
+`code: views_study.py + static/src/55-study.jsx; scripts/load_study_topics.py (gusheng/MetaV); memory project_study_modules`
 
 ### ~~Chronological reading mode~~ — DONE + LIVE 2026-06-09 (desktop + mobile)
 Read the Bible in event order, works with ANY version (ABP/KJV/BSB). Shipped as a reading-ORDER

@@ -186,6 +186,13 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   (`core.heb_db()`, no owner gate on the data). **PUBLIC for everyone, no login (2026-06-11)** —
   `hebPickable` gates on `hebAvail` (heb.db loaded), not the old `hebOwner`. Full record: memory
   `project_hebrew_ot_interlinear`.
+  `study.db` — **admin-only** authored "study modules" (built 2026-06-12): one `entries` table (row
+  per topic / denomination / argument / name; `json` body + `type` + `status`). Served by admin-gated
+  `views_study.py` (`core.study_db()`); the **Study** tab (`static/src/55-study.jsx`). Topics = a
+  sectioned browse; denomination/argument = a position→support→tension→resolution claim editor; verse
+  text shown is ABP prose (KJV fallback). MetaV/Nave's topics imported by
+  `scripts/load_study_topics.py` (concepts → browser; person/place names → a "Nave's topical" block on
+  the metaV sidebar). Full record: memory `project_study_modules`.
 - `<book>_words` / `<book>_verses` — non-canonical texts, each in its OWN two tables, walled off
   from the Bible's tables and from search/word counts. Built by `scripts/load_extra.py`; served by
   `/api/extra/<book>/chapter/<n>`. English-only texts (no Greek) load with an empty words table.
