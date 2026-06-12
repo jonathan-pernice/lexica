@@ -181,6 +181,36 @@ const api = {
   }).catch(() => ({
     ok: false
   })),
+  // Study modules (admin-only) — authored study content in study.db.
+  studyEntries: type => fetch(`/api/study/entries${type && type !== "all" ? `?type=${encodeURIComponent(type)}` : ""}`, {
+    headers: _authHeaders()
+  }).then(r => r.ok ? r.json() : null).catch(() => null),
+  studyEntry: id => fetch(`/api/study/entry/${encodeURIComponent(id)}`, {
+    headers: _authHeaders()
+  }).then(r => r.ok ? r.json() : null).catch(() => null),
+  studySave: entry => fetch(`/api/study/entry`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ..._authHeaders()
+    },
+    body: JSON.stringify(entry)
+  }).then(r => r.ok ? r.json() : null).catch(() => null),
+  studyDelete: id => fetch(`/api/study/entry/${encodeURIComponent(id)}/delete`, {
+    method: "POST",
+    headers: _authHeaders()
+  }).then(r => r.ok ? r.json() : {
+    ok: false
+  }).catch(() => ({
+    ok: false
+  })),
+  studyVerse: ref => fetch(`/api/study/verse?ref=${encodeURIComponent(ref)}`, {
+    headers: _authHeaders()
+  }).then(r => r.ok ? r.json() : {
+    verses: []
+  }).catch(() => ({
+    verses: []
+  })),
   textSearch: (q, corpus, mode, book) => fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` + `&mode=${encodeURIComponent(mode || "phrase")}` + (book ? `&book=${encodeURIComponent(book)}` : "")).then(r => r.json()),
   summary: (book, ch) => fetch(`/api/summary/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
@@ -1353,7 +1383,8 @@ function useNotesVersion() {
 // ============================================================
 function Header({
   activeView,
-  onNavChange
+  onNavChange,
+  owner
 }) {
   return /*#__PURE__*/React.createElement("header", {
     className: "hdr"
@@ -1400,7 +1431,10 @@ function Header({
   }, "Search"), /*#__PURE__*/React.createElement("button", {
     className: "hdr-link " + (activeView === "notes" ? "active" : ""),
     onClick: () => onNavChange("notes")
-  }, "Notes"), /*#__PURE__*/React.createElement("button", {
+  }, "Notes"), owner && /*#__PURE__*/React.createElement("button", {
+    className: "hdr-link " + (activeView === "study" ? "active" : ""),
+    onClick: () => onNavChange("study")
+  }, "Study"), /*#__PURE__*/React.createElement("button", {
     className: "hdr-link " + (activeView === "about" ? "active" : ""),
     onClick: () => onNavChange("about")
   }, "About"))));
@@ -3761,6 +3795,490 @@ function CorpusResults({
     label: g.label,
     verses: g.verses
   }, passageGroupProps))));
+}
+
+// ============================================================
+// STUDY MODULES — admin-only authored study content (the "engine")
+// One shape, three views: a study TOPIC, a DENOMINATION's belief, or one side of
+// an ARGUMENT. Each entry = a position + support verses + tension verses + a
+// resolution (the middle road, or an open mystery) + notes + related links.
+// Verses are entered as a REFERENCE; the KJV text auto-fills from the corpus.
+// Backend: views_study.py (study.db). Every route is admin-gated (404 otherwise).
+// ============================================================
+const STUDY_TYPES = [{
+  id: "topic",
+  label: "Topic"
+}, {
+  id: "denomination",
+  label: "Denomination"
+}, {
+  id: "argument",
+  label: "Argument"
+}];
+const STUDY_TYPE_LABEL = {
+  topic: "Topic",
+  denomination: "Denomination",
+  argument: "Argument"
+};
+function blankStudyEntry(type) {
+  return {
+    id: "",
+    type: type || "topic",
+    title: "",
+    heldBy: "",
+    intro: "",
+    support: [],
+    tension: [],
+    resolution: {
+      mode: "middle",
+      text: ""
+    },
+    notes: "",
+    related: [],
+    status: "draft"
+  };
+}
+
+// One verse bucket (Support or Tension): a list of refs with their auto-filled
+// text, plus an add row that resolves the reference as you type it in.
+function StudyVerseBucket({
+  kind,
+  items,
+  onAdd,
+  onRemove
+}) {
+  const [ref, setRef] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const add = () => {
+    const r = ref.trim();
+    if (!r || busy) return;
+    setBusy(true);
+    setErr("");
+    api.studyVerse(r).then(d => {
+      setBusy(false);
+      if (d && d.verses && d.verses.length) {
+        onAdd({
+          ref: r,
+          text: d.verses.map(v => v.text).join(" ")
+        });
+        setRef("");
+      } else {
+        setErr(d && d.error || "Couldn't find that reference.");
+      }
+    });
+  };
+  const isSupport = kind === "support";
+  return /*#__PURE__*/React.createElement("div", {
+    className: "study-bucket study-bucket--" + kind
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "study-bucket-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "study-bucket-dot",
+    "aria-hidden": "true"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "study-bucket-name"
+  }, isSupport ? "Support" : "Tension"), /*#__PURE__*/React.createElement("span", {
+    className: "study-bucket-hint"
+  }, isSupport ? "verses used to hold it" : "verses that sit in conflict with it")), items.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "study-verse-list"
+  }, items.map((it, i) => /*#__PURE__*/React.createElement("div", {
+    className: "study-verse-row",
+    key: i
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "study-verse-ref"
+  }, it.ref), /*#__PURE__*/React.createElement("span", {
+    className: "study-verse-text"
+  }, it.text || /*#__PURE__*/React.createElement("em", {
+    className: "study-verse-missing"
+  }, "not found \u2014 saved as a reference")), /*#__PURE__*/React.createElement("button", {
+    className: "study-x",
+    onClick: () => onRemove(i),
+    "aria-label": "Remove verse",
+    title: "Remove"
+  }, "\xD7")))), /*#__PURE__*/React.createElement("div", {
+    className: "study-add-row"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "study-add-input",
+    type: "text",
+    value: ref,
+    placeholder: "Add a reference \u2014 e.g. Romans 10:17 (text fills in)",
+    onChange: e => {
+      setRef(e.target.value);
+      if (err) setErr("");
+    },
+    onKeyDown: e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        add();
+      }
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "study-add-btn",
+    onClick: add,
+    disabled: busy || !ref.trim()
+  }, busy ? "…" : "Add")), err && /*#__PURE__*/React.createElement("div", {
+    className: "study-add-err"
+  }, err));
+}
+
+// Free-text chips of related entry/topic names.
+function StudyRelated({
+  items,
+  onAdd,
+  onRemove
+}) {
+  const [val, setVal] = useState("");
+  const add = () => {
+    const v = val.trim();
+    if (!v) return;
+    if (!items.includes(v)) onAdd(v);
+    setVal("");
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "study-related"
+  }, items.map((r, i) => /*#__PURE__*/React.createElement("span", {
+    className: "study-chip",
+    key: i
+  }, r, /*#__PURE__*/React.createElement("button", {
+    className: "study-chip-x",
+    onClick: () => onRemove(i),
+    "aria-label": "Remove",
+    title: "Remove"
+  }, "\xD7"))), /*#__PURE__*/React.createElement("input", {
+    className: "study-chip-input",
+    type: "text",
+    value: val,
+    placeholder: "link a topic\u2026",
+    onChange: e => setVal(e.target.value),
+    onKeyDown: e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        add();
+      }
+    },
+    onBlur: add
+  }));
+}
+
+// The full entry editor.
+function StudyEditor({
+  entry,
+  onChange,
+  onSave,
+  onDelete,
+  onClose,
+  saving,
+  savedAt
+}) {
+  const up = patch => onChange({
+    ...entry,
+    ...patch
+  });
+  const isDenom = entry.type === "denomination";
+  return /*#__PURE__*/React.createElement("div", {
+    className: "study-editor"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "study-editor-bar"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "study-back",
+    onClick: onClose
+  }, "\u2039 All entries"), /*#__PURE__*/React.createElement("div", {
+    className: "study-editor-actions"
+  }, savedAt && !saving && /*#__PURE__*/React.createElement("span", {
+    className: "study-saved"
+  }, "Saved \u2713"), entry.id && /*#__PURE__*/React.createElement("button", {
+    className: "study-del",
+    onClick: onDelete
+  }, "Delete"), /*#__PURE__*/React.createElement("button", {
+    className: "study-save",
+    onClick: onSave,
+    disabled: saving || !entry.title.trim()
+  }, saving ? "Saving…" : "Save"))), /*#__PURE__*/React.createElement("div", {
+    className: "study-field study-type-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "study-label"
+  }, "Type"), /*#__PURE__*/React.createElement("div", {
+    className: "seg"
+  }, STUDY_TYPES.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: "seg-b" + (entry.type === t.id ? " on" : ""),
+    onClick: () => up({
+      type: t.id
+    })
+  }, t.label)))), /*#__PURE__*/React.createElement("div", {
+    className: "study-head-row"
+  }, isDenom && /*#__PURE__*/React.createElement("div", {
+    className: "study-field study-field--held"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "study-label"
+  }, "Held by"), /*#__PURE__*/React.createElement("input", {
+    className: "study-input",
+    type: "text",
+    value: entry.heldBy,
+    placeholder: "e.g. Church of Christ",
+    onChange: e => up({
+      heldBy: e.target.value
+    })
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "study-field study-field--title"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "study-label"
+  }, entry.type === "argument" ? "Position (one side)" : "Position"), /*#__PURE__*/React.createElement("input", {
+    className: "study-input",
+    type: "text",
+    value: entry.title,
+    placeholder: isDenom ? "What they hold — e.g. Baptism is required for salvation" : "The topic or claim",
+    onChange: e => up({
+      title: e.target.value
+    })
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "study-field"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "study-label"
+  }, "Intro ", /*#__PURE__*/React.createElement("span", {
+    className: "study-label-hint"
+  }, "(optional, one or two lines)")), /*#__PURE__*/React.createElement("textarea", {
+    className: "study-textarea study-textarea--sm",
+    value: entry.intro,
+    placeholder: "A short, plain-English lead-in.",
+    onChange: e => up({
+      intro: e.target.value
+    })
+  })), /*#__PURE__*/React.createElement(StudyVerseBucket, {
+    kind: "support",
+    items: entry.support,
+    onAdd: v => up({
+      support: [...entry.support, v]
+    }),
+    onRemove: i => up({
+      support: entry.support.filter((_, j) => j !== i)
+    })
+  }), /*#__PURE__*/React.createElement(StudyVerseBucket, {
+    kind: "tension",
+    items: entry.tension,
+    onAdd: v => up({
+      tension: [...entry.tension, v]
+    }),
+    onRemove: i => up({
+      tension: entry.tension.filter((_, j) => j !== i)
+    })
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "study-field"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "study-res-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "study-label"
+  }, "Resolution"), /*#__PURE__*/React.createElement("div", {
+    className: "seg seg--res"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (entry.resolution.mode === "middle" ? " on" : ""),
+    onClick: () => up({
+      resolution: {
+        ...entry.resolution,
+        mode: "middle"
+      }
+    })
+  }, "Middle road"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (entry.resolution.mode === "mystery" ? " on" : ""),
+    onClick: () => up({
+      resolution: {
+        ...entry.resolution,
+        mode: "mystery"
+      }
+    })
+  }, "Open mystery"))), /*#__PURE__*/React.createElement("textarea", {
+    className: "study-textarea",
+    value: entry.resolution.text,
+    placeholder: entry.resolution.mode === "mystery" ? "Why the text leaves this open — what we can and can't say." : "The middle road the text points to — how the support and tension are held together.",
+    onChange: e => up({
+      resolution: {
+        ...entry.resolution,
+        text: e.target.value
+      }
+    })
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "study-field"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "study-label"
+  }, "Your notes ", /*#__PURE__*/React.createElement("span", {
+    className: "study-label-hint"
+  }, "(private)")), /*#__PURE__*/React.createElement("textarea", {
+    className: "study-textarea study-textarea--sm",
+    value: entry.notes,
+    placeholder: "Commentary, cross-links, things to revisit.",
+    onChange: e => up({
+      notes: e.target.value
+    })
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "study-field"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "study-label"
+  }, "Related"), /*#__PURE__*/React.createElement(StudyRelated, {
+    items: entry.related,
+    onAdd: r => up({
+      related: [...entry.related, r]
+    }),
+    onRemove: i => up({
+      related: entry.related.filter((_, j) => j !== i)
+    })
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "study-field study-status-row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "study-label"
+  }, "Visibility"), /*#__PURE__*/React.createElement("div", {
+    className: "seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (entry.status === "draft" ? " on" : ""),
+    onClick: () => up({
+      status: "draft"
+    })
+  }, "Draft"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (entry.status === "published" ? " on" : ""),
+    onClick: () => up({
+      status: "published"
+    })
+  }, "Published")), /*#__PURE__*/React.createElement("span", {
+    className: "study-label-hint"
+  }, "Draft = only you. Published is reserved for a future public reader.")));
+}
+function StudyView() {
+  const [entries, setEntries] = useState(null);
+  const [err, setErr] = useState(false);
+  const [filter, setFilter] = useState("all");
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState(null);
+  const load = () => {
+    api.studyEntries("all").then(d => {
+      if (d && d.entries) {
+        setEntries(d.entries);
+        setErr(false);
+      } else setErr(true);
+    });
+  };
+  useEffect(() => {
+    load();
+  }, []);
+  const openEntry = id => {
+    setSavedAt(null);
+    api.studyEntry(id).then(d => {
+      if (!d) return;
+      setEditing({
+        id: d.id,
+        type: d.type,
+        title: d.title || "",
+        heldBy: d.heldBy || "",
+        intro: d.intro || "",
+        support: d.support || [],
+        tension: d.tension || [],
+        resolution: d.resolution || {
+          mode: "middle",
+          text: ""
+        },
+        notes: d.notes || "",
+        related: d.related || [],
+        status: d.status || "draft"
+      });
+    });
+  };
+  const newEntry = () => {
+    setSavedAt(null);
+    setEditing(blankStudyEntry("topic"));
+  };
+  const save = () => {
+    if (!editing || !editing.title.trim() || saving) return;
+    setSaving(true);
+    const payload = {
+      ...editing,
+      support: editing.support.map(v => ({
+        ref: v.ref
+      })),
+      tension: editing.tension.map(v => ({
+        ref: v.ref
+      }))
+    };
+    api.studySave(payload).then(d => {
+      setSaving(false);
+      if (d && d.id) {
+        setEditing(e => ({
+          ...e,
+          id: d.id
+        }));
+        setSavedAt(Date.now());
+        load();
+      }
+    });
+  };
+  const del = () => {
+    if (!editing || !editing.id) {
+      setEditing(null);
+      return;
+    }
+    if (!window.confirm("Delete this entry?")) return;
+    api.studyDelete(editing.id).then(() => {
+      setEditing(null);
+      load();
+    });
+  };
+  if (err) return /*#__PURE__*/React.createElement("div", {
+    className: "stats-view"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stats-empty"
+  }, "Couldn't load study entries. (Admin sign-in required.)"));
+  if (editing) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "study-view"
+    }, /*#__PURE__*/React.createElement(StudyEditor, {
+      entry: editing,
+      onChange: setEditing,
+      onSave: save,
+      onDelete: del,
+      onClose: () => {
+        setEditing(null);
+        setSavedAt(null);
+      },
+      saving: saving,
+      savedAt: savedAt
+    }));
+  }
+  const shown = (entries || []).filter(e => filter === "all" || e.type === filter);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "study-view"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "study-list-head"
+  }, /*#__PURE__*/React.createElement("h1", {
+    className: "stats-title"
+  }, "Study modules"), /*#__PURE__*/React.createElement("button", {
+    className: "study-new",
+    onClick: newEntry
+  }, "+ New entry")), /*#__PURE__*/React.createElement("div", {
+    className: "stats-sub"
+  }, "Author topics, denomination beliefs, and arguments \u2014 each as a position with its support and tension verses."), /*#__PURE__*/React.createElement("div", {
+    className: "study-filter seg"
+  }, [["all", "All"], ["topic", "Topics"], ["denomination", "Denominations"], ["argument", "Arguments"]].map(([id, lbl]) => /*#__PURE__*/React.createElement("button", {
+    key: id,
+    className: "seg-b" + (filter === id ? " on" : ""),
+    onClick: () => setFilter(id)
+  }, lbl))), entries === null ? /*#__PURE__*/React.createElement("div", {
+    className: "stats-empty"
+  }, "Loading\u2026") : shown.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "stats-empty"
+  }, entries.length === 0 ? "No entries yet — start with “+ New entry”." : "None of this type yet.") : /*#__PURE__*/React.createElement("div", {
+    className: "study-rows"
+  }, shown.map(e => /*#__PURE__*/React.createElement("button", {
+    className: "study-row",
+    key: e.id,
+    onClick: () => openEntry(e.id)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "study-badge study-badge--" + e.type
+  }, STUDY_TYPE_LABEL[e.type] || e.type), /*#__PURE__*/React.createElement("span", {
+    className: "study-row-title"
+  }, e.title, e.heldBy ? /*#__PURE__*/React.createElement("span", {
+    className: "study-row-held"
+  }, " \xB7 ", e.heldBy) : null), e.status === "draft" && /*#__PURE__*/React.createElement("span", {
+    className: "study-row-draft"
+  }, "draft")))));
 }
 
 // ============================================================
@@ -9074,7 +9592,8 @@ function App() {
     className: "app view-" + mainView + " " + (activeEntry || libCrossRef || activeNote || showLibSummary ? "has-detail " : "") + (focusMode && mainView === "library" ? "focus-mode" : "")
   }, /*#__PURE__*/React.createElement(Header, {
     activeView: mainView,
-    onNavChange: handleNavChange
+    onNavChange: handleNavChange,
+    owner: owner
   }), isMobile && mainView !== "library" && /*#__PURE__*/React.createElement("div", {
     className: "mobile-brand-bar"
   }, /*#__PURE__*/React.createElement("svg", {
@@ -9122,7 +9641,7 @@ function App() {
     owner: owner
   }), mainView === "notes" && /*#__PURE__*/React.createElement(NotesView, {
     onOpen: openNoteFromList
-  }), /*#__PURE__*/React.createElement("div", {
+  }), mainView === "study" && owner && /*#__PURE__*/React.createElement(StudyView, null), /*#__PURE__*/React.createElement("div", {
     style: {
       display: mainView === "lexicon" ? undefined : "none"
     }
@@ -9150,7 +9669,7 @@ function App() {
   })), /*#__PURE__*/React.createElement("div", {
     className: "main-inner",
     style: {
-      display: mainView === "library" || mainView === "about" || mainView === "lexicon" || mainView === "notes" ? "none" : undefined
+      display: mainView === "library" || mainView === "about" || mainView === "lexicon" || mainView === "notes" || mainView === "study" ? "none" : undefined
     }
   }, /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(SearchBar, {
     q2: q2,
@@ -9401,7 +9920,25 @@ function App() {
     strokeLinejoin: "round"
   }, /*#__PURE__*/React.createElement("path", {
     d: "M6 3h12v18l-6-4-6 4z"
-  })), "Notes"), /*#__PURE__*/React.createElement("button", {
+  })), "Notes"), owner && /*#__PURE__*/React.createElement("button", {
+    className: "mobile-tab" + (mainView === "study" ? " active" : ""),
+    onClick: () => handleNavChange("study")
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "18",
+    height: "18",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  }, /*#__PURE__*/React.createElement("path", {
+    d: "M4 19.5A2.5 2.5 0 0 1 6.5 17H20"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+  }), /*#__PURE__*/React.createElement("path", {
+    d: "M9 7h7M9 11h7"
+  })), "Study"), /*#__PURE__*/React.createElement("button", {
     className: "mobile-tab" + (mainView === "about" ? " active" : ""),
     onClick: () => handleNavChange("about")
   }, /*#__PURE__*/React.createElement("svg", {

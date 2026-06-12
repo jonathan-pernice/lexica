@@ -207,7 +207,7 @@ function App() {
 
   return (
     <div className={"app view-" + mainView + " " + ((activeEntry || libCrossRef || activeNote || showLibSummary) ? "has-detail " : "") + (focusMode && mainView === "library" ? "focus-mode" : "")}>
-      <Header activeView={mainView} onNavChange={handleNavChange}/>
+      <Header activeView={mainView} onNavChange={handleNavChange} owner={owner}/>
       {isMobile && mainView !== "library" && (
         <div className="mobile-brand-bar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -226,6 +226,7 @@ function App() {
         )}
         {mainView === "about" && <AboutView owner={owner} />}
         {mainView === "notes" && <NotesView onOpen={openNoteFromList} />}
+        {mainView === "study" && owner && <StudyView />}
         <div style={{ display: mainView === "lexicon" ? undefined : "none" }}>
           <LexiconView
             onNavigateToSearch={(q) => { handleNavChange("search"); setQ2(q); }}
@@ -241,7 +242,7 @@ function App() {
             isMobile={isMobile}
           />
         </div>
-        <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about" || mainView === "lexicon" || mainView === "notes") ? "none" : undefined }}>
+        <div className="main-inner" style={{ display: (mainView === "library" || mainView === "about" || mainView === "lexicon" || mainView === "notes" || mainView === "study") ? "none" : undefined }}>
           <><SearchBar
             q2={q2} setQ2={setQ2}
             onAiSearch={handleAiSearch}
@@ -415,6 +416,12 @@ function App() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
             Notes
           </button>
+          {owner && (
+            <button className={"mobile-tab" + (mainView === "study" ? " active" : "")} onClick={() => handleNavChange("study")}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h7"/></svg>
+              Study
+            </button>
+          )}
           <button className={"mobile-tab" + (mainView === "about" ? " active" : "")} onClick={() => handleNavChange("about")}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8.5"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
             About

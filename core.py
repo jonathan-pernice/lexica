@@ -164,6 +164,20 @@ def notes_db():
     return conn
 
 
+# Admin-authored "study modules" content (guided topics, denomination chart,
+# arguments) lives in its OWN file, study.db — kept OUT of bible.db (the corpus
+# is rebuilt; authored study content must survive that) and OUT of git (*.db is
+# gitignored), like notes.db. Only the admin (owner) writes here; reading may open
+# up later. The admin gate in views_study.py decides who can touch it.
+STUDY_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "study.db")
+
+
+def study_db():
+    conn = sqlite3.connect(STUDY_DB)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
 # The ESV is a PERSONAL, owner-only reading text (Crossway-copyrighted — it is
 # NEVER a public corpus like KJV/BSB). Its text lives in its OWN file, esv.db,
 # kept OUT of bible.db and OUT of git (*.db is gitignored), and loaded on

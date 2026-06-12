@@ -142,6 +142,25 @@ const api = {
       headers: { "Content-Type": "application/json", ..._authHeaders() },
       body: JSON.stringify({ user_id: userId, role }),
     }).then(r => r.ok ? r.json() : { ok: false }).catch(() => ({ ok: false })),
+  // Study modules (admin-only) — authored study content in study.db.
+  studyEntries: (type) =>
+    fetch(`/api/study/entries${type && type !== "all" ? `?type=${encodeURIComponent(type)}` : ""}`, { headers: _authHeaders() })
+      .then(r => r.ok ? r.json() : null).catch(() => null),
+  studyEntry: (id) =>
+    fetch(`/api/study/entry/${encodeURIComponent(id)}`, { headers: _authHeaders() })
+      .then(r => r.ok ? r.json() : null).catch(() => null),
+  studySave: (entry) =>
+    fetch(`/api/study/entry`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ..._authHeaders() },
+      body: JSON.stringify(entry),
+    }).then(r => r.ok ? r.json() : null).catch(() => null),
+  studyDelete: (id) =>
+    fetch(`/api/study/entry/${encodeURIComponent(id)}/delete`, { method: "POST", headers: _authHeaders() })
+      .then(r => r.ok ? r.json() : { ok: false }).catch(() => ({ ok: false })),
+  studyVerse: (ref) =>
+    fetch(`/api/study/verse?ref=${encodeURIComponent(ref)}`, { headers: _authHeaders() })
+      .then(r => r.ok ? r.json() : { verses: [] }).catch(() => ({ verses: [] })),
   textSearch: (q, corpus, mode, book) =>
     fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` +
           `&mode=${encodeURIComponent(mode || "phrase")}` +
