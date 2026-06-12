@@ -203,8 +203,8 @@ def main():
     ap.add_argument("--limit", type=int, default=25, help="max topics to import (0 = all). Default 25.")
     ap.add_argument("--only", default="", help="comma-separated main-topic names to import (overrides --limit)")
     ap.add_argument("--replace", action="store_true", help="overwrite already-imported entries (default: skip)")
-    ap.add_argument("--keep-names", action="store_true", help="keep person/place-name topics too (default: drop them — they're already in the metaV sidebar and a word search)")
-    ap.add_argument("--min-verses", type=int, default=0, help="also skip topics with fewer than N verses (default 0 = off; the name drop does the real work)")
+    ap.add_argument("--min-verses", type=int, default=0, help="skip CONCEPT topics with fewer than N verses (default 0 = off)")
+    ap.add_argument("--name-min", type=int, default=3, help="a person/place needs at least N verses to get a sidebar name-topic (default 3)")
     args = ap.parse_args()
 
     db_path = args.db or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "study.db")
@@ -219,57 +219,65 @@ def main():
     built = build_topics(topics, topic_index, verses)
     print(f"Built {len(built):,} main topics.")
 
-    if not args.keep_names:
-        names = load_names(args.csv_dir)
-        before = len(built)
-        built = [(m, secs) for (m, secs) in built if _norm_name(m) in KEEP_NAMES or _norm_name(m) not in names]
-        print(f"Dropped {before - len(built):,} person/place-name topics → {len(built):,} concept topics left.")
-
-    if args.min_verses > 0:
-        built = [(m, secs) for (m, secs) in built if sum(len(s["verses"]) for s in secs) >= args.min_verses]
-        print(f"{len(built):,} topics with {args.min_verses}+ verses (the rest are one-off names, skipped).")
+    # Classify each: concept topics go to the Topic browser; person/place names
+    # become sidebar "name-topics" (looked up by name on the metaV card). A few
+    # central names (God, Jesus…) are kept as concepts.
+    names = load_names(args.csv_dir)
+    concepts, name_topics = [], []
+    for main, sections in built:
+        total = sum(len(s["verses"]) for s in sections)
+        n = _norm_name(main)
+        if n in names and n not in KEEP_NAMES:
+            if total >= args.name_min:
+                name_topics.append((main, sections))
+        elif args.min_verses <= 0 or total >= args.min_verses:
+            concepts.append((main, sections))
+    print(f"{len(concepts):,} concept topics, {len(name_topics):,} name-topics (people/places with depth).")
 
     if args.only.strip():
         wanted = {w.strip().lower() for w in args.only.split(",") if w.strip()}
-        built = [g for g in built if g[0].lower() in wanted]
+        concepts = [g for g in concepts if g[0].lower() in wanted]
+        name_topics = [g for g in name_topics if g[0].lower() in wanted]
     elif args.limit and args.limit > 0:
-        built = built[:args.limit]
+        concepts = concepts[:args.limit]
 
     conn = sqlite3.connect(db_path)
     ensure_table(conn)
     if args.replace:
-        cleared = conn.execute("DELETE FROM entries WHERE id GLOB 'metav_*'").rowcount
+        cleared = conn.execute("DELETE FROM entries WHERE id GLOB 'metav*'").rowcount
         print(f"Cleared {cleared:,} prior MetaV imports (re-importing fresh).")
     now = _now()
-    created = skipped = 0
-    for main, sections in built:
-        if not sections:
-            continue
-        entry_id = "metav_" + slugify(main)
-        exists = conn.execute("SELECT 1 FROM entries WHERE id=?", (entry_id,)).fetchone()
-        if exists and not args.replace:
-            skipped += 1
-            continue
-        body = json.dumps({
-            "intro": "", "sections": sections,
-            "related": [], "source": "metav",
-        }, ensure_ascii=False)
-        if exists:
-            conn.execute(
-                "UPDATE entries SET type='topic', title=?, json=?, status='draft', updated=?, deleted=0 WHERE id=?",
-                (main, body, now, entry_id),
-            )
-        else:
-            conn.execute(
-                "INSERT INTO entries (id, type, title, json, status, created, updated, deleted)"
-                " VALUES (?,?,?,?,?,?,?,0)",
-                (entry_id, "topic", main, body, "draft", now, now),
-            )
-        created += 1
+
+    def write(prefix, etype, items):
+        created = skipped = 0
+        for main, sections in items:
+            if not sections:
+                continue
+            entry_id = prefix + slugify(main)
+            exists = conn.execute("SELECT 1 FROM entries WHERE id=?", (entry_id,)).fetchone()
+            if exists and not args.replace:
+                skipped += 1
+                continue
+            body = json.dumps({"intro": "", "sections": sections, "related": [], "source": "metav"}, ensure_ascii=False)
+            if exists:
+                conn.execute(
+                    "UPDATE entries SET type=?, title=?, json=?, status='draft', updated=?, deleted=0 WHERE id=?",
+                    (etype, main, body, now, entry_id),
+                )
+            else:
+                conn.execute(
+                    "INSERT INTO entries (id, type, title, json, status, created, updated, deleted) VALUES (?,?,?,?,?,?,?,0)",
+                    (entry_id, etype, main, body, "draft", now, now),
+                )
+            created += 1
+        return created, skipped
+
+    cc, cs = write("metav_", "topic", concepts)
+    nc, ns = write("metavn_", "name", name_topics)
     conn.commit()
     conn.close()
-    print(f"Done. {created} entries written, {skipped} left untouched (already imported).")
-    print("Open the Study tab → Topics to review and curate them.")
+    print(f"Done. {cc} concept topics + {nc} name-topics written ({cs + ns} left untouched).")
+    print("Concepts: Study → Topics. Name-topics show on the metaV person/place sidebar.")
 
 
 if __name__ == "__main__":

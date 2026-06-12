@@ -3277,6 +3277,13 @@ input { font-family: inherit; }
 .study-search-input { width: 100%; height: 36px; font: inherit; font-size: 14px; color: var(--ink); background: var(--paper); border: 1px solid var(--rule-2); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
 .study-search-input:focus { outline: none; border-color: var(--accent); }
 
+/* Nave's topical block on the metaV person/place sidebar */
+.nave-secs { display: flex; flex-direction: column; gap: 4px; }
+.nave-sec { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; background: var(--ctl-bg); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 11px; cursor: pointer; }
+.nave-sec:hover { border-color: var(--ink-3); }
+.nave-sec-h { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nave-sec-n { flex: none; font-size: 11.5px; color: var(--ink-4); }
+
 .study-rows { display: flex; flex-direction: column; gap: 6px; }
 .study-row {
   display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;

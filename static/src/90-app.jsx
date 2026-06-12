@@ -26,6 +26,7 @@ function App() {
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
   const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
+  const [studyPending, setStudyPending] = useState(null);   // open this name-topic in Study (from the metaV sidebar)
   const [libTranslation, setLibTranslation] = useState("abp");
   const [activeNote, setActiveNote] = useState(null);   // note id being edited
   const [focusMode, setFocusMode] = useState(false);    // distraction-free reading: chrome hidden (library only, not remembered)
@@ -163,6 +164,14 @@ function App() {
     handleNavChange("lexicon");
   };
 
+  const handleOpenStudyName = (id) => {
+    if (!id) return;
+    setActiveEntry(null);     // close the person/place panel before jumping to Study
+    setLibCrossRef(null);
+    setStudyPending(id);
+    handleNavChange("study");
+  };
+
   const handleAiSearch = async (overrideQ) => {
     const q = (overrideQ !== undefined ? overrideQ : q2).trim();
     if (!q) return;
@@ -226,7 +235,7 @@ function App() {
         )}
         {mainView === "about" && <AboutView owner={owner} />}
         {mainView === "notes" && <NotesView onOpen={openNoteFromList} />}
-        {mainView === "study" && owner && <StudyView />}
+        {mainView === "study" && owner && <StudyView pending={studyPending} onConsumed={() => setStudyPending(null)} />}
         <div style={{ display: mainView === "lexicon" ? undefined : "none" }}>
           <LexiconView
             onNavigateToSearch={(q) => { handleNavChange("search"); setQ2(q); }}
@@ -339,6 +348,7 @@ function App() {
           totalResults={allResults.length}
                     onNavigateToLexicon={handleNavigateToLexicon}
           onReadInContext={handleReadInContext}
+          onOpenStudyName={handleOpenStudyName}
           overviewBack={mainView === "library"}
         />
       )}
@@ -354,6 +364,7 @@ function App() {
             totalResults={allResults.length}
                         onNavigateToLexicon={handleNavigateToLexicon}
             onReadInContext={handleReadInContext}
+            onOpenStudyName={handleOpenStudyName}
           />
         </>
       )}

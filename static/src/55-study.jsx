@@ -19,6 +19,9 @@ const CLAIM_TYPES = [
   { id: "argument", label: "Argument" },
 ];
 const STUDY_TYPE_LABEL = { topic: "Topic", denomination: "Denomination", argument: "Argument" };
+// "name" = a person/place name-topic (MetaV), shown on the metaV sidebar, opened
+// here read-only. Same shape as a topic, so it renders through TopicPage.
+const isTopicLike = t => t === "topic" || t === "name";
 
 function blankTopic() {
   return { id: "", type: "topic", title: "", intro: "", sections: [{ heading: "", verses: [] }], related: [], status: "draft", source: "" };
@@ -286,7 +289,7 @@ function StudyEditor({ entry, onChange, onSave, onDelete, onClose, saving, saved
 }
 
 // ---- The Study tab --------------------------------------------------------
-function StudyView() {
+function StudyView({ pending, onConsumed }) {
   const [module, setModule] = useState("topic");
   const [entries, setEntries] = useState(null);
   const [err, setErr] = useState(false);
@@ -311,8 +314,8 @@ function StudyView() {
     setSavedAt(null);
     api.studyEntry(id).then(d => {
       if (!d) return;
-      if (d.type === "topic") {
-        setEditing({ id: d.id, type: "topic", title: d.title || "", intro: d.intro || "",
+      if (isTopicLike(d.type)) {
+        setEditing({ id: d.id, type: d.type, title: d.title || "", intro: d.intro || "",
           sections: (d.sections || []).map(s => ({ heading: s.heading || "", verses: s.verses || [] })),
           related: d.related || [], status: d.status || "draft", source: d.source || "" });
         setEditMode(false);
@@ -326,11 +329,16 @@ function StudyView() {
   };
   const newEntry = () => { setSavedAt(null); setEditMode(true); setEditing(module === "topic" ? blankTopic() : blankClaim(module)); };
 
+  // Opened from the metaV sidebar: jump straight into a name-topic's page.
+  useEffect(() => {
+    if (pending) { openEntry(pending); if (onConsumed) onConsumed(); }
+  }, [pending]);
+
   const save = () => {
     if (!editing || !editing.title.trim() || saving) return;
     setSaving(true);
     let payload;
-    if (editing.type === "topic") {
+    if (isTopicLike(editing.type)) {
       payload = { ...editing, sections: editing.sections.map(s => ({ heading: s.heading, verses: s.verses.map(v => ({ ref: v.ref })) })) };
     } else {
       payload = { ...editing, support: editing.support.map(v => ({ ref: v.ref })), tension: editing.tension.map(v => ({ ref: v.ref })) };
@@ -349,7 +357,7 @@ function StudyView() {
   if (err) return <div className="stats-view"><div className="stats-empty">Couldn't load study content. (Admin sign-in required.)</div></div>;
 
   if (editing) {
-    if (editing.type === "topic")
+    if (isTopicLike(editing.type))
       return <div className="study-view"><TopicPage entry={editing} editing={editMode} onChange={setEditing} onSave={save} onDelete={del} onClose={() => { setEditing(null); setSavedAt(null); }} onToggleEdit={() => setEditMode(m => !m)} saving={saving} savedAt={savedAt} /></div>;
     return <div className="study-view"><StudyEditor entry={editing} onChange={setEditing} onSave={save} onDelete={del} onClose={() => { setEditing(null); setSavedAt(null); }} saving={saving} savedAt={savedAt} /></div>;
   }

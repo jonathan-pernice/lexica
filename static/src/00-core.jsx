@@ -161,6 +161,10 @@ const api = {
   studyVerse: (ref) =>
     fetch(`/api/study/verse?ref=${encodeURIComponent(ref)}`, { headers: _authHeaders() })
       .then(r => r.ok ? r.json() : { verses: [] }).catch(() => ({ verses: [] })),
+  // Nave's topical for a person/place name (subtopic headers + counts) on the metaV sidebar.
+  studyForName: (name) =>
+    fetch(`/api/study/for-name/${encodeURIComponent(name)}`, { headers: _authHeaders() })
+      .then(r => r.ok ? r.json() : { sections: [] }).catch(() => ({ sections: [] })),
   textSearch: (q, corpus, mode, book) =>
     fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` +
           `&mode=${encodeURIComponent(mode || "phrase")}` +

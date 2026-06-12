@@ -99,7 +99,7 @@ SummaryPanel._cache = {};
 // ============================================================
 // DETAIL PANEL — SIDEBAR / BOTTOM SHEET
 // ============================================================
-function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch, onReadInContext, onNameSearch, onNavigateToLexicon, overviewBack }) {
+function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onStrongsSearch, onReadInContext, onNameSearch, onNavigateToLexicon, onOpenStudyName, overviewBack }) {
   const [verseText, setVerseText] = useState("");
   const [verseLoading, setVerseLoading] = useState(false);
   const [abpCount, setAbpCount] = useState(null);
@@ -204,6 +204,21 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   const [metavPlaceData, setMetavPlaceData] = useState(null);
   const [metavTab, setMetavTab] = useState("person"); // "person" | "place"
   const [metavLoading, setMetavLoading] = useState(false);
+
+  // Nave's topical study for this person/place (subtopic headers + counts), shown
+  // under the metaV card. Admin-only (the endpoint 404s otherwise → stays null).
+  const [naveData, setNaveData] = useState(null);
+  useEffect(() => {
+    setNaveData(null);
+    if (!metavPersonData && !metavPlaceData) return;
+    const nm = extractProperName(entry.pnName || entry.gloss || "");
+    if (!nm || nm.length < 2) return;
+    let cancelled = false;
+    api.studyForName(nm).then(d => {
+      if (!cancelled && d && d.sections && d.sections.length) setNaveData(d);
+    });
+    return () => { cancelled = true; };
+  }, [metavPersonData, metavPlaceData, entry]);
   // Derived — all downstream code uses these unchanged.
   // If the word's OWN proper-noun type (tipnr pn_types) is a clean SINGLE type and
   // we have that card, the word IS that entity — the other metaV card is a
@@ -392,6 +407,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   // gets BDB; everything else may get LSJ) — same either/or as the old ternary.
   const sections = [];
   if (metavLoading || metavPersonData || metavPlaceData) sections.push("metav");
+  if (naveData && naveData.sections.length) sections.push("naveTopical");
   if (aiDescription || aiDescLoading) sections.push("aidesc");
   if (isHebrewWord) sections.push("bdb");
   else if ((!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person"
@@ -470,6 +486,19 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           </div>
         ) : null}
         </>}
+      </section>
+    );
+    case "naveTopical": return (
+      <section key="naveTopical" className="sec">
+        <h4 className="sec-head"><span className="sec-t">Nave's topical</span></h4>
+        <div className="nave-secs">
+          {naveData.sections.map((s, i) => (
+            <button key={i} className="nave-sec" onClick={() => onOpenStudyName && onOpenStudyName(naveData.id)}>
+              <span className="nave-sec-h">{s.heading || "General"}</span>
+              <span className="nave-sec-n">{s.n}</span>
+            </button>
+          ))}
+        </div>
       </section>
     );
     case "aidesc": return (

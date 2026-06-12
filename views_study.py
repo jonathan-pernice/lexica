@@ -40,7 +40,7 @@ from views_notes import is_admin
 
 bp = Blueprint("study", __name__)
 
-_TYPES = ("topic", "denomination", "argument")
+_TYPES = ("topic", "denomination", "argument", "name")   # "name" = a metaV person/place name-topic (sectioned like a topic; not shown in the browser list)
 _RES_MODES = ("middle", "mystery")
 _MAX_ENTRY_BYTES = 200_000     # one whole entry's JSON (long notes + many refs)
 _MAX_VERSES = 300              # support/tension refs per bucket
@@ -64,6 +64,13 @@ def _ensure_tables():
 
 def _now():
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+
+def _slug(s):
+    """Match the loader's slugify so a person/place name maps to its name-topic id
+    ('metavn_' + slug). Keep in sync with scripts/load_study_topics.slugify."""
+    s = re.sub(r"[^a-z0-9]+", "_", (s or "").strip().lower()).strip("_")
+    return s or "topic"
 
 
 # ── Reference parsing ────────────────────────────────────────────────────────
@@ -310,7 +317,7 @@ def _body_from_request(etype: str, body: dict) -> dict:
     denomination/argument carries the claim shape (support/tension/resolution)."""
     related = body.get("related") if isinstance(body.get("related"), list) else []
     related = [str(x).strip() for x in related if str(x).strip()][:100]
-    if etype == "topic":
+    if etype in ("topic", "name"):
         return {
             "intro": str(body.get("intro") or "").strip()[:4000],
             "sections": _clean_sections(body.get("sections")),
@@ -345,7 +352,7 @@ def _resolve_body(etype: str, stored: dict) -> dict:
     """Expand stored refs into {ref, text} pairs for the client — inside each section
     for a topic, in the support/tension buckets for a claim."""
     b = dict(stored)
-    if etype == "topic":
+    if etype in ("topic", "name"):
         b["sections"] = [
             {"heading": (s or {}).get("heading", ""), "verses": _expand_refs((s or {}).get("verses"))}
             for s in (stored.get("sections") or [])
@@ -391,7 +398,7 @@ def list_entries():
             data = json.loads(r["json"]) or {}
         except (ValueError, TypeError):
             data = {}
-        if r["type"] == "topic":
+        if r["type"] in ("topic", "name"):
             n = sum(len((s or {}).get("verses") or []) for s in (data.get("sections") or []))
             heldBy = ""
         else:
@@ -523,3 +530,32 @@ def resolve_verse():
     if not verses:
         return jsonify({"ref": ref, "verses": [], "error": "Couldn't find that reference."}), 200
     return jsonify({"ref": ref, "verses": verses})
+
+
+@bp.route("/api/study/for-name/<name>", methods=["GET"])
+@limiter.limit("600 per hour")
+def for_name(name):
+    """The Nave's topical study for a person/place name (its subtopic sections +
+    verses), shown on the metaV sidebar. Loaded as a 'name'-type entry by the
+    topics loader; id = 'metavn_' + slug(name). Empty {sections:[]} if there's none."""
+    g = _guard()
+    if g:
+        return g
+    _ensure_tables()
+    entry_id = "metavn_" + _slug(name)
+    conn = study_db()
+    try:
+        r = conn.execute(
+            "SELECT title, json FROM entries WHERE id=? AND deleted=0", (entry_id,)
+        ).fetchone()
+    finally:
+        conn.close()
+    if not r:
+        return jsonify({"name": name, "id": None, "sections": []})
+    try:
+        stored = json.loads(r["json"]) or {}
+    except (ValueError, TypeError):
+        stored = {}
+    secs = [{"heading": (s or {}).get("heading", ""), "n": len((s or {}).get("verses") or [])}
+            for s in (stored.get("sections") or [])]
+    return jsonify({"name": r["title"], "id": entry_id, "sections": secs})

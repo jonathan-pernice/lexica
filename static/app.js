@@ -211,6 +211,14 @@ const api = {
   }).catch(() => ({
     verses: []
   })),
+  // Nave's topical for a person/place name (subtopic headers + counts) on the metaV sidebar.
+  studyForName: name => fetch(`/api/study/for-name/${encodeURIComponent(name)}`, {
+    headers: _authHeaders()
+  }).then(r => r.ok ? r.json() : {
+    sections: []
+  }).catch(() => ({
+    sections: []
+  })),
   textSearch: (q, corpus, mode, book) => fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` + `&mode=${encodeURIComponent(mode || "phrase")}` + (book ? `&book=${encodeURIComponent(book)}` : "")).then(r => r.json()),
   summary: (book, ch) => fetch(`/api/summary/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
@@ -1880,6 +1888,7 @@ function DetailPanel({
   onReadInContext,
   onNameSearch,
   onNavigateToLexicon,
+  onOpenStudyName,
   overviewBack
 }) {
   const [verseText, setVerseText] = useState("");
@@ -2002,6 +2011,23 @@ function DetailPanel({
   const [metavPlaceData, setMetavPlaceData] = useState(null);
   const [metavTab, setMetavTab] = useState("person"); // "person" | "place"
   const [metavLoading, setMetavLoading] = useState(false);
+
+  // Nave's topical study for this person/place (subtopic headers + counts), shown
+  // under the metaV card. Admin-only (the endpoint 404s otherwise → stays null).
+  const [naveData, setNaveData] = useState(null);
+  useEffect(() => {
+    setNaveData(null);
+    if (!metavPersonData && !metavPlaceData) return;
+    const nm = extractProperName(entry.pnName || entry.gloss || "");
+    if (!nm || nm.length < 2) return;
+    let cancelled = false;
+    api.studyForName(nm).then(d => {
+      if (!cancelled && d && d.sections && d.sections.length) setNaveData(d);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [metavPersonData, metavPlaceData, entry]);
   // Derived — all downstream code uses these unchanged.
   // If the word's OWN proper-noun type (tipnr pn_types) is a clean SINGLE type and
   // we have that card, the word IS that entity — the other metaV card is a
@@ -2216,6 +2242,7 @@ function DetailPanel({
   // gets BDB; everything else may get LSJ) — same either/or as the old ternary.
   const sections = [];
   if (metavLoading || metavPersonData || metavPlaceData) sections.push("metav");
+  if (naveData && naveData.sections.length) sections.push("naveTopical");
   if (aiDescription || aiDescLoading) sections.push("aidesc");
   if (isHebrewWord) sections.push("bdb");else if ((!isPN || metavType === "place" && metavData?.strongs_g?.length > 0) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0)) sections.push("lsj");
   if (!isHebrew && !isPN && !entry.isKjv && !entry.isExtra && abpCount !== null && abpCount > 0) sections.push("abpOcc");
@@ -2316,6 +2343,25 @@ function DetailPanel({
             fontStyle: "italic"
           }
         }, "Location unknown")) : null));
+      case "naveTopical":
+        return /*#__PURE__*/React.createElement("section", {
+          key: "naveTopical",
+          className: "sec"
+        }, /*#__PURE__*/React.createElement("h4", {
+          className: "sec-head"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "sec-t"
+        }, "Nave's topical")), /*#__PURE__*/React.createElement("div", {
+          className: "nave-secs"
+        }, naveData.sections.map((s, i) => /*#__PURE__*/React.createElement("button", {
+          key: i,
+          className: "nave-sec",
+          onClick: () => onOpenStudyName && onOpenStudyName(naveData.id)
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "nave-sec-h"
+        }, s.heading || "General"), /*#__PURE__*/React.createElement("span", {
+          className: "nave-sec-n"
+        }, s.n)))));
       case "aidesc":
         return /*#__PURE__*/React.createElement("section", {
           key: "aidesc",
@@ -3830,6 +3876,9 @@ const STUDY_TYPE_LABEL = {
   denomination: "Denomination",
   argument: "Argument"
 };
+// "name" = a person/place name-topic (MetaV), shown on the metaV sidebar, opened
+// here read-only. Same shape as a topic, so it renders through TopicPage.
+const isTopicLike = t => t === "topic" || t === "name";
 function blankTopic() {
   return {
     id: "",
@@ -4373,7 +4422,10 @@ function StudyEditor({
 }
 
 // ---- The Study tab --------------------------------------------------------
-function StudyView() {
+function StudyView({
+  pending,
+  onConsumed
+}) {
   const [module, setModule] = useState("topic");
   const [entries, setEntries] = useState(null);
   const [err, setErr] = useState(false);
@@ -4405,10 +4457,10 @@ function StudyView() {
     setSavedAt(null);
     api.studyEntry(id).then(d => {
       if (!d) return;
-      if (d.type === "topic") {
+      if (isTopicLike(d.type)) {
         setEditing({
           id: d.id,
-          type: "topic",
+          type: d.type,
           title: d.title || "",
           intro: d.intro || "",
           sections: (d.sections || []).map(s => ({
@@ -4446,11 +4498,19 @@ function StudyView() {
     setEditMode(true);
     setEditing(module === "topic" ? blankTopic() : blankClaim(module));
   };
+
+  // Opened from the metaV sidebar: jump straight into a name-topic's page.
+  useEffect(() => {
+    if (pending) {
+      openEntry(pending);
+      if (onConsumed) onConsumed();
+    }
+  }, [pending]);
   const save = () => {
     if (!editing || !editing.title.trim() || saving) return;
     setSaving(true);
     let payload;
-    if (editing.type === "topic") {
+    if (isTopicLike(editing.type)) {
       payload = {
         ...editing,
         sections: editing.sections.map(s => ({
@@ -4500,7 +4560,7 @@ function StudyView() {
     className: "stats-empty"
   }, "Couldn't load study content. (Admin sign-in required.)"));
   if (editing) {
-    if (editing.type === "topic") return /*#__PURE__*/React.createElement("div", {
+    if (isTopicLike(editing.type)) return /*#__PURE__*/React.createElement("div", {
       className: "study-view"
     }, /*#__PURE__*/React.createElement(TopicPage, {
       entry: editing,
@@ -9680,6 +9740,7 @@ function App() {
   const [libNav, setLibNav] = useState(null);
   const [libCrossRef, setLibCrossRef] = useState(null);
   const [lexiconPendingStrongs, setLexiconPendingStrongs] = useState(null);
+  const [studyPending, setStudyPending] = useState(null); // open this name-topic in Study (from the metaV sidebar)
   const [libTranslation, setLibTranslation] = useState("abp");
   const [activeNote, setActiveNote] = useState(null); // note id being edited
   const [focusMode, setFocusMode] = useState(false); // distraction-free reading: chrome hidden (library only, not remembered)
@@ -9846,6 +9907,13 @@ function App() {
     }); // corpus: "abp" | "kjv" | undefined (default by language)
     handleNavChange("lexicon");
   };
+  const handleOpenStudyName = id => {
+    if (!id) return;
+    setActiveEntry(null); // close the person/place panel before jumping to Study
+    setLibCrossRef(null);
+    setStudyPending(id);
+    handleNavChange("study");
+  };
   const handleAiSearch = async overrideQ => {
     const q = (overrideQ !== undefined ? overrideQ : q2).trim();
     if (!q) return;
@@ -9944,7 +10012,10 @@ function App() {
     owner: owner
   }), mainView === "notes" && /*#__PURE__*/React.createElement(NotesView, {
     onOpen: openNoteFromList
-  }), mainView === "study" && owner && /*#__PURE__*/React.createElement(StudyView, null), /*#__PURE__*/React.createElement("div", {
+  }), mainView === "study" && owner && /*#__PURE__*/React.createElement(StudyView, {
+    pending: studyPending,
+    onConsumed: () => setStudyPending(null)
+  }), /*#__PURE__*/React.createElement("div", {
     style: {
       display: mainView === "lexicon" ? undefined : "none"
     }
@@ -10081,6 +10152,7 @@ function App() {
     totalResults: allResults.length,
     onNavigateToLexicon: handleNavigateToLexicon,
     onReadInContext: handleReadInContext,
+    onOpenStudyName: handleOpenStudyName,
     overviewBack: mainView === "library"
   }), activeEntry && isMobile && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "sheet-scrim",
@@ -10092,7 +10164,8 @@ function App() {
     occurrences: countMap[activeEntry.strongs_raw] || 0,
     totalResults: allResults.length,
     onNavigateToLexicon: handleNavigateToLexicon,
-    onReadInContext: handleReadInContext
+    onReadInContext: handleReadInContext,
+    onOpenStudyName: handleOpenStudyName
   })), activeNote && /*#__PURE__*/React.createElement(NotesPanel, {
     noteId: activeNote,
     isMobile: isMobile,
