@@ -3,7 +3,7 @@
 // One shape, three views: a study TOPIC, a DENOMINATION's belief, or one side of
 // an ARGUMENT. Each entry = a position + support verses + tension verses + a
 // resolution (the middle road, or an open mystery) + notes + related links.
-// Verses are entered as a REFERENCE; the KJV text auto-fills from the corpus.
+// Verses are entered as a REFERENCE; the ABP prose text auto-fills from the corpus.
 // Backend: views_study.py (study.db). Every route is admin-gated (404 otherwise).
 // ============================================================
 const STUDY_TYPES = [

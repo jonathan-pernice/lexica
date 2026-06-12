@@ -16,9 +16,10 @@ open to the public later — that's a deliberate, separate decision (these modul
 take positions, unlike the rest of the Berean app). Non-admins get a 404, same as
 the admin user-management routes in views_notes.
 
-Verses are stored as plain REFERENCES only ("Romans 10:17"); the KJV text is
-resolved live from bible.db on read and for the editor's auto-fill, so a long verse
-list costs a few keystrokes and the text never drifts from the corpus.
+Verses are stored as plain REFERENCES only ("Romans 10:17"); the ABP PROSE text is
+resolved live from bible.db on read and for the editor's auto-fill (KJV fallback
+when ABP lacks the verse), so a long verse list costs a few keystrokes and the text
+never drifts from the corpus.
 
 Endpoints (all admin-only):
   GET  /api/study/entries?type=        -> {entries:[{id,type,title,heldBy,status,updated}]}
@@ -186,9 +187,43 @@ def _parse_ref(ref: str):
     return book_id, start_ch, start_v, end_ch, end_v
 
 
+def _join_prose(tokens):
+    """Join word glosses into prose, attaching trailing punctuation with no space —
+    the same rule the reader's ABP Prose mode uses (joinProse in 60-library.jsx)."""
+    out = ""
+    for i, tok in enumerate(tokens):
+        if i == 0:
+            out = tok
+        elif re.match(r"^[.,;:?!—)]", tok):
+            out += tok
+        else:
+            out += " " + tok
+    return out
+
+
+def _abp_prose(conn, abbr, chapter, verse):
+    """ABP prose English for one verse — its words' english joined in order, the same
+    text the reader's Prose mode shows. None if ABP has no matching verse (e.g. the
+    versification differs from the KJV reference), so the caller can fall back."""
+    row = conn.execute(
+        "SELECT id FROM verses WHERE book=? AND chapter=? AND verse=?",
+        (abbr, chapter, verse),
+    ).fetchone()
+    if not row:
+        return None
+    ws = conn.execute(
+        "SELECT english FROM words WHERE verse_id=? AND english IS NOT NULL ORDER BY position",
+        (row["id"],),
+    ).fetchall()
+    toks = [w["english"] for w in ws if w["english"]]
+    return _join_prose(toks) if toks else None
+
+
 def _resolve_ref(ref: str):
-    """Resolve a reference to a list of {ref, text} from KJV (public-domain, all 66
-    books). Returns [] if the reference can't be parsed or isn't found."""
+    """Resolve a reference to a list of {ref, text}. Text is the ABP PROSE English
+    (the app's primary text, in its readable running-prose form); when ABP has no
+    matching verse we fall back to the KJV verse text so the editor still shows
+    something. KJV's canonical verse order is used only to enumerate a range."""
     parsed = _parse_ref(ref)
     if not parsed:
         return []
@@ -216,17 +251,19 @@ def _resolve_ref(ref: str):
             " WHERE verse_id BETWEEN ? AND ? ORDER BY verse_id",
             (start_id, end_id),
         ).fetchall()
+        out = []
+        for r in rows:
+            abbr = _KJV_BOOK_ID_REV.get(r["book_id"], "")
+            disp = _BOOK_DISPLAY.get(abbr, "")
+            abp = _abp_prose(conn, abbr, r["chapter"], r["verse_num"])
+            out.append({
+                "ref": f"{disp} {r['chapter']}:{r['verse_num']}".strip(),
+                "text": abp or r["verse_text"],
+            })
     except Exception:
         return []
     finally:
         conn.close()
-    out = []
-    for r in rows:
-        disp = _BOOK_DISPLAY.get(_KJV_BOOK_ID_REV.get(r["book_id"], ""), "")
-        out.append({
-            "ref": f"{disp} {r['chapter']}:{r['verse_num']}".strip(),
-            "text": r["verse_text"],
-        })
     return out
 
 
@@ -434,7 +471,7 @@ def delete_entry(entry_id):
 @bp.route("/api/study/verse", methods=["GET"])
 @limiter.limit("600 per hour")
 def resolve_verse():
-    """Auto-fill helper: look up one reference's KJV text as the editor adds it."""
+    """Auto-fill helper: look up one reference's ABP prose text as the editor adds it."""
     g = _guard()
     if g:
         return g
