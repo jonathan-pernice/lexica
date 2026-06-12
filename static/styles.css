@@ -106,6 +106,7 @@ html, body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overscroll-behavior: none;   /* no wheel rubber-band/bounce when the page can't scroll */
 }
 body { min-height: 100vh; }
 button { font-family: inherit; cursor: pointer; border: 0; background: transparent; color: inherit; padding: 0; }
