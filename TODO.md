@@ -306,8 +306,11 @@ chrono keeps the inline bar at the playing chapter.** Chrono is scroll-aware (pl
 - ~~**Mobile dock slide-OUT animation**~~ — **DONE 2026-06-11.** The bottom scrubber now eases back
   DOWN when the chapter/passage ends (`audio-dock-down`), matching its slide-up entry. It stays mounted
   one beat after the audio clears (`dockClosing` in 60-library.jsx) so the exit can play; a re-open cancels it.
-- **ESV audio** — built (FCBH Bible Brain, `ENGESVN2DA` = NT-only), owner-gated; waits on `FCBH_API_KEY`
-  in the WSGI (key requested 2026-06-10). OT needs a separate fileset (`ESV_AUDIO_FILESET_OT`).
+- **ESV audio** — owner-only; code DONE 2026-06-11. Now prefers **Crossway's own ESV API**
+  (api.esv.org, `ESV_API_TOKEN`) — whole-Bible Max McLean reading, instant self-serve token (NO FCBH
+  approval wait). `views_esv._crossway_audio_url` captures the 302→signed-mp3 URL. FCBH (`FCBH_API_KEY`,
+  NT-only) stays as the fallback if only that key is set. JUST NEEDS: free token at api.esv.org →
+  `ESV_API_TOKEN` in the WSGI → reload. (FCBH key still pending and now optional.)
 - ~~**KJV audio**~~ — **DONE + LIVE 2026-06-11 (public, no key).** Single narrator + soft music
   background (the "Firefighters for Christ" KJV reading, hosted by audiotreasure.com at
   `/content/KJV_FF/<NN>_<Name>_<chap>.mp3`). Hotlinked like BSB — `views_kjv.kjv_audio` +
