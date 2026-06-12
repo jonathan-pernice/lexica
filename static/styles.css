@@ -3274,6 +3274,8 @@ input { font-family: inherit; }
 }
 .study-new:hover { border-color: var(--ink-3); }
 .study-filter { margin: 16px 0 18px; }
+.study-search-input { width: 100%; height: 36px; font: inherit; font-size: 14px; color: var(--ink); background: var(--paper); border: 1px solid var(--rule-2); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
+.study-search-input:focus { outline: none; border-color: var(--accent); }
 
 .study-rows { display: flex; flex-direction: column; gap: 6px; }
 .study-row {

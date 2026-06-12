@@ -4381,6 +4381,7 @@ function StudyView() {
   const [editMode, setEditMode] = useState(false); // topics: read vs edit
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
+  const [q, setQ] = useState("");
   const load = mod => {
     setEntries(null);
     api.studyEntries(mod).then(d => {
@@ -4397,6 +4398,7 @@ function StudyView() {
     if (m === module) return;
     setEditing(null);
     setSavedAt(null);
+    setQ("");
     setModule(m);
   };
   const openEntry = id => {
@@ -4532,6 +4534,8 @@ function StudyView() {
   const isTopic = module === "topic";
   const moduleName = isTopic ? "Topics" : module === "denomination" ? "Denominations" : "Arguments";
   const newLabel = isTopic ? "topic" : module === "denomination" ? "denomination" : "argument";
+  const qs = q.trim().toLowerCase();
+  const shown = (entries || []).filter(e => !qs || (e.title || "").toLowerCase().includes(qs) || (e.heldBy || "").toLowerCase().includes(qs));
   return /*#__PURE__*/React.createElement("div", {
     className: "study-view"
   }, /*#__PURE__*/React.createElement("div", {
@@ -4549,13 +4553,21 @@ function StudyView() {
     onClick: newEntry
   }, "+ New ", newLabel)), /*#__PURE__*/React.createElement("div", {
     className: "stats-sub"
-  }, isTopic ? "Browse a subject and its verses, grouped by subtopic. Mostly filled from MetaV — light edits only." : "A position with its support and tension verses, and where the text resolves it — or stays a mystery."), entries === null ? /*#__PURE__*/React.createElement("div", {
+  }, isTopic ? "Browse a subject and its verses, grouped by subtopic. Mostly filled from MetaV — light edits only." : "A position with its support and tension verses, and where the text resolves it — or stays a mystery."), entries && entries.length > 0 && /*#__PURE__*/React.createElement("input", {
+    className: "study-search-input",
+    type: "text",
+    value: q,
+    placeholder: "Search " + moduleName.toLowerCase() + "…",
+    onChange: e => setQ(e.target.value)
+  }), entries === null ? /*#__PURE__*/React.createElement("div", {
     className: "stats-empty"
   }, "Loading\u2026") : entries.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "stats-empty"
-  }, "Nothing here yet \u2014 start with \u201C+ New ", newLabel, "\u201D.", isTopic ? " (Or import from MetaV.)" : "") : /*#__PURE__*/React.createElement("div", {
+  }, "Nothing here yet \u2014 start with \u201C+ New ", newLabel, "\u201D.", isTopic ? " (Or import from MetaV.)" : "") : shown.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "stats-empty"
+  }, "No matches for \u201C", q, "\u201D.") : /*#__PURE__*/React.createElement("div", {
     className: "study-rows"
-  }, entries.map(e => /*#__PURE__*/React.createElement("button", {
+  }, shown.map(e => /*#__PURE__*/React.createElement("button", {
     className: "study-row",
     key: e.id,
     onClick: () => openEntry(e.id)

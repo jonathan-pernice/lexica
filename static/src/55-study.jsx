@@ -294,6 +294,7 @@ function StudyView() {
   const [editMode, setEditMode] = useState(false);   // topics: read vs edit
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
+  const [q, setQ] = useState("");
 
   const load = mod => {
     setEntries(null);
@@ -304,7 +305,7 @@ function StudyView() {
   };
   useEffect(() => { load(module); }, [module]);
 
-  const pickModule = m => { if (m === module) return; setEditing(null); setSavedAt(null); setModule(m); };
+  const pickModule = m => { if (m === module) return; setEditing(null); setSavedAt(null); setQ(""); setModule(m); };
 
   const openEntry = id => {
     setSavedAt(null);
@@ -356,6 +357,8 @@ function StudyView() {
   const isTopic = module === "topic";
   const moduleName = isTopic ? "Topics" : (module === "denomination" ? "Denominations" : "Arguments");
   const newLabel = isTopic ? "topic" : (module === "denomination" ? "denomination" : "argument");
+  const qs = q.trim().toLowerCase();
+  const shown = (entries || []).filter(e => !qs || (e.title || "").toLowerCase().includes(qs) || (e.heldBy || "").toLowerCase().includes(qs));
   return (
     <div className="study-view">
       <div className="study-sub">
@@ -371,13 +374,20 @@ function StudyView() {
         ? "Browse a subject and its verses, grouped by subtopic. Mostly filled from MetaV — light edits only."
         : "A position with its support and tension verses, and where the text resolves it — or stays a mystery."}</div>
 
+      {entries && entries.length > 0 && (
+        <input className="study-search-input" type="text" value={q}
+          placeholder={"Search " + moduleName.toLowerCase() + "…"} onChange={e => setQ(e.target.value)} />
+      )}
+
       {entries === null ? (
         <div className="stats-empty">Loading…</div>
       ) : entries.length === 0 ? (
         <div className="stats-empty">Nothing here yet — start with “+ New {newLabel}”.{isTopic ? " (Or import from MetaV.)" : ""}</div>
+      ) : shown.length === 0 ? (
+        <div className="stats-empty">No matches for “{q}”.</div>
       ) : (
         <div className="study-rows">
-          {entries.map(e => (
+          {shown.map(e => (
             <button className="study-row" key={e.id} onClick={() => openEntry(e.id)}>
               {!isTopic && <span className={"study-badge study-badge--" + e.type}>{STUDY_TYPE_LABEL[e.type] || e.type}</span>}
               <span className="study-row-title">{e.title}{e.heldBy ? <span className="study-row-held"> · {e.heldBy}</span> : null}</span>

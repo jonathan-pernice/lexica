@@ -3,13 +3,14 @@
 
 MetaV (github.com/gusheng/MetaV) carries ~2,035 topics from Nave's + Torrey's,
 each linked to its verses. This turns each MAIN topic (e.g. "Faith", "Aaron")
-into one DRAFT study entry: the topic's verses are dropped into the Support bucket,
-in canonical order, de-duplicated. You then curate each one in the Study tab —
-add the tension verses, set the middle road / mystery. Nothing is published.
+into one DRAFT topic entry: each subtopic becomes a SECTION (heading + its verses,
+canonical order, de-duped), so a topic reads as a sectioned browse. Nothing is
+published; you tidy them in the Study tab.
 
-It's grouped by main topic (the subtopics under a name are merged into that one
-entry). Re-running is safe: an entry whose id already exists is left alone (your
-edits survive) unless you pass --replace.
+By default it skips thin one-off names (fewer than 5 verses — most of Nave's is
+proper names with a verse or two) so the list stays browsable; tune with
+--min-verses (0 keeps everything). Re-running is safe: an entry whose id already
+exists is left alone (your edits survive) unless you pass --replace.
 
 Runs on PythonAnywhere, where study.db lives. Reads three files from the MetaV CSV
 folder: Verses.csv (verse id -> book/chapter/verse), Topics.csv (id, main, sub),
@@ -61,7 +62,7 @@ def slugify(name):
 def load_verses(csv_dir):
     """Verses.csv -> {VerseID: (BookID, Chapter, VerseNum)}. Has a header row."""
     out = {}
-    with open(os.path.join(csv_dir, "Verses.csv"), newline="", encoding="utf-8") as f:
+    with open(os.path.join(csv_dir, "Verses.csv"), newline="", encoding="utf-8-sig") as f:
         for r in csv.DictReader(f):
             try:
                 out[r["VerseID"]] = (int(r["BookID"]), int(r["Chapter"]), int(r["VerseNum"]))
@@ -73,7 +74,7 @@ def load_verses(csv_dir):
 def load_topics(csv_dir):
     """Topics.csv -> {TopicID: (main, sub)}. NO header (first line is data)."""
     out = {}
-    with open(os.path.join(csv_dir, "Topics.csv"), newline="", encoding="utf-8") as f:
+    with open(os.path.join(csv_dir, "Topics.csv"), newline="", encoding="utf-8-sig") as f:
         for row in csv.reader(f):
             if not row:
                 continue
@@ -88,7 +89,7 @@ def load_topics(csv_dir):
 def load_topic_index(csv_dir):
     """TopicIndex.csv -> {TopicID: [VerseID,...]}. Has a header row."""
     out = {}
-    with open(os.path.join(csv_dir, "TopicIndex.csv"), newline="", encoding="utf-8") as f:
+    with open(os.path.join(csv_dir, "TopicIndex.csv"), newline="", encoding="utf-8-sig") as f:
         for r in csv.DictReader(f):
             tid = (r.get("TopicID") or "").strip()
             vid = (r.get("VerseID") or "").strip()
@@ -164,6 +165,7 @@ def main():
     ap.add_argument("--limit", type=int, default=25, help="max topics to import (0 = all). Default 25.")
     ap.add_argument("--only", default="", help="comma-separated main-topic names to import (overrides --limit)")
     ap.add_argument("--replace", action="store_true", help="overwrite already-imported entries (default: skip)")
+    ap.add_argument("--min-verses", type=int, default=5, help="skip topics with fewer than N verses — thins the one-off name entries. Default 5; 0 = keep all.")
     args = ap.parse_args()
 
     db_path = args.db or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "study.db")
@@ -177,6 +179,10 @@ def main():
 
     built = build_topics(topics, topic_index, verses)
     print(f"Built {len(built):,} main topics.")
+
+    if args.min_verses > 0:
+        built = [(m, secs) for (m, secs) in built if sum(len(s["verses"]) for s in secs) >= args.min_verses]
+        print(f"{len(built):,} topics with {args.min_verses}+ verses (the rest are one-off names, skipped).")
 
     if args.only.strip():
         wanted = {w.strip().lower() for w in args.only.split(",") if w.strip()}
