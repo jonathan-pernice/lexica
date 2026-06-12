@@ -5,9 +5,10 @@ Runs on PythonAnywhere (it needs study.db + bible.db + the Anthropic key). It re
 the SAME `_draft_intro` the in-app "Draft with AI" button uses, so the voice matches.
 Safe to re-run — by default it only fills topics whose intro is still empty.
 
-  python3 scripts/generate_topic_intros.py              # fill only empty intros
-  python3 scripts/generate_topic_intros.py --limit 10   # just the first 10 (a test batch)
-  python3 scripts/generate_topic_intros.py --replace    # redo EVERY topic's intro
+  python3 scripts/generate_topic_intros.py                    # fill only empty intros (A-Z)
+  python3 scripts/generate_topic_intros.py --order size --limit 50   # the 50 BIGGEST topics first
+  python3 scripts/generate_topic_intros.py --limit 10        # just the first 10 (a test batch)
+  python3 scripts/generate_topic_intros.py --replace         # redo EVERY topic's intro
 
 IMPORTANT — the API key:
   The key lives in the WSGI file, not a .env, so a shell run won't see it automatically.
@@ -45,6 +46,8 @@ def main():
     ap = argparse.ArgumentParser(description="Draft text-first intros for Study topics.")
     ap.add_argument("--replace", action="store_true", help="redo intros that already exist")
     ap.add_argument("--limit", type=int, default=0, help="stop after N (0 = all)")
+    ap.add_argument("--order", choices=["title", "size"], default="title",
+                    help="'size' = biggest topics first (most verses); default is A-Z")
     args = ap.parse_args()
 
     if _anthropic is None:
@@ -54,9 +57,21 @@ def main():
 
     conn = study_db()
     rows = conn.execute(
-        "SELECT id, title, json FROM entries WHERE type='topic' AND deleted=0 ORDER BY title"
+        "SELECT id, title, json FROM entries WHERE type='topic' AND deleted=0"
     ).fetchall()
-    print("Topics found: {}".format(len(rows)))
+
+    def _vcount(r):
+        try:
+            d = json.loads(r["json"]) or {}
+        except (ValueError, TypeError):
+            return 0
+        return sum(len((s or {}).get("verses") or []) for s in (d.get("sections") or []))
+
+    if args.order == "size":
+        rows = sorted(rows, key=_vcount, reverse=True)
+    else:
+        rows = sorted(rows, key=lambda r: (r["title"] or "").lower())
+    print("Topics found: {} (order: {})".format(len(rows), args.order))
 
     done = skipped = failed = 0
     for r in rows:
