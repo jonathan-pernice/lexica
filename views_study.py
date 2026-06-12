@@ -460,14 +460,19 @@ def _intro_user_prompt(title, sections):
     return "\n".join(lines)
 
 
-def _draft_intro(title, sections):
-    """Haiku-written, text-first intro for a topic. Returns '' on any failure so the
-    caller decides what to do. Shared by the in-app button and the bulk script."""
+_INTRO_HAIKU = "claude-haiku-4-5-20251001"
+_INTRO_SONNET = "claude-sonnet-4-6"
+
+
+def _draft_intro(title, sections, model=None):
+    """Text-first intro for a topic — Haiku by default, or Sonnet (model=_INTRO_SONNET)
+    for the more careful public batch. Returns '' on any failure so the caller decides.
+    Shared by the in-app button (Haiku) and the bulk script."""
     if not _anthropic:
         return ""
     try:
         msg = _anthropic.messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=model or _INTRO_HAIKU,
             max_tokens=180,
             temperature=0.5,
             system=_INTRO_SYSTEM,
