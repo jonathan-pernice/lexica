@@ -142,7 +142,14 @@ function TopicSectionEdit({ section, idx, count, onChange, onRemove, onMove }) {
   );
 }
 
-function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onToggleEdit, onWalk, previewReader, saving, savedAt }) {
+// Which subtopic sections start open on the read page: a 1-section topic opens; a
+// multi-section topic starts collapsed (you see the structure first, expand on demand).
+function defaultOpenSecs(entry) {
+  const secs = (entry && entry.sections) || [];
+  return new Set(secs.length <= 1 ? secs.map((_, i) => i) : []);
+}
+
+function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onToggleEdit, previewReader, saving, savedAt }) {
   const up = patch => onChange({ ...entry, ...patch });
   const verseCount = entry.sections.reduce((n, s) => n + s.verses.length, 0);
   const [drafting, setDrafting] = useState(false);
@@ -156,16 +163,18 @@ function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onTogg
       if (d && d.intro) up({ intro: d.intro }); else setDraftErr(true);
     });
   };
+  const [openSecs, setOpenSecs] = useState(() => defaultOpenSecs(entry));
+  useEffect(() => { setOpenSecs(defaultOpenSecs(entry)); }, [entry.id]);
+  const allOpen = entry.sections.length > 0 && openSecs.size === entry.sections.length;
+  const toggleAll = () => setOpenSecs(allOpen ? new Set() : new Set(entry.sections.map((_, i) => i)));
+  const toggleSec = i => setOpenSecs(prev => { const n = new Set(prev); n.has(i) ? n.delete(i) : n.add(i); return n; });
 
   if (!editing) {
     return (
       <div className="study-topic">
         <div className="study-editor-bar">
           <button className="study-back" onClick={onClose}>‹ {previewReader ? "Back" : "All topics"}</button>
-          <div className="study-editor-actions">
-            {onWalk && verseCount > 0 && <button className="study-walk-launch" onClick={onWalk}>▸ Walk through</button>}
-            {!previewReader && <button className="study-edit-btn" onClick={onToggleEdit}>Edit</button>}
-          </div>
+          {!previewReader && <button className="study-edit-btn" onClick={onToggleEdit}>Edit</button>}
         </div>
         <div className="study-eyebrow">Topic</div>
         <h1 className="study-topic-title">{entry.title}</h1>
@@ -173,19 +182,35 @@ function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onTogg
         {entry.intro && <p className="study-topic-intro">{entry.intro}</p>}
         {entry.sections.length === 0 ? (
           <div className="stats-empty">No verses yet — click Edit to add some.</div>
-        ) : entry.sections.map((s, i) => (
-          <div className="study-section" key={i}>
-            {s.heading && <div className="study-section-head">{s.heading}</div>}
-            <div className="study-read-verses">
-              {s.verses.map((v, j) => (
-                <div className="study-read-verse" key={j}>
-                  <span className="study-verse-ref">{v.ref}</span>
-                  <span className="study-read-text">{v.text || <em className="study-verse-missing">(text not found)</em>}</span>
+        ) : (
+          <>
+            {entry.sections.length > 1 && (
+              <button className="study-collapse-all" onClick={toggleAll}>{allOpen ? "Collapse all" : "Expand all"}</button>
+            )}
+            {entry.sections.map((s, i) => {
+              const isOpen = openSecs.has(i);
+              return (
+                <div className={"study-section study-section--collapsible" + (isOpen ? " open" : "")} key={i}>
+                  <button className="study-section-toggle" onClick={() => toggleSec(i)} aria-expanded={isOpen}>
+                    <span className="study-section-chevron">{isOpen ? "▾" : "▸"}</span>
+                    <span className="study-section-head-text">{s.heading || "General references"}</span>
+                    <span className="study-section-count">{s.verses.length}</span>
+                  </button>
+                  {isOpen && (
+                    <div className="study-read-verses">
+                      {s.verses.map((v, j) => (
+                        <div className="study-read-verse" key={j}>
+                          <span className="study-verse-ref">{v.ref}</span>
+                          <span className="study-read-text">{v.text || <em className="study-verse-missing">(text not found)</em>}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
-        ))}
+              );
+            })}
+          </>
+        )}
       </div>
     );
   }
@@ -471,88 +496,6 @@ function ArgumentPage({ entry, editing, onChange, onSave, onDelete, onClose, onT
 }
 
 // ---- Reader views ---------------------------------------------------------
-// Turn a topic into walkthrough STEPS: an intro card (if any), then one step per
-// subtopic SECTION — but a long section is split into parts so no step is a wall.
-function buildSteps(entry, cap) {
-  const per = cap || 6;
-  const steps = [];
-  if (entry.intro && entry.intro.trim())
-    steps.push({ kind: "intro", title: entry.title, text: entry.intro });
-  (entry.sections || []).forEach(sec => {
-    const verses = sec.verses || [];
-    if (!verses.length) {
-      if (sec.heading) steps.push({ kind: "section", heading: sec.heading, verses: [] });
-      return;
-    }
-    const total = Math.ceil(verses.length / per);
-    for (let i = 0; i < verses.length; i += per) {
-      const partNo = Math.floor(i / per) + 1;
-      steps.push({
-        kind: "section", heading: sec.heading, verses: verses.slice(i, i + per),
-        part: total > 1 ? "(" + partNo + " of " + total + ")" : "",
-      });
-    }
-  });
-  if (!steps.length) steps.push({ kind: "section", heading: entry.title, verses: [] });
-  return steps;
-}
-
-// The stepped, one-subtopic-at-a-time guided reading of a topic. Reader-facing.
-function WalkthroughView({ entry, previewReader, onExit }) {
-  const steps = buildSteps(entry, 6);
-  const n = steps.length;
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const onKey = e => {
-      if (e.key === "ArrowLeft") setI(x => Math.max(0, x - 1));
-      else if (e.key === "ArrowRight") setI(x => Math.min(n - 1, x + 1));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [n]);
-  const idx = Math.min(i, n - 1);
-  const cur = steps[idx];
-  return (
-    <div className="study-walk">
-      <div className="study-walk-top">
-        <button className="study-back" onClick={onExit}>‹ {previewReader ? "Back" : "Close walkthrough"}</button>
-        <span className="study-walk-count">Step {idx + 1} of {n}</span>
-      </div>
-      <div className="study-walk-bar"><div className="study-walk-bar-fill" style={{ width: Math.round(((idx + 1) / n) * 100) + "%" }} /></div>
-      <div className="study-walk-eyebrow">{entry.title}</div>
-
-      <div className="study-walk-step">
-        {cur.kind === "intro" ? (
-          <>
-            <h1 className="study-walk-title">{cur.title}</h1>
-            <p className="study-walk-intro">{cur.text}</p>
-          </>
-        ) : (
-          <>
-            {cur.heading ? <h2 className="study-walk-head">{cur.heading}{cur.part ? <span className="study-walk-part"> {cur.part}</span> : null}</h2> : null}
-            {cur.verses.length ? (
-              <div className="study-walk-verses">
-                {cur.verses.map((v, j) => (
-                  <div className="study-walk-verse" key={j}>
-                    <div className="study-walk-ref">{v.ref}</div>
-                    <div className="study-walk-text">{v.text || <em className="study-verse-missing">(text not found)</em>}</div>
-                  </div>
-                ))}
-              </div>
-            ) : <div className="study-side-empty">No verses in this section.</div>}
-          </>
-        )}
-      </div>
-
-      <div className="study-walk-nav">
-        <button className="study-walk-btn" disabled={idx === 0} onClick={() => setI(x => Math.max(0, x - 1))}>‹ Back</button>
-        <div className="study-walk-dots">{steps.map((_, k) => <span key={k} className={"study-walk-dot" + (k === idx ? " on" : "")} />)}</div>
-        <button className="study-walk-btn" disabled={idx >= n - 1} onClick={() => setI(x => Math.min(n - 1, x + 1))}>Next ›</button>
-      </div>
-    </div>
-  );
-}
-
 // A labeled read-only verse list (Support / Tension), for the denomination read view.
 function DenomVerseList({ label, items }) {
   if (!items || !items.length) return null;
@@ -602,7 +545,6 @@ function StudyView({ pending, onConsumed }) {
   const [editing, setEditing] = useState(null);
   const [editMode, setEditMode] = useState(false);   // read vs edit (read-first for all types)
   const [previewReader, setPreviewReader] = useState(false);  // admin: preview the clean reader view
-  const [walk, setWalk] = useState(null);            // a topic entry being read as a stepped walkthrough
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
   const [q, setQ] = useState("");
@@ -671,13 +613,11 @@ function StudyView({ pending, onConsumed }) {
 
   if (err) return <div className="stats-view"><div className="stats-empty">Couldn't load study content. (Admin sign-in required.)</div></div>;
 
-  if (walk)
-    return <div className="study-view"><WalkthroughView entry={walk} previewReader={previewReader} onExit={() => setWalk(null)} /></div>;
   if (editing) {
     const ro = previewReader || !editMode;   // read-only: preview mode, or not actively editing
     const close = () => { setEditing(null); setSavedAt(null); };
     if (isTopicLike(editing.type))
-      return <div className="study-view"><TopicPage entry={editing} editing={!ro} onChange={setEditing} onSave={save} onDelete={del} onClose={close} onToggleEdit={() => setEditMode(m => !m)} onWalk={() => setWalk(editing)} previewReader={previewReader} saving={saving} savedAt={savedAt} /></div>;
+      return <div className="study-view"><TopicPage entry={editing} editing={!ro} onChange={setEditing} onSave={save} onDelete={del} onClose={close} onToggleEdit={() => setEditMode(m => !m)} previewReader={previewReader} saving={saving} savedAt={savedAt} /></div>;
     if (editing.type === "argument")
       return <div className="study-view"><ArgumentPage entry={editing} editing={!ro} onChange={setEditing} onSave={save} onDelete={del} onClose={close} onToggleEdit={() => setEditMode(m => !m)} previewReader={previewReader} saving={saving} savedAt={savedAt} /></div>;
     if (ro)

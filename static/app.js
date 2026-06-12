@@ -4131,6 +4131,13 @@ function TopicSectionEdit({
     placeholder: "Add a reference to this section"
   }));
 }
+
+// Which subtopic sections start open on the read page: a 1-section topic opens; a
+// multi-section topic starts collapsed (you see the structure first, expand on demand).
+function defaultOpenSecs(entry) {
+  const secs = entry && entry.sections || [];
+  return new Set(secs.length <= 1 ? secs.map((_, i) => i) : []);
+}
 function TopicPage({
   entry,
   editing,
@@ -4139,7 +4146,6 @@ function TopicPage({
   onDelete,
   onClose,
   onToggleEdit,
-  onWalk,
   previewReader,
   saving,
   savedAt
@@ -4172,6 +4178,17 @@ function TopicPage({
       });else setDraftErr(true);
     });
   };
+  const [openSecs, setOpenSecs] = useState(() => defaultOpenSecs(entry));
+  useEffect(() => {
+    setOpenSecs(defaultOpenSecs(entry));
+  }, [entry.id]);
+  const allOpen = entry.sections.length > 0 && openSecs.size === entry.sections.length;
+  const toggleAll = () => setOpenSecs(allOpen ? new Set() : new Set(entry.sections.map((_, i) => i)));
+  const toggleSec = i => setOpenSecs(prev => {
+    const n = new Set(prev);
+    n.has(i) ? n.delete(i) : n.add(i);
+    return n;
+  });
   if (!editing) {
     return /*#__PURE__*/React.createElement("div", {
       className: "study-topic"
@@ -4180,15 +4197,10 @@ function TopicPage({
     }, /*#__PURE__*/React.createElement("button", {
       className: "study-back",
       onClick: onClose
-    }, "\u2039 ", previewReader ? "Back" : "All topics"), /*#__PURE__*/React.createElement("div", {
-      className: "study-editor-actions"
-    }, onWalk && verseCount > 0 && /*#__PURE__*/React.createElement("button", {
-      className: "study-walk-launch",
-      onClick: onWalk
-    }, "\u25B8 Walk through"), !previewReader && /*#__PURE__*/React.createElement("button", {
+    }, "\u2039 ", previewReader ? "Back" : "All topics"), !previewReader && /*#__PURE__*/React.createElement("button", {
       className: "study-edit-btn",
       onClick: onToggleEdit
-    }, "Edit"))), /*#__PURE__*/React.createElement("div", {
+    }, "Edit")), /*#__PURE__*/React.createElement("div", {
       className: "study-eyebrow"
     }, "Topic"), /*#__PURE__*/React.createElement("h1", {
       className: "study-topic-title"
@@ -4198,23 +4210,37 @@ function TopicPage({
       className: "study-topic-intro"
     }, entry.intro), entry.sections.length === 0 ? /*#__PURE__*/React.createElement("div", {
       className: "stats-empty"
-    }, "No verses yet \u2014 click Edit to add some.") : entry.sections.map((s, i) => /*#__PURE__*/React.createElement("div", {
-      className: "study-section",
-      key: i
-    }, s.heading && /*#__PURE__*/React.createElement("div", {
-      className: "study-section-head"
-    }, s.heading), /*#__PURE__*/React.createElement("div", {
-      className: "study-read-verses"
-    }, s.verses.map((v, j) => /*#__PURE__*/React.createElement("div", {
-      className: "study-read-verse",
-      key: j
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "study-verse-ref"
-    }, v.ref), /*#__PURE__*/React.createElement("span", {
-      className: "study-read-text"
-    }, v.text || /*#__PURE__*/React.createElement("em", {
-      className: "study-verse-missing"
-    }, "(text not found)"))))))));
+    }, "No verses yet \u2014 click Edit to add some.") : /*#__PURE__*/React.createElement(React.Fragment, null, entry.sections.length > 1 && /*#__PURE__*/React.createElement("button", {
+      className: "study-collapse-all",
+      onClick: toggleAll
+    }, allOpen ? "Collapse all" : "Expand all"), entry.sections.map((s, i) => {
+      const isOpen = openSecs.has(i);
+      return /*#__PURE__*/React.createElement("div", {
+        className: "study-section study-section--collapsible" + (isOpen ? " open" : ""),
+        key: i
+      }, /*#__PURE__*/React.createElement("button", {
+        className: "study-section-toggle",
+        onClick: () => toggleSec(i),
+        "aria-expanded": isOpen
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "study-section-chevron"
+      }, isOpen ? "▾" : "▸"), /*#__PURE__*/React.createElement("span", {
+        className: "study-section-head-text"
+      }, s.heading || "General references"), /*#__PURE__*/React.createElement("span", {
+        className: "study-section-count"
+      }, s.verses.length)), isOpen && /*#__PURE__*/React.createElement("div", {
+        className: "study-read-verses"
+      }, s.verses.map((v, j) => /*#__PURE__*/React.createElement("div", {
+        className: "study-read-verse",
+        key: j
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "study-verse-ref"
+      }, v.ref), /*#__PURE__*/React.createElement("span", {
+        className: "study-read-text"
+      }, v.text || /*#__PURE__*/React.createElement("em", {
+        className: "study-verse-missing"
+      }, "(text not found)"))))));
+    })));
   }
   return /*#__PURE__*/React.createElement("div", {
     className: "study-editor"
@@ -4795,122 +4821,6 @@ function ArgumentPage({
 }
 
 // ---- Reader views ---------------------------------------------------------
-// Turn a topic into walkthrough STEPS: an intro card (if any), then one step per
-// subtopic SECTION — but a long section is split into parts so no step is a wall.
-function buildSteps(entry, cap) {
-  const per = cap || 6;
-  const steps = [];
-  if (entry.intro && entry.intro.trim()) steps.push({
-    kind: "intro",
-    title: entry.title,
-    text: entry.intro
-  });
-  (entry.sections || []).forEach(sec => {
-    const verses = sec.verses || [];
-    if (!verses.length) {
-      if (sec.heading) steps.push({
-        kind: "section",
-        heading: sec.heading,
-        verses: []
-      });
-      return;
-    }
-    const total = Math.ceil(verses.length / per);
-    for (let i = 0; i < verses.length; i += per) {
-      const partNo = Math.floor(i / per) + 1;
-      steps.push({
-        kind: "section",
-        heading: sec.heading,
-        verses: verses.slice(i, i + per),
-        part: total > 1 ? "(" + partNo + " of " + total + ")" : ""
-      });
-    }
-  });
-  if (!steps.length) steps.push({
-    kind: "section",
-    heading: entry.title,
-    verses: []
-  });
-  return steps;
-}
-
-// The stepped, one-subtopic-at-a-time guided reading of a topic. Reader-facing.
-function WalkthroughView({
-  entry,
-  previewReader,
-  onExit
-}) {
-  const steps = buildSteps(entry, 6);
-  const n = steps.length;
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const onKey = e => {
-      if (e.key === "ArrowLeft") setI(x => Math.max(0, x - 1));else if (e.key === "ArrowRight") setI(x => Math.min(n - 1, x + 1));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [n]);
-  const idx = Math.min(i, n - 1);
-  const cur = steps[idx];
-  return /*#__PURE__*/React.createElement("div", {
-    className: "study-walk"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-top"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "study-back",
-    onClick: onExit
-  }, "\u2039 ", previewReader ? "Back" : "Close walkthrough"), /*#__PURE__*/React.createElement("span", {
-    className: "study-walk-count"
-  }, "Step ", idx + 1, " of ", n)), /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-bar"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-bar-fill",
-    style: {
-      width: Math.round((idx + 1) / n * 100) + "%"
-    }
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-eyebrow"
-  }, entry.title), /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-step"
-  }, cur.kind === "intro" ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", {
-    className: "study-walk-title"
-  }, cur.title), /*#__PURE__*/React.createElement("p", {
-    className: "study-walk-intro"
-  }, cur.text)) : /*#__PURE__*/React.createElement(React.Fragment, null, cur.heading ? /*#__PURE__*/React.createElement("h2", {
-    className: "study-walk-head"
-  }, cur.heading, cur.part ? /*#__PURE__*/React.createElement("span", {
-    className: "study-walk-part"
-  }, " ", cur.part) : null) : null, cur.verses.length ? /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-verses"
-  }, cur.verses.map((v, j) => /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-verse",
-    key: j
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-ref"
-  }, v.ref), /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-text"
-  }, v.text || /*#__PURE__*/React.createElement("em", {
-    className: "study-verse-missing"
-  }, "(text not found)"))))) : /*#__PURE__*/React.createElement("div", {
-    className: "study-side-empty"
-  }, "No verses in this section."))), /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-nav"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "study-walk-btn",
-    disabled: idx === 0,
-    onClick: () => setI(x => Math.max(0, x - 1))
-  }, "\u2039 Back"), /*#__PURE__*/React.createElement("div", {
-    className: "study-walk-dots"
-  }, steps.map((_, k) => /*#__PURE__*/React.createElement("span", {
-    key: k,
-    className: "study-walk-dot" + (k === idx ? " on" : "")
-  }))), /*#__PURE__*/React.createElement("button", {
-    className: "study-walk-btn",
-    disabled: idx >= n - 1,
-    onClick: () => setI(x => Math.min(n - 1, x + 1))
-  }, "Next \u203A")));
-}
-
 // A labeled read-only verse list (Support / Tension), for the denomination read view.
 function DenomVerseList({
   label,
@@ -4992,7 +4902,6 @@ function StudyView({
   const [editing, setEditing] = useState(null);
   const [editMode, setEditMode] = useState(false); // read vs edit (read-first for all types)
   const [previewReader, setPreviewReader] = useState(false); // admin: preview the clean reader view
-  const [walk, setWalk] = useState(null); // a topic entry being read as a stepped walkthrough
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState(null);
   const [q, setQ] = useState("");
@@ -5147,13 +5056,6 @@ function StudyView({
   }, /*#__PURE__*/React.createElement("div", {
     className: "stats-empty"
   }, "Couldn't load study content. (Admin sign-in required.)"));
-  if (walk) return /*#__PURE__*/React.createElement("div", {
-    className: "study-view"
-  }, /*#__PURE__*/React.createElement(WalkthroughView, {
-    entry: walk,
-    previewReader: previewReader,
-    onExit: () => setWalk(null)
-  }));
   if (editing) {
     const ro = previewReader || !editMode; // read-only: preview mode, or not actively editing
     const close = () => {
@@ -5170,7 +5072,6 @@ function StudyView({
       onDelete: del,
       onClose: close,
       onToggleEdit: () => setEditMode(m => !m),
-      onWalk: () => setWalk(editing),
       previewReader: previewReader,
       saving: saving,
       savedAt: savedAt
