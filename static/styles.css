@@ -1,4 +1,9 @@
 :root {
+  /* Desktop header height — pinned so the nav/toolbar (which sit below it) can be
+     sized to match exactly. Left unpinned, the brand text renders ~65px and the
+     64px the nav assumed left the page 1px too tall (a mouse-wheel shift). */
+  --hdr-h: 66px;
+
   /* Type */
   --f-sans: "DM Sans", "Söhne", system-ui, -apple-system, sans-serif;
   --f-serif: "Source Serif 4", "Source Serif Pro", "Iowan Old Style", Georgia, serif;
@@ -123,11 +128,11 @@ input { font-family: inherit; }
    HEADER
 ============================================================ */
 .hdr {
+  height: var(--hdr-h);          /* pinned so the nav/toolbar below can match it exactly */
+  box-sizing: border-box;
   background: var(--navy);
   color: #e9ecf2;
-  /* drawn as an inset shadow, not a border, so it doesn't add 1px to the header's
-     height — the nav/toolbar are sized to a 64px header (top:64 / 100vh-64), and a
-     1px border made the page 1px too tall (a wheel-shift on short chapters). */
+  /* bottom line as an inset shadow, not a border, so it doesn't add to the height */
   box-shadow: inset 0 -1px 0 var(--navy-edge);
   position: sticky;
   top: 0;
@@ -1274,7 +1279,7 @@ input { font-family: inherit; }
   border-bottom: 1px solid var(--rule);
   margin-bottom: 16px;
   position: sticky;
-  top: 64px;
+  top: var(--hdr-h);
   z-index: 20;
   background: var(--bg);
   box-shadow: 0 4px 12px -4px rgba(20, 20, 30, 0.06);
@@ -2600,8 +2605,8 @@ input { font-family: inherit; }
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 64px;
-  height: calc(100vh - 64px);
+  top: var(--hdr-h);
+  height: calc(100vh - var(--hdr-h));
   overflow: hidden;
 }
 /* "Other" books list, inline in the panel (pushes .nav-scroll down; its own scroll) */
@@ -2796,7 +2801,7 @@ input { font-family: inherit; }
     backdrop-filter: blur(6px);
     flex-wrap: wrap;
     position: sticky;
-    top: 64px;
+    top: var(--hdr-h);
     z-index: 20;
   }
   .lib-bar-l { display: flex; align-items: center; column-gap: 6px; row-gap: 8px; flex-wrap: wrap; }

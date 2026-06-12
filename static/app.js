@@ -5153,6 +5153,7 @@ function LibraryView({
   const [dockClosing, setDockClosing] = useState(false); // mobile dock: keep it mounted briefly so it can slide OUT
   const dockWasShown = useRef(false);
   const audioRef = useRef(null);
+  const resumeAudioRef = useRef(false); // page-turn while playing → keep the read-along going on the next page
   const [viewCh, setViewCh] = useState(null); // chrono: chapter currently scrolled into view (drives the toolbar play target)
   const [libOptions, setLibOptions] = useState({
     viewMode: "chip",
@@ -5594,6 +5595,15 @@ function LibraryView({
     setAudioPlaying(false);
     setAudioCur(0);
     setAudioDur(0);
+    // If the change was a page-turn while audio was playing, keep listening: load the
+    // new chapter/passage and let the audioUrl effect auto-play it (no need to leave
+    // reading mode to press play again).
+    if (resumeAudioRef.current) {
+      resumeAudioRef.current = false;
+      const b = chronoOn ? curPassage && curPassage.book : selBook && selBook.abbrev;
+      const c = chronoOn ? curPassage && curPassage.start_ch : selChapter;
+      if (b && c) loadAudio(b, c);
+    }
   }, [selBook && selBook.abbrev, selChapter, translation, chronoPos]);
   // New mp3 loaded: start playing (the user already pressed Listen).
   useEffect(() => {
@@ -6004,11 +6014,15 @@ function LibraryView({
   const turnPage = dir => {
     // dir: +1 next, -1 prev
     if (chronoOn) {
+      const can = dir > 0 ? chrono && chronoPos < chrono.passages.length : chronoPos > 1;
+      if (!can) return;
+      if (audioPlaying) resumeAudioRef.current = true; // carry the read-along onto the next passage
       stepPassage(dir);
       return;
     }
     const c = selChapter + dir;
     if (c < 1 || c > maxChap) return;
+    if (audioPlaying) resumeAudioRef.current = true; // carry the read-along onto the next chapter
     setSelChapter(c);
     if (!nonCanon) onNavChange?.({
       ...nav,
