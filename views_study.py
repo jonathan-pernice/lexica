@@ -228,16 +228,21 @@ def _abp_prose(conn, abbr, chapter, verse):
     return _join_prose(toks) if toks else None
 
 
-def _resolve_ref(ref: str):
+def _resolve_ref(ref, conn=None):
     """Resolve a reference to a list of {ref, text}. Text is the ABP PROSE English
     (the app's primary text, in its readable running-prose form); when ABP has no
     matching verse we fall back to the KJV verse text so the editor still shows
-    something. KJV's canonical verse order is used only to enumerate a range."""
+    something. KJV's canonical verse order is used only to enumerate a range.
+
+    Pass a shared `conn` to reuse one db handle across many refs (a whole topic);
+    without one it opens and closes its own."""
     parsed = _parse_ref(ref)
     if not parsed:
         return []
     book_id, sc, sv, ec, ev = parsed
-    conn = db_ro()
+    own = conn is None
+    if own:
+        conn = db_ro()
     try:
         start = conn.execute(
             "SELECT verse_id FROM kjv_verses WHERE book_id=? AND chapter=? AND verse_num=?",
@@ -272,7 +277,8 @@ def _resolve_ref(ref: str):
     except Exception:
         return []
     finally:
-        conn.close()
+        if own:
+            conn.close()
     return out
 
 
@@ -373,11 +379,12 @@ def _body_from_request(etype: str, body: dict) -> dict:
     }
 
 
-def _expand_refs(refs):
-    """[ref,...] -> [{ref, text}] with ABP prose resolved (empty text if unresolved)."""
+def _expand_refs(refs, conn=None):
+    """[ref,...] -> [{ref, text}] with ABP prose resolved (empty text if unresolved).
+    Pass a shared connection so a whole entry resolves on ONE db handle."""
     out = []
     for ref in refs or []:
-        hits = _resolve_ref(ref)
+        hits = _resolve_ref(ref, conn)
         out.append({"ref": ref, "text": " ".join(h["text"] for h in hits) if hits else ""})
     return out
 
@@ -386,28 +393,32 @@ def _resolve_body(etype: str, stored: dict) -> dict:
     """Expand stored refs into {ref, text} pairs for the client — inside each section
     for a topic, in the support/tension buckets for a claim."""
     b = dict(stored)
-    if etype in ("topic", "name"):
-        b["sections"] = [
-            {"heading": (s or {}).get("heading", ""), "verses": _expand_refs((s or {}).get("verses"))}
-            for s in (stored.get("sections") or [])
-        ]
-    elif etype == "argument":
-        sides = stored.get("sides")
-        if not sides and (stored.get("support") or stored.get("tension")):
-            # legacy argument (saved before the two-sided layout): support -> A, tension -> B
-            sides = [
-                {"claim": "", "verses": stored.get("support") or []},
-                {"claim": "", "verses": stored.get("tension") or []},
+    conn = db_ro()
+    try:
+        if etype in ("topic", "name"):
+            b["sections"] = [
+                {"heading": (s or {}).get("heading", ""), "verses": _expand_refs((s or {}).get("verses"), conn)}
+                for s in (stored.get("sections") or [])
             ]
-        b["sides"] = [
-            {"claim": (s or {}).get("claim", ""), "verses": _expand_refs((s or {}).get("verses"))}
-            for s in (sides or [])
-        ]
-        b.pop("support", None)
-        b.pop("tension", None)
-    else:
-        b["support"] = _expand_refs(stored.get("support"))
-        b["tension"] = _expand_refs(stored.get("tension"))
+        elif etype == "argument":
+            sides = stored.get("sides")
+            if not sides and (stored.get("support") or stored.get("tension")):
+                # legacy argument (saved before the two-sided layout): support -> A, tension -> B
+                sides = [
+                    {"claim": "", "verses": stored.get("support") or []},
+                    {"claim": "", "verses": stored.get("tension") or []},
+                ]
+            b["sides"] = [
+                {"claim": (s or {}).get("claim", ""), "verses": _expand_refs((s or {}).get("verses"), conn)}
+                for s in (sides or [])
+            ]
+            b.pop("support", None)
+            b.pop("tension", None)
+        else:
+            b["support"] = _expand_refs(stored.get("support"), conn)
+            b["tension"] = _expand_refs(stored.get("tension"), conn)
+    finally:
+        conn.close()
     return b
 
 
