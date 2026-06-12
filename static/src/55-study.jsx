@@ -22,6 +22,9 @@ const STUDY_TYPE_LABEL = { topic: "Topic", denomination: "Denomination", argumen
 // "name" = a person/place name-topic (MetaV), shown on the metaV sidebar, opened
 // here read-only. Same shape as a topic, so it renders through TopicPage.
 const isTopicLike = t => t === "topic" || t === "name";
+// Subtopic headings arrive from Nave's as little sentences ("Father.") — drop a
+// trailing period/comma so they read as headings, not sentences.
+const cleanHeading = h => String(h || "").replace(/\s*[.,;:]+\s*$/, "");
 
 function blankTopic() {
   return { id: "", type: "topic", title: "", intro: "", sections: [{ heading: "", verses: [] }], related: [], status: "draft", source: "" };
@@ -193,7 +196,7 @@ function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onTogg
                 <div className={"study-section study-section--collapsible" + (isOpen ? " open" : "")} key={i}>
                   <button className="study-section-toggle" onClick={() => toggleSec(i)} aria-expanded={isOpen}>
                     <span className="study-section-chevron">{isOpen ? "▾" : "▸"}</span>
-                    <span className="study-section-head-text">{s.heading || "General references"}</span>
+                    <span className="study-section-head-text">{cleanHeading(s.heading) || "General references"}</span>
                     <span className="study-section-count">{s.verses.length}</span>
                   </button>
                   {isOpen && (

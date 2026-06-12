@@ -3892,6 +3892,9 @@ const STUDY_TYPE_LABEL = {
 // "name" = a person/place name-topic (MetaV), shown on the metaV sidebar, opened
 // here read-only. Same shape as a topic, so it renders through TopicPage.
 const isTopicLike = t => t === "topic" || t === "name";
+// Subtopic headings arrive from Nave's as little sentences ("Father.") — drop a
+// trailing period/comma so they read as headings, not sentences.
+const cleanHeading = h => String(h || "").replace(/\s*[.,;:]+\s*$/, "");
 function blankTopic() {
   return {
     id: "",
@@ -4226,7 +4229,7 @@ function TopicPage({
         className: "study-section-chevron"
       }, isOpen ? "▾" : "▸"), /*#__PURE__*/React.createElement("span", {
         className: "study-section-head-text"
-      }, s.heading || "General references"), /*#__PURE__*/React.createElement("span", {
+      }, cleanHeading(s.heading) || "General references"), /*#__PURE__*/React.createElement("span", {
         className: "study-section-count"
       }, s.verses.length)), isOpen && /*#__PURE__*/React.createElement("div", {
         className: "study-read-verses"
