@@ -14,17 +14,38 @@ from core import db_ro, _KJV_BOOK_ID, _KJV_BOOK_ID_REV
 
 bp = Blueprint("kjv", __name__)
 
-# Public-domain KJV chapter narration WITH a soft music background, hosted by
-# audiotreasure.com (the "Firefighters for Christ" KJV reading). One mp3 per
-# chapter at /content/KJV_FF/<NN>_<Name>_<chap>.mp3 — NN = 01-66 book number,
-# chap = 2-digit EXCEPT Psalms (book 19) which is 3-digit. The book-name tokens
-# are the site's own irregular spellings (abbreviations + a "Soloman" typo), so
-# they're pinned in a map rather than derived. No key; the files stream
-# cross-site with range support, so we just hand the browser the URL for an
-# <audio> tag (same approach as BSB). Single narrator + music (no dramatized
-# voices — that's the FCBH recording, which needs the pending Bible Brain key).
-_KJV_AUDIO_BASE = "https://www.audiotreasure.com/content/KJV_FF"
-_KJV_AUDIO_NAME = {
+# Public-domain KJV chapter narration, hosted by audiotreasure.com. Two recordings:
+#   VOICE (preferred) — Stephen Johnston, voice-only, ~60% higher bitrate (clearer):
+#       /content/KJV_AT/<NN>_<Name><CCC>.mp3   (3-digit chapter glued to the name)
+#   MUSIC (fallback)  — "Firefighters for Christ", narrator + soft music bed, lower bitrate:
+#       /content/KJV_FF/<NN>_<Name>_<chap>.mp3 (chap 2-digit, Psalms 3-digit)
+# The VOICE set is missing files for 6 books on the host (their page links 404), so those
+# fall back to the MUSIC set — every book still plays. Book-name tokens are each site
+# folder's own irregular spellings (pinned, not derived). No key; files stream cross-site,
+# so we just hand the browser the URL for an <audio> tag (same approach as BSB). A
+# DRAMATIZED multi-voice KJV is the FCBH recording, which needs the pending Bible Brain key.
+_KJV_VOICE_BASE = "https://www.audiotreasure.com/content/KJV_AT"
+_KJV_MUSIC_BASE = "https://www.audiotreasure.com/content/KJV_FF"
+# book_id -> KJV_AT (voice) book-name token. Proper-ish spellings ("Psalms" is plural here).
+_KJV_VOICE_NAME = {
+    1: "Genesis", 2: "Exodus", 3: "Leviticus", 4: "Numbers", 5: "Deuteronomy",
+    6: "Joshua", 7: "Judges", 8: "Ruth", 9: "1Samuel", 10: "2Samuel",
+    11: "1Kings", 12: "2Kings", 13: "1Chronicles", 14: "2Chronicles", 15: "Ezra",
+    16: "Nehemiah", 17: "Esther", 19: "Psalms", 20: "Proverbs", 21: "Ecclesiastes",
+    23: "Isaiah", 24: "Jeremiah", 25: "Lamentations", 26: "Ezekiel", 27: "Daniel",
+    28: "Hosea", 29: "Joel", 30: "Amos", 31: "Obadiah", 32: "Jonah", 33: "Micah",
+    34: "Nahum", 35: "Habakkuk", 36: "Zephaniah", 37: "Haggai", 38: "Zechariah",
+    39: "Malachi", 40: "Matthew", 41: "Mark", 42: "Luke", 43: "John", 44: "Acts",
+    45: "Romans", 46: "1Corinthians", 47: "2Corinthians", 48: "Galatians",
+    49: "Ephesians", 50: "Philippians", 51: "Colossians", 52: "1Thessalonians",
+    53: "2Thessalonians", 54: "1Timothy", 55: "2Timothy", 56: "Titus",
+    58: "Hebrews", 59: "James", 60: "1Peter", 61: "2Peter", 62: "1John",
+    66: "Revelation",
+}
+# Books whose KJV_AT (voice) files are absent on the host -> use the MUSIC set instead.
+_KJV_VOICE_MISSING = {18, 22, 57, 63, 64, 65}   # Job, Song of Solomon, Philemon, 2/3 John, Jude
+# book_id -> KJV_FF (music) book-name token. Irregular ("Soloman" typo, "Prov", "1Cor"...).
+_KJV_MUSIC_NAME = {
     1: "Genesis", 2: "Exodus", 3: "Leviticus", 4: "Numbers", 5: "Deuteronomy",
     6: "Joshua", 7: "Judges", 8: "Ruth", 9: "1Samuel", 10: "2Samuel",
     11: "1Kings", 12: "2Kings", 13: "1Chronicles", 14: "2Chronicles", 15: "Ezra",
@@ -44,16 +65,22 @@ _KJV_AUDIO_NAME = {
 
 @bp.route("/api/kjv/audio/<book>/<int:chapter>")
 def kjv_audio(book, chapter):
-    """Public-domain KJV chapter narration URL (audiotreasure.com, music bg).
-    Returns {url}; no key, no gate — KJV is public. {url: None} for an unknown
-    book/chapter (the frontend then flashes 'No audio for this chapter')."""
+    """Public-domain KJV chapter narration URL (audiotreasure.com). Prefers the clearer
+    voice-only reading; falls back to the music reading for the books the voice set is
+    missing. Returns {url}; no key, no gate — KJV is public. {url: None} if unknown."""
     book_id = _KJV_BOOK_ID.get(book)
-    name = _KJV_AUDIO_NAME.get(book_id) if book_id else None
+    if book_id is None:
+        return jsonify({"url": None})
+    # Voice-only (clearer) where the host has it.
+    if book_id not in _KJV_VOICE_MISSING and book_id in _KJV_VOICE_NAME:
+        stem = f"{book_id:02d}_{_KJV_VOICE_NAME[book_id]}"
+        return jsonify({"url": f"{_KJV_VOICE_BASE}/{stem}{chapter:03d}.mp3"})
+    # Music fallback (complete set).
+    name = _KJV_MUSIC_NAME.get(book_id)
     if not name:
         return jsonify({"url": None})
     chap = f"{chapter:03d}" if book_id == 19 else f"{chapter:02d}"
-    fname = f"{book_id:02d}_{name}_{chap}.mp3"
-    return jsonify({"url": f"{_KJV_AUDIO_BASE}/{fname}"})
+    return jsonify({"url": f"{_KJV_MUSIC_BASE}/{book_id:02d}_{name}_{chap}.mp3"})
 
 
 @bp.route("/api/kjv/chapter/<book>/<int:chapter>")
