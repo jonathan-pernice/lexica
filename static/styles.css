@@ -2669,7 +2669,8 @@ input { font-family: inherit; }
 .nav-other-caret.open { transform: rotate(180deg); }
 
 .nav-scroll { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 2px 6px 16px; }
-.nav-scroll::-webkit-scrollbar { width: 9px; }
+.nav-scroll { scrollbar-color: var(--rule-2) var(--bg-sunk); }   /* Firefox: thumb + track */
+.nav-scroll::-webkit-scrollbar { width: 9px; background: var(--bg-sunk); }   /* track matches the nav bg in every theme (was white in sepia/dark) */
 .nav-scroll::-webkit-scrollbar-thumb { background: var(--rule-2); border-radius: 5px; border: 2px solid var(--bg-sunk); }
 
 .nav-group { margin-bottom: 2px; }
