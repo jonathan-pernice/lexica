@@ -3391,6 +3391,22 @@ input { font-family: inherit; }
 .study-add-section { align-self: flex-start; font-size: 13px; color: var(--ink-2); background: var(--bg-sunk); border: 1px dashed var(--rule-2); border-radius: 8px; padding: 8px 14px; cursor: pointer; }
 .study-add-section:hover { color: var(--ink); border-color: var(--ink-3); }
 
+/* argument — two-sided (Side A | Side B), edit + read */
+.study-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.study-side { border: 1px solid var(--rule); border-radius: 12px; padding: 12px 14px; background: var(--paper); min-width: 0; }
+.study-side-label, .study-side-tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-4); margin-bottom: 8px; }
+.study-side-claim-input { width: 100%; font: inherit; font-size: 14px; font-weight: 500; color: var(--ink); background: var(--bg); border: 1px solid var(--rule-2); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+.study-side-claim-input:focus { outline: none; border-color: var(--accent); }
+.study-side-vlabel { font-size: 11px; color: var(--ink-4); margin-bottom: 6px; }
+.study-side--read .study-side-claim { font-family: var(--f-serif); font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 10px; padding-bottom: 7px; border-bottom: 1px solid var(--rule); }
+.study-side--read .study-read-verse { flex-direction: column; gap: 2px; }
+.study-side--read .study-read-verse .study-verse-ref { width: auto; }
+.study-side--read .study-read-text { font-size: 14px; }
+.study-side-empty { font-size: 12.5px; color: var(--ink-4); font-style: italic; }
+.study-arg-res { margin-top: 18px; background: var(--bg-sunk); border: 1px solid var(--rule); border-radius: 12px; padding: 13px 15px; }
+.study-arg-res-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); margin-bottom: 5px; }
+.study-arg-res-text { font-family: var(--f-serif); font-size: 15px; line-height: 1.6; color: var(--ink); margin: 0; }
+
 @media (max-width: 1099px) {
   .study-view { padding: 14px 14px 90px; }
   .study-editor-bar { position: static; }
@@ -3399,4 +3415,5 @@ input { font-family: inherit; }
   .study-topic-title { font-size: 22px; }
   .study-read-verse { flex-direction: column; gap: 2px; }
   .study-read-verse .study-verse-ref { width: auto; }
+  .study-sides { grid-template-columns: 1fr; }
 }

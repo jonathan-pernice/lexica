@@ -33,6 +33,39 @@ function blankClaim(type) {
     notes: "", related: [], status: "draft",
   };
 }
+// An ARGUMENT is two-sided: a question, then Side A and Side B (each with its own
+// claim + verses), then the shared resolution. A denomination stays one-sided
+// (support/tension) in blankClaim above.
+function blankArgument() {
+  return {
+    id: "", type: "argument", title: "", intro: "",
+    sides: [{ claim: "", verses: [] }, { claim: "", verses: [] }],
+    resolution: { mode: "middle", text: "" }, notes: "", related: [], status: "draft",
+  };
+}
+// Arguments always show exactly two side slots — pad/trim so the layout stays stable.
+function padSides(sides) {
+  const a = (sides || []).slice(0, 2).map(s => ({ claim: (s && s.claim) || "", verses: (s && s.verses) || [] }));
+  while (a.length < 2) a.push({ claim: "", verses: [] });
+  return a;
+}
+// Flip a claim between denomination (support/tension) and argument (two sides)
+// WITHOUT losing the verses already entered: support↔Side A, tension↔Side B.
+function convertClaimType(entry, t) {
+  if (t === entry.type) return entry;
+  if (t === "argument") {
+    const sides = (entry.sides && entry.sides.length)
+      ? entry.sides
+      : [{ claim: "", verses: entry.support || [] }, { claim: "", verses: entry.tension || [] }];
+    return { ...entry, type: t, sides: padSides(sides) };
+  }
+  const s = entry.sides || [];
+  return {
+    ...entry, type: t, heldBy: entry.heldBy || "",
+    support: (entry.support && entry.support.length) ? entry.support : ((s[0] && s[0].verses) || []),
+    tension: (entry.tension && entry.tension.length) ? entry.tension : ((s[1] && s[1].verses) || []),
+  };
+}
 function moveItem(arr, i, dir) {
   const j = i + dir;
   if (j < 0 || j >= arr.length) return arr;
@@ -221,7 +254,7 @@ function StudyEditor({ entry, onChange, onSave, onDelete, onClose, saving, saved
         <span className="study-label">Type</span>
         <div className="seg">
           {CLAIM_TYPES.map(t => (
-            <button key={t.id} className={"seg-b" + (entry.type === t.id ? " on" : "")} onClick={() => up({ type: t.id })}>{t.label}</button>
+            <button key={t.id} className={"seg-b" + (entry.type === t.id ? " on" : "")} onClick={() => onChange(convertClaimType(entry, t.id))}>{t.label}</button>
           ))}
         </div>
       </div>
@@ -288,6 +321,138 @@ function StudyEditor({ entry, onChange, onSave, onDelete, onClose, saving, saved
   );
 }
 
+// ---- Argument (two-sided) -------------------------------------------------
+// One side card in the editor: its claim + its own verse list.
+function ArgumentSideEdit({ side, label, onChange }) {
+  return (
+    <div className="study-side study-side--edit">
+      <div className="study-side-label">{label}</div>
+      <input className="study-side-claim-input" type="text" value={side.claim}
+        placeholder="This side holds…" onChange={e => onChange({ ...side, claim: e.target.value })} />
+      <div className="study-side-vlabel">Verses for this side</div>
+      <VerseRows items={side.verses} onRemove={i => onChange({ ...side, verses: side.verses.filter((_, j) => j !== i) })} />
+      <AddRef onAdd={v => onChange({ ...side, verses: [...side.verses, v] })} placeholder="Add a verse for this side" />
+    </div>
+  );
+}
+
+// An argument reads/edits like a topic page (read view + Edit toggle), but its body
+// is the two-sided layout (Side A | Side B) plus the resolution that weighs them.
+function ArgumentPage({ entry, editing, onChange, onSave, onDelete, onClose, onToggleEdit, saving, savedAt }) {
+  const up = patch => onChange({ ...entry, ...patch });
+  const sides = padSides(entry.sides);
+  const res = entry.resolution || { mode: "middle", text: "" };
+  const setSide = (i, ns) => up({ sides: sides.map((x, j) => j === i ? ns : x) });
+
+  if (!editing) {
+    const verseCount = sides.reduce((n, s) => n + (s.verses ? s.verses.length : 0), 0);
+    return (
+      <div className="study-topic study-arg">
+        <div className="study-editor-bar">
+          <button className="study-back" onClick={onClose}>‹ All arguments</button>
+          <button className="study-edit-btn" onClick={onToggleEdit}>Edit</button>
+        </div>
+        <div className="study-eyebrow">Argument</div>
+        <h1 className="study-topic-title">{entry.title}</h1>
+        <div className="study-topic-meta">two sides · {verseCount} verses</div>
+        {entry.intro && <p className="study-topic-intro">{entry.intro}</p>}
+        <div className="study-sides study-sides--read">
+          {sides.map((s, i) => (
+            <div className="study-side study-side--read" key={i}>
+              <div className="study-side-tag">Side {i === 0 ? "A" : "B"}</div>
+              <div className="study-side-claim">{s.claim || <em className="study-verse-missing">(no claim yet)</em>}</div>
+              {(s.verses && s.verses.length) ? (
+                <div className="study-read-verses">
+                  {s.verses.map((v, j) => (
+                    <div className="study-read-verse" key={j}>
+                      <span className="study-verse-ref">{v.ref}</span>
+                      <span className="study-read-text">{v.text || <em className="study-verse-missing">(text not found)</em>}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : <div className="study-side-empty">No verses yet.</div>}
+            </div>
+          ))}
+        </div>
+        <div className="study-arg-res">
+          <div className="study-arg-res-label">{res.mode === "mystery" ? "An open mystery" : "Where the text lands"}</div>
+          <p className="study-arg-res-text">{res.text || <em className="study-verse-missing">(not written yet)</em>}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="study-editor">
+      <div className="study-editor-bar">
+        <button className="study-back" onClick={() => entry.id ? onToggleEdit() : onClose()}>‹ {entry.id ? "Done editing" : "Cancel"}</button>
+        <div className="study-editor-actions">
+          {savedAt && !saving && <span className="study-saved">Saved ✓</span>}
+          {entry.id && <button className="study-del" onClick={onDelete}>Delete</button>}
+          <button className="study-save" onClick={onSave} disabled={saving || !entry.title.trim()}>{saving ? "Saving…" : "Save"}</button>
+        </div>
+      </div>
+
+      <div className="study-field study-type-row">
+        <span className="study-label">Type</span>
+        <div className="seg">
+          {CLAIM_TYPES.map(t => (
+            <button key={t.id} className={"seg-b" + (entry.type === t.id ? " on" : "")} onClick={() => onChange(convertClaimType(entry, t.id))}>{t.label}</button>
+          ))}
+        </div>
+      </div>
+
+      <div className="study-field">
+        <label className="study-label">The question</label>
+        <input className="study-input" type="text" value={entry.title} placeholder="What's disputed — e.g. Can a believer lose their salvation?" onChange={e => up({ title: e.target.value })} />
+      </div>
+      <div className="study-field">
+        <label className="study-label">Intro <span className="study-label-hint">(optional)</span></label>
+        <textarea className="study-textarea study-textarea--sm" value={entry.intro} placeholder="A short, plain-English lead-in to the question." onChange={e => up({ intro: e.target.value })} />
+      </div>
+
+      <div className="study-sides study-sides--edit">
+        <ArgumentSideEdit side={sides[0]} label="Side A" onChange={ns => setSide(0, ns)} />
+        <ArgumentSideEdit side={sides[1]} label="Side B" onChange={ns => setSide(1, ns)} />
+      </div>
+
+      <div className="study-field">
+        <div className="study-res-head">
+          <span className="study-label">Resolution</span>
+          <div className="seg seg--res">
+            <button className={"seg-b" + (res.mode === "middle" ? " on" : "")} onClick={() => up({ resolution: { ...res, mode: "middle" } })}>Middle road</button>
+            <button className={"seg-b" + (res.mode === "mystery" ? " on" : "")} onClick={() => up({ resolution: { ...res, mode: "mystery" } })}>Open mystery</button>
+          </div>
+        </div>
+        <textarea className="study-textarea" value={res.text}
+          placeholder={res.mode === "mystery" ? "Why the text leaves this open — what we can and can't say." : "The middle road the text points to — how both sides are held together."}
+          onChange={e => up({ resolution: { ...res, text: e.target.value } })} />
+      </div>
+
+      <div className="study-field">
+        <label className="study-label">Your notes <span className="study-label-hint">(private)</span></label>
+        <textarea className="study-textarea study-textarea--sm" value={entry.notes} placeholder="Commentary, cross-links, things to revisit." onChange={e => up({ notes: e.target.value })} />
+      </div>
+
+      <div className="study-field">
+        <label className="study-label">Related</label>
+        <StudyRelated items={entry.related}
+          onAdd={r => up({ related: [...entry.related, r] })}
+          onRemove={i => up({ related: entry.related.filter((_, j) => j !== i) })} />
+      </div>
+
+      <div className="study-field study-status-row">
+        <span className="study-label">Visibility</span>
+        <div className="seg">
+          <button className={"seg-b" + (entry.status === "draft" ? " on" : "")} onClick={() => up({ status: "draft" })}>Draft</button>
+          <button className={"seg-b" + (entry.status === "published" ? " on" : "")} onClick={() => up({ status: "published" })}>Published</button>
+        </div>
+        <span className="study-label-hint">Draft = only you. Published is reserved for a future public reader.</span>
+      </div>
+    </div>
+  );
+}
+
 // ---- The Study tab --------------------------------------------------------
 function StudyView({ pending, onConsumed }) {
   const [module, setModule] = useState("topic");
@@ -319,6 +484,11 @@ function StudyView({ pending, onConsumed }) {
           sections: (d.sections || []).map(s => ({ heading: s.heading || "", verses: s.verses || [] })),
           related: d.related || [], status: d.status || "draft", source: d.source || "" });
         setEditMode(false);
+      } else if (d.type === "argument") {
+        setEditing({ id: d.id, type: "argument", title: d.title || "", intro: d.intro || "",
+          sides: padSides(d.sides), resolution: d.resolution || { mode: "middle", text: "" },
+          notes: d.notes || "", related: d.related || [], status: d.status || "draft" });
+        setEditMode(false);
       } else {
         setEditing({ id: d.id, type: d.type, title: d.title || "", heldBy: d.heldBy || "", intro: d.intro || "",
           support: d.support || [], tension: d.tension || [], resolution: d.resolution || { mode: "middle", text: "" },
@@ -327,7 +497,7 @@ function StudyView({ pending, onConsumed }) {
       }
     });
   };
-  const newEntry = () => { setSavedAt(null); setEditMode(true); setEditing(module === "topic" ? blankTopic() : blankClaim(module)); };
+  const newEntry = () => { setSavedAt(null); setEditMode(true); setEditing(module === "topic" ? blankTopic() : module === "argument" ? blankArgument() : blankClaim(module)); };
 
   // Opened from the metaV sidebar: jump straight into a name-topic's page.
   useEffect(() => {
@@ -340,6 +510,8 @@ function StudyView({ pending, onConsumed }) {
     let payload;
     if (isTopicLike(editing.type)) {
       payload = { ...editing, sections: editing.sections.map(s => ({ heading: s.heading, verses: s.verses.map(v => ({ ref: v.ref })) })) };
+    } else if (editing.type === "argument") {
+      payload = { ...editing, sides: padSides(editing.sides).map(s => ({ claim: s.claim, verses: (s.verses || []).map(v => ({ ref: v.ref })) })) };
     } else {
       payload = { ...editing, support: editing.support.map(v => ({ ref: v.ref })), tension: editing.tension.map(v => ({ ref: v.ref })) };
     }
@@ -359,6 +531,8 @@ function StudyView({ pending, onConsumed }) {
   if (editing) {
     if (isTopicLike(editing.type))
       return <div className="study-view"><TopicPage entry={editing} editing={editMode} onChange={setEditing} onSave={save} onDelete={del} onClose={() => { setEditing(null); setSavedAt(null); }} onToggleEdit={() => setEditMode(m => !m)} saving={saving} savedAt={savedAt} /></div>;
+    if (editing.type === "argument")
+      return <div className="study-view"><ArgumentPage entry={editing} editing={editMode} onChange={setEditing} onSave={save} onDelete={del} onClose={() => { setEditing(null); setSavedAt(null); }} onToggleEdit={() => setEditMode(m => !m)} saving={saving} savedAt={savedAt} /></div>;
     return <div className="study-view"><StudyEditor entry={editing} onChange={setEditing} onSave={save} onDelete={del} onClose={() => { setEditing(null); setSavedAt(null); }} saving={saving} savedAt={savedAt} /></div>;
   }
 
@@ -380,6 +554,8 @@ function StudyView({ pending, onConsumed }) {
       </div>
       <div className="stats-sub">{isTopic
         ? "Browse a subject and its verses, grouped by subtopic. Mostly filled from MetaV — light edits only."
+        : module === "argument"
+        ? "Two sides laid out with their own verses, and where the text lands between them — or stays a mystery."
         : "A position with its support and tension verses, and where the text resolves it — or stays a mystery."}</div>
 
       {entries && entries.length > 0 && (

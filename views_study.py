@@ -311,6 +311,26 @@ def _clean_sections(items):
     return out
 
 
+_MAX_SIDES = 2   # an argument is two-sided
+
+
+def _clean_sides(items):
+    """Argument sides: [{claim, verses:[ref,...]}], trimmed; the first two kept."""
+    out = []
+    if not isinstance(items, list):
+        return out
+    for s in items:
+        if not isinstance(s, dict):
+            continue
+        out.append({
+            "claim": str(s.get("claim") or "").strip()[:300],
+            "verses": _clean_refs(s.get("verses")),
+        })
+        if len(out) >= _MAX_SIDES:
+            break
+    return out
+
+
 def _body_from_request(etype: str, body: dict) -> dict:
     """Normalize the incoming entry into its stored JSON shape (only fields we keep,
     so a client can't smuggle extra keys in). A TOPIC carries subtopic SECTIONS; a
@@ -323,6 +343,18 @@ def _body_from_request(etype: str, body: dict) -> dict:
             "sections": _clean_sections(body.get("sections")),
             "related": related,
             "source": str(body.get("source") or "").strip()[:40],
+        }
+    if etype == "argument":
+        res = body.get("resolution") or {}
+        mode = (res.get("mode") or "middle").strip().lower()
+        if mode not in _RES_MODES:
+            mode = "middle"
+        return {
+            "intro": str(body.get("intro") or "").strip()[:2000],
+            "sides": _clean_sides(body.get("sides")),
+            "resolution": {"mode": mode, "text": str(res.get("text") or "").strip()[:8000]},
+            "notes": str(body.get("notes") or "").strip()[:20000],
+            "related": related,
         }
     res = body.get("resolution") or {}
     mode = (res.get("mode") or "middle").strip().lower()
@@ -357,6 +389,20 @@ def _resolve_body(etype: str, stored: dict) -> dict:
             {"heading": (s or {}).get("heading", ""), "verses": _expand_refs((s or {}).get("verses"))}
             for s in (stored.get("sections") or [])
         ]
+    elif etype == "argument":
+        sides = stored.get("sides")
+        if not sides and (stored.get("support") or stored.get("tension")):
+            # legacy argument (saved before the two-sided layout): support -> A, tension -> B
+            sides = [
+                {"claim": "", "verses": stored.get("support") or []},
+                {"claim": "", "verses": stored.get("tension") or []},
+            ]
+        b["sides"] = [
+            {"claim": (s or {}).get("claim", ""), "verses": _expand_refs((s or {}).get("verses"))}
+            for s in (sides or [])
+        ]
+        b.pop("support", None)
+        b.pop("tension", None)
     else:
         b["support"] = _expand_refs(stored.get("support"))
         b["tension"] = _expand_refs(stored.get("tension"))
@@ -400,6 +446,13 @@ def list_entries():
             data = {}
         if r["type"] in ("topic", "name"):
             n = sum(len((s or {}).get("verses") or []) for s in (data.get("sections") or []))
+            heldBy = ""
+        elif r["type"] == "argument":
+            sides = data.get("sides")
+            if sides:
+                n = sum(len((s or {}).get("verses") or []) for s in sides)
+            else:
+                n = len(data.get("support") or []) + len(data.get("tension") or [])
             heldBy = ""
         else:
             n = len(data.get("support") or []) + len(data.get("tension") or [])
