@@ -81,6 +81,14 @@
   --ctl-on: #363c47;
   --overlay-bg: #20242b;
 }
+/* Dark: the highlight + search-mark backgrounds are always light pastels, so pin
+   their text dark (the default --ink text is light in dark mode → unreadable). */
+:root[data-theme="dark"] .lib-search-mark,
+:root[data-theme="dark"] .lib-hi-yellow,
+:root[data-theme="dark"] .lib-hi-green,
+:root[data-theme="dark"] .lib-hi-blue,
+:root[data-theme="dark"] .lib-hi-pink,
+:root[data-theme="dark"] .lib-hi-orange { color: #221e18; }
 
 * { box-sizing: border-box; }
 html, body {
@@ -207,7 +215,7 @@ input { font-family: inherit; }
   font-size: 14px;
   font-weight: 600;
   background: var(--ink);
-  color: #f4f6fa;
+  color: var(--paper);
   border: none;
   border-radius: var(--r-md);
   cursor: pointer;
@@ -301,7 +309,7 @@ input { font-family: inherit; }
 .lexicon-translit { font-size: 15px; font-style: italic; font-family: var(--f-serif); color: var(--ink-2); }
 .lexicon-strongs-tag {
   font-family: var(--f-mono);
-  font-size: 11px; font-weight: 500; color: #fff;
+  font-size: 11px; font-weight: 500; color: var(--paper);
   background: var(--accent); padding: 2px 7px; border-radius: 4px;
   letter-spacing: 0.02em;
 }
@@ -417,7 +425,7 @@ input { font-family: inherit; }
   width: 34px; height: 34px;
   border-radius: 6px;
   background: var(--ink);
-  color: #f4f6fa;
+  color: var(--paper);
   display: grid; place-items: center;
 }
 .search-go:hover { opacity: 0.85; }
@@ -444,7 +452,7 @@ input { font-family: inherit; }
 .chip:hover { background: var(--ctl-bg); border-color: var(--rule-2); }
 .chip.chip-active {
   background: var(--ink);
-  color: #f6f3ec;
+  color: var(--paper);
   border-color: var(--ink);
 }
 .chip.ghost { border-style: dashed; color: var(--ink-3); }
@@ -623,7 +631,7 @@ input { font-family: inherit; }
 }
 .card-badge.solid {
   background: var(--accent);
-  color: #fff;
+  color: var(--paper);
 }
 .card-main {
   display: flex;
@@ -1082,7 +1090,7 @@ input { font-family: inherit; }
 /* ---- Extracted from inline styles ---- */
 .detail-greek--he { font-family: var(--f-serif); text-align: left; }
 .lsj-badge--gold { background: var(--gold); color: #fff; }
-.lsj-badge--accent { background: var(--accent); color: #fff; }
+.lsj-badge--accent { background: var(--accent); color: var(--paper); }
 .lsj-def--loading { color: var(--ink-4); font-style: italic; padding: 8px 0; }
 .detail-p--meta { margin-top: 8px; }
 .link-btn--strong { font-weight: 600; }
@@ -2324,7 +2332,7 @@ input { font-family: inherit; }
 .tour-btn-next,
 .tour-btn-done {
   background: var(--accent);
-  color: #fff;
+  color: var(--paper);
   border: none;
 }
 .tour-btn-next:hover,
@@ -2405,7 +2413,7 @@ input { font-family: inherit; }
 }
 .donate-btn.github {
   background: var(--ink);
-  color: #fff;
+  color: var(--paper);
 }
 
 /* ── metaV sidebar ───────────────────────────────────────────── */
