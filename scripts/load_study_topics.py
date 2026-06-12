@@ -7,9 +7,11 @@ into one DRAFT topic entry: each subtopic becomes a SECTION (heading + its verse
 canonical order, de-duped), so a topic reads as a sectioned browse. Nothing is
 published; you tidy them in the Study tab.
 
-By default it skips thin one-off names (fewer than 5 verses — most of Nave's is
-proper names with a verse or two) so the list stays browsable; tune with
---min-verses (0 keeps everything). Re-running is safe: an entry whose id already
+By default it DROPS person/place-name topics (Aaron, Abana…) using MetaV's own
+People/Places lists — they're already in the metaV sidebar and a word search —
+keeping only concept topics (Faith, Atonement, Affliction…). A short whitelist
+keeps central ones (God, Jesus, Holy Spirit). Pass --keep-names to keep them all,
+or --min-verses N for an extra trim. Re-running is safe: an entry whose id already
 exists is left alone (your edits survive) unless you pass --replace.
 
 Runs on PythonAnywhere, where study.db lives. Reads three files from the MetaV CSV
@@ -57,6 +59,42 @@ def _now():
 def slugify(name):
     s = re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")
     return s or "topic"
+
+
+def _norm_name(s):
+    """Loose match key for comparing a topic name to a person/place name."""
+    return re.sub(r"\s+", " ", re.sub(r"[^\w\s]", "", s or "")).strip().lower()
+
+
+# Central topics that ARE persons in the data but are worth a study topic — kept
+# even when person/place names are dropped. Edit freely.
+KEEP_NAMES = {
+    "god", "jesus", "jesus christ", "christ", "holy spirit", "holy ghost",
+    "spirit", "messiah", "son of god", "son of man", "lamb of god",
+}
+
+
+def load_names(csv_dir):
+    """Person + place names (+ aliases) from MetaV, normalized. These topics are
+    DROPPED — they're already covered by the metaV person/place sidebar and a plain
+    word search; the topic module is for concepts."""
+    names = set()
+
+    def read(fname, col):
+        path = os.path.join(csv_dir, fname)
+        if not os.path.exists(path):
+            return
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            for r in csv.DictReader(f):
+                n = _norm_name(r.get(col))
+                if n:
+                    names.add(n)
+
+    read("People.csv", "Name")
+    read("PeopleAliases.csv", "Alias")
+    read("Places.csv", "PlaceName")
+    read("PlaceAliases.csv", "Alias")
+    return names
 
 
 def load_verses(csv_dir):
@@ -165,7 +203,8 @@ def main():
     ap.add_argument("--limit", type=int, default=25, help="max topics to import (0 = all). Default 25.")
     ap.add_argument("--only", default="", help="comma-separated main-topic names to import (overrides --limit)")
     ap.add_argument("--replace", action="store_true", help="overwrite already-imported entries (default: skip)")
-    ap.add_argument("--min-verses", type=int, default=5, help="skip topics with fewer than N verses — thins the one-off name entries. Default 5; 0 = keep all.")
+    ap.add_argument("--keep-names", action="store_true", help="keep person/place-name topics too (default: drop them — they're already in the metaV sidebar and a word search)")
+    ap.add_argument("--min-verses", type=int, default=0, help="also skip topics with fewer than N verses (default 0 = off; the name drop does the real work)")
     args = ap.parse_args()
 
     db_path = args.db or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "study.db")
@@ -179,6 +218,12 @@ def main():
 
     built = build_topics(topics, topic_index, verses)
     print(f"Built {len(built):,} main topics.")
+
+    if not args.keep_names:
+        names = load_names(args.csv_dir)
+        before = len(built)
+        built = [(m, secs) for (m, secs) in built if _norm_name(m) in KEEP_NAMES or _norm_name(m) not in names]
+        print(f"Dropped {before - len(built):,} person/place-name topics → {len(built):,} concept topics left.")
 
     if args.min_verses > 0:
         built = [(m, secs) for (m, secs) in built if sum(len(s["verses"]) for s in secs) >= args.min_verses]
