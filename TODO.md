@@ -308,7 +308,14 @@ chrono keeps the inline bar at the playing chapter.** Chrono is scroll-aware (pl
   one beat after the audio clears (`dockClosing` in 60-library.jsx) so the exit can play; a re-open cancels it.
 - **ESV audio** — built (FCBH Bible Brain, `ENGESVN2DA` = NT-only), owner-gated; waits on `FCBH_API_KEY`
   in the WSGI (key requested 2026-06-10). OT needs a separate fileset (`ESV_AUDIO_FILESET_OT`).
-- **KJV audio** — not built; FCBH dramatized or free plain recordings exist if wanted.
+- ~~**KJV audio**~~ — **DONE + LIVE 2026-06-11 (public, no key).** Single narrator + soft music
+  background (the "Firefighters for Christ" KJV reading, hosted by audiotreasure.com at
+  `/content/KJV_FF/<NN>_<Name>_<chap>.mp3`). Hotlinked like BSB — `views_kjv.kjv_audio` +
+  `api.kjvAudio` + `kjvMode` in the audio toggle; book-name tokens pinned in `_KJV_AUDIO_NAME`
+  (irregular spellings + a "Soloman" typo), Psalms = 3-digit chapters, all 66 books covered.
+  STILL OPEN: a **dramatized** KJV (multiple voices + music) = the FCBH recording, so it rides the
+  same pending Bible Brain key as ESV; swap/add it then if wanted. Self-hosting the archive.org
+  dramatized copies is off the table (FCBH owns that recording).
 - **Verse-by-verse karaoke** — needs per-verse timing data; bigger lift, parked.
 `code: views_bsb.bsb_audio + views_esv.esv_audio; audio player in 60-library.jsx`
 

@@ -97,6 +97,12 @@ const api = {
   }).catch(() => ({
     url: null
   })),
+  // KJV public-domain narration (audiotreasure.com, music bg) — no key, public.
+  kjvAudio: (book, ch) => fetch(`/api/kjv/audio/${encodeURIComponent(book)}/${ch}`).then(r => r.ok ? r.json() : {
+    url: null
+  }).catch(() => ({
+    url: null
+  })),
   // ESV is the owner's personal text — every call carries the login token and the
   // server refuses anyone but the owner (404). esvStatus drives the toggle.
   esvStatus: () => fetch(`/api/esv/status`, {
@@ -5578,7 +5584,7 @@ function LibraryView({
   const loadAudio = (book, ch) => {
     if (!book) return;
     setAudioBusy(true);
-    const fetchUrl = translation === "esv" ? api.esvAudio : api.bsbAudio;
+    const fetchUrl = translation === "esv" ? api.esvAudio : translation === "kjv" ? api.kjvAudio : api.bsbAudio;
     fetchUrl(book, ch).then(d => {
       setAudioBusy(false);
       if (d && d.url) {
@@ -5738,6 +5744,7 @@ function LibraryView({
   const bsbMode = translation === "bsb";
   const esvMode = translation === "esv";
   const nivMode = translation === "niv";
+  const kjvMode = translation === "kjv"; // KJV has public-domain audio (no key)
   const hebMode = translation === "heb"; // Hebrew interlinear: always chips, no prose option
   const proseLocked = !!(nonCanon && nonCanon.englishOnly) || bsbMode || esvMode || nivMode;
   const chipMode = !proseLocked && (viewMode === "chip" || showStrongs || showInterlinear);
@@ -5834,7 +5841,7 @@ function LibraryView({
   // spot). The button targets the chapter you're reading: canonical = the open chapter;
   // chrono = whichever chapter is scrolled into view (viewCh). Press play and you get
   // that chapter; it auto-advances to the next when one ends.
-  const audioCapable = bsbMode || esvMode;
+  const audioCapable = bsbMode || esvMode || kjvMode;
   const audioTarget = audioCapable ? {
     book: chronoOn ? curPassage && curPassage.book : selBook && selBook.abbrev,
     ch: chronoOn ? viewCh || curPassage && curPassage.start_ch : selChapter

@@ -14,6 +14,47 @@ from core import db_ro, _KJV_BOOK_ID, _KJV_BOOK_ID_REV
 
 bp = Blueprint("kjv", __name__)
 
+# Public-domain KJV chapter narration WITH a soft music background, hosted by
+# audiotreasure.com (the "Firefighters for Christ" KJV reading). One mp3 per
+# chapter at /content/KJV_FF/<NN>_<Name>_<chap>.mp3 — NN = 01-66 book number,
+# chap = 2-digit EXCEPT Psalms (book 19) which is 3-digit. The book-name tokens
+# are the site's own irregular spellings (abbreviations + a "Soloman" typo), so
+# they're pinned in a map rather than derived. No key; the files stream
+# cross-site with range support, so we just hand the browser the URL for an
+# <audio> tag (same approach as BSB). Single narrator + music (no dramatized
+# voices — that's the FCBH recording, which needs the pending Bible Brain key).
+_KJV_AUDIO_BASE = "https://www.audiotreasure.com/content/KJV_FF"
+_KJV_AUDIO_NAME = {
+    1: "Genesis", 2: "Exodus", 3: "Leviticus", 4: "Numbers", 5: "Deuteronomy",
+    6: "Joshua", 7: "Judges", 8: "Ruth", 9: "1Samuel", 10: "2Samuel",
+    11: "1Kings", 12: "2Kings", 13: "1Chronicles", 14: "2Chronicles", 15: "Ezra",
+    16: "Nehemiah", 17: "Esther", 18: "Job", 19: "Psalm", 20: "Prov",
+    21: "Ecclesiastes", 22: "Song_of_Soloman", 23: "Isaiah", 24: "Jeremiah",
+    25: "Lamentations", 26: "Ezekiel", 27: "Daniel", 28: "Hosea", 29: "Joel",
+    30: "Amos", 31: "Obadiah", 32: "Jonah", 33: "Micah", 34: "Nahum",
+    35: "Habakkuk", 36: "Zephaniah", 37: "Haggai", 38: "Zechariah", 39: "Malachi",
+    40: "Matthew", 41: "Mark", 42: "Luke", 43: "John", 44: "Acts", 45: "Romans",
+    46: "1Cor", 47: "2Cor", 48: "Gal", 49: "Ephesians", 50: "Philippians",
+    51: "Colossians", 52: "1Thess", 53: "2Thess", 54: "1Timothy", 55: "2Timothy",
+    56: "Titus", 57: "Philemon", 58: "Hebrews", 59: "James", 60: "1Peter",
+    61: "2Peter", 62: "1John", 63: "2John", 64: "3John", 65: "Jude",
+    66: "Revelation",
+}
+
+
+@bp.route("/api/kjv/audio/<book>/<int:chapter>")
+def kjv_audio(book, chapter):
+    """Public-domain KJV chapter narration URL (audiotreasure.com, music bg).
+    Returns {url}; no key, no gate — KJV is public. {url: None} for an unknown
+    book/chapter (the frontend then flashes 'No audio for this chapter')."""
+    book_id = _KJV_BOOK_ID.get(book)
+    name = _KJV_AUDIO_NAME.get(book_id) if book_id else None
+    if not name:
+        return jsonify({"url": None})
+    chap = f"{chapter:03d}" if book_id == 19 else f"{chapter:02d}"
+    fname = f"{book_id:02d}_{name}_{chap}.mp3"
+    return jsonify({"url": f"{_KJV_AUDIO_BASE}/{fname}"})
+
 
 @bp.route("/api/kjv/chapter/<book>/<int:chapter>")
 def kjv_chapter(book, chapter):
