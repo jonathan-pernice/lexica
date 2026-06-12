@@ -289,7 +289,7 @@ category *names* (renamed to drop loaded framing); generate the actual verses an
 Berean-style. Build a quick proof-of-concept with the off-the-shelf topic→verse mappings first to see
 if people use it, then swap in our own verse selection. Could be a new tab or a mode inside Search.
 
-### Study modules — admin-only tab (design done 2026-06-12, not built)
+### Study modules — admin-only tab (ENGINE v1 BUILT 2026-06-12, pending deploy)
 A new **admin-gated tab** (gate like the Admin page) holding three related study tools that all run on
 ONE shared engine, so it's one build + mostly data entry, not three features:
 - **Guided study (topics)** — pick a topic, get walked through its verses step by step (intro → Step N
@@ -305,8 +305,13 @@ The shared per-entry shape (one editor builds all three): **position** (the clai
 for it) · **tension** (verses against it) · **resolution** (middle road the text points to, OR marked an
 open mystery) · **notes** (private) · **related** (links to other entries). Editor only takes a verse
 REFERENCE — the verse text auto-fills from the corpus, so long verse lists stay cheap to enter. What's
-saved in the editor is what the reader views render. First build step = the data shape + the admin editor
-(content entry stalls everything otherwise; consider AI-drafts-you-correct). Two layout mockups shown
+saved in the editor is what the reader views render. BUILT v1 (2026-06-12, pushed, NOT yet deployed — goes live on his deploy.sh): the AUTHORING side —
+admin-only Study tab + entry editor + storage (`views_study.py` = study.db + admin-gated CRUD +
+`/api/study/verse` KJV auto-fill; `static/src/55-study.jsx`; nav gated on the `owner` flag). study.db
+auto-creates, normal deploy. Couldn't test live (no local DB) — first deploy is the real test.
+STILL TO DO: the reader-facing guided WALKTHROUGH views; the MetaV `Topics.csv` import (loader still
+doesn't pull it — hand-authored for now); a real two-sided ARGUMENT layout (v1 reuses single-position).
+Speed content entry later with AI-drafts-you-correct. Two layout mockups shown
 2026-06-12 (reader walkthrough + admin editor). Intentionally bends the app's "no imposed theology" rule —
 his app, his direction; the tension-verse framing keeps the TEXT as judge. Open: public vs his-eyes-only.
 `code: new admin tab (gate via views_notes is_admin); topics from scripts/load_metav.py + MetaV Topics.csv;
