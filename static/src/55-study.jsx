@@ -145,6 +145,17 @@ function TopicSectionEdit({ section, idx, count, onChange, onRemove, onMove }) {
 function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onToggleEdit, onWalk, previewReader, saving, savedAt }) {
   const up = patch => onChange({ ...entry, ...patch });
   const verseCount = entry.sections.reduce((n, s) => n + s.verses.length, 0);
+  const [drafting, setDrafting] = useState(false);
+  const [draftErr, setDraftErr] = useState(false);
+  const draftIntro = () => {
+    if (drafting) return;
+    setDrafting(true); setDraftErr(false);
+    const slim = (entry.sections || []).map(s => ({ heading: s.heading, verses: (s.verses || []).slice(0, 2).map(v => ({ ref: v.ref, text: v.text })) }));
+    api.studyDraftIntro({ title: entry.title, sections: slim }).then(d => {
+      setDrafting(false);
+      if (d && d.intro) up({ intro: d.intro }); else setDraftErr(true);
+    });
+  };
 
   if (!editing) {
     return (
@@ -194,8 +205,11 @@ function TopicPage({ entry, editing, onChange, onSave, onDelete, onClose, onTogg
         <input className="study-input" type="text" value={entry.title} placeholder="Subject — e.g. Faith" onChange={e => up({ title: e.target.value })} />
       </div>
       <div className="study-field">
-        <label className="study-label">Intro <span className="study-label-hint">(optional)</span></label>
-        <textarea className="study-textarea study-textarea--sm" value={entry.intro} placeholder="A short, plain-English lead-in." onChange={e => up({ intro: e.target.value })} />
+        <label className="study-label">Intro <span className="study-label-hint">(optional)</span>
+          <button type="button" className="study-ai-btn" disabled={drafting || !entry.title.trim()} onClick={draftIntro}>{drafting ? "Drafting…" : "✦ Draft with AI"}</button>
+          {draftErr && <span className="study-ai-err">couldn't draft — try again</span>}
+        </label>
+        <textarea className="study-textarea study-textarea--sm" value={entry.intro} placeholder="A short, plain-English lead-in (or use Draft with AI)." onChange={e => up({ intro: e.target.value })} />
       </div>
       {entry.sections.map((s, i) => (
         <TopicSectionEdit key={i} section={s} idx={i} count={entry.sections.length}

@@ -219,6 +219,19 @@ const api = {
   }).catch(() => ({
     sections: []
   })),
+  // Admin: draft a text-first intro for a topic (title + sections) → { intro }.
+  studyDraftIntro: payload => fetch(`/api/study/draft-intro`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ..._authHeaders()
+    },
+    body: JSON.stringify(payload)
+  }).then(r => r.ok ? r.json() : {
+    error: true
+  }).catch(() => ({
+    error: true
+  })),
   textSearch: (q, corpus, mode, book) => fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` + `&mode=${encodeURIComponent(mode || "phrase")}` + (book ? `&book=${encodeURIComponent(book)}` : "")).then(r => r.json()),
   summary: (book, ch) => fetch(`/api/summary/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
@@ -4136,6 +4149,29 @@ function TopicPage({
     ...patch
   });
   const verseCount = entry.sections.reduce((n, s) => n + s.verses.length, 0);
+  const [drafting, setDrafting] = useState(false);
+  const [draftErr, setDraftErr] = useState(false);
+  const draftIntro = () => {
+    if (drafting) return;
+    setDrafting(true);
+    setDraftErr(false);
+    const slim = (entry.sections || []).map(s => ({
+      heading: s.heading,
+      verses: (s.verses || []).slice(0, 2).map(v => ({
+        ref: v.ref,
+        text: v.text
+      }))
+    }));
+    api.studyDraftIntro({
+      title: entry.title,
+      sections: slim
+    }).then(d => {
+      setDrafting(false);
+      if (d && d.intro) up({
+        intro: d.intro
+      });else setDraftErr(true);
+    });
+  };
   if (!editing) {
     return /*#__PURE__*/React.createElement("div", {
       className: "study-topic"
@@ -4216,10 +4252,17 @@ function TopicPage({
     className: "study-label"
   }, "Intro ", /*#__PURE__*/React.createElement("span", {
     className: "study-label-hint"
-  }, "(optional)")), /*#__PURE__*/React.createElement("textarea", {
+  }, "(optional)"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "study-ai-btn",
+    disabled: drafting || !entry.title.trim(),
+    onClick: draftIntro
+  }, drafting ? "Drafting…" : "✦ Draft with AI"), draftErr && /*#__PURE__*/React.createElement("span", {
+    className: "study-ai-err"
+  }, "couldn't draft \u2014 try again")), /*#__PURE__*/React.createElement("textarea", {
     className: "study-textarea study-textarea--sm",
     value: entry.intro,
-    placeholder: "A short, plain-English lead-in.",
+    placeholder: "A short, plain-English lead-in (or use Draft with AI).",
     onChange: e => up({
       intro: e.target.value
     })

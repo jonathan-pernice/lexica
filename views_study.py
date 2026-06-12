@@ -29,16 +29,18 @@ Endpoints (all admin-only):
   GET  /api/study/verse?ref=Rom+10:17  -> {ref, verses:[{ref,text}]}  (auto-fill)
 """
 import json
+import logging
 import re
 import secrets
 import time
 
 from flask import Blueprint, jsonify, request
 
-from core import study_db, db_ro, limiter, _KJV_BOOK_ID, _KJV_BOOK_ID_REV
+from core import study_db, db_ro, limiter, _anthropic, _KJV_BOOK_ID, _KJV_BOOK_ID_REV
 from views_notes import is_admin
 
 bp = Blueprint("study", __name__)
+log = logging.getLogger("study")
 
 _TYPES = ("topic", "denomination", "argument", "name")   # "name" = a metaV person/place name-topic (sectioned like a topic; not shown in the browser list)
 _RES_MODES = ("middle", "mystery")
@@ -409,6 +411,66 @@ def _resolve_body(etype: str, stored: dict) -> dict:
     return b
 
 
+# ── AI: draft a topic intro (text-first, Berean) ─────────────────────────────
+_INTRO_SYSTEM = (
+    "You write a one- to two-sentence introduction to a Bible study topic, to sit "
+    "above the list of verses a reader is about to walk through. Be text-first and "
+    "Berean: say what the gathered verses cover and invite the reader in, but state "
+    "no doctrine the verses don't, impose no system, and name a tension as a tension. "
+    "Plain, warm, concise. No markdown, no heading, no surrounding quotation marks."
+)
+
+
+def _intro_user_prompt(title, sections):
+    """A compact prompt: the topic, its subtopic headings, and a few sample verses
+    (capped, so a huge topic stays cheap)."""
+    lines = ["Topic: " + (title or "").strip()]
+    shown = 0
+    for s in sections or []:
+        if not isinstance(s, dict):
+            continue
+        h = (s.get("heading") or "").strip()
+        if h:
+            lines.append("Subtopic: " + h)
+        for v in (s.get("verses") or []):
+            if shown >= 14:
+                break
+            ref = str((v.get("ref") if isinstance(v, dict) else "") or "").strip()
+            txt = str((v.get("text") if isinstance(v, dict) else "") or "").strip()
+            if ref and txt:
+                lines.append("  " + ref + " — " + txt[:200])
+                shown += 1
+            elif ref:
+                lines.append("  " + ref)
+        if shown >= 14:
+            break
+    lines.append("")
+    lines.append("Write the 1-2 sentence intro for this topic.")
+    return "\n".join(lines)
+
+
+def _draft_intro(title, sections):
+    """Haiku-written, text-first intro for a topic. Returns '' on any failure so the
+    caller decides what to do. Shared by the in-app button and the bulk script."""
+    if not _anthropic:
+        return ""
+    try:
+        msg = _anthropic.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=180,
+            temperature=0.5,
+            system=_INTRO_SYSTEM,
+            messages=[{"role": "user", "content": _intro_user_prompt(title, sections)}],
+        )
+        out = msg.content[0].text.strip() if msg.content else ""
+    except Exception as e:
+        log.error("draft intro failed for %r: %s", title, e)
+        return ""
+    if len(out) >= 2 and out[0] in "\"'“" and out[-1] in "\"'”":
+        out = out[1:-1].strip()
+    return out
+
+
 def _guard():
     if not is_admin():
         return jsonify({"error": "not found"}), 404
@@ -612,3 +674,29 @@ def for_name(name):
     secs = [{"heading": (s or {}).get("heading", ""), "n": len((s or {}).get("verses") or [])}
             for s in (stored.get("sections") or [])]
     return jsonify({"name": r["title"], "id": entry_id, "sections": secs})
+
+
+@bp.route("/api/study/draft-intro", methods=["POST"])
+@limiter.limit("120 per hour")
+def draft_intro_route():
+    """Admin: draft a text-first intro for the topic being edited (title + sections in
+    the body). Returns {intro}; the editor fills the field and the admin reviews + saves."""
+    g = _guard()
+    if g:
+        return g
+    if not _anthropic:
+        return jsonify({"error": "AI not available"}), 503
+    try:
+        body = json.loads(request.get_data(cache=False) or b"{}")
+    except (ValueError, TypeError):
+        return jsonify({"error": "bad request"}), 400
+    if not isinstance(body, dict):
+        return jsonify({"error": "bad request"}), 400
+    title = str(body.get("title") or "").strip()
+    sections = body.get("sections") or []
+    if not title and not sections:
+        return jsonify({"error": "nothing to summarize"}), 400
+    intro = _draft_intro(title, sections)
+    if not intro:
+        return jsonify({"error": "couldn't draft an intro"}), 500
+    return jsonify({"intro": intro})

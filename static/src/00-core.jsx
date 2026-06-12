@@ -165,6 +165,13 @@ const api = {
   studyForName: (name) =>
     fetch(`/api/study/for-name/${encodeURIComponent(name)}`, { headers: _authHeaders() })
       .then(r => r.ok ? r.json() : { sections: [] }).catch(() => ({ sections: [] })),
+  // Admin: draft a text-first intro for a topic (title + sections) → { intro }.
+  studyDraftIntro: (payload) =>
+    fetch(`/api/study/draft-intro`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ..._authHeaders() },
+      body: JSON.stringify(payload),
+    }).then(r => r.ok ? r.json() : { error: true }).catch(() => ({ error: true })),
   textSearch: (q, corpus, mode, book) =>
     fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` +
           `&mode=${encodeURIComponent(mode || "phrase")}` +
