@@ -294,10 +294,9 @@ Built + deployed: admin-only **Study** tab, sub-switch **Topics · Denominations
 sectioned browse (MetaV/Nave's, ~1,819 concept topics loaded); denomination/argument = the
 position→support→tension→resolution claim editor; person/place names → a "Nave's topical" block on the
 metaV sidebar (696 name-topics). Verse text = ABP prose (KJV fallback). OPEN:
-- **BUG: the "Nave's topical" sidebar block isn't showing live** — the whole sidebar flow was never
-  verified in the real app. Debug: does `/api/study/for-name/<Name>` (admin, Bearer) return sections?
-  trace the `naveData` effect + `sections.push("naveTopical")` in `30-detail-panel.jsx`; whether
-  `extractProperName` matches the loader's `metavn_<slug>` id; owner gating; or simply not redeployed.
+- Sidebar "Nave's topical" block is LIVE (the earlier blank was a redeploy/refresh miss). STILL
+  VERIFY: the tap-through — a subtopic header should jump to the Study tab and open that name's
+  sectioned page (`studyPending` → `openEntry`).
 - Reader-facing guided WALKTHROUGH view (the stepped topic-reading mockup) — not built.
 - A real two-sided ARGUMENT layout (v1 reuses the single-position claim editor).
 - Decide PUBLIC vs admin-only for these modules. Optional: fold MetaV `Writers` in (replace hand `_BOOK_AUTHORS`).
