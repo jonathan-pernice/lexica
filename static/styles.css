@@ -40,6 +40,41 @@
   --lib-row-gap: 8px;    /* lib-verse-row gap */
 }
 
+/* ----- Reading themes (data-theme on <html>; default = the light :root above) -----
+   Trial 2026-06-11: re-skins the whole app via the color variables. Sepia = warmer
+   parchment; dark = warm near-black. The navy header stays brand navy in every theme. */
+:root[data-theme="sepia"] {
+  --bg: #e9dfc8;          /* parchment */
+  --bg-sunk: #e1d5b9;
+  --paper: #f3ecd9;
+  --ink: #423526;         /* warm dark brown */
+  --ink-2: #574734;
+  --ink-3: #79694f;
+  --ink-4: #9b8c6f;
+  --rule: #d7c9a8;
+  --rule-2: #c7b791;
+  --accent: #4a4636;
+  --accent-soft: color-mix(in oklab, #4a4636 12%, var(--paper));
+}
+:root[data-theme="dark"] {
+  --bg: #16181c;          /* warm near-black */
+  --bg-sunk: #101216;
+  --paper: #1d2025;       /* cards a touch lighter than the page */
+  --ink: #e7e2d6;         /* warm off-white text */
+  --ink-2: #c4c8cf;
+  --ink-3: #9aa0aa;
+  --ink-4: #6c717b;
+  --rule: #2b2f37;
+  --rule-2: #3a3f49;
+  --accent: #9db4d8;      /* lighter navy so links read on dark */
+  --accent-soft: color-mix(in oklab, #9db4d8 16%, var(--paper));
+  --gold: oklch(0.78 0.11 75);
+  --gold-soft: oklch(0.33 0.06 75);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+}
+
 * { box-sizing: border-box; }
 html, body {
   margin: 0;
@@ -1843,6 +1878,8 @@ input { font-family: inherit; }
 /* Compact text-size button + its little popover (replaces the inline A−/A+ seg) */
 .lib-font-btn { font-size: 13px; letter-spacing: 0.01em; }
 .lib-font-menu { min-width: 0; padding: 6px; }
+.lib-theme-seg { margin-top: 6px; }
+.lib-theme-seg .seg-b { flex: 1 1 0; padding: 5px 6px; }
 
 /* ----- Non-canonical reader: readable English (parallel right column) ----- */
 .lib-did-eng {

@@ -485,7 +485,7 @@ function ModesSheet({
   corpus, translation, pickBible, esvOwner, nivOwner, hebShown, hebPickable, toggleParallel, nonCanonList,
   compareAvail, compareActive, toggleCompare,
   showStrongs, showInterlinear, setOpt, chipMode, viewMode, libFontSize, changeFontSize, onClose,
-  chrono, orderMode, setOrder,
+  chrono, orderMode, setOrder, theme, setTheme,
 }) {
   const { sheetRef, scrollRef } = useSwipeToDismiss(onClose);
   const activeNonCanon = nonCanonList.find(t => t.id === corpus) || null;
@@ -591,6 +591,14 @@ function ModesSheet({
                 <span className="font-size-lbl">{libFontSize}</span>
                 <button className="mseg-b" onClick={() => changeFontSize(+1)}>A+</button>
               </div>
+            </div>
+          </div>
+          <div className="mode-sec">
+            <div className="mode-lbl">Theme</div>
+            <div className="mseg">
+              <button className={"mseg-b"+(theme==="light"?" on":"")} aria-pressed={theme==="light"} onClick={()=>setTheme("light")}>Light</button>
+              <button className={"mseg-b"+(theme==="sepia"?" on":"")} aria-pressed={theme==="sepia"} onClick={()=>setTheme("sepia")}>Sepia</button>
+              <button className={"mseg-b"+(theme==="dark"?" on":"")} aria-pressed={theme==="dark"} onClick={()=>setTheme("dark")}>Dark</button>
             </div>
           </div>
         </div>
@@ -755,6 +763,14 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
     if (stored) return parseInt(stored, 10);
     return isMobile ? 15 : 18;
   });
+  // Reading theme: "light" (default) | "sepia" | "dark". Applied to <html data-theme>
+  // so it re-skins the whole app, and remembered across reloads.
+  const [theme, setTheme] = useState(() => localStorage.getItem("lexica.theme.v1") || "light");
+  useEffect(() => {
+    if (theme === "light") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("lexica.theme.v1", theme);
+  }, [theme]);
   const [translation, setTranslation] = useState("abp"); // layout: "abp" | "kjv" | "bsb" | "esv" | "niv" | "parallel"
   // Compare (parallel): translation === "parallel" is the mode; compareSel is WHICH
   // texts (2-4) sit side by side. ESV/NIV only offered to the owner.
@@ -2441,6 +2457,8 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
           chrono={chrono}
           orderMode={orderMode}
           setOrder={setOrder}
+          theme={theme}
+          setTheme={setTheme}
           onClose={() => setModesOpen(false)}
         />
       )}
@@ -2527,6 +2545,11 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                       <button className="seg-b" onClick={() => changeFontSize(-1)}>A−</button>
                       <span className="font-size-lbl">{libFontSize}</span>
                       <button className="seg-b" onClick={() => changeFontSize(+1)}>A+</button>
+                    </div>
+                    <div className="seg lib-theme-seg">
+                      <button className={"seg-b"+(theme==="light"?" on":"")} onClick={() => setTheme("light")}>Light</button>
+                      <button className={"seg-b"+(theme==="sepia"?" on":"")} onClick={() => setTheme("sepia")}>Sepia</button>
+                      <button className={"seg-b"+(theme==="dark"?" on":"")} onClick={() => setTheme("dark")}>Dark</button>
                     </div>
                   </div>
                 </>

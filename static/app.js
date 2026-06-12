@@ -4407,7 +4407,9 @@ function ModesSheet({
   onClose,
   chrono,
   orderMode,
-  setOrder
+  setOrder,
+  theme,
+  setTheme
 }) {
   const {
     sheetRef,
@@ -4617,7 +4619,25 @@ function ModesSheet({
   }, libFontSize), /*#__PURE__*/React.createElement("button", {
     className: "mseg-b",
     onClick: () => changeFontSize(+1)
-  }, "A+")))))));
+  }, "A+")))), /*#__PURE__*/React.createElement("div", {
+    className: "mode-sec"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mode-lbl"
+  }, "Theme"), /*#__PURE__*/React.createElement("div", {
+    className: "mseg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (theme === "light" ? " on" : ""),
+    "aria-pressed": theme === "light",
+    onClick: () => setTheme("light")
+  }, "Light"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (theme === "sepia" ? " on" : ""),
+    "aria-pressed": theme === "sepia",
+    onClick: () => setTheme("sepia")
+  }, "Sepia"), /*#__PURE__*/React.createElement("button", {
+    className: "mseg-b" + (theme === "dark" ? " on" : ""),
+    "aria-pressed": theme === "dark",
+    onClick: () => setTheme("dark")
+  }, "Dark"))))));
 }
 
 // Non-canonical texts — reached via the "Other" pick, walled off from the Bible
@@ -5117,6 +5137,13 @@ function LibraryView({
     if (stored) return parseInt(stored, 10);
     return isMobile ? 15 : 18;
   });
+  // Reading theme: "light" (default) | "sepia" | "dark". Applied to <html data-theme>
+  // so it re-skins the whole app, and remembered across reloads.
+  const [theme, setTheme] = useState(() => localStorage.getItem("lexica.theme.v1") || "light");
+  useEffect(() => {
+    if (theme === "light") document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("lexica.theme.v1", theme);
+  }, [theme]);
   const [translation, setTranslation] = useState("abp"); // layout: "abp" | "kjv" | "bsb" | "esv" | "niv" | "parallel"
   // Compare (parallel): translation === "parallel" is the mode; compareSel is WHICH
   // texts (2-4) sit side by side. ESV/NIV only offered to the owner.
@@ -7295,6 +7322,8 @@ function LibraryView({
     chrono: chrono,
     orderMode: orderMode,
     setOrder: setOrder,
+    theme: theme,
+    setTheme: setTheme,
     onClose: () => setModesOpen(false)
   }), /*#__PURE__*/React.createElement("div", null, navVisible ? /*#__PURE__*/React.createElement("div", {
     className: "lib-bar"
@@ -7473,7 +7502,18 @@ function LibraryView({
   }, libFontSize), /*#__PURE__*/React.createElement("button", {
     className: "seg-b",
     onClick: () => changeFontSize(+1)
-  }, "A+"))))))) : /*#__PURE__*/React.createElement("div", {
+  }, "A+")), /*#__PURE__*/React.createElement("div", {
+    className: "seg lib-theme-seg"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (theme === "light" ? " on" : ""),
+    onClick: () => setTheme("light")
+  }, "Light"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (theme === "sepia" ? " on" : ""),
+    onClick: () => setTheme("sepia")
+  }, "Sepia"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (theme === "dark" ? " on" : ""),
+    onClick: () => setTheme("dark")
+  }, "Dark"))))))) : /*#__PURE__*/React.createElement("div", {
     className: "lib-toolbar"
   }, /*#__PURE__*/React.createElement("button", {
     className: "mbar-overview",
