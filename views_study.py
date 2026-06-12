@@ -424,11 +424,13 @@ def _resolve_body(etype: str, stored: dict) -> dict:
 
 # ── AI: draft a topic intro (text-first, Berean) ─────────────────────────────
 _INTRO_SYSTEM = (
-    "You write a one- to two-sentence introduction to a Bible study topic, to sit "
-    "above the list of verses a reader is about to walk through. Be text-first and "
-    "Berean: say what the gathered verses cover and invite the reader in, but state "
-    "no doctrine the verses don't, impose no system, and name a tension as a tension. "
-    "Plain, warm, concise. No markdown, no heading, no surrounding quotation marks."
+    "You write a one- or two-sentence lead-in that sits above a set of Bible verses a "
+    "reader is about to read on a topic. Berean and strictly text-first: ground it ONLY "
+    "in what these gathered verses actually say — add no doctrine they don't state, and "
+    "import no theological system or denominational position. If the verses pull in "
+    "different directions or leave something open, say so plainly instead of resolving it "
+    "for the reader. Describe and invite; do not conclude, moralize, or tell the reader "
+    "what to do. Plain words, warm, concise. No markdown, no heading, no quotation marks."
 )
 
 
