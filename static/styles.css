@@ -3376,7 +3376,7 @@ input { font-family: inherit; }
 .study-section-head { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 9px; padding-bottom: 5px; border-bottom: 1px solid var(--rule); }
 .study-read-verses { display: flex; flex-direction: column; gap: 9px; }
 .study-read-verse { display: flex; gap: 12px; align-items: baseline; }
-.study-read-verse .study-verse-ref { flex: none; width: 96px; }
+.study-read-verse .study-verse-ref { flex: none; min-width: 96px; }
 .study-read-text { flex: 1; min-width: 0; font-family: var(--f-serif); font-size: 15px; line-height: 1.5; color: var(--ink); }
 
 /* topic — edit (sections) */
