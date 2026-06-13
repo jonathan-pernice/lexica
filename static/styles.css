@@ -3098,9 +3098,17 @@ input { font-family: inherit; }
 .lib-note-dot svg { width: 13px; height: 13px; }
 .lib-note-dot:hover { color: var(--ink); }
 .lib-note-dot-inline { margin: 0 2px; }
+/* Hang the marker in a left gutter so EVERY line of a marked verse (incl. wrapped
+   lines) aligns under the first word — not just line one. padding-left opens the
+   gutter; the marker's negative margin pulls it back into it. Works for prose +
+   chips alike; width tracks the marker (18px desktop / 25px phones). */
+.lib-verse-content:has(> .lib-note-dot:not(.lib-note-dot-inline)) { padding-left: 18px; }
+.lib-verse-content > .lib-note-dot:not(.lib-note-dot-inline) { margin-left: -18px; }
 @media (max-width: 1099px) {
   .lib-note-dot { padding: 4px 8px 4px 2px; }   /* bigger tap target on phones */
   .lib-note-dot svg { width: 15px; height: 15px; }
+  .lib-verse-content:has(> .lib-note-dot:not(.lib-note-dot-inline)) { padding-left: 25px; }
+  .lib-verse-content > .lib-note-dot:not(.lib-note-dot-inline) { margin-left: -25px; }
 }
 
 /* Note editor (reuses .detail shell) */
