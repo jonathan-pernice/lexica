@@ -26,6 +26,7 @@ def main():
     ap = argparse.ArgumentParser(description="Batch publish/unpublish Study topics.")
     ap.add_argument("--all", action="store_true", help="publish every topic (default: only ones with an intro)")
     ap.add_argument("--common", action="store_true", help="only the curated hot topics (same list the intro script uses)")
+    ap.add_argument("--skip-first", type=int, default=0, metavar="N", help="when publishing, skip the first N topics alphabetically (the early test batch)")
     ap.add_argument("--unpublish", action="store_true", help="set topics back to Draft instead")
     ap.add_argument("--limit", type=int, default=0, help="stop after N changes (0 = no cap)")
     args = ap.parse_args()
@@ -38,6 +39,8 @@ def main():
     if args.common:
         wanted = {t.lower() for t in _COMMON}
         rows = [r for r in rows if (r["title"] or "").strip().lower() in wanted]
+    elif args.skip_first and not args.unpublish:
+        rows = sorted(rows, key=lambda r: (r["title"] or "").lower())[args.skip_first:]
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
     changed = 0
