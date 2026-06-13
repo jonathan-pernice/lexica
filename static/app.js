@@ -6941,6 +6941,7 @@ function LibraryView({
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchCounts, setSearchCounts] = useState(null); // {verses, matches, capped}
   const [searchHi, setSearchHi] = useState(null); // {terms, partial, caseSensitive} for result highlighting
+  const didSearchRef = useRef(false); // true once a search has run (gates the auto-rerun on setting changes)
   const [searchOptsOpen, setSearchOptsOpen] = useState(false); // the collapsible options/range block
   // eSword-style options
   const [searchMode, setSearchMode] = useState("any"); // "any" | "all" | "phrase"
@@ -7388,6 +7389,7 @@ function LibraryView({
   const runTextSearch = () => {
     const q = searchQ.trim();
     if (!q || !readCorpus) return;
+    didSearchRef.current = true;
     const terms = searchMode === "phrase" ? [q] : q.split(/\s+/);
     setSearchHi({
       terms,
@@ -7432,6 +7434,13 @@ function LibraryView({
   };
   // Which preset (if any) the current from/to pair matches — for the dropdown's value.
   const activeRangeId = (SEARCH_RANGES.find(r => r.from === searchFrom && r.to === searchTo) || {}).id || "custom";
+  // Once a search has run, changing mode / range / whole-word / case re-runs it
+  // automatically so the list never sits stale against the controls. (Exclude
+  // re-runs on Enter — it's typed, so we don't fire on every keystroke.)
+  useEffect(() => {
+    if (!didSearchRef.current || !searchQ.trim() || !readCorpus) return;
+    runTextSearch();
+  }, [searchMode, searchPartial, searchCase, searchFrom, searchTo]);
   // Jump to a hit. Bible → the shared nav path (loads chapter, highlights +
   // scrolls). Non-canonical → same text, just switch to that chapter.
   const jumpToResult = r => {
