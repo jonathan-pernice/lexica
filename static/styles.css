@@ -3321,11 +3321,11 @@ input { font-family: inherit; }
 .study-search-input:focus { outline: none; border-color: var(--accent); }
 
 /* Nave's topical block on the metaV person/place sidebar */
-.nave-secs { display: flex; flex-direction: column; gap: 4px; }
-.nave-sec { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; background: var(--ctl-bg); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 11px; cursor: pointer; }
-.nave-sec:hover { border-color: var(--ink-3); }
-.nave-sec-h { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.nave-sec-n { flex: none; font-size: 11.5px; color: var(--ink-4); }
+.nave-secs { display: flex; flex-direction: column; gap: 6px; }
+.nave-sec { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 9px 12px; cursor: pointer; transition: border-color .12s, background .12s; }
+.nave-sec:hover { border-color: var(--gold); background: var(--gold-soft); }
+.nave-sec-h { font-size: 13.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nave-sec-n { flex: none; font-family: var(--f-mono); font-size: 10px; color: var(--gold); background: var(--gold-soft); padding: 2px 7px; border-radius: 20px; }
 
 .study-rows { display: flex; flex-direction: column; gap: 6px; }
 .study-row {

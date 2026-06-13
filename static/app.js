@@ -2267,7 +2267,6 @@ function DetailPanel({
   // gets BDB; everything else may get LSJ) — same either/or as the old ternary.
   const sections = [];
   if (metavLoading || metavPersonData || metavPlaceData) sections.push("metav");
-  if (naveData && naveData.sections.length) sections.push("naveTopical");
   if (aiDescription || aiDescLoading) sections.push("aidesc");
   if (isHebrewWord) sections.push("bdb");else if ((!isPN || metavType === "place" && metavData?.strongs_g?.length > 0) && metavType !== "person" && !aiDescription && !aiDescLoading && (entry.greek || entry.strongs_raw || metavData?.strongs_g?.length > 0)) sections.push("lsj");
   if (!isHebrew && !isPN && !entry.isKjv && !entry.isExtra && abpCount !== null && abpCount > 0) sections.push("abpOcc");
@@ -2278,6 +2277,9 @@ function DetailPanel({
   if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
   if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
   if (isHebrew && !entry.isHeb && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
+  // Nave's topical sits BELOW the lexicon/place cards (metaV, AI, BDB/LSJ) — it's a
+  // study cross-link, not a definition, so it reads last among the reference blocks.
+  if (naveData && naveData.sections.length) sections.push("naveTopical");
   if (entry.derivation) sections.push("derivation");
   if (entry.book && !entry.isExtra) sections.push("verse");
   if (occurrences > 0 || totalResults > 0) sections.push("frequency");
@@ -2376,7 +2378,9 @@ function DetailPanel({
           className: "sec-head"
         }, /*#__PURE__*/React.createElement("span", {
           className: "sec-t"
-        }, "Nave's topical")), /*#__PURE__*/React.createElement("div", {
+        }, "Nave's Topical"), /*#__PURE__*/React.createElement("span", {
+          className: "lsj-badge"
+        }, "Nave's")), /*#__PURE__*/React.createElement("div", {
           className: "nave-secs"
         }, naveData.sections.map((s, i) => /*#__PURE__*/React.createElement("button", {
           key: i,
@@ -6802,10 +6806,25 @@ function LibraryView({
   const fontWrapRef = useRef(null); // the Aa menu wrapper — for click-outside-to-close
   // Close the Aa (size/theme) menu on any click outside it — robust against the
   // toolbar sitting above the scrim. Clicks inside keep it open so A−/A+ still work.
+  // The outside click that closes it is SWALLOWED so it doesn't also select a word
+  // or open something behind the menu (the dismiss click should only dismiss).
   useEffect(() => {
     if (!fontOpen) return;
     const onDoc = e => {
-      if (!fontWrapRef.current || !fontWrapRef.current.contains(e.target)) setFontOpen(false);
+      if (fontWrapRef.current && fontWrapRef.current.contains(e.target)) return; // inside: keep open
+      setFontOpen(false);
+      const swallow = ev => {
+        ev.stopPropagation();
+        ev.preventDefault();
+      };
+      document.addEventListener("click", swallow, {
+        capture: true,
+        once: true
+      });
+      // If this press never becomes a click (e.g. a drag), drop the swallower.
+      setTimeout(() => document.removeEventListener("click", swallow, {
+        capture: true
+      }), 350);
     };
     document.addEventListener("pointerdown", onDoc);
     return () => document.removeEventListener("pointerdown", onDoc);
@@ -6924,7 +6943,7 @@ function LibraryView({
   const [searchHi, setSearchHi] = useState(null); // {terms, partial, caseSensitive} for result highlighting
   const [searchOptsOpen, setSearchOptsOpen] = useState(false); // the collapsible options/range block
   // eSword-style options
-  const [searchMode, setSearchMode] = useState("phrase"); // "phrase" | "all" | "any"
+  const [searchMode, setSearchMode] = useState("any"); // "any" | "all" | "phrase"
   const [searchPartial, setSearchPartial] = useState(true); // true = substring, false = whole word
   const [searchCase, setSearchCase] = useState(false); // case-sensitive
   const [searchExclude, setSearchExclude] = useState(""); // words to exclude
@@ -9294,15 +9313,15 @@ function LibraryView({
   }, /*#__PURE__*/React.createElement("div", {
     className: "seg lib-search-mode-seg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (searchMode === "phrase" ? " on" : ""),
-    onClick: () => setSearchMode("phrase")
-  }, "Phrase"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (searchMode === "any" ? " on" : ""),
+    onClick: () => setSearchMode("any")
+  }, "Any word"), /*#__PURE__*/React.createElement("button", {
     className: "seg-b" + (searchMode === "all" ? " on" : ""),
     onClick: () => setSearchMode("all")
   }, "All words"), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (searchMode === "any" ? " on" : ""),
-    onClick: () => setSearchMode("any")
-  }, "Any word")), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (searchMode === "phrase" ? " on" : ""),
+    onClick: () => setSearchMode("phrase")
+  }, "Phrase")), /*#__PURE__*/React.createElement("button", {
     className: "lib-search-opts-btn" + (searchOptsOpen ? " on" : ""),
     onClick: () => setSearchOptsOpen(o => !o)
   }, "Options ", searchOptsOpen ? "▴" : "▾")), searchOptsOpen && /*#__PURE__*/React.createElement("div", {
@@ -9361,9 +9380,7 @@ function LibraryView({
     className: "lib-search-results"
   }, searchLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lib-search-status"
-  }, "Searching\u2026") : searchResults == null ? /*#__PURE__*/React.createElement("div", {
-    className: "lib-search-status"
-  }, "Type words and press Enter.") : searchResults.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, "Searching\u2026") : searchResults == null ? null : searchResults.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "lib-search-status"
   }, "No matches.") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "lib-search-status"

@@ -823,9 +823,18 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const fontWrapRef = useRef(null);   // the Aa menu wrapper — for click-outside-to-close
   // Close the Aa (size/theme) menu on any click outside it — robust against the
   // toolbar sitting above the scrim. Clicks inside keep it open so A−/A+ still work.
+  // The outside click that closes it is SWALLOWED so it doesn't also select a word
+  // or open something behind the menu (the dismiss click should only dismiss).
   useEffect(() => {
     if (!fontOpen) return;
-    const onDoc = (e) => { if (!fontWrapRef.current || !fontWrapRef.current.contains(e.target)) setFontOpen(false); };
+    const onDoc = (e) => {
+      if (fontWrapRef.current && fontWrapRef.current.contains(e.target)) return;   // inside: keep open
+      setFontOpen(false);
+      const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
+      document.addEventListener("click", swallow, { capture: true, once: true });
+      // If this press never becomes a click (e.g. a drag), drop the swallower.
+      setTimeout(() => document.removeEventListener("click", swallow, { capture: true }), 350);
+    };
     document.addEventListener("pointerdown", onDoc);
     return () => document.removeEventListener("pointerdown", onDoc);
   }, [fontOpen]);
@@ -913,7 +922,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const [searchHi, setSearchHi] = useState(null);             // {terms, partial, caseSensitive} for result highlighting
   const [searchOptsOpen, setSearchOptsOpen] = useState(false);// the collapsible options/range block
   // eSword-style options
-  const [searchMode, setSearchMode] = useState("phrase");     // "phrase" | "all" | "any"
+  const [searchMode, setSearchMode] = useState("any");        // "any" | "all" | "phrase"
   const [searchPartial, setSearchPartial] = useState(true);   // true = substring, false = whole word
   const [searchCase, setSearchCase] = useState(false);        // case-sensitive
   const [searchExclude, setSearchExclude] = useState("");     // words to exclude
@@ -2707,9 +2716,9 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             </div>
             <div className="lib-search-modes">
               <div className="seg lib-search-mode-seg">
-                <button className={"seg-b" + (searchMode === "phrase" ? " on" : "")} onClick={() => setSearchMode("phrase")}>Phrase</button>
-                <button className={"seg-b" + (searchMode === "all" ? " on" : "")} onClick={() => setSearchMode("all")}>All words</button>
                 <button className={"seg-b" + (searchMode === "any" ? " on" : "")} onClick={() => setSearchMode("any")}>Any word</button>
+                <button className={"seg-b" + (searchMode === "all" ? " on" : "")} onClick={() => setSearchMode("all")}>All words</button>
+                <button className={"seg-b" + (searchMode === "phrase" ? " on" : "")} onClick={() => setSearchMode("phrase")}>Phrase</button>
               </div>
               <button className={"lib-search-opts-btn" + (searchOptsOpen ? " on" : "")} onClick={() => setSearchOptsOpen(o => !o)}>Options {searchOptsOpen ? "▴" : "▾"}</button>
             </div>
@@ -2748,7 +2757,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               {searchLoading ? (
                 <div className="lib-search-status">Searching…</div>
               ) : searchResults == null ? (
-                <div className="lib-search-status">Type words and press Enter.</div>
+                null
               ) : searchResults.length === 0 ? (
                 <div className="lib-search-status">No matches.</div>
               ) : (

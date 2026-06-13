@@ -407,7 +407,6 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   // gets BDB; everything else may get LSJ) — same either/or as the old ternary.
   const sections = [];
   if (metavLoading || metavPersonData || metavPlaceData) sections.push("metav");
-  if (naveData && naveData.sections.length) sections.push("naveTopical");
   if (aiDescription || aiDescLoading) sections.push("aidesc");
   if (isHebrewWord) sections.push("bdb");
   else if ((!isPN || (metavType === "place" && metavData?.strongs_g?.length > 0)) && metavType !== "person"
@@ -421,6 +420,9 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
   if (entry.isKjv && !isHebrew && !isPN && kjvCount !== null && kjvCount > 0) sections.push("kjvOcc");
   if (!entry.isKjv && isPN && pnCount !== null && pnCount > 0 && onNameSearch) sections.push("pnOcc");
   if (isHebrew && !entry.isHeb && kjvCount !== null && kjvCount > 0) sections.push("hebrewKjvOcc");
+  // Nave's topical sits BELOW the lexicon/place cards (metaV, AI, BDB/LSJ) — it's a
+  // study cross-link, not a definition, so it reads last among the reference blocks.
+  if (naveData && naveData.sections.length) sections.push("naveTopical");
   if (entry.derivation) sections.push("derivation");
   if (entry.book && !entry.isExtra) sections.push("verse");
   if (occurrences > 0 || totalResults > 0) sections.push("frequency");
@@ -490,7 +492,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     );
     case "naveTopical": return (
       <section key="naveTopical" className="sec">
-        <h4 className="sec-head"><span className="sec-t">Nave's topical</span></h4>
+        <h4 className="sec-head"><span className="sec-t">Nave's Topical</span><span className="lsj-badge">Nave's</span></h4>
         <div className="nave-secs">
           {naveData.sections.map((s, i) => (
             <button key={i} className="nave-sec" onClick={() => onOpenStudyName && onOpenStudyName(naveData.id)}>
