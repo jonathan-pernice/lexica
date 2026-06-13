@@ -8694,11 +8694,11 @@ function LibraryView({
           key: `bg${gi}`,
           className: "lib-bracket-group"
         }, gwR.length === 1 ? /*#__PURE__*/React.createElement("span", {
-          className: "lib-bracket-unit"
+          className: "lib-bracket-unit" + hcOpen
         }, bracketChar("[", "bl", hcOpen), bracketChip(gwR[0], `bg${gi}w0`), bracketChar("]", "br", hcClose), bracketTrail && trailChar(bracketTrail, "bt", hcClose)) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
-          className: "lib-bracket-unit"
+          className: "lib-bracket-unit" + hcOpen
         }, bracketChar("[", "bl", hcOpen), bracketChip(gwR[0], `bg${gi}w0`)), gwR.slice(1, -1).map((w, wi) => bracketChip(w, `bg${gi}w${wi + 1}`)), /*#__PURE__*/React.createElement("span", {
-          className: "lib-bracket-unit"
+          className: "lib-bracket-unit" + hcClose
         }, bracketChip(gwR[gwR.length - 1], `bg${gi}w${gwR.length - 1}`), bracketChar("]", "br", hcClose), bracketTrail && trailChar(bracketTrail, "bt", hcClose))));
       });
     }
