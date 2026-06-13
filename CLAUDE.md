@@ -286,6 +286,13 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   `--ctl-bg` (idle) / `--ctl-on` (selected) — set per theme in ONE place; **add new buttons with those
   vars, never hardcoded `#fff`.** Light-on-light is the dark-mode trap: an `--ink`/`--accent` bg flips
   LIGHT in dark, so pair its text with `var(--paper)`. Navy header stays brand navy in every theme.
+  More dark/sepia traps fixed 2026-06-13 (top-of-styles.css rules): (a) the highlight pastels +
+  search-mark + gold-filled badges/tags stay LIGHT in every theme, so their TEXT is pinned dark
+  (`:root[data-theme="dark"] .lib-hi-* / .lib-hi-* * / .tag / .lsj-badge--gold { color:#221e18 }` —
+  the `* ` reaches the inner chip Greek/English/Strong's spans); (b) borders use `var(--rule)`, NOT
+  `var(--line, #e4ded2)` (no `--line` exists → light fallback showed as white outlines in dark); (c)
+  the focus ring + frosted sticky bars are theme-aware — ring = `color-mix(... var(--accent) 30% ...)`,
+  bars mix toward `var(--ctl-bg)` (NOT `#fff`, which went muddy in dark).
 - **Compare (was "Parallel"): pick 2–4 of ABP/KJV/BSB/ESV/NIV to read side by side.** `translation === "parallel"`
   is the mode; `compareSel` (array) = which texts. Desktop = N columns (`.lib-cmp-2/3/4`); mobile = stacked,
   one labeled line per text. Rows are the ordered UNION of every selected text's verses (keyed chapter+verse),
@@ -308,6 +315,26 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   book/chapter/translation (+ an open non-canon text) and restores it on load instead of opening at Genesis 1.
   An explicit verse jump (`nav.book`, e.g. a Search/cross-ref click) overrides it. Compare/chronological are NOT
   restored (fall back to single/canonical). (2026-06-10)
+- **In-text search (the magnifying-glass panel) — eSword-style (2026-06-13).** Searches the reader's
+  current text (ABP/KJV/BSB or a non-canon book). Modes Any / All / Phrase (DEFAULT = Any); options
+  (in a collapsible "Options ▾") = a book RANGE (preset groups Whole-Bible/OT/NT/Pentateuch…Apocalypse
+  via `SEARCH_RANGES`, plus from/to pickers), Whole-words-only, Case-sensitive, Exclude words. Shows
+  "X verses found, Y matches". Enter or Go runs it; once a search has run, changing any control
+  re-runs automatically (exclude applies on Enter AND on blur); results cap at 1000 but the counts
+  cover the whole match set. Backed by `/api/text-search` in views_search.py — a broad case-insensitive
+  LIKE net narrowed/tallied in Python (whole-word/case/exclude), with an in-memory cache (last 256
+  searches, keyed by all params). **CRITICAL: ABP's `verses.book` column is a TEXT abbreviation, so a
+  plain ORDER BY sorts ALPHABETICALLY — `_ABP_RANK_SQL` maps each abbrev to its Bible-order number so
+  ABP sorts/range-filters canonically like KJV/BSB (which key by numeric book_id).** Skipped on
+  purpose: inline Strong's in each result row (deferred). State + UI live in 60-library.jsx; API in
+  00-core.jsx `api.textSearch`.
+- **Left-nav book list is an ACCORDION (2026-06-13).** Click a book to open its chapter grid (and
+  switch to it); click the open book to collapse it. Starts collapsed — the current chapter shows
+  beside the active book name (`.nav-book-ch`). `navOpenBook` in `LibNavPanel`; on the mobile overlay
+  the panel closes on a CHAPTER tap (not a book tap, since a book tap just expands).
+- The **Aa size/theme menu** closes on any click outside it (document `pointerdown` listener +
+  `fontWrapRef` in 60-library.jsx); that dismiss click is SWALLOWED (capture-phase one-shot) so it
+  doesn't also select a word behind the menu.
 - **Focus mode — distraction-free reading (LIVE 2026-06-11).** A `focusMode` flag in `90-app.jsx`
   adds `focus-mode` to `.app` (library view only; NOT remembered across reloads). Trigger = tap blank
   space in the reader (`readingHandlers.onClick` in 60-library.jsx → `toggleFocus`), Esc exits.
@@ -320,6 +347,12 @@ scripts/          # build-frontend.js + one-time import/migration scripts
 - Word clicks → LSJ sidebar (G-numbers), BDB sidebar (H-numbers), or metaV (proper nouns)
 - KJV word clicks correctly route: common words → LSJ, proper nouns → metaV, Hebrew → BDB
 - Italic words render muted/italic: KJV (italic=1) and ABP (words.italic=1); ABP bracket words `[word]` are also translator additions
+- **Highlight paint over ABP brackets (2026-06-13):** word chips sit flush so their highlight
+  backgrounds merge into one bar, but the `[` `]` glyphs + trailing punctuation sit between chips and
+  weren't painted, so a highlight broke at every bracket. Fix: carry the edge word's highlight class
+  (`hcOpen`/`hcClose`) onto the bracket glyphs AND the `.lib-bracket-unit` wrappers. Because a
+  highlighted chip is tucked 3px over the bracket, `.lib-bracket-glyph` also gets `position/z-index`
+  so the bracket's serifs aren't covered (else `[` looked like a thin vertical line). (60-library.jsx + styles.css)
 - Verse layout: `lib-verse-row` (flex-start) → `lib-vnum` (fixed, min-width gutter, non-selectable) +
   `lib-verse-content`. The verse number's CLICK target is an inner `.lib-vnum-num` hugging the digits, so
   the empty gutter beside the number is inert (no stray click/cross-ref/verse-highlight). (2026-06-11)

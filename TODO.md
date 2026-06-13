@@ -115,6 +115,20 @@ Deliberate NON-targets (listed so we don't mistake them for gaps): no paid comme
 
 ---
 
+## Library in-text search — eSword-style, DONE 2026-06-13 (one small follow-up)
+
+The reader's magnifying-glass search got the eSword upgrade: canonical order, "X verses, Y matches",
+book range (preset groups + from/to), any/all/phrase (default Any), whole-word/case/exclude, auto
+re-run on setting change, and an in-memory result cache. Full record: memory `project-esword-reference`.
+Open:
+- **Quick phone check of the new options panel** — built/tested on desktop; styles are responsive but
+  the range dropdowns + checkboxes are worth a look on a narrow screen.
+- Optional, only if first-search latency ever bugs you: a real full-text index (FTS5) for speed —
+  but it changes the "match inside a word" behavior (default substring he likes) and needs a one-time
+  build on PA. Parked. `code: /api/text-search in views_search.py; panel in static/src/60-library.jsx`
+
+---
+
 ## Word click-targets — the article wrong-slot cleanup
 
 Background: this is a precision upgrade, **not a bug** — every verse reads correctly. The issue is
