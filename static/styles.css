@@ -1998,7 +1998,8 @@ input { font-family: inherit; }
 .iword {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;   /* left-align so a line never starts indented (the
+                                centred Greek is wider than a short English word) */
   gap: 2px;
 }
 .iw-greek {
@@ -2013,7 +2014,7 @@ input { font-family: inherit; }
    column's edge, which drifts from a short word (the column is as wide as the
    greek/translit stacked above it) — unfixable while it's its own column. Muted,
    a shade off the text colour. */
-.iw-brk { color: var(--ink-4); }
+.iw-brk { color: var(--ink-2); }   /* match the reading pane's bracket colour */
 .iw-translit {
   font-family: var(--f-serif);
   font-style: italic;
