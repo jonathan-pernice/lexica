@@ -353,8 +353,9 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
           // Show the OT/NT tag only when the testament changes (once at the top,
           // once at the OT→NT boundary) — repeating it on every group was noise.
           const newTestament = gi === 0 || groups[gi - 1].t !== g.t;
+          const tClass = g.t === "OT" ? " nav-group--ot" : g.t === "NT" ? " nav-group--nt" : "";
           return (
-          <div className={"nav-group" + (newTestament ? " nav-group--tnew" : "")} key={g.key}>
+          <div className={"nav-group" + (newTestament ? " nav-group--tnew" : "") + tClass} key={g.key}>
             {newTestament && (
               <div className="nav-testament"><span className="nav-div-t">{g.t}</span></div>
             )}
@@ -372,7 +373,9 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
                     aria-expanded={open}
                   >
                     <span className="nav-book-name">{b.name}</span>
-                    {active && !open && <span className="nav-book-ch">{selChapter}</span>}
+                    {active
+                      ? (!open && <span className="nav-book-ch">{selChapter}</span>)
+                      : <span className="nav-book-count">{b.chapters}</span>}
                   </button>
                   {open && (
                     <div className="nav-chips">

@@ -5830,8 +5830,9 @@ function LibNavPanel({
     // Show the OT/NT tag only when the testament changes (once at the top,
     // once at the OT→NT boundary) — repeating it on every group was noise.
     const newTestament = gi === 0 || groups[gi - 1].t !== g.t;
+    const tClass = g.t === "OT" ? " nav-group--ot" : g.t === "NT" ? " nav-group--nt" : "";
     return /*#__PURE__*/React.createElement("div", {
-      className: "nav-group" + (newTestament ? " nav-group--tnew" : ""),
+      className: "nav-group" + (newTestament ? " nav-group--tnew" : "") + tClass,
       key: g.key
     }, newTestament && /*#__PURE__*/React.createElement("div", {
       className: "nav-testament"
@@ -5853,9 +5854,11 @@ function LibNavPanel({
         "aria-expanded": open
       }, /*#__PURE__*/React.createElement("span", {
         className: "nav-book-name"
-      }, b.name), active && !open && /*#__PURE__*/React.createElement("span", {
+      }, b.name), active ? !open && /*#__PURE__*/React.createElement("span", {
         className: "nav-book-ch"
-      }, selChapter)), open && /*#__PURE__*/React.createElement("div", {
+      }, selChapter) : /*#__PURE__*/React.createElement("span", {
+        className: "nav-book-count"
+      }, b.chapters)), open && /*#__PURE__*/React.createElement("div", {
         className: "nav-chips"
       }, Array.from({
         length: b.chapters

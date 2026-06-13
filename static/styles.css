@@ -2690,10 +2690,15 @@ input { font-family: inherit; }
   .nav-scroll { scrollbar-width: thin; scrollbar-color: var(--rule-2) var(--bg-sunk); }
 }
 
-.nav-group { margin-bottom: 2px; }
+/* No gap between same-testament groups so the spine (below) runs continuous. */
+.nav-group { margin-bottom: 0; }
 /* A touch more air above a new testament block (where the OT/NT tag shows). */
 .nav-group--tnew { margin-top: 10px; }
 .nav-group--tnew:first-child { margin-top: 0; }
+/* #3 — whisper-quiet testament spine down the left: warm for OT, cool for NT, so
+   you sense which testament you're in without it shouting. */
+.nav-group--ot { border-left: 2px solid var(--gold-soft); padding-left: 4px; }
+.nav-group--nt { border-left: 2px solid var(--accent-soft); padding-left: 4px; }
 /* Standalone OT/NT testament header, sitting ABOVE the first category of each. */
 .nav-testament { padding: 4px 10px 4px; }
 .nav-div {
@@ -2721,9 +2726,11 @@ input { font-family: inherit; }
 .nav-book:hover { color: var(--ink); background: var(--bg-sunk); }
 .nav-book.on { background: var(--bg-sunk); color: var(--ink); font-weight: 600; }
 .nav-book.on:hover { background: var(--rule); }
-.nav-book-name { letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-book-name { flex: 1; min-width: 0; letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* Current chapter shown beside the active book name while its grid is collapsed */
 .nav-book-ch { margin-left: 8px; color: var(--ink-2); font-weight: 600; font-size: 12.5px; flex: none; }
+/* #4 — muted total-chapter count on the right of each (inactive) book row */
+.nav-book-count { margin-left: 8px; flex: none; font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums; }
 
 .nav-chips {
   display: grid;
