@@ -19,11 +19,13 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core import study_db   # noqa: E402
+from generate_topic_intros import _COMMON   # noqa: E402  (the curated hot-topic list)
 
 
 def main():
     ap = argparse.ArgumentParser(description="Batch publish/unpublish Study topics.")
     ap.add_argument("--all", action="store_true", help="publish every topic (default: only ones with an intro)")
+    ap.add_argument("--common", action="store_true", help="only the curated hot topics (same list the intro script uses)")
     ap.add_argument("--unpublish", action="store_true", help="set topics back to Draft instead")
     ap.add_argument("--limit", type=int, default=0, help="stop after N changes (0 = no cap)")
     args = ap.parse_args()
@@ -33,6 +35,9 @@ def main():
     rows = conn.execute(
         "SELECT id, title, json, status FROM entries WHERE type='topic' AND deleted=0 ORDER BY title"
     ).fetchall()
+    if args.common:
+        wanted = {t.lower() for t in _COMMON}
+        rows = [r for r in rows if (r["title"] or "").strip().lower() in wanted]
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
     changed = 0
