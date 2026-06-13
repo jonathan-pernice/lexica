@@ -9390,6 +9390,9 @@ function LibraryView({
     onChange: e => setSearchExclude(e.target.value),
     onKeyDown: e => {
       if (e.key === "Enter") runTextSearch();
+    },
+    onBlur: () => {
+      if (didSearchRef.current && searchQ.trim()) runTextSearch();
     }
   })), /*#__PURE__*/React.createElement("div", {
     className: "lib-search-results"

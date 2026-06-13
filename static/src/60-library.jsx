@@ -2765,6 +2765,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                   value={searchExclude}
                   onChange={(e) => setSearchExclude(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") runTextSearch(); }}
+                  onBlur={() => { if (didSearchRef.current && searchQ.trim()) runTextSearch(); }}
                 />
               </div>
             )}
