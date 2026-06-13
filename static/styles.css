@@ -2008,6 +2008,7 @@ input { font-family: inherit; }
   line-height: 1.2;
 }
 .iw-heb { direction: rtl; font-size: 17px; }
+.iw-bracket { align-self: center; font-family: var(--f-greek); font-size: 18px; color: var(--ink-4); line-height: 1; }
 .iw-translit {
   font-family: var(--f-serif);
   font-style: italic;

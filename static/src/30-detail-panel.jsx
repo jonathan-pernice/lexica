@@ -143,6 +143,7 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           top: w.lemma || "", translit: w.translit || "", english: w.english || "",
           strongs: (w.strongs_base === "*") ? "" : tag((w.strongs && w.strongs !== "*") ? w.strongs : w.strongs_base),
           he: false,
+          bracket_id: w.bracket_id,   // ABP translator-supplied words -> [ ] in the render (KJV/Hebrew leave this undefined)
         }))))
         .catch(() => done([]));
     }
@@ -668,14 +669,27 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
             ) : interlinearWords.length === 0 ? (
               <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>No interlinear for this verse.</span>
-            ) : interlinearWords.map((w, i) => (
-              <div key={i} className="iword">
-                <span className={"iw-greek" + (w.he ? " iw-heb" : "")}>{w.top || "—"}</span>
-                {w.translit && <span className="iw-translit">{w.translit}</span>}
-                <span className="iw-english">{w.english || "—"}</span>
-                {w.strongs && <span className="iw-strongs">{w.strongs}</span>}
-              </div>
-            ))}
+            ) : interlinearWords.map((w, i) => {
+              // ABP brackets: open before the first word of a bracket group, close
+              // after the last (a group = consecutive words sharing bracket_id, same
+              // rule as the reading pane). KJV/Hebrew have no bracket_id -> no brackets.
+              const bid = (w.bracket_id != null) ? w.bracket_id : null;
+              const prev = interlinearWords[i - 1], next = interlinearWords[i + 1];
+              const open = bid != null && (!prev || prev.bracket_id !== bid);
+              const close = bid != null && (!next || next.bracket_id !== bid);
+              return (
+                <React.Fragment key={i}>
+                  {open && <span className="iw-bracket">[</span>}
+                  <div className="iword">
+                    <span className={"iw-greek" + (w.he ? " iw-heb" : "")}>{w.top || "—"}</span>
+                    {w.translit && <span className="iw-translit">{w.translit}</span>}
+                    <span className="iw-english">{w.english || "—"}</span>
+                    {w.strongs && <span className="iw-strongs">{w.strongs}</span>}
+                  </div>
+                  {close && <span className="iw-bracket">]</span>}
+                </React.Fragment>
+              );
+            })}
           </div>
         )}
         <div className="dverse-tools">

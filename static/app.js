@@ -1965,7 +1965,8 @@ function DetailPanel({
         translit: w.translit || "",
         english: w.english || "",
         strongs: w.strongs_base === "*" ? "" : tag(w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base),
-        he: false
+        he: false,
+        bracket_id: w.bracket_id // ABP translator-supplied words -> [ ] in the render (KJV/Hebrew leave this undefined)
       })))).catch(() => done([]));
     }
     return () => {
@@ -2619,18 +2620,33 @@ function DetailPanel({
             color: "var(--ink-4)",
             fontSize: "13px"
           }
-        }, "No interlinear for this verse.") : interlinearWords.map((w, i) => /*#__PURE__*/React.createElement("div", {
-          key: i,
-          className: "iword"
-        }, /*#__PURE__*/React.createElement("span", {
-          className: "iw-greek" + (w.he ? " iw-heb" : "")
-        }, w.top || "—"), w.translit && /*#__PURE__*/React.createElement("span", {
-          className: "iw-translit"
-        }, w.translit), /*#__PURE__*/React.createElement("span", {
-          className: "iw-english"
-        }, w.english || "—"), w.strongs && /*#__PURE__*/React.createElement("span", {
-          className: "iw-strongs"
-        }, w.strongs)))), /*#__PURE__*/React.createElement("div", {
+        }, "No interlinear for this verse.") : interlinearWords.map((w, i) => {
+          // ABP brackets: open before the first word of a bracket group, close
+          // after the last (a group = consecutive words sharing bracket_id, same
+          // rule as the reading pane). KJV/Hebrew have no bracket_id -> no brackets.
+          const bid = w.bracket_id != null ? w.bracket_id : null;
+          const prev = interlinearWords[i - 1],
+            next = interlinearWords[i + 1];
+          const open = bid != null && (!prev || prev.bracket_id !== bid);
+          const close = bid != null && (!next || next.bracket_id !== bid);
+          return /*#__PURE__*/React.createElement(React.Fragment, {
+            key: i
+          }, open && /*#__PURE__*/React.createElement("span", {
+            className: "iw-bracket"
+          }, "["), /*#__PURE__*/React.createElement("div", {
+            className: "iword"
+          }, /*#__PURE__*/React.createElement("span", {
+            className: "iw-greek" + (w.he ? " iw-heb" : "")
+          }, w.top || "—"), w.translit && /*#__PURE__*/React.createElement("span", {
+            className: "iw-translit"
+          }, w.translit), /*#__PURE__*/React.createElement("span", {
+            className: "iw-english"
+          }, w.english || "—"), w.strongs && /*#__PURE__*/React.createElement("span", {
+            className: "iw-strongs"
+          }, w.strongs)), close && /*#__PURE__*/React.createElement("span", {
+            className: "iw-bracket"
+          }, "]"));
+        })), /*#__PURE__*/React.createElement("div", {
           className: "dverse-tools"
         }, /*#__PURE__*/React.createElement("button", {
           className: "link-btn",
