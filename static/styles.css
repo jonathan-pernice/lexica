@@ -1471,7 +1471,7 @@ input { font-family: inherit; }
   padding: 4px 0;
 }
 .bdb-xlit { font-size: 15px; color: var(--ink-2); font-style: italic; }
-.bdb-pronounce { color: var(--ink-3); font-style: normal; }
+.bdb-pronounce { color: var(--ink-2); font-style: normal; }
 .bdb-pos-badge {
   display: inline-block;
   font-size: 10px;
