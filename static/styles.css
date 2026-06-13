@@ -2474,7 +2474,10 @@ input { font-family: inherit; }
 }
 .metav-tag-gold {
   background: var(--gold-soft);
-  color: var(--gold);
+  /* mid gold on pale gold washes out — deepen toward ink for contrast (adapts
+     per theme: darker on the light bg, stays light-tan on the dark bg). */
+  color: color-mix(in oklab, var(--gold) 60%, var(--ink));
+  font-weight: 600;
 }
 .metav-rels { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
 .metav-rel-row { display: flex; gap: 8px; font-size: 13px; }
