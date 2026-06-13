@@ -2691,6 +2691,9 @@ input { font-family: inherit; }
 }
 
 .nav-group { margin-bottom: 2px; }
+/* A touch more air above a new testament block (where the OT/NT tag shows). */
+.nav-group--tnew { margin-top: 10px; }
+.nav-group--tnew:first-child { margin-top: 0; }
 .nav-div {
   display: flex; align-items: baseline; gap: 6px;
   padding: 8px 10px 3px;
@@ -2712,8 +2715,10 @@ input { font-family: inherit; }
   color: var(--ink-2);
   text-align: left;
 }
-.nav-book:hover { color: var(--ink); }
-.nav-book.on { background: var(--bg-sunk); color: var(--ink); font-weight: 600; border-radius: 5px; }
+.nav-book { border-radius: 5px; transition: background 0.12s, color 0.12s; }
+.nav-book:hover { color: var(--ink); background: var(--bg-sunk); }
+.nav-book.on { background: var(--bg-sunk); color: var(--ink); font-weight: 600; }
+.nav-book.on:hover { background: var(--rule); }
 .nav-book-name { letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* Current chapter shown beside the active book name while its grid is collapsed */
 .nav-book-ch { margin-left: 8px; color: var(--ink-2); font-weight: 600; font-size: 12.5px; flex: none; }

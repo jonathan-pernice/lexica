@@ -349,10 +349,14 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
           );
         })}
         {!chronoMode && nonCanon && nonCanonActive}
-        {!chronoMode && !nonCanon && groups.map(g => (
-          <div className="nav-group" key={g.key}>
+        {!chronoMode && !nonCanon && groups.map((g, gi) => {
+          // Show the OT/NT tag only when the testament changes (once at the top,
+          // once at the OT→NT boundary) — repeating it on every group was noise.
+          const newTestament = gi === 0 || groups[gi - 1].t !== g.t;
+          return (
+          <div className={"nav-group" + (newTestament ? " nav-group--tnew" : "")} key={g.key}>
             <div className="nav-div">
-              <span className="nav-div-t">{g.t}</span>
+              {newTestament && <span className="nav-div-t">{g.t}</span>}
               <span className="nav-div-n">{g.div}</span>
             </div>
             {g.books.map(b => {
@@ -383,7 +387,8 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
               );
             })}
           </div>
-        ))}
+          );
+        })}
       </div>
     </nav>
   );

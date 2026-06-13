@@ -5826,42 +5826,47 @@ function LibNavPanel({
         }
       }, p.label);
     })));
-  }), !chronoMode && nonCanon && nonCanonActive, !chronoMode && !nonCanon && groups.map(g => /*#__PURE__*/React.createElement("div", {
-    className: "nav-group",
-    key: g.key
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "nav-div"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "nav-div-t"
-  }, g.t), /*#__PURE__*/React.createElement("span", {
-    className: "nav-div-n"
-  }, g.div)), g.books.map(b => {
-    const active = !nonCanon && selBook && b.abbrev === selBook.abbrev;
-    const open = navOpenBook === b.abbrev;
+  }), !chronoMode && nonCanon && nonCanonActive, !chronoMode && !nonCanon && groups.map((g, gi) => {
+    // Show the OT/NT tag only when the testament changes (once at the top,
+    // once at the OT→NT boundary) — repeating it on every group was noise.
+    const newTestament = gi === 0 || groups[gi - 1].t !== g.t;
     return /*#__PURE__*/React.createElement("div", {
-      key: b.abbrev,
-      ref: active ? navBookRef : null
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "nav-book" + (active ? " on" : "") + (open ? " open" : ""),
-      onClick: () => onBookClick(b),
-      "aria-expanded": open
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "nav-book-name"
-    }, b.name), active && !open && /*#__PURE__*/React.createElement("span", {
-      className: "nav-book-ch"
-    }, selChapter)), open && /*#__PURE__*/React.createElement("div", {
-      className: "nav-chips"
-    }, Array.from({
-      length: b.chapters
-    }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
-      key: n,
-      className: "ch-chip" + (n === selChapter ? " on" : ""),
-      onClick: () => {
-        setSelChapter(n);
-        if (isOverlay) onClose();
-      }
-    }, n))));
-  })))));
+      className: "nav-group" + (newTestament ? " nav-group--tnew" : ""),
+      key: g.key
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "nav-div"
+    }, newTestament && /*#__PURE__*/React.createElement("span", {
+      className: "nav-div-t"
+    }, g.t), /*#__PURE__*/React.createElement("span", {
+      className: "nav-div-n"
+    }, g.div)), g.books.map(b => {
+      const active = !nonCanon && selBook && b.abbrev === selBook.abbrev;
+      const open = navOpenBook === b.abbrev;
+      return /*#__PURE__*/React.createElement("div", {
+        key: b.abbrev,
+        ref: active ? navBookRef : null
+      }, /*#__PURE__*/React.createElement("button", {
+        className: "nav-book" + (active ? " on" : "") + (open ? " open" : ""),
+        onClick: () => onBookClick(b),
+        "aria-expanded": open
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "nav-book-name"
+      }, b.name), active && !open && /*#__PURE__*/React.createElement("span", {
+        className: "nav-book-ch"
+      }, selChapter)), open && /*#__PURE__*/React.createElement("div", {
+        className: "nav-chips"
+      }, Array.from({
+        length: b.chapters
+      }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
+        key: n,
+        className: "ch-chip" + (n === selChapter ? " on" : ""),
+        onClick: () => {
+          setSelChapter(n);
+          if (isOverlay) onClose();
+        }
+      }, n))));
+    }));
+  })));
 }
 
 // ============================================================
