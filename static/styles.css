@@ -1969,8 +1969,8 @@ input { font-family: inherit; }
 .lib-bracket:last-child  { margin-left:  -3px; }
 /* close-bracket keeps its leftward tuck even when trailing punctuation follows */
 .lib-bracket:has(+ .lib-bracket-trail) { margin-left: -3px; }
-/* trailing clause punctuation lifted outside the "]": hug it tight, baseline-aligned */
-.lib-bracket-trail { flex-shrink: 0; margin-left: -2px; }
+/* trailing clause punctuation lifted outside the "]": a hair of daylight off it, baseline-aligned */
+.lib-bracket-trail { flex-shrink: 0; margin-left: 1px; }
 .lib-bracket-glyph {
   font-family: var(--f-serif);
   font-size: 16px;
