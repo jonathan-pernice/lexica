@@ -2738,6 +2738,10 @@ input { font-family: inherit; }
 .nav-book.on { background: color-mix(in oklab, var(--bg) 82%, var(--ink)); color: var(--ink); font-weight: 600; }
 .nav-book.on:hover { background: color-mix(in oklab, var(--bg) 76%, var(--ink)); }
 .nav-book-name { flex: 1; min-width: 0; letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Active book: let the name hug its content so the CURRENT chapter sits right next
+   to it ("Genesis 1"), instead of being pushed to the far-right count column where
+   it reads like a chapter total. */
+.nav-book.on .nav-book-name { flex: 0 1 auto; }
 /* Current chapter shown beside the active book name while its grid is collapsed */
 .nav-book-ch { margin-left: 8px; color: var(--ink-2); font-weight: 600; font-size: 12.5px; flex: none; }
 /* #4 — muted total-chapter count on the right of each (inactive) book row */
