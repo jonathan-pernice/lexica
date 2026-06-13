@@ -373,9 +373,8 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
                     aria-expanded={open}
                   >
                     <span className="nav-book-name">{b.name}</span>
-                    {active
-                      ? (!open && <span className="nav-book-ch">{selChapter}</span>)
-                      : <span className="nav-book-count">{b.chapters}</span>}
+                    {active && !open && <span className="nav-book-ch">{selChapter}</span>}
+                    {!open && <span className="nav-book-count">{b.chapters}</span>}
                   </button>
                   {open && (
                     <div className="nav-chips">

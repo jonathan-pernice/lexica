@@ -5852,9 +5852,9 @@ function LibNavPanel({
         "aria-expanded": open
       }, /*#__PURE__*/React.createElement("span", {
         className: "nav-book-name"
-      }, b.name), active ? !open && /*#__PURE__*/React.createElement("span", {
+      }, b.name), active && !open && /*#__PURE__*/React.createElement("span", {
         className: "nav-book-ch"
-      }, selChapter) : /*#__PURE__*/React.createElement("span", {
+      }, selChapter), !open && /*#__PURE__*/React.createElement("span", {
         className: "nav-book-count"
       }, b.chapters)), open && /*#__PURE__*/React.createElement("div", {
         className: "nav-chips"
