@@ -23,6 +23,7 @@ from flask import Blueprint, jsonify
 from core import (
     db_ro, _anthropic, limiter, log, _ai_cache,
     ai_fingerprint, ai_cache_get, ai_cache_put, ai_cache_prune,
+    _KJV_BOOK_ID_REV,
 )
 
 bp = Blueprint("summary", __name__)
@@ -38,26 +39,66 @@ _EXTRA_BOOK_RE = re.compile(r"^[a-z0-9_]+$")   # stricter: table-name safe, used
 _HAIKU_MODEL = "claude-haiku-4-5-20251001"
 _CHAP_MODEL = "claude-sonnet-4-6"
 
-# Traditionally recognized author per book, fed to Haiku so it names the writer
-# instead of hedging ("an apostolic witness…"). Only books with a well-established
-# attribution are listed; genuinely anonymous books (Job, Esther, Hebrews, the
-# Samuel–Kings histories) are intentionally omitted so nothing is fabricated.
+# Our hand-curated author per book, fed to the model so it names the writer instead
+# of hedging ("an apostolic witness…"). This list WINS over metaV — it keeps the better
+# wording ("David and other psalmists", "the apostle John") and the scribe notes. Any
+# book left blank here is filled from metaV's Writers table with the traditional
+# attribution (Judges/Ruth/Samuel→Samuel, Kings→Jeremiah, Chronicles→Ezra, Job→Moses,
+# Esther→Mordecai); see _metav_writers / _resolve_author below. Hebrews is anonymous in
+# both (metaV marks it "Unknown") so it gets no author line.
 _BOOK_AUTHORS = {
     "Gen": "Moses", "Exo": "Moses", "Lev": "Moses", "Num": "Moses", "Deu": "Moses",
     "Jos": "Joshua", "Ezr": "Ezra", "Neh": "Nehemiah",
     "Psa": "David and other psalmists", "Pro": "Solomon", "Ecc": "Solomon", "Son": "Solomon",
-    "Isa": "Isaiah", "Jer": "Jeremiah", "Lam": "Jeremiah", "Eze": "Ezekiel", "Dan": "Daniel",
+    "Isa": "Isaiah", "Jer": "Jeremiah, who dictated to his scribe Baruch",
+    "Lam": "Jeremiah", "Eze": "Ezekiel", "Dan": "Daniel",
     "Hos": "Hosea", "Joe": "Joel", "Amo": "Amos", "Oba": "Obadiah", "Jon": "Jonah",
     "Mic": "Micah", "Nah": "Nahum", "Hab": "Habakkuk", "Zep": "Zephaniah",
     "Hag": "Haggai", "Zec": "Zechariah", "Mal": "Malachi",
     "Mat": "Matthew", "Mar": "Mark", "Luk": "Luke", "Joh": "the apostle John",
-    "Act": "Luke", "Rom": "Paul", "1Co": "Paul", "2Co": "Paul", "Gal": "Paul",
+    "Act": "Luke", "Rom": "Paul, written down by his scribe Tertius",
+    "1Co": "Paul", "2Co": "Paul", "Gal": "Paul",
     "Eph": "Paul", "Php": "Paul", "Col": "Paul", "1Th": "Paul", "2Th": "Paul",
     "1Ti": "Paul", "2Ti": "Paul", "Tit": "Paul", "Phm": "Paul",
     "Jas": "James", "1Pe": "Peter", "2Pe": "Peter",
     "1Jn": "the apostle John", "2Jn": "the apostle John", "3Jn": "the apostle John",
     "Jud": "Jude", "Rev": "the apostle John",
 }
+
+# metaV's Writers table (bible.db) fills the books _BOOK_AUTHORS leaves blank with the
+# traditional attribution. Read once, lazily, and cached; if the table is missing or
+# empty we just fall back to the hand list (no author line for the blanks). metaV's
+# book_id is the standard Protestant 1-66, mapped to our abbrev via _KJV_BOOK_ID_REV.
+_metav_writers_cache: dict | None = None
+
+
+def _metav_writers() -> dict:
+    """metaV's Writers table → {abbrev: writer}. Skips its "Unknown" rows (Hebrews).
+    Loaded once; safe-empty on any read error so a missing table never breaks summaries."""
+    global _metav_writers_cache
+    if _metav_writers_cache is not None:
+        return _metav_writers_cache
+    out: dict[str, str] = {}
+    try:
+        conn = db_ro()
+        try:
+            for r in conn.execute("SELECT book_id, writer FROM metav_writers"):
+                abbrev = _KJV_BOOK_ID_REV.get(r["book_id"])
+                writer = (r["writer"] or "").strip()
+                if abbrev and writer and writer.lower() != "unknown":
+                    out[abbrev] = writer
+        finally:
+            conn.close()
+    except Exception as exc:
+        log.warning("metav_writers read failed (using hand list only): %s", exc)
+    _metav_writers_cache = out
+    return out
+
+
+def _resolve_author(book: str) -> str | None:
+    """Our curated name wins (better wording + scribe notes); metaV fills the blanks
+    with the traditional attribution. None when neither has one (e.g. Hebrews)."""
+    return _BOOK_AUTHORS.get(book) or _metav_writers().get(book)
 
 
 _SUMMARY_SYSTEM = """\
@@ -120,8 +161,10 @@ _SUMMARY_TPL_BASE = ai_fingerprint(
 def _summary_ver(book: str) -> str:
     """ver_key for this book's summaries: the shared template hash plus a short hash
     of the book's own author string. The row's query key stays stable, so changing an
-    author overwrites that book's row in place rather than orphaning it."""
-    author = _BOOK_AUTHORS.get(book, "")
+    author overwrites that book's row in place rather than orphaning it. Uses the
+    resolved author (hand list or metaV), so a metaV fill or a scribe edit refreshes
+    only that book's cached summaries."""
+    author = _resolve_author(book) or ""
     return f"{_SUMMARY_TPL_BASE}:{hashlib.sha1(author.encode('utf-8')).hexdigest()[:8]}"
 
 
@@ -268,7 +311,7 @@ def reading_summary(book, chapter):
     finally:
         conn.close()
 
-    author = _BOOK_AUTHORS.get(book)
+    author = _resolve_author(book)
     author_line = _AUTHOR_LINE_TMPL.format(author=author) if author else ""
 
     # Book blurb — generate if not already cached.
