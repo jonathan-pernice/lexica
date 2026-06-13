@@ -1538,7 +1538,7 @@ input { font-family: inherit; }
   z-index: 62;                 /* above the focus wash (50), reading sheet (60), arrows (61) */
   display: flex; align-items: center; justify-content: center; gap: 10px;
   padding: 5px 16px calc(5px + env(safe-area-inset-bottom, 0px));
-  background: color-mix(in oklab, var(--bg) 86%, #fff);
+  background: color-mix(in oklab, var(--bg) 86%, var(--ctl-bg));
   backdrop-filter: blur(6px);
   border-top: 1px solid var(--rule);
   animation: audio-dock-up 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -2074,7 +2074,7 @@ input { font-family: inherit; }
 }
 @media (max-width: 1099px) {
   .hdr { display: none; }
-  .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 56px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, #fff); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); gap: 4px; }
+  .lib-toolbar { position: sticky; top: 0; z-index: 20; height: 56px; padding: 0 6px; margin-bottom: 8px; flex-wrap: nowrap; justify-content: space-between; background: color-mix(in oklab, var(--bg) 84%, var(--ctl-bg)); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); gap: 4px; }
   .lib-toolbar-navy { background: var(--navy); border-bottom-color: var(--navy-edge, #1e3050); backdrop-filter: none; }
   .lib-toolbar-navy .mbar-loc-name { color: #e9ecf2; }
   .lib-toolbar-navy .mbar-loc-ch { color: #7eb8e8; }  /* --accent is dark navy; invisible on the navy bar without this */
@@ -2639,7 +2639,7 @@ input { font-family: inherit; }
   padding: 0 10px;
   height: 36px;
 }
-.nav-search:focus-within { border-color: var(--ink-3); box-shadow: 0 0 0 3px rgba(15,27,45,0.05); }
+.nav-search:focus-within { border-color: var(--ink-3); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 30%, transparent); }
 .nav-search-i { color: var(--ink-4); flex: 0 0 15px; }
 .nav-search input { flex: 1; border: 0; outline: 0; background: transparent; font-size: 13.5px; color: var(--ink); }
 .nav-search input::placeholder { color: var(--ink-4); }
@@ -2812,7 +2812,7 @@ input { font-family: inherit; }
     gap: 16px;
     padding: 12px 24px;
     border-bottom: 1px solid var(--rule);
-    background: color-mix(in oklab, var(--bg) 80%, #fff);
+    background: color-mix(in oklab, var(--bg) 80%, var(--ctl-bg));
     backdrop-filter: blur(6px);
     flex-wrap: wrap;
     position: sticky;
@@ -2905,7 +2905,7 @@ input { font-family: inherit; }
   border: 1px solid var(--rule); border-radius: 8px;
   background: var(--ctl-bg); color: var(--ink);
 }
-.lib-search-input:focus { outline: none; border-color: var(--ink-2); box-shadow: 0 0 0 3px rgba(15,27,45,0.05); }
+.lib-search-input:focus { outline: none; border-color: var(--ink-2); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 30%, transparent); }
 .lib-search-go, .lib-search-x {
   border: 1px solid var(--rule); border-radius: 8px; background: var(--ctl-bg);
   color: var(--ink); cursor: pointer; padding: 0 12px; font-size: 14px;
