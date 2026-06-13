@@ -2887,7 +2887,7 @@ input { font-family: inherit; }
   position: fixed; z-index: 210;            /* above the mobile tab bar (z-index 200) */
   top: 12px; left: 50%; transform: translateX(-50%);
   width: min(640px, calc(100vw - 24px));
-  max-height: 80vh; display: flex; flex-direction: column;
+  max-height: 92vh; display: flex; flex-direction: column;
   background: var(--paper); border: 1px solid var(--line, #e4ded2);
   border-radius: 12px; box-shadow: 0 12px 40px rgba(34, 30, 24, 0.22);
   overflow: hidden;
