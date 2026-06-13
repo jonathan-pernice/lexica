@@ -332,6 +332,14 @@ scripts/          # build-frontend.js + one-time import/migration scripts
   switch to it); click the open book to collapse it. Starts collapsed — the current chapter shows
   beside the active book name (`.nav-book-ch`). `navOpenBook` in `LibNavPanel`; on the mobile overlay
   the panel closes on a CHAPTER tap (not a book tap, since a book tap just expands).
+- **Left-nav polish (2026-06-13) — full record: memory `project_book_nav_polish`.** Hover/active
+  pills darken the page via `color-mix(... var(--bg) N%, var(--ink))` — do NOT use `--bg-sunk` (it
+  matches the sepia parchment → invisible). A spelled-out **Old/New Testament** header sits above the
+  first category of each testament (`.nav-testament`, colour-matched to its spine) — shown only when
+  the testament changes. A left **spine** runs down each testament (warm `--gold` for OT, cool
+  `--accent` for NT; the `*-soft` tints are a `[data-theme="dark"]`-only override — they vanish on
+  parchment). Every COLLAPSED book shows a muted right-aligned **chapter count** (`b.chapters`); the
+  OPEN book hides it; the active book also keeps its current chapter hugging the name.
 - The **Aa size/theme menu** closes on any click outside it (document `pointerdown` listener +
   `fontWrapRef` in 60-library.jsx); that dismiss click is SWALLOWED (capture-phase one-shot) so it
   doesn't also select a word behind the menu.
