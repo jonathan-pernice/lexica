@@ -43,6 +43,9 @@ Still open:
    shared VOICE snippet in core.py was never built — xref/chapter carry their own wording; (b) person/place
    (`_PN_SYSTEM`, Haiku, "1-2 sentences") is CORRECT as a hard cap — leave it, do NOT convert to adaptive;
    (c) glance at the LSJ word-study blurb (Haiku) to confirm it's hard-capped, not soft.
+   (d) Book-blurb AUTHOR list DONE 2026-06-13 (metaV traditional names baked into `_BOOK_AUTHORS`,
+   scribes named, debated ones hedged "traditionally attributed to" — see archive). OPEN, optional:
+   1 Peter "by Silvanus" (1Pe 5:12) — add Silvanus as scribe? Debated (scribe vs letter-carrier); left out.
    NOTE: changing these prompts is exactly what the
    new fingerprint scheme watches, so each edit will lazily refresh that category's cache (expected).
    `code: shared snippet in core.py; views_crossref.py system prompts; views_metav.py _PN_SYSTEM;
@@ -313,8 +316,8 @@ sidebar block). Publish + dupe scripts: publish_topics, find_topics, find_topic_
 - **PUBLIC "go-live" flip** — open published Study topics to actual visitors (everything's admin-only
   Preview until then). The big remaining step/decision.
 - Drop the place "Sin" entry (Sin (1)/(2) — one is the Wilderness of Sin) from the `_COMMON` list.
-- Optional: scope the alphabetical list sort to Topics if denom/arg should stay newest-first; fold MetaV
-  `Writers` into `_BOOK_AUTHORS`; the few ambiguous "X, the Y" titles ("God, the Father") stay un-flipped.
+- Optional: scope the alphabetical list sort to Topics if denom/arg should stay newest-first; the few
+  ambiguous "X, the Y" titles ("God, the Father") stay un-flipped. (MetaV `Writers` fold-in DONE — see archive.)
 `code: views_study.py + static/src/55-study.jsx; scripts/{load_study_topics,generate_topic_intros,publish_topics,find_topics,find_topic_dupes,merge_the_dupes}.py; memory project_study_modules`
 
 ### ~~Chronological reading mode~~ — DONE + LIVE 2026-06-09 (desktop + mobile)

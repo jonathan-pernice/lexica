@@ -6,6 +6,37 @@ few "leave it alone" verdicts worth keeping.
 
 ---
 
+## Book-summary author list — folded in metaV Writers + named scribes — DONE 2026-06-13
+
+The reading-pane book blurb names the writer from `_BOOK_AUTHORS` (views_summary.py). It used to
+leave the traditionally-anonymous books blank on purpose. Folded in metaV's **Writers** list (the
+same gusheng/MetaV dataset People/Places came from) to fill them: Judges/Ruth/1-2 Samuel = Samuel,
+1-2 Kings = Jeremiah, 1-2 Chronicles = Ezra, Job = Moses, Esther = Mordecai. Hebrews stays blank —
+metaV itself marks it "Unknown" (honest), and a blank means no author line. Also added the two
+scripturally-named scribes inline: Jeremiah/Baruch (Jer 36) and Romans/Tertius (Rom 16:22).
+
+How: pulled the real Writers.csv off GitHub (couldn't see the live `metav_writers` table — bible.db
+is PA-only), eyeballed every row vs our list. First wired a LIVE read of `metav_writers` (mapped
+book_id 1-66 via core `_KJV_BOOK_ID_REV`), then REVERTED it — baked the names straight into the one
+`_BOOK_AUTHORS` list at the user's call, so there's no second source and no dependency on the table
+being loaded. metaV's data was looser than ours in two spots (Psalms = just "David" vs our "David and
+other psalmists"; John = just "John" vs "the apostle John") — kept ours.
+
+Lessons worth keeping:
+- **metaV doesn't fabricate, but it's confident about disputed traditions.** It honestly says
+  "Unknown" for Hebrews, but flatly attributes Job→Moses, Esther→Mordecai, etc. — fringe/Talmudic
+  views, not "well established."
+- **Feeding the model a name isn't enough.** The summary SYSTEM prompt only names an author "when
+  well established", so Haiku SILENTLY DROPPED the contested fold-ins (Job showed no writer) while the
+  solid ones (Jeremiah, Paul) worked. Fix was `_AUTHOR_LINE_TMPL`: license a "traditionally attributed
+  to X" hedge for debated ascriptions — honest, and the names now surface. (Commits 870db14 live-read,
+  bbf5148 bake-in, 645c38f the hedge.)
+- Not a cache/wiring bug — Jeremiah picking up Baruch immediately proved the deploy + cache-refresh
+  path worked; only the prompt was holding Job back.
+- OPEN, optional: 1 Peter "by Silvanus" (1Pe 5:12) as a scribe — debated (scribe vs carrier), left out.
+
+---
+
 ## Study modules — admin Study tab + MetaV/Nave's import — BUILT 2026-06-12
 
 Recovered a lost idea ("a DB that had study topics") → it was the **MetaV** dataset
