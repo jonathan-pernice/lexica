@@ -669,38 +669,55 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
             ) : interlinearWords.length === 0 ? (
               <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>No interlinear for this verse.</span>
-            ) : interlinearWords.map((w, i) => {
-              // ABP brackets: open before the first word of a bracket group, close
-              // after the last (a group = consecutive words sharing bracket_id, same
-              // rule as the reading pane). KJV/Hebrew have no bracket_id -> no brackets.
-              const bid = (w.bracket_id != null) ? w.bracket_id : null;
-              const prev = interlinearWords[i - 1], next = interlinearWords[i + 1];
-              const open = bid != null && (!prev || prev.bracket_id !== bid);
-              const close = bid != null && (!next || next.bracket_id !== bid);
-              // On the group's last word, lift trailing clause punctuation outside the
-              // "]" (mirror the reading pane: "second.]" -> "second].").
-              let eng = w.english || "—", trail = "";
-              if (close) { const m = (w.english || "").match(/[.,;:!?·]+$/); if (m) { trail = m[0]; eng = (w.english || "").slice(0, m.index) || "—"; } }
-              const cell = (
-                <div className="iword">
-                  <span className={"iw-greek" + (w.he ? " iw-heb" : "")}>{w.top || "—"}</span>
-                  {w.translit && <span className="iw-translit">{w.translit}</span>}
-                  <span className="iw-english">{eng}</span>
-                  {w.strongs && <span className="iw-strongs">{w.strongs}</span>}
-                </div>
-              );
-              // Glue [ to the first word and ] (+ any lifted punctuation) to the last
-              // as one no-break unit, so a line break can never strand a lone bracket.
-              if (bid == null) return <React.Fragment key={i}>{cell}</React.Fragment>;
-              return (
-                <span key={i} className="iw-bracket-unit">
-                  {open && <span className="iw-bracket">[</span>}
-                  {cell}
-                  {close && <span className="iw-bracket">]</span>}
-                  {trail && <span className="iw-bracket-trail">{trail}</span>}
-                </span>
-              );
-            })}
+            ) : (() => {
+              // Uniform column structure so every cell lines up: reserve the translit /
+              // strongs rows (hidden when a word lacks them) whenever the verse uses
+              // them, and build the "[" / "]" and any lifted punctuation as COLUMNS
+              // with the SAME rows — the glyph living in the english slot — so they
+              // align row-for-row with the words (the reading-pane approach), instead
+              // of a lone glyph floating at the column's centre.
+              const hasTranslit = interlinearWords.some(w => w.translit);
+              const hasStrongs = interlinearWords.some(w => w.strongs);
+              const colRows = (mid) => (<>
+                <span className="iw-greek" style={{ visibility: "hidden" }}>x</span>
+                {hasTranslit && <span className="iw-translit" style={{ visibility: "hidden" }}>x</span>}
+                {mid}
+                {hasStrongs && <span className="iw-strongs" style={{ visibility: "hidden" }}>G0</span>}
+              </>);
+              const bracketCol = (glyph, k) => <span key={k} className="iw-bracket">{colRows(<span className="iw-bracket-glyph">{glyph}</span>)}</span>;
+              const trailCol = (txt, k) => <span key={k} className="iw-bracket-trail">{colRows(<span className="iw-english">{txt}</span>)}</span>;
+              return interlinearWords.map((w, i) => {
+                // A bracket group = consecutive words sharing bracket_id (same rule as
+                // the reading pane). KJV/Hebrew carry no bracket_id, so they get none.
+                const bid = (w.bracket_id != null) ? w.bracket_id : null;
+                const prev = interlinearWords[i - 1], next = interlinearWords[i + 1];
+                const open = bid != null && (!prev || prev.bracket_id !== bid);
+                const close = bid != null && (!next || next.bracket_id !== bid);
+                // On the group's last word, lift trailing clause punctuation outside
+                // the "]" (mirror the reading pane: "second.]" -> "second].").
+                let eng = w.english || "—", trail = "";
+                if (close) { const m = (w.english || "").match(/[.,;:!?·]+$/); if (m) { trail = m[0]; eng = (w.english || "").slice(0, m.index) || "—"; } }
+                const cell = (
+                  <div className="iword">
+                    <span className={"iw-greek" + (w.he ? " iw-heb" : "")}>{w.top || "—"}</span>
+                    {hasTranslit && <span className="iw-translit" style={w.translit ? undefined : { visibility: "hidden" }}>{w.translit || "x"}</span>}
+                    <span className="iw-english">{eng}</span>
+                    {hasStrongs && <span className="iw-strongs" style={w.strongs ? undefined : { visibility: "hidden" }}>{w.strongs || "G0"}</span>}
+                  </div>
+                );
+                // Glue [ to the first word and ] (+ any lifted punctuation) to the last
+                // as one no-break unit, so a wrap can never strand a lone bracket.
+                if (bid == null) return <React.Fragment key={i}>{cell}</React.Fragment>;
+                return (
+                  <span key={i} className="iw-bracket-unit">
+                    {open && bracketCol("[", "bo")}
+                    {cell}
+                    {close && bracketCol("]", "bc")}
+                    {trail && trailCol(trail, "bt")}
+                  </span>
+                );
+              });
+            })()}
           </div>
         )}
         <div className="dverse-tools">
