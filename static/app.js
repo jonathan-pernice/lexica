@@ -232,7 +232,19 @@ const api = {
   }).catch(() => ({
     error: true
   })),
-  textSearch: (q, corpus, mode, book) => fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` + `&mode=${encodeURIComponent(mode || "phrase")}` + (book ? `&book=${encodeURIComponent(book)}` : "")).then(r => r.json()),
+  textSearch: (q, corpus, opts = {}) => {
+    const p = new URLSearchParams({
+      q,
+      corpus: corpus || "bsb",
+      mode: opts.mode || "phrase"
+    });
+    p.set("partial", opts.partial === false ? "0" : "1");
+    p.set("case", opts.caseSensitive ? "1" : "0");
+    if (opts.exclude) p.set("exclude", opts.exclude);
+    if (opts.from) p.set("from", opts.from);
+    if (opts.to) p.set("to", opts.to);
+    return fetch(`/api/text-search?${p.toString()}`).then(r => r.json());
+  },
   summary: (book, ch) => fetch(`/api/summary/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) => fetch(`/api/kjv/verse/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
   kjvVerseWords: (book, ch, v) => fetch(`/api/kjv/verse_words/${encodeURIComponent(book)}/${ch}/${v}`).then(r => r.json()),
@@ -5277,29 +5289,105 @@ function StudyView({
 // LIBRARY HELPERS
 // ============================================================
 
-// Wrap every occurrence of `term` in `text` with a highlight mark (for the
-// in-text search result snippets). Case-insensitive; returns React nodes.
-function highlightTerm(text, term) {
-  if (!text || !term) return text;
-  const lower = text.toLowerCase();
-  const t = term.toLowerCase();
-  if (lower.indexOf(t) === -1) return text;
+// Wrap every occurrence of any term in `terms` with a highlight mark (for the
+// in-text search result list). `partial` false = whole-word only; `caseSensitive`
+// matches case. Mirrors the backend matcher so the paint lines up with the hits.
+function highlightTerms(text, terms, partial, caseSensitive) {
+  if (!text || !terms || !terms.length) return text;
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const body = terms.filter(Boolean).map(t => {
+    const e = esc(t);
+    return partial ? e : `(?<!\\w)${e}(?!\\w)`;
+  }).join("|");
+  if (!body) return text;
+  let re;
+  try {
+    re = new RegExp(body, caseSensitive ? "g" : "gi");
+  } catch (e) {
+    return text;
+  }
   const parts = [];
-  let i = 0,
+  let last = 0,
     key = 0,
-    pos = lower.indexOf(t, i);
-  while (pos !== -1) {
-    if (pos > i) parts.push(text.slice(i, pos));
+    m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
     parts.push(/*#__PURE__*/React.createElement("mark", {
       key: key++,
       className: "lib-search-mark"
-    }, text.slice(pos, pos + term.length)));
-    i = pos + term.length;
-    pos = lower.indexOf(t, i);
+    }, m[0]));
+    last = m.index + m[0].length;
+    if (m.index === re.lastIndex) re.lastIndex++; // guard against a zero-length match
   }
-  if (i < text.length) parts.push(text.slice(i));
+  if (last < text.length) parts.push(text.slice(last));
   return parts;
 }
+
+// Search-range presets for the in-text search (mirrors eSword's range groups).
+// Each is [fromAbbrev, toAbbrev] over the canonical 66 books.
+const SEARCH_RANGES = [{
+  id: "all",
+  label: "Whole Bible",
+  from: "Gen",
+  to: "Rev"
+}, {
+  id: "ot",
+  label: "Old Testament",
+  from: "Gen",
+  to: "Mal"
+}, {
+  id: "nt",
+  label: "New Testament",
+  from: "Mat",
+  to: "Rev"
+}, {
+  id: "pent",
+  label: "Pentateuch (Gen–Deu)",
+  from: "Gen",
+  to: "Deu"
+}, {
+  id: "hist",
+  label: "History (Jos–Est)",
+  from: "Jos",
+  to: "Est"
+}, {
+  id: "wis",
+  label: "Wisdom (Job–Son)",
+  from: "Job",
+  to: "Son"
+}, {
+  id: "maj",
+  label: "Major Prophets (Isa–Dan)",
+  from: "Isa",
+  to: "Dan"
+}, {
+  id: "min",
+  label: "Minor Prophets (Hos–Mal)",
+  from: "Hos",
+  to: "Mal"
+}, {
+  id: "gos",
+  label: "Gospels & Acts (Mat–Act)",
+  from: "Mat",
+  to: "Act"
+}, {
+  id: "paul",
+  label: "Paul's Letters (Rom–Heb)",
+  from: "Rom",
+  to: "Heb"
+}, {
+  id: "gen",
+  label: "General Letters (Jas–Jud)",
+  from: "Jas",
+  to: "Jud"
+}, {
+  id: "apoc",
+  label: "Apocalypse (Rev)",
+  from: "Rev",
+  to: "Rev"
+}];
+// Canonical book list (abbrev order) for the from/to pickers.
+const SEARCH_BOOK_LIST = Object.keys(BOOK_ORDER);
 
 // Reorder words for natural English reading:
 // within each bracket group sort by greek_pos ascending; non-bracket words keep position order.
@@ -5546,6 +5634,22 @@ function LibNavPanel({
     n.has(g) ? n.delete(g) : n.add(g);
     return n;
   });
+
+  // Book accordion: which book's chapter grid is expanded. Starts collapsed (null)
+  // — the current chapter shows next to the book name until you open it. Click the
+  // open book to collapse it again; click another book to switch + open that one.
+  const [navOpenBook, setNavOpenBook] = useState(null);
+  const onBookClick = b => {
+    if (navOpenBook === b.abbrev) {
+      setNavOpenBook(null);
+      return;
+    } // tap the open book to collapse
+    if (!(selBook && b.abbrev === selBook.abbrev)) {
+      setSelBook(b);
+      setSelChapter(1);
+    }
+    setNavOpenBook(b.abbrev);
+  };
   const filtered = useMemo(() => {
     // Hebrew is OT-only (no Hebrew NT), so drop the NT books from the list in HEB mode.
     const base = translation === "heb" ? books.filter(b => !NT_BOOKS.has(b.abbrev)) : books;
@@ -5729,26 +5833,29 @@ function LibNavPanel({
     className: "nav-div-n"
   }, g.div)), g.books.map(b => {
     const active = !nonCanon && selBook && b.abbrev === selBook.abbrev;
+    const open = navOpenBook === b.abbrev;
     return /*#__PURE__*/React.createElement("div", {
       key: b.abbrev,
       ref: active ? navBookRef : null
     }, /*#__PURE__*/React.createElement("button", {
-      className: "nav-book" + (active ? " on" : ""),
-      onClick: () => {
-        setSelBook(b);
-        setSelChapter(1);
-        if (isOverlay) onClose();
-      }
+      className: "nav-book" + (active ? " on" : "") + (open ? " open" : ""),
+      onClick: () => onBookClick(b),
+      "aria-expanded": open
     }, /*#__PURE__*/React.createElement("span", {
       className: "nav-book-name"
-    }, b.name)), active && /*#__PURE__*/React.createElement("div", {
+    }, b.name), active && !open && /*#__PURE__*/React.createElement("span", {
+      className: "nav-book-ch"
+    }, selChapter)), open && /*#__PURE__*/React.createElement("div", {
       className: "nav-chips"
     }, Array.from({
       length: b.chapters
     }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("button", {
       key: n,
       className: "ch-chip" + (n === selChapter ? " on" : ""),
-      onClick: () => setSelChapter(n)
+      onClick: () => {
+        setSelChapter(n);
+        if (isOverlay) onClose();
+      }
     }, n))));
   })))));
 }
@@ -6692,6 +6799,17 @@ function LibraryView({
   const [didLoading, setDidLoading] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   const [fontOpen, setFontOpen] = useState(false);
+  const fontWrapRef = useRef(null); // the Aa menu wrapper — for click-outside-to-close
+  // Close the Aa (size/theme) menu on any click outside it — robust against the
+  // toolbar sitting above the scrim. Clicks inside keep it open so A−/A+ still work.
+  useEffect(() => {
+    if (!fontOpen) return;
+    const onDoc = e => {
+      if (!fontWrapRef.current || !fontWrapRef.current.contains(e.target)) setFontOpen(false);
+    };
+    document.addEventListener("pointerdown", onDoc);
+    return () => document.removeEventListener("pointerdown", onDoc);
+  }, [fontOpen]);
   const [summaryOpen, setSummaryOpen] = useState(false); // mobile: overview sheet
   // Chronological reading: the same reader, fed passages in event order. The list
   // is a static file (book + verse range pointers, no Bible text). "canonical" =
@@ -6802,8 +6920,16 @@ function LibraryView({
   const [searchQ, setSearchQ] = useState("");
   const [searchResults, setSearchResults] = useState(null); // null = no search run yet
   const [searchLoading, setSearchLoading] = useState(false);
-  const [searchScope, setSearchScope] = useState("all"); // "all" | "book" (current book only)
-  const [searchTerm, setSearchTerm] = useState(""); // the term actually searched (for highlighting)
+  const [searchCounts, setSearchCounts] = useState(null); // {verses, matches, capped}
+  const [searchHi, setSearchHi] = useState(null); // {terms, partial, caseSensitive} for result highlighting
+  const [searchOptsOpen, setSearchOptsOpen] = useState(false); // the collapsible options/range block
+  // eSword-style options
+  const [searchMode, setSearchMode] = useState("phrase"); // "phrase" | "all" | "any"
+  const [searchPartial, setSearchPartial] = useState(true); // true = substring, false = whole word
+  const [searchCase, setSearchCase] = useState(false); // case-sensitive
+  const [searchExclude, setSearchExclude] = useState(""); // words to exclude
+  const [searchFrom, setSearchFrom] = useState("Gen"); // range start (book abbrev)
+  const [searchTo, setSearchTo] = useState("Rev"); // range end (book abbrev)
 
   useEffect(() => {
     api.books().then(data => {
@@ -7243,18 +7369,50 @@ function LibraryView({
   const runTextSearch = () => {
     const q = searchQ.trim();
     if (!q || !readCorpus) return;
-    setSearchTerm(q);
+    const terms = searchMode === "phrase" ? [q] : q.split(/\s+/);
+    setSearchHi({
+      terms,
+      partial: searchPartial,
+      caseSensitive: searchCase
+    });
     setSearchLoading(true);
     setSearchResults(null);
-    const bookFilter = corpus === "bible" && searchScope === "book" ? selBook?.abbrev || "" : "";
-    api.textSearch(q, readCorpus, "phrase", bookFilter).then(d => {
+    setSearchCounts(null);
+    const opts = {
+      mode: searchMode,
+      partial: searchPartial,
+      caseSensitive: searchCase,
+      exclude: searchExclude.trim()
+    };
+    // Range only applies to the Bible texts (non-canon is a single book).
+    if (corpus === "bible") {
+      opts.from = searchFrom;
+      opts.to = searchTo;
+    }
+    api.textSearch(q, readCorpus, opts).then(d => {
       setSearchResults(d.results || []);
+      setSearchCounts({
+        verses: d.verse_count || 0,
+        matches: d.match_count || 0,
+        capped: !!d.capped
+      });
       setSearchLoading(false);
     }).catch(() => {
       setSearchResults([]);
+      setSearchCounts(null);
       setSearchLoading(false);
     });
   };
+  // Apply a range preset (sets the from/to book pickers).
+  const applyRangePreset = id => {
+    const r = SEARCH_RANGES.find(x => x.id === id);
+    if (r) {
+      setSearchFrom(r.from);
+      setSearchTo(r.to);
+    }
+  };
+  // Which preset (if any) the current from/to pair matches — for the dropdown's value.
+  const activeRangeId = (SEARCH_RANGES.find(r => r.from === searchFrom && r.to === searchTo) || {}).id || "custom";
   // Jump to a hit. Bible → the shared nav path (loads chapter, highlights +
   // scrolls). Non-canonical → same text, just switch to that chapter.
   const jumpToResult = r => {
@@ -9036,7 +9194,8 @@ function LibraryView({
       if (canSearch) setSearchOpen(o => !o);
     }
   }, /*#__PURE__*/React.createElement(Icon.Search, null)), /*#__PURE__*/React.createElement("div", {
-    className: "lib-other-wrap"
+    className: "lib-other-wrap",
+    ref: fontWrapRef
   }, /*#__PURE__*/React.createElement("button", {
     className: "lib-toggle lib-font-btn",
     onClick: () => setFontOpen(o => !o),
@@ -9115,7 +9274,7 @@ function LibraryView({
     className: "lib-search-input",
     type: "text",
     autoFocus: true,
-    placeholder: `Search ${searchName}${corpus === "bible" && searchScope === "book" && selBook ? " · " + selBook.name : ""}…`,
+    placeholder: `Search ${searchName}…`,
     value: searchQ,
     onChange: e => setSearchQ(e.target.value),
     onKeyDown: e => {
@@ -9130,15 +9289,75 @@ function LibraryView({
     className: "lib-search-x",
     onClick: () => setSearchOpen(false),
     "aria-label": "Close search"
-  }, "\u2715")), corpus === "bible" && /*#__PURE__*/React.createElement("div", {
-    className: "lib-search-scope seg"
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "lib-search-modes"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "seg lib-search-mode-seg"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (searchScope === "all" ? " on" : ""),
-    onClick: () => setSearchScope("all")
-  }, "Whole Bible"), /*#__PURE__*/React.createElement("button", {
-    className: "seg-b" + (searchScope === "book" ? " on" : ""),
-    onClick: () => setSearchScope("book")
-  }, "This book")), /*#__PURE__*/React.createElement("div", {
+    className: "seg-b" + (searchMode === "phrase" ? " on" : ""),
+    onClick: () => setSearchMode("phrase")
+  }, "Phrase"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (searchMode === "all" ? " on" : ""),
+    onClick: () => setSearchMode("all")
+  }, "All words"), /*#__PURE__*/React.createElement("button", {
+    className: "seg-b" + (searchMode === "any" ? " on" : ""),
+    onClick: () => setSearchMode("any")
+  }, "Any word")), /*#__PURE__*/React.createElement("button", {
+    className: "lib-search-opts-btn" + (searchOptsOpen ? " on" : ""),
+    onClick: () => setSearchOptsOpen(o => !o)
+  }, "Options ", searchOptsOpen ? "▴" : "▾")), searchOptsOpen && /*#__PURE__*/React.createElement("div", {
+    className: "lib-search-opts"
+  }, corpus === "bible" && /*#__PURE__*/React.createElement("div", {
+    className: "lib-search-range"
+  }, /*#__PURE__*/React.createElement("select", {
+    className: "lib-search-sel",
+    value: activeRangeId,
+    onChange: e => applyRangePreset(e.target.value)
+  }, SEARCH_RANGES.map(r => /*#__PURE__*/React.createElement("option", {
+    key: r.id,
+    value: r.id
+  }, r.label)), activeRangeId === "custom" && /*#__PURE__*/React.createElement("option", {
+    value: "custom"
+  }, "Custom range")), /*#__PURE__*/React.createElement("div", {
+    className: "lib-search-range-books"
+  }, /*#__PURE__*/React.createElement("select", {
+    className: "lib-search-sel",
+    value: searchFrom,
+    onChange: e => setSearchFrom(e.target.value)
+  }, SEARCH_BOOK_LIST.map(b => /*#__PURE__*/React.createElement("option", {
+    key: b,
+    value: b
+  }, BOOK_LABELS[b] || b))), /*#__PURE__*/React.createElement("span", {
+    className: "lib-search-range-dash"
+  }, "to"), /*#__PURE__*/React.createElement("select", {
+    className: "lib-search-sel",
+    value: searchTo,
+    onChange: e => setSearchTo(e.target.value)
+  }, SEARCH_BOOK_LIST.map(b => /*#__PURE__*/React.createElement("option", {
+    key: b,
+    value: b
+  }, BOOK_LABELS[b] || b))))), /*#__PURE__*/React.createElement("label", {
+    className: "lib-search-check"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: !searchPartial,
+    onChange: e => setSearchPartial(!e.target.checked)
+  }), " Whole words only"), /*#__PURE__*/React.createElement("label", {
+    className: "lib-search-check"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: searchCase,
+    onChange: e => setSearchCase(e.target.checked)
+  }), " Case-sensitive"), /*#__PURE__*/React.createElement("input", {
+    className: "lib-search-input lib-search-excl-input",
+    type: "text",
+    placeholder: "Exclude verses with\u2026",
+    value: searchExclude,
+    onChange: e => setSearchExclude(e.target.value),
+    onKeyDown: e => {
+      if (e.key === "Enter") runTextSearch();
+    }
+  })), /*#__PURE__*/React.createElement("div", {
     className: "lib-search-results"
   }, searchLoading ? /*#__PURE__*/React.createElement("div", {
     className: "lib-search-status"
@@ -9148,7 +9367,7 @@ function LibraryView({
     className: "lib-search-status"
   }, "No matches.") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "lib-search-status"
-  }, searchResults.length, searchResults.length === 1000 ? "+" : "", " match", searchResults.length === 1 ? "" : "es"), searchResults.map((r, i) => /*#__PURE__*/React.createElement("button", {
+  }, searchCounts ? `${searchCounts.verses}${searchCounts.capped ? "+" : ""} verse${searchCounts.verses === 1 ? "" : "s"} found, ${searchCounts.matches}${searchCounts.capped ? "+" : ""} match${searchCounts.matches === 1 ? "" : "es"}` : `${searchResults.length} results`), searchResults.map((r, i) => /*#__PURE__*/React.createElement("button", {
     key: i,
     className: "lib-search-hit",
     onClick: () => jumpToResult(r)
@@ -9156,7 +9375,7 @@ function LibraryView({
     className: "lib-search-hit-ref"
   }, corpus === "bible" ? BOOK_LABELS[r.book] || r.book : searchName, " ", r.chapter, ":", r.verse), /*#__PURE__*/React.createElement("span", {
     className: "lib-search-hit-text"
-  }, highlightTerm(r.text, searchTerm)))))))), /*#__PURE__*/React.createElement("div", _extends({
+  }, searchHi ? highlightTerms(r.text, searchHi.terms, searchHi.partial, searchHi.caseSensitive) : r.text))))))), /*#__PURE__*/React.createElement("div", _extends({
     ref: readingRef,
     className: "lib-reading" + (showInterlinear ? " lib-interlinear-on" : "") + (audioDockOn ? " lib-reading--audio" : ""),
     style: {

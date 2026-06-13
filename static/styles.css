@@ -2707,6 +2707,8 @@ input { font-family: inherit; }
 .nav-book:hover { color: var(--ink); }
 .nav-book.on { background: var(--bg-sunk); color: var(--ink); font-weight: 600; border-radius: 5px; }
 .nav-book-name { letter-spacing: -0.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Current chapter shown beside the active book name while its grid is collapsed */
+.nav-book-ch { margin-left: 8px; color: var(--ink-2); font-weight: 600; font-size: 12.5px; flex: none; }
 
 .nav-chips {
   display: grid;
@@ -2907,14 +2909,38 @@ input { font-family: inherit; }
 }
 .lib-search-go { font-weight: 600; }
 .lib-search-go:hover, .lib-search-x:hover { background: var(--bg); }
-.lib-search-scope { display: flex; gap: 0; margin: 8px 10px 2px; }
-.lib-search-scope .seg-b {
+/* Mode seg (Phrase / All words / Any word) + the Options toggle */
+.lib-search-modes { display: flex; gap: 8px; align-items: center; margin: 8px 10px 2px; }
+.lib-search-mode-seg { display: flex; flex: 1; gap: 0; }
+.lib-search-mode-seg .seg-b {
   flex: 1; padding: 6px 10px; font-size: 13px; cursor: pointer;
   border: 1px solid var(--line, #e4ded2); background: var(--ctl-bg); color: var(--ink-2);
 }
-.lib-search-scope .seg-b:first-child { border-radius: 8px 0 0 8px; }
-.lib-search-scope .seg-b:last-child { border-radius: 0 8px 8px 0; border-left: none; }
-.lib-search-scope .seg-b.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lib-search-mode-seg .seg-b:first-child { border-radius: 8px 0 0 8px; }
+.lib-search-mode-seg .seg-b:not(:first-child) { border-left: none; }
+.lib-search-mode-seg .seg-b:last-child { border-radius: 0 8px 8px 0; }
+.lib-search-mode-seg .seg-b.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lib-search-opts-btn {
+  padding: 6px 10px; font-size: 13px; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--line, #e4ded2); border-radius: 8px; background: var(--ctl-bg); color: var(--ink-2);
+}
+.lib-search-opts-btn.on { background: var(--ctl-on); color: var(--ink); }
+/* Collapsible options/range block */
+.lib-search-opts {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 6px 10px 2px; padding: 10px; font-size: 13px;
+  border: 1px solid var(--line, #e4ded2); border-radius: 8px; background: var(--bg);
+}
+.lib-search-range { display: flex; flex-direction: column; gap: 6px; }
+.lib-search-range-books { display: flex; align-items: center; gap: 6px; }
+.lib-search-range-dash { color: var(--ink-2); font-size: 12px; }
+.lib-search-sel {
+  flex: 1; min-width: 0; padding: 6px 8px; font-size: 13px;
+  border: 1px solid var(--line, #e4ded2); border-radius: 8px; background: var(--ctl-bg); color: var(--ink);
+}
+.lib-search-check { display: flex; align-items: center; gap: 7px; color: var(--ink); cursor: pointer; }
+.lib-search-check input { cursor: pointer; }
+.lib-search-excl-input { font-size: 14px; }
 .lib-search-results { overflow-y: auto; overscroll-behavior: contain; padding: 6px 0 10px; }
 .lib-search-status { padding: 8px 14px; color: var(--ink-2); font-size: 13px; }
 .lib-search-hit {

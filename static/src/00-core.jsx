@@ -172,10 +172,15 @@ const api = {
       headers: { "Content-Type": "application/json", ..._authHeaders() },
       body: JSON.stringify(payload),
     }).then(r => r.ok ? r.json() : { error: true }).catch(() => ({ error: true })),
-  textSearch: (q, corpus, mode, book) =>
-    fetch(`/api/text-search?q=${encodeURIComponent(q)}&corpus=${encodeURIComponent(corpus || "bsb")}` +
-          `&mode=${encodeURIComponent(mode || "phrase")}` +
-          (book ? `&book=${encodeURIComponent(book)}` : "")).then(r => r.json()),
+  textSearch: (q, corpus, opts = {}) => {
+    const p = new URLSearchParams({ q, corpus: corpus || "bsb", mode: opts.mode || "phrase" });
+    p.set("partial", opts.partial === false ? "0" : "1");
+    p.set("case", opts.caseSensitive ? "1" : "0");
+    if (opts.exclude) p.set("exclude", opts.exclude);
+    if (opts.from) p.set("from", opts.from);
+    if (opts.to) p.set("to", opts.to);
+    return fetch(`/api/text-search?${p.toString()}`).then(r => r.json());
+  },
   summary: (book, ch) =>
     fetch(`/api/summary/${encodeURIComponent(book)}/${ch}`).then(r => r.json()),
   kjvVerse: (book, ch, v) =>

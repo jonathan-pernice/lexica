@@ -2,24 +2,49 @@
 // LIBRARY HELPERS
 // ============================================================
 
-// Wrap every occurrence of `term` in `text` with a highlight mark (for the
-// in-text search result snippets). Case-insensitive; returns React nodes.
-function highlightTerm(text, term) {
-  if (!text || !term) return text;
-  const lower = text.toLowerCase();
-  const t = term.toLowerCase();
-  if (lower.indexOf(t) === -1) return text;
+// Wrap every occurrence of any term in `terms` with a highlight mark (for the
+// in-text search result list). `partial` false = whole-word only; `caseSensitive`
+// matches case. Mirrors the backend matcher so the paint lines up with the hits.
+function highlightTerms(text, terms, partial, caseSensitive) {
+  if (!text || !terms || !terms.length) return text;
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const body = terms.filter(Boolean).map(t => {
+    const e = esc(t);
+    return partial ? e : `(?<!\\w)${e}(?!\\w)`;
+  }).join("|");
+  if (!body) return text;
+  let re;
+  try { re = new RegExp(body, caseSensitive ? "g" : "gi"); } catch (e) { return text; }
   const parts = [];
-  let i = 0, key = 0, pos = lower.indexOf(t, i);
-  while (pos !== -1) {
-    if (pos > i) parts.push(text.slice(i, pos));
-    parts.push(<mark key={key++} className="lib-search-mark">{text.slice(pos, pos + term.length)}</mark>);
-    i = pos + term.length;
-    pos = lower.indexOf(t, i);
+  let last = 0, key = 0, m;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    parts.push(<mark key={key++} className="lib-search-mark">{m[0]}</mark>);
+    last = m.index + m[0].length;
+    if (m.index === re.lastIndex) re.lastIndex++;   // guard against a zero-length match
   }
-  if (i < text.length) parts.push(text.slice(i));
+  if (last < text.length) parts.push(text.slice(last));
   return parts;
 }
+
+// Search-range presets for the in-text search (mirrors eSword's range groups).
+// Each is [fromAbbrev, toAbbrev] over the canonical 66 books.
+const SEARCH_RANGES = [
+  { id: "all", label: "Whole Bible",            from: "Gen", to: "Rev" },
+  { id: "ot",  label: "Old Testament",          from: "Gen", to: "Mal" },
+  { id: "nt",  label: "New Testament",          from: "Mat", to: "Rev" },
+  { id: "pent",label: "Pentateuch (Gen–Deu)",   from: "Gen", to: "Deu" },
+  { id: "hist",label: "History (Jos–Est)",      from: "Jos", to: "Est" },
+  { id: "wis", label: "Wisdom (Job–Son)",       from: "Job", to: "Son" },
+  { id: "maj", label: "Major Prophets (Isa–Dan)", from: "Isa", to: "Dan" },
+  { id: "min", label: "Minor Prophets (Hos–Mal)", from: "Hos", to: "Mal" },
+  { id: "gos", label: "Gospels & Acts (Mat–Act)", from: "Mat", to: "Act" },
+  { id: "paul",label: "Paul's Letters (Rom–Heb)", from: "Rom", to: "Heb" },
+  { id: "gen", label: "General Letters (Jas–Jud)", from: "Jas", to: "Jud" },
+  { id: "apoc",label: "Apocalypse (Rev)",       from: "Rev", to: "Rev" },
+];
+// Canonical book list (abbrev order) for the from/to pickers.
+const SEARCH_BOOK_LIST = Object.keys(BOOK_ORDER);
 
 // Reorder words for natural English reading:
 // within each bracket group sort by greek_pos ascending; non-bracket words keep position order.
@@ -173,6 +198,16 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
     return n;
   });
 
+  // Book accordion: which book's chapter grid is expanded. Starts collapsed (null)
+  // — the current chapter shows next to the book name until you open it. Click the
+  // open book to collapse it again; click another book to switch + open that one.
+  const [navOpenBook, setNavOpenBook] = useState(null);
+  const onBookClick = (b) => {
+    if (navOpenBook === b.abbrev) { setNavOpenBook(null); return; }   // tap the open book to collapse
+    if (!(selBook && b.abbrev === selBook.abbrev)) { setSelBook(b); setSelChapter(1); }
+    setNavOpenBook(b.abbrev);
+  };
+
   const filtered = useMemo(() => {
     // Hebrew is OT-only (no Hebrew NT), so drop the NT books from the list in HEB mode.
     const base = translation === "heb" ? books.filter(b => !NT_BOOKS.has(b.abbrev)) : books;
@@ -322,21 +357,24 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
             </div>
             {g.books.map(b => {
               const active = !nonCanon && selBook && b.abbrev === selBook.abbrev;
+              const open = navOpenBook === b.abbrev;
               return (
                 <div key={b.abbrev} ref={active ? navBookRef : null}>
                   <button
-                    className={"nav-book" + (active ? " on" : "")}
-                    onClick={() => { setSelBook(b); setSelChapter(1); if (isOverlay) onClose(); }}
+                    className={"nav-book" + (active ? " on" : "") + (open ? " open" : "")}
+                    onClick={() => onBookClick(b)}
+                    aria-expanded={open}
                   >
                     <span className="nav-book-name">{b.name}</span>
+                    {active && !open && <span className="nav-book-ch">{selChapter}</span>}
                   </button>
-                  {active && (
+                  {open && (
                     <div className="nav-chips">
                       {Array.from({ length: b.chapters }, (_, i) => i + 1).map(n => (
                         <button
                           key={n}
                           className={"ch-chip" + (n === selChapter ? " on" : "")}
-                          onClick={() => setSelChapter(n)}
+                          onClick={() => { setSelChapter(n); if (isOverlay) onClose(); }}
                         >{n}</button>
                       ))}
                     </div>
@@ -782,6 +820,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const [didLoading, setDidLoading] = useState(false);
   const [otherOpen, setOtherOpen] = useState(false);
   const [fontOpen, setFontOpen] = useState(false);
+  const fontWrapRef = useRef(null);   // the Aa menu wrapper — for click-outside-to-close
+  // Close the Aa (size/theme) menu on any click outside it — robust against the
+  // toolbar sitting above the scrim. Clicks inside keep it open so A−/A+ still work.
+  useEffect(() => {
+    if (!fontOpen) return;
+    const onDoc = (e) => { if (!fontWrapRef.current || !fontWrapRef.current.contains(e.target)) setFontOpen(false); };
+    document.addEventListener("pointerdown", onDoc);
+    return () => document.removeEventListener("pointerdown", onDoc);
+  }, [fontOpen]);
   const [summaryOpen, setSummaryOpen] = useState(false);   // mobile: overview sheet
   // Chronological reading: the same reader, fed passages in event order. The list
   // is a static file (book + verse range pointers, no Bible text). "canonical" =
@@ -862,8 +909,16 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const [searchQ, setSearchQ] = useState("");
   const [searchResults, setSearchResults] = useState(null);   // null = no search run yet
   const [searchLoading, setSearchLoading] = useState(false);
-  const [searchScope, setSearchScope] = useState("all");      // "all" | "book" (current book only)
-  const [searchTerm, setSearchTerm] = useState("");           // the term actually searched (for highlighting)
+  const [searchCounts, setSearchCounts] = useState(null);     // {verses, matches, capped}
+  const [searchHi, setSearchHi] = useState(null);             // {terms, partial, caseSensitive} for result highlighting
+  const [searchOptsOpen, setSearchOptsOpen] = useState(false);// the collapsible options/range block
+  // eSword-style options
+  const [searchMode, setSearchMode] = useState("phrase");     // "phrase" | "all" | "any"
+  const [searchPartial, setSearchPartial] = useState(true);   // true = substring, false = whole word
+  const [searchCase, setSearchCase] = useState(false);        // case-sensitive
+  const [searchExclude, setSearchExclude] = useState("");     // words to exclude
+  const [searchFrom, setSearchFrom] = useState("Gen");        // range start (book abbrev)
+  const [searchTo, setSearchTo] = useState("Rev");            // range end (book abbrev)
 
   useEffect(() => {
     api.books().then(data => {
@@ -1215,14 +1270,29 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
   const runTextSearch = () => {
     const q = searchQ.trim();
     if (!q || !readCorpus) return;
-    setSearchTerm(q);
+    const terms = searchMode === "phrase" ? [q] : q.split(/\s+/);
+    setSearchHi({ terms, partial: searchPartial, caseSensitive: searchCase });
     setSearchLoading(true);
     setSearchResults(null);
-    const bookFilter = (corpus === "bible" && searchScope === "book") ? (selBook?.abbrev || "") : "";
-    api.textSearch(q, readCorpus, "phrase", bookFilter)
-      .then(d => { setSearchResults(d.results || []); setSearchLoading(false); })
-      .catch(() => { setSearchResults([]); setSearchLoading(false); });
+    setSearchCounts(null);
+    const opts = { mode: searchMode, partial: searchPartial, caseSensitive: searchCase, exclude: searchExclude.trim() };
+    // Range only applies to the Bible texts (non-canon is a single book).
+    if (corpus === "bible") { opts.from = searchFrom; opts.to = searchTo; }
+    api.textSearch(q, readCorpus, opts)
+      .then(d => {
+        setSearchResults(d.results || []);
+        setSearchCounts({ verses: d.verse_count || 0, matches: d.match_count || 0, capped: !!d.capped });
+        setSearchLoading(false);
+      })
+      .catch(() => { setSearchResults([]); setSearchCounts(null); setSearchLoading(false); });
   };
+  // Apply a range preset (sets the from/to book pickers).
+  const applyRangePreset = (id) => {
+    const r = SEARCH_RANGES.find(x => x.id === id);
+    if (r) { setSearchFrom(r.from); setSearchTo(r.to); }
+  };
+  // Which preset (if any) the current from/to pair matches — for the dropdown's value.
+  const activeRangeId = (SEARCH_RANGES.find(r => r.from === searchFrom && r.to === searchTo) || {}).id || "custom";
   // Jump to a hit. Bible → the shared nav path (loads chapter, highlights +
   // scrolls). Non-canonical → same text, just switch to that chapter.
   const jumpToResult = (r) => {
@@ -2562,7 +2632,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
             <span className="lib-bar-sep" aria-hidden="true"/>
             {audioBtn}
             <button className={"lib-toggle lib-toggle-icon" + (searchOpen ? " on" : "")} disabled={!canSearch} style={!canSearch ? { opacity: 0.35, cursor: "default" } : undefined} title={canSearch ? "Search this text" : "Search isn't available for this text"} aria-label="Search this text" aria-pressed={searchOpen} onClick={() => { if (canSearch) setSearchOpen(o => !o); }}><Icon.Search/></button>
-            <div className="lib-other-wrap">
+            <div className="lib-other-wrap" ref={fontWrapRef}>
               <button className="lib-toggle lib-font-btn" onClick={() => setFontOpen(o => !o)} title="Text size" aria-label="Text size">Aa ▾</button>
               {fontOpen && (
                 <>
@@ -2627,7 +2697,7 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                 className="lib-search-input"
                 type="text"
                 autoFocus
-                placeholder={`Search ${searchName}${corpus === "bible" && searchScope === "book" && selBook ? " · " + selBook.name : ""}…`}
+                placeholder={`Search ${searchName}…`}
                 value={searchQ}
                 onChange={(e) => setSearchQ(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") runTextSearch(); if (e.key === "Escape") setSearchOpen(false); }}
@@ -2635,10 +2705,43 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
               <button className="lib-search-go" onClick={runTextSearch} aria-label="Search">Go</button>
               <button className="lib-search-x" onClick={() => setSearchOpen(false)} aria-label="Close search">✕</button>
             </div>
-            {corpus === "bible" && (
-              <div className="lib-search-scope seg">
-                <button className={"seg-b" + (searchScope === "all" ? " on" : "")} onClick={() => setSearchScope("all")}>Whole Bible</button>
-                <button className={"seg-b" + (searchScope === "book" ? " on" : "")} onClick={() => setSearchScope("book")}>This book</button>
+            <div className="lib-search-modes">
+              <div className="seg lib-search-mode-seg">
+                <button className={"seg-b" + (searchMode === "phrase" ? " on" : "")} onClick={() => setSearchMode("phrase")}>Phrase</button>
+                <button className={"seg-b" + (searchMode === "all" ? " on" : "")} onClick={() => setSearchMode("all")}>All words</button>
+                <button className={"seg-b" + (searchMode === "any" ? " on" : "")} onClick={() => setSearchMode("any")}>Any word</button>
+              </div>
+              <button className={"lib-search-opts-btn" + (searchOptsOpen ? " on" : "")} onClick={() => setSearchOptsOpen(o => !o)}>Options {searchOptsOpen ? "▴" : "▾"}</button>
+            </div>
+            {searchOptsOpen && (
+              <div className="lib-search-opts">
+                {corpus === "bible" && (
+                  <div className="lib-search-range">
+                    <select className="lib-search-sel" value={activeRangeId} onChange={(e) => applyRangePreset(e.target.value)}>
+                      {SEARCH_RANGES.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
+                      {activeRangeId === "custom" && <option value="custom">Custom range</option>}
+                    </select>
+                    <div className="lib-search-range-books">
+                      <select className="lib-search-sel" value={searchFrom} onChange={(e) => setSearchFrom(e.target.value)}>
+                        {SEARCH_BOOK_LIST.map(b => <option key={b} value={b}>{BOOK_LABELS[b] || b}</option>)}
+                      </select>
+                      <span className="lib-search-range-dash">to</span>
+                      <select className="lib-search-sel" value={searchTo} onChange={(e) => setSearchTo(e.target.value)}>
+                        {SEARCH_BOOK_LIST.map(b => <option key={b} value={b}>{BOOK_LABELS[b] || b}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                )}
+                <label className="lib-search-check"><input type="checkbox" checked={!searchPartial} onChange={(e) => setSearchPartial(!e.target.checked)} /> Whole words only</label>
+                <label className="lib-search-check"><input type="checkbox" checked={searchCase} onChange={(e) => setSearchCase(e.target.checked)} /> Case-sensitive</label>
+                <input
+                  className="lib-search-input lib-search-excl-input"
+                  type="text"
+                  placeholder="Exclude verses with…"
+                  value={searchExclude}
+                  onChange={(e) => setSearchExclude(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") runTextSearch(); }}
+                />
               </div>
             )}
             <div className="lib-search-results">
@@ -2650,11 +2753,15 @@ function LibraryView({ nav, onNavChange, onWordClick, onVerseNumberClick, onOpen
                 <div className="lib-search-status">No matches.</div>
               ) : (
                 <>
-                  <div className="lib-search-status">{searchResults.length}{searchResults.length === 1000 ? "+" : ""} match{searchResults.length === 1 ? "" : "es"}</div>
+                  <div className="lib-search-status">
+                    {searchCounts
+                      ? `${searchCounts.verses}${searchCounts.capped ? "+" : ""} verse${searchCounts.verses === 1 ? "" : "s"} found, ${searchCounts.matches}${searchCounts.capped ? "+" : ""} match${searchCounts.matches === 1 ? "" : "es"}`
+                      : `${searchResults.length} results`}
+                  </div>
                   {searchResults.map((r, i) => (
                     <button key={i} className="lib-search-hit" onClick={() => jumpToResult(r)}>
                       <span className="lib-search-hit-ref">{(corpus === "bible" ? (BOOK_LABELS[r.book] || r.book) : searchName)} {r.chapter}:{r.verse}</span>
-                      <span className="lib-search-hit-text">{highlightTerm(r.text, searchTerm)}</span>
+                      <span className="lib-search-hit-text">{searchHi ? highlightTerms(r.text, searchHi.terms, searchHi.partial, searchHi.caseSensitive) : r.text}</span>
                     </button>
                   ))}
                 </>
