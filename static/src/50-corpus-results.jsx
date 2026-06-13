@@ -169,10 +169,23 @@ function VerseRow({ book, chapter, verse, label, allResults, onWordClick, onRead
                 <span className="lib-bracket-glyph">{ch}</span>
               </span>
             );
-            // Glue "[" to the first word and "]" to the last word (nowrap units)
-            // so a line break can only fall BETWEEN words inside the bracket —
-            // never stranding a lone "[" at a line end or a "]" at a line start.
-            const gw = g.words;
+            const corpusTrailChar = (txt, k) => (
+              <span key={k} className="lib-bracket-trail"><span className="lib-iw-english">{txt}</span></span>
+            );
+            // Lift the bracket's trailing clause punctuation OUTSIDE the "]" (mirror
+            // the reading pane): "...us;]" reads "...us];". clean_english glues the
+            // mark onto the group's last word, so snip it off and re-emit after "]".
+            const TRAIL = /[.,;:!?·]+$/;
+            let gw = g.words, trail = "";
+            {
+              const li = gw.length - 1;
+              const lastEng = (gw[li] && gw[li].english) || "";
+              const m = lastEng.match(TRAIL);
+              if (m) { trail = m[0]; gw = gw.map((w, i) => i === li ? { ...w, english: lastEng.slice(0, m.index) } : w); }
+            }
+            // Glue "[" to the first word and "]" (+ any lifted punctuation) to the
+            // last word (nowrap units) so a line break can only fall BETWEEN words
+            // inside the bracket — never stranding a lone "[" or "]" at a line edge.
             return (
               <span key={`bg${gi}`} className="lib-bracket-group">
                 {gw.length === 1 ? (
@@ -180,6 +193,7 @@ function VerseRow({ book, chapter, verse, label, allResults, onWordClick, onRead
                     {corpusBracketChar("[", "bl")}
                     {renderCorpusWord(gw[0], `bg${gi}w0`)}
                     {corpusBracketChar("]", "br")}
+                    {trail && corpusTrailChar(trail, "bt")}
                   </span>
                 ) : (<>
                   <span className="lib-bracket-unit">
@@ -190,6 +204,7 @@ function VerseRow({ book, chapter, verse, label, allResults, onWordClick, onRead
                   <span className="lib-bracket-unit">
                     {renderCorpusWord(gw[gw.length - 1], `bg${gi}w${gw.length - 1}`)}
                     {corpusBracketChar("]", "br")}
+                    {trail && corpusTrailChar(trail, "bt")}
                   </span>
                 </>)}
               </span>

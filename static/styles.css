@@ -2012,6 +2012,7 @@ input { font-family: inherit; }
    word column's height and centers, so [ ] embrace the whole stacked word. */
 .iw-bracket-unit { display: inline-flex; align-items: stretch; white-space: nowrap; flex-shrink: 0; gap: 2px; }
 .iw-bracket { display: flex; align-items: center; font-family: var(--f-greek); font-size: 20px; color: var(--ink-4); line-height: 1; user-select: none; }
+.iw-bracket-trail { align-self: center; font-family: var(--f-serif); font-size: 15px; color: var(--ink); line-height: 1; margin-left: -1px; }
 .iw-translit {
   font-family: var(--f-serif);
   font-style: italic;

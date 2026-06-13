@@ -677,22 +677,27 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
               const prev = interlinearWords[i - 1], next = interlinearWords[i + 1];
               const open = bid != null && (!prev || prev.bracket_id !== bid);
               const close = bid != null && (!next || next.bracket_id !== bid);
+              // On the group's last word, lift trailing clause punctuation outside the
+              // "]" (mirror the reading pane: "second.]" -> "second].").
+              let eng = w.english || "—", trail = "";
+              if (close) { const m = (w.english || "").match(/[.,;:!?·]+$/); if (m) { trail = m[0]; eng = (w.english || "").slice(0, m.index) || "—"; } }
               const cell = (
                 <div className="iword">
                   <span className={"iw-greek" + (w.he ? " iw-heb" : "")}>{w.top || "—"}</span>
                   {w.translit && <span className="iw-translit">{w.translit}</span>}
-                  <span className="iw-english">{w.english || "—"}</span>
+                  <span className="iw-english">{eng}</span>
                   {w.strongs && <span className="iw-strongs">{w.strongs}</span>}
                 </div>
               );
-              // Glue [ to the first word and ] to the last as one no-break unit, so a
-              // line break can never strand a lone "[" at a line end or "]" at a start.
+              // Glue [ to the first word and ] (+ any lifted punctuation) to the last
+              // as one no-break unit, so a line break can never strand a lone bracket.
               if (bid == null) return <React.Fragment key={i}>{cell}</React.Fragment>;
               return (
                 <span key={i} className="iw-bracket-unit">
                   {open && <span className="iw-bracket">[</span>}
                   {cell}
                   {close && <span className="iw-bracket">]</span>}
+                  {trail && <span className="iw-bracket-trail">{trail}</span>}
                 </span>
               );
             })}

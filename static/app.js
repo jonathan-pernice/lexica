@@ -2629,6 +2629,17 @@ function DetailPanel({
             next = interlinearWords[i + 1];
           const open = bid != null && (!prev || prev.bracket_id !== bid);
           const close = bid != null && (!next || next.bracket_id !== bid);
+          // On the group's last word, lift trailing clause punctuation outside the
+          // "]" (mirror the reading pane: "second.]" -> "second].").
+          let eng = w.english || "—",
+            trail = "";
+          if (close) {
+            const m = (w.english || "").match(/[.,;:!?·]+$/);
+            if (m) {
+              trail = m[0];
+              eng = (w.english || "").slice(0, m.index) || "—";
+            }
+          }
           const cell = /*#__PURE__*/React.createElement("div", {
             className: "iword"
           }, /*#__PURE__*/React.createElement("span", {
@@ -2637,11 +2648,11 @@ function DetailPanel({
             className: "iw-translit"
           }, w.translit), /*#__PURE__*/React.createElement("span", {
             className: "iw-english"
-          }, w.english || "—"), w.strongs && /*#__PURE__*/React.createElement("span", {
+          }, eng), w.strongs && /*#__PURE__*/React.createElement("span", {
             className: "iw-strongs"
           }, w.strongs));
-          // Glue [ to the first word and ] to the last as one no-break unit, so a
-          // line break can never strand a lone "[" at a line end or "]" at a start.
+          // Glue [ to the first word and ] (+ any lifted punctuation) to the last
+          // as one no-break unit, so a line break can never strand a lone bracket.
           if (bid == null) return /*#__PURE__*/React.createElement(React.Fragment, {
             key: i
           }, cell);
@@ -2652,7 +2663,9 @@ function DetailPanel({
             className: "iw-bracket"
           }, "["), cell, close && /*#__PURE__*/React.createElement("span", {
             className: "iw-bracket"
-          }, "]"));
+          }, "]"), trail && /*#__PURE__*/React.createElement("span", {
+            className: "iw-bracket-trail"
+          }, trail));
         })), /*#__PURE__*/React.createElement("div", {
           className: "dverse-tools"
         }, /*#__PURE__*/React.createElement("button", {
@@ -3758,20 +3771,43 @@ function VerseRow({
       }, /*#__PURE__*/React.createElement("span", {
         className: "lib-bracket-glyph"
       }, ch));
-      // Glue "[" to the first word and "]" to the last word (nowrap units)
-      // so a line break can only fall BETWEEN words inside the bracket —
-      // never stranding a lone "[" at a line end or a "]" at a line start.
-      const gw = g.words;
+      const corpusTrailChar = (txt, k) => /*#__PURE__*/React.createElement("span", {
+        key: k,
+        className: "lib-bracket-trail"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "lib-iw-english"
+      }, txt));
+      // Lift the bracket's trailing clause punctuation OUTSIDE the "]" (mirror
+      // the reading pane): "...us;]" reads "...us];". clean_english glues the
+      // mark onto the group's last word, so snip it off and re-emit after "]".
+      const TRAIL = /[.,;:!?·]+$/;
+      let gw = g.words,
+        trail = "";
+      {
+        const li = gw.length - 1;
+        const lastEng = gw[li] && gw[li].english || "";
+        const m = lastEng.match(TRAIL);
+        if (m) {
+          trail = m[0];
+          gw = gw.map((w, i) => i === li ? {
+            ...w,
+            english: lastEng.slice(0, m.index)
+          } : w);
+        }
+      }
+      // Glue "[" to the first word and "]" (+ any lifted punctuation) to the
+      // last word (nowrap units) so a line break can only fall BETWEEN words
+      // inside the bracket — never stranding a lone "[" or "]" at a line edge.
       return /*#__PURE__*/React.createElement("span", {
         key: `bg${gi}`,
         className: "lib-bracket-group"
       }, gw.length === 1 ? /*#__PURE__*/React.createElement("span", {
         className: "lib-bracket-unit"
-      }, corpusBracketChar("[", "bl"), renderCorpusWord(gw[0], `bg${gi}w0`), corpusBracketChar("]", "br")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
+      }, corpusBracketChar("[", "bl"), renderCorpusWord(gw[0], `bg${gi}w0`), corpusBracketChar("]", "br"), trail && corpusTrailChar(trail, "bt")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", {
         className: "lib-bracket-unit"
       }, corpusBracketChar("[", "bl"), renderCorpusWord(gw[0], `bg${gi}w0`)), gw.slice(1, -1).map((w, wi) => renderCorpusWord(w, `bg${gi}w${wi + 1}`)), /*#__PURE__*/React.createElement("span", {
         className: "lib-bracket-unit"
-      }, renderCorpusWord(gw[gw.length - 1], `bg${gi}w${gw.length - 1}`), corpusBracketChar("]", "br"))));
+      }, renderCorpusWord(gw[gw.length - 1], `bg${gi}w${gw.length - 1}`), corpusBracketChar("]", "br"), trail && corpusTrailChar(trail, "bt"))));
     });
   })()));
 }
