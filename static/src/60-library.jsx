@@ -355,8 +355,10 @@ function LibNavPanel({ books, selBook, setSelBook, selChapter, setSelChapter, is
           const newTestament = gi === 0 || groups[gi - 1].t !== g.t;
           return (
           <div className={"nav-group" + (newTestament ? " nav-group--tnew" : "")} key={g.key}>
+            {newTestament && (
+              <div className="nav-testament"><span className="nav-div-t">{g.t}</span></div>
+            )}
             <div className="nav-div">
-              {newTestament && <span className="nav-div-t">{g.t}</span>}
               <span className="nav-div-n">{g.div}</span>
             </div>
             {g.books.map(b => {

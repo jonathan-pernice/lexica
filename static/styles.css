@@ -2694,6 +2694,8 @@ input { font-family: inherit; }
 /* A touch more air above a new testament block (where the OT/NT tag shows). */
 .nav-group--tnew { margin-top: 10px; }
 .nav-group--tnew:first-child { margin-top: 0; }
+/* Standalone OT/NT testament header, sitting ABOVE the first category of each. */
+.nav-testament { padding: 4px 10px 4px; }
 .nav-div {
   display: flex; align-items: baseline; gap: 6px;
   padding: 8px 10px 3px;

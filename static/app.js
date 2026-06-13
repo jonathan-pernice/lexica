@@ -5833,11 +5833,13 @@ function LibNavPanel({
     return /*#__PURE__*/React.createElement("div", {
       className: "nav-group" + (newTestament ? " nav-group--tnew" : ""),
       key: g.key
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "nav-div"
-    }, newTestament && /*#__PURE__*/React.createElement("span", {
+    }, newTestament && /*#__PURE__*/React.createElement("div", {
+      className: "nav-testament"
+    }, /*#__PURE__*/React.createElement("span", {
       className: "nav-div-t"
-    }, g.t), /*#__PURE__*/React.createElement("span", {
+    }, g.t)), /*#__PURE__*/React.createElement("div", {
+      className: "nav-div"
+    }, /*#__PURE__*/React.createElement("span", {
       className: "nav-div-n"
     }, g.div)), g.books.map(b => {
       const active = !nonCanon && selBook && b.abbrev === selBook.abbrev;
