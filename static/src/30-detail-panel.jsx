@@ -112,12 +112,40 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
     setInterlinearWords(null);
   }, [entry && entry.id]);
 
+  // The side-card interlinear follows the TEXT you're reading, same as the reading
+  // pane: KJV -> KJV words, Hebrew (HEB reader) -> Hebrew words, otherwise ABP Greek.
+  // Each feed is normalised to one shape {top, translit, english, strongs, he} so the
+  // render below stays a single dumb loop. (Before, it always pulled ABP Greek — so a
+  // KJV verse showed the LXX Greek underneath it.)
   useEffect(() => {
     if (!showInterlinear || !entry || interlinearWords) return;
     let cancelled = false;
-    api.verseWords(entry.book, entry.chapter, entry.verse)
-      .then(d => { if (!cancelled) setInterlinearWords(d.words || []); })
-      .catch(() => { if (!cancelled) setInterlinearWords([]); });
+    const done = (rows) => { if (!cancelled) setInterlinearWords(rows); };
+    const tag = (s) => (s && s !== "*") ? strongsTag(s) : "";
+    if (entry.isKjv) {
+      api.kjvVerseWords(entry.book, entry.chapter, entry.verse)
+        .then(rows => done((rows || []).map(w => {
+          const sid = (w.strongs_ids && w.strongs_ids[0]) || "";
+          return { top: w.lemma || "", translit: w.xlit || "", english: w.word || "",
+                   strongs: tag(sid), he: /^H/i.test(sid) };
+        })))
+        .catch(() => done([]));
+    } else if (entry.isHeb) {
+      api.hebVerseWords(entry.book, entry.chapter, entry.verse)
+        .then(d => done((d.words || []).map(w => ({
+          top: w.hebrew || "", translit: w.translit || "", english: w.gloss || "",
+          strongs: tag(w.strongs), he: true,
+        }))))
+        .catch(() => done([]));
+    } else {
+      api.verseWords(entry.book, entry.chapter, entry.verse)
+        .then(d => done((d.words || []).map(w => ({
+          top: w.lemma || "", translit: w.translit || "", english: w.english || "",
+          strongs: (w.strongs_base === "*") ? "" : tag((w.strongs && w.strongs !== "*") ? w.strongs : w.strongs_base),
+          he: false,
+        }))))
+        .catch(() => done([]));
+    }
     return () => { cancelled = true; };
   }, [showInterlinear, entry && entry.id]);
 
@@ -638,14 +666,14 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
           <div className="interlinear">
             {!interlinearWords ? (
               <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>Loading…</span>
+            ) : interlinearWords.length === 0 ? (
+              <span style={{ color: "var(--ink-4)", fontSize: "13px" }}>No interlinear for this verse.</span>
             ) : interlinearWords.map((w, i) => (
               <div key={i} className="iword">
-                <span className="iw-greek">{w.lemma || "—"}</span>
-                <span className="iw-translit">{w.translit || ""}</span>
+                <span className={"iw-greek" + (w.he ? " iw-heb" : "")}>{w.top || "—"}</span>
+                {w.translit && <span className="iw-translit">{w.translit}</span>}
                 <span className="iw-english">{w.english || "—"}</span>
-                {(w.strongs || w.strongs_base) && w.strongs_base !== "*" && (
-                  <span className="iw-strongs">{strongsTag((w.strongs && w.strongs !== '*') ? w.strongs : w.strongs_base)}</span>
-                )}
+                {w.strongs && <span className="iw-strongs">{w.strongs}</span>}
               </div>
             ))}
           </div>

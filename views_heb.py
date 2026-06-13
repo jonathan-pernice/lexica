@@ -16,8 +16,9 @@ so visitors don't see a half-loaded OT; flip that to status.available once all 3
 books are in. The data route itself stays public the whole time (public-domain text).
 
 Endpoints:
-  GET /api/hebrew/status                    -> {available: bool, owner: bool}
-  GET /api/hebrew/chapter/<book>/<chapter>  -> [{verse, heading, words:[...]}]
+  GET /api/hebrew/status                          -> {available: bool, owner: bool}
+  GET /api/hebrew/chapter/<book>/<chapter>        -> [{verse, heading, words:[...]}]
+  GET /api/hebrew/verse-words/<book>/<ch>/<verse> -> {words:[...]}  (one verse, for the side card)
 """
 import sqlite3
 
@@ -106,3 +107,39 @@ def hebrew_chapter(book, chapter):
             "grammar": (r["grammar"] if "grammar" in r.keys() else ""),
         })
     return jsonify(verses)
+
+
+@bp.route("/api/hebrew/verse-words/<book>/<int:chapter>/<int:verse>")
+def hebrew_verse_words(book, chapter, verse):
+    """One verse's Hebrew words for the word-detail SIDE CARD interlinear. Same word
+    shape as the chapter route, just a single verse. Returns {words:[]} if heb.db
+    isn't loaded (so the side card simply shows nothing, never errors)."""
+    try:
+        conn = heb_db()
+    except sqlite3.OperationalError:
+        return jsonify({"words": []})                     # heb.db not loaded yet
+    try:
+        try:
+            rows = conn.execute(
+                "SELECT position, hebrew, strongs, gloss, translit"
+                " FROM heb_words WHERE book = ? AND chapter = ? AND verse = ? ORDER BY position",
+                (book, chapter, verse),
+            ).fetchall()
+        except sqlite3.OperationalError:
+            # heb.db built before the translit column existed — read the legacy shape
+            rows = conn.execute(
+                "SELECT position, hebrew, strongs, gloss"
+                " FROM heb_words WHERE book = ? AND chapter = ? AND verse = ? ORDER BY position",
+                (book, chapter, verse),
+            ).fetchall()
+    except sqlite3.OperationalError:
+        return jsonify({"words": []})                     # heb_words table missing
+    finally:
+        conn.close()
+    words = [{
+        "hebrew": r["hebrew"],
+        "strongs": r["strongs"],
+        "gloss": r["gloss"],
+        "translit": (r["translit"] if "translit" in r.keys() else ""),
+    } for r in rows]
+    return jsonify({"words": words})

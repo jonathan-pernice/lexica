@@ -62,6 +62,7 @@ const api = {
   }).then(r => r.json()),
   verse: (book, chapter, verse) => fetch(`/api/verse/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
   verseWords: (book, chapter, verse) => fetch(`/api/verse-words/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
+  hebVerseWords: (book, chapter, verse) => fetch(`/api/hebrew/verse-words/${encodeURIComponent(book)}/${chapter}/${verse}`).then(r => r.json()),
   strongsCount: strongs_base => fetch(`/api/strongs-count/${encodeURIComponent(strongs_base)}`).then(r => r.json()),
   lsj: (lemma, strongs) => {
     const path = lemma || strongs || '';
@@ -1926,14 +1927,47 @@ function DetailPanel({
     setShowInterlinear(false);
     setInterlinearWords(null);
   }, [entry && entry.id]);
+
+  // The side-card interlinear follows the TEXT you're reading, same as the reading
+  // pane: KJV -> KJV words, Hebrew (HEB reader) -> Hebrew words, otherwise ABP Greek.
+  // Each feed is normalised to one shape {top, translit, english, strongs, he} so the
+  // render below stays a single dumb loop. (Before, it always pulled ABP Greek — so a
+  // KJV verse showed the LXX Greek underneath it.)
   useEffect(() => {
     if (!showInterlinear || !entry || interlinearWords) return;
     let cancelled = false;
-    api.verseWords(entry.book, entry.chapter, entry.verse).then(d => {
-      if (!cancelled) setInterlinearWords(d.words || []);
-    }).catch(() => {
-      if (!cancelled) setInterlinearWords([]);
-    });
+    const done = rows => {
+      if (!cancelled) setInterlinearWords(rows);
+    };
+    const tag = s => s && s !== "*" ? strongsTag(s) : "";
+    if (entry.isKjv) {
+      api.kjvVerseWords(entry.book, entry.chapter, entry.verse).then(rows => done((rows || []).map(w => {
+        const sid = w.strongs_ids && w.strongs_ids[0] || "";
+        return {
+          top: w.lemma || "",
+          translit: w.xlit || "",
+          english: w.word || "",
+          strongs: tag(sid),
+          he: /^H/i.test(sid)
+        };
+      }))).catch(() => done([]));
+    } else if (entry.isHeb) {
+      api.hebVerseWords(entry.book, entry.chapter, entry.verse).then(d => done((d.words || []).map(w => ({
+        top: w.hebrew || "",
+        translit: w.translit || "",
+        english: w.gloss || "",
+        strongs: tag(w.strongs),
+        he: true
+      })))).catch(() => done([]));
+    } else {
+      api.verseWords(entry.book, entry.chapter, entry.verse).then(d => done((d.words || []).map(w => ({
+        top: w.lemma || "",
+        translit: w.translit || "",
+        english: w.english || "",
+        strongs: w.strongs_base === "*" ? "" : tag(w.strongs && w.strongs !== "*" ? w.strongs : w.strongs_base),
+        he: false
+      })))).catch(() => done([]));
+    }
     return () => {
       cancelled = true;
     };
@@ -2580,18 +2614,23 @@ function DetailPanel({
             color: "var(--ink-4)",
             fontSize: "13px"
           }
-        }, "Loading\u2026") : interlinearWords.map((w, i) => /*#__PURE__*/React.createElement("div", {
+        }, "Loading\u2026") : interlinearWords.length === 0 ? /*#__PURE__*/React.createElement("span", {
+          style: {
+            color: "var(--ink-4)",
+            fontSize: "13px"
+          }
+        }, "No interlinear for this verse.") : interlinearWords.map((w, i) => /*#__PURE__*/React.createElement("div", {
           key: i,
           className: "iword"
         }, /*#__PURE__*/React.createElement("span", {
-          className: "iw-greek"
-        }, w.lemma || "—"), /*#__PURE__*/React.createElement("span", {
+          className: "iw-greek" + (w.he ? " iw-heb" : "")
+        }, w.top || "—"), w.translit && /*#__PURE__*/React.createElement("span", {
           className: "iw-translit"
-        }, w.translit || ""), /*#__PURE__*/React.createElement("span", {
+        }, w.translit), /*#__PURE__*/React.createElement("span", {
           className: "iw-english"
-        }, w.english || "—"), (w.strongs || w.strongs_base) && w.strongs_base !== "*" && /*#__PURE__*/React.createElement("span", {
+        }, w.english || "—"), w.strongs && /*#__PURE__*/React.createElement("span", {
           className: "iw-strongs"
-        }, strongsTag(w.strongs && w.strongs !== '*' ? w.strongs : w.strongs_base))))), /*#__PURE__*/React.createElement("div", {
+        }, w.strongs)))), /*#__PURE__*/React.createElement("div", {
           className: "dverse-tools"
         }, /*#__PURE__*/React.createElement("button", {
           className: "link-btn",
