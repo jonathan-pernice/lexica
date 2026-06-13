@@ -2371,26 +2371,40 @@ function DetailPanel({
           }
         }, "Location unknown")) : null));
       case "naveTopical":
-        return /*#__PURE__*/React.createElement("section", {
-          key: "naveTopical",
-          className: "sec"
-        }, /*#__PURE__*/React.createElement("h4", {
-          className: "sec-head"
-        }, /*#__PURE__*/React.createElement("span", {
-          className: "sec-t"
-        }, "Nave's Topical"), /*#__PURE__*/React.createElement("span", {
-          className: "lsj-badge"
-        }, "Nave's")), /*#__PURE__*/React.createElement("div", {
-          className: "nave-secs"
-        }, naveData.sections.map((s, i) => /*#__PURE__*/React.createElement("button", {
-          key: i,
-          className: "nave-sec",
-          onClick: () => onOpenStudyName && onOpenStudyName(naveData.id)
-        }, /*#__PURE__*/React.createElement("span", {
-          className: "nave-sec-h"
-        }, s.heading || "General"), /*#__PURE__*/React.createElement("span", {
-          className: "nave-sec-n"
-        }, s.n)))));
+        {
+          // Sidebar-only: cap at 5 so the side card stays short, and strip the leading
+          // "N. " that Nave's bakes into each heading (so it reads "A name of Christ",
+          // not "2. A name of Christ"). The full, un-stripped list lives on the Study page.
+          const NAVE_CAP = 5;
+          const shown = naveData.sections.slice(0, NAVE_CAP);
+          const extra = naveData.sections.length - shown.length;
+          const openFull = () => onOpenStudyName && onOpenStudyName(naveData.id);
+          return /*#__PURE__*/React.createElement("section", {
+            key: "naveTopical",
+            className: "sec"
+          }, /*#__PURE__*/React.createElement("h4", {
+            className: "sec-head"
+          }, /*#__PURE__*/React.createElement("span", {
+            className: "sec-t"
+          }, "Nave's Topical"), /*#__PURE__*/React.createElement("span", {
+            className: "lsj-badge"
+          }, "Nave's")), /*#__PURE__*/React.createElement("div", {
+            className: "nave-secs"
+          }, shown.map((s, i) => /*#__PURE__*/React.createElement("button", {
+            key: i,
+            className: "nave-sec",
+            onClick: openFull
+          }, /*#__PURE__*/React.createElement("span", {
+            className: "nave-sec-h"
+          }, (s.heading || "").replace(/^\s*\d+\.\s*/, "").trim() || "General"), /*#__PURE__*/React.createElement("span", {
+            className: "nave-sec-n"
+          }, s.n))), extra > 0 && /*#__PURE__*/React.createElement("button", {
+            className: "nave-sec nave-sec--more",
+            onClick: openFull
+          }, /*#__PURE__*/React.createElement("span", {
+            className: "nave-sec-h"
+          }, "+ ", extra, " more in Study"))));
+        }
       case "aidesc":
         return /*#__PURE__*/React.createElement("section", {
           key: "aidesc",

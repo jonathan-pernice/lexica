@@ -490,19 +490,33 @@ function DetailPanel({ entry, isMobile, onClose, occurrences, totalResults, onSt
         </>}
       </section>
     );
-    case "naveTopical": return (
+    case "naveTopical": {
+      // Sidebar-only: cap at 5 so the side card stays short, and strip the leading
+      // "N. " that Nave's bakes into each heading (so it reads "A name of Christ",
+      // not "2. A name of Christ"). The full, un-stripped list lives on the Study page.
+      const NAVE_CAP = 5;
+      const shown = naveData.sections.slice(0, NAVE_CAP);
+      const extra = naveData.sections.length - shown.length;
+      const openFull = () => onOpenStudyName && onOpenStudyName(naveData.id);
+      return (
       <section key="naveTopical" className="sec">
         <h4 className="sec-head"><span className="sec-t">Nave's Topical</span><span className="lsj-badge">Nave's</span></h4>
         <div className="nave-secs">
-          {naveData.sections.map((s, i) => (
-            <button key={i} className="nave-sec" onClick={() => onOpenStudyName && onOpenStudyName(naveData.id)}>
-              <span className="nave-sec-h">{s.heading || "General"}</span>
+          {shown.map((s, i) => (
+            <button key={i} className="nave-sec" onClick={openFull}>
+              <span className="nave-sec-h">{(s.heading || "").replace(/^\s*\d+\.\s*/, "").trim() || "General"}</span>
               <span className="nave-sec-n">{s.n}</span>
             </button>
           ))}
+          {extra > 0 && (
+            <button className="nave-sec nave-sec--more" onClick={openFull}>
+              <span className="nave-sec-h">+ {extra} more in Study</span>
+            </button>
+          )}
         </div>
       </section>
-    );
+      );
+    }
     case "aidesc": return (
       <section key="aidesc" className="sec">
         <h4 className="sec-head"><span className="sec-t">{metavType === "place" ? "Biblical Place" : "Biblical Reference"}</span><span className="lsj-badge lsj-badge--accent">AI</span></h4>

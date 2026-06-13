@@ -95,10 +95,10 @@
 :root[data-theme="dark"] .lib-search-mark,
 :root[data-theme="dark"] :is(.lib-hi-yellow, .lib-hi-green, .lib-hi-blue, .lib-hi-pink, .lib-hi-orange),
 :root[data-theme="dark"] :is(.lib-hi-yellow, .lib-hi-green, .lib-hi-blue, .lib-hi-pink, .lib-hi-orange) * { color: #221e18; }
-/* Dark: gold is a LIGHT tan here, so white text on gold-filled badges/tags is low
-   contrast — pin those dark too. */
-:root[data-theme="dark"] .tag,
-:root[data-theme="dark"] .lsj-badge--gold { color: #221e18; }
+/* Dark: gold is a LIGHT tan here, so white text on a gold-FILLED tag is low
+   contrast — pin those dark. (The metaV/BDB/Nave's badges are now the SOFT
+   pill — light-tan text on a dark gold-soft bg — so they're NOT pinned here.) */
+:root[data-theme="dark"] .tag { color: #221e18; }
 /* Dark: the Strong's word-order number is a dark red (#c0392b) that sinks into the
    dark bg — brighten it to a legible coral. */
 :root[data-theme="dark"] .lib-iw-pos { color: #f0726a; }
@@ -1106,7 +1106,7 @@ input { font-family: inherit; }
 
 /* ---- Extracted from inline styles ---- */
 .detail-greek--he { font-family: var(--f-serif); text-align: left; }
-.lsj-badge--gold { background: var(--gold); color: #fff; }
+.lsj-badge--gold { background: var(--gold-soft); color: var(--gold); }
 .lsj-badge--accent { background: var(--accent); color: var(--paper); }
 .lsj-def--loading { color: var(--ink-4); font-style: italic; padding: 8px 0; }
 .detail-p--meta { margin-top: 8px; }
@@ -1448,13 +1448,14 @@ input { font-family: inherit; }
 /* BDB (Hebrew) sidebar */
 .bdb-badge {
   display: inline-block;
+  font-family: var(--f-mono);
   font-size: 9px;
-  font-weight: 700;
   letter-spacing: 0.06em;
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: #fef3c7;
-  color: #92400e;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--gold-soft);
+  color: var(--gold);
   margin-left: 6px;
   vertical-align: middle;
 }
@@ -3363,6 +3364,8 @@ input { font-family: inherit; }
 .nave-sec:hover { border-color: var(--gold); background: var(--gold-soft); }
 .nave-sec-h { font-size: 13.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nave-sec-n { flex: none; font-family: var(--f-mono); font-size: 10px; color: var(--gold); background: var(--gold-soft); padding: 2px 7px; border-radius: 20px; }
+.nave-sec--more { justify-content: center; border-style: dashed; }
+.nave-sec--more .nave-sec-h { font-size: 12.5px; color: var(--ink-3); }
 
 .study-rows { display: flex; flex-direction: column; gap: 6px; }
 .study-row {
